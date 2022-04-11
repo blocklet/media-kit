@@ -1,5 +1,22 @@
 import React from 'react';
-import { Uppload, en, Local, Preview, Camera, xhrUploader } from 'uppload';
+import {
+  en,
+  xhrUploader,
+  Uppload,
+  Local,
+  Preview,
+  Camera,
+  Rotate,
+  Crop,
+  Blur,
+  Contrast,
+  Grayscale,
+  Saturate,
+  Twitter,
+  Facebook,
+  Screenshot,
+  URL,
+} from 'uppload';
 import 'uppload/dist/uppload.css';
 import 'uppload/dist/themes/light.css';
 
@@ -17,25 +34,26 @@ const uppload = new Uppload({
   }),
 });
 
-uppload.use([new Local(), new Camera(), new Preview()]);
+// services
+uppload.use([new Local(), new Camera(), new Screenshot(), new URL(), new Twitter(), new Facebook()]);
+
+// effects
+uppload.use([new Preview(), new Rotate(), new Crop(), new Blur(), new Contrast(), new Grayscale(), new Saturate()]);
 
 export default function Uploader() {
-  const [imageUrl, setImageUrl] = React.useState(defaultImage);
+  const [url, setUrl] = React.useState(defaultImage);
   const handleOpen = () => {
-    uppload.on('upload', (url) => {
-      console.log(url);
-      setImageUrl(url);
-    });
+    uppload.on('upload', setUrl);
     uppload.open();
   };
 
   return (
     <div>
-      <img alt="" src={imageUrl} />
+      <img alt="" src={url} />
       <button onClick={handleOpen} type="button">
         Select another photo
       </button>
-      <p>Current react URL state: {imageUrl}</p>
+      <p>Current react URL state: {url}</p>
     </div>
   );
 }

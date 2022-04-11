@@ -1,8 +1,8 @@
-const path = require('path');
 const multer = require('multer');
 const express = require('express');
 const joinUrl = require('url-join');
 const middleware = require('@blocklet/sdk/lib/middlewares');
+const mime = require('mime-types');
 const { nanoid } = require('nanoid');
 
 const env = require('../libs/env');
@@ -14,7 +14,7 @@ const upload = multer({
   storage: multer.diskStorage({
     destination: env.uploadDir,
     filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${nanoid()}${path.extname(file.originalname)}`);
+      cb(null, `${Date.now()}-${nanoid()}.${mime.extension(file.mimetype)}`);
     },
   }),
 });
