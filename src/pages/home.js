@@ -15,7 +15,8 @@ const Home = () => {
       <section className="splash">
         <div className="page-header">
           <h1 className="page-title">
-            ImageBin<span> - Easy Image Uploads</span>
+            {window.blocklet.appName}
+            <span> - Easy Image Uploads</span>
           </h1>
           <SessionManager session={session} onLogout={onLogout} />
         </div>

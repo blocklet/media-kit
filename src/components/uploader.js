@@ -68,7 +68,7 @@ export default function Uploader() {
             <div className="image-shine" />
           </div>
         )}
-        <p>Upload new image to your ImageBin</p>
+        <p>Upload new image to {window.blocklet.appName}</p>
       </div>
       <div className="splash-controls">
         <button onClick={handleOpen} type="button" className="submit">
