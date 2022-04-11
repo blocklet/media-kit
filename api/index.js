@@ -1,5 +1,7 @@
 require('dotenv-flow').config();
 require('express-async-errors');
+
+const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
@@ -9,6 +11,11 @@ const fallback = require('express-history-api-fallback');
 
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
+const env = require('./libs/env');
+
+if (fs.existsSync(env.uploadDir) === false) {
+  fs.mkdirSync(env.uploadDir, { recursive: true });
+}
 
 const app = express();
 
@@ -17,8 +24,11 @@ app.use(cookieParser());
 app.use(express.json({ limit: '1 mb' }));
 app.use(express.urlencoded({ extended: true, limit: '1 mb' }));
 
+app.use('/uploads', express.static(env.uploadDir));
+
 const router = express.Router();
-router.use('/api', require('./routes'));
+router.use('/api', require('./routes/user'));
+router.use('/api', require('./routes/upload'));
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';

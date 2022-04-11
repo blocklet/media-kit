@@ -1,5 +1,5 @@
 import React from 'react';
-import { Uppload, en, Local, Preview, Camera } from 'uppload';
+import { Uppload, en, Local, Preview, Camera, xhrUploader } from 'uppload';
 import 'uppload/dist/uppload.css';
 import 'uppload/dist/themes/light.css';
 
@@ -9,15 +9,12 @@ const defaultImage =
 const uppload = new Uppload({
   lang: en,
   defaultService: 'local',
-  uploader: (file, updateProgress) =>
-    new Promise((resolve) => {
-      setTimeout(() => resolve(window.URL.createObjectURL(file)), 4000);
-      let progress = 0;
-      const interval = setInterval(() => {
-        if (progress > 99) clearInterval(interval);
-        updateProgress(progress++);
-      }, 30);
-    }),
+  maxWidth: 1440,
+  maxHeight: 900,
+  uploader: xhrUploader({
+    endpoint: `${window.location.origin}/api/upload`,
+    fileKeyName: 'image',
+  }),
 });
 
 uppload.use([new Local(), new Camera(), new Preview()]);
@@ -26,6 +23,7 @@ export default function Uploader() {
   const [imageUrl, setImageUrl] = React.useState(defaultImage);
   const handleOpen = () => {
     uppload.on('upload', (url) => {
+      console.log(url);
       setImageUrl(url);
     });
     uppload.open();
