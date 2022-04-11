@@ -1,17 +1,23 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import styled from 'styled-components';
+import SessionManager from '@arcblock/did-connect/lib/SessionManager';
 
 import Uploader from '../components/uploader';
 import UploadHistory from '../components/history';
+import { useSessionContext } from '../contexts/session';
 
 const Home = () => {
+  const { session } = useSessionContext();
   return (
     <Div>
       <section className="splash">
-        <h1 className="page-title">
-          ImageBin<span> - Easy Image Uploads</span>
-        </h1>
+        <div className="page-header">
+          <h1 className="page-title">
+            ImageBin<span> - Easy Image Uploads</span>
+          </h1>
+          <SessionManager session={session} />
+        </div>
         <Uploader />
       </section>
       <section className="history">
@@ -31,11 +37,17 @@ const Div = styled.div`
   .splash {
     padding: 32px;
 
+    .page-header {
+      display: flex;
+      flex-direction: row;
+    }
+
     .page-title {
       font-size: 2em;
-      margin: 0.67em 0;
+      margin: 0.67em 0 0.67em 64px;
       margin-top: 0;
       text-shadow: 0 3px 3px rgb(0 0 0 / 50%);
+      flex: 1;
     }
   }
 

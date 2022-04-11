@@ -1,18 +1,19 @@
 import React from 'react';
+import get from 'lodash/get';
 import { MuiThemeProvider, CssBaseline } from '@material-ui/core';
 import { ThemeProvider, createGlobalStyle } from 'styled-components';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import theme from './libs/theme';
+import { SessionProvider } from './contexts/session';
 
 import Home from './pages/home';
 import About from './pages/about';
 
 const GlobalStyle = createGlobalStyle`
   body {
-    font-family: 'Roboto', sans-serif;
     min-height: 100%;
-    background-color: #484d5d;
+    background-color: #484d5d !important;
     background-image: url(/images/bg.png);
     text-align: center;
     color: #070c16;
@@ -33,16 +34,18 @@ function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <GlobalStyle />
-        <div className="app">
-          <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-        </div>
+        <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
+          <CssBaseline />
+          <GlobalStyle />
+          <div className="app">
+            <Routes>
+              <Route exact path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </div>
+        </SessionProvider>
       </ThemeProvider>
     </MuiThemeProvider>
   );

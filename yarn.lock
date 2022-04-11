@@ -107,6 +107,31 @@
     semver "^7.3.4"
     tweetnacl-sealedbox-js "^1.2.0"
 
+"@arcblock/did-connect@^1.17.3":
+  version "1.17.3"
+  resolved "https://registry.yarnpkg.com/@arcblock/did-connect/-/did-connect-1.17.3.tgz#4ccd958c0a769c6d379e5593e3d1a53d2655019c"
+  integrity sha512-C97btL8PA1O4lH2V4Cga5k/80Go1B9UVJm01HZXex9mwPVGg4LJXbJzFW0kCSkycOvyAPBkVV93TGpiyQFavng==
+  dependencies:
+    "@arcblock/did-motif" "^1.1.4"
+    "@arcblock/event-client" "^1.0.23"
+    "@arcblock/icons" "^1.17.3"
+    "@arcblock/react-hooks" "^1.17.3"
+    "@arcblock/ux" "^1.17.3"
+    "@fontsource/rubik" "^4.5.0"
+    "@fontsource/ubuntu-mono" "^4.4.5"
+    "@material-ui/core" "^4.12.3"
+    "@material-ui/icons" "4.11.2"
+    axios "^0.21.1"
+    core-js "^3.6.4"
+    dsbridge "3.1.4"
+    js-cookie "^2.2.1"
+    mdi-material-ui "^6.22.1"
+    querystring "^0.2.1"
+    react-use "^17.2.4"
+    styled-components "^5.0.0"
+    tweetnacl "^1.0.3"
+    tweetnacl-sealedbox-js "^1.2.0"
+
 "@arcblock/did-ext@^1.16.0":
   version "1.16.3"
   resolved "https://registry.yarnpkg.com/@arcblock/did-ext/-/did-ext-1.16.3.tgz#82f8950a5f9370f1a5c91e41b04645d61b4509be"
@@ -120,6 +145,13 @@
     bn.js "^5.2.0"
     debug "^4.3.3"
     lodash "^4.17.21"
+
+"@arcblock/did-motif@^1.1.4":
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/@arcblock/did-motif/-/did-motif-1.1.4.tgz#b43e6cc757b09a49c3d0a8fd135e42f7d521395f"
+  integrity sha512-ubvgKhDoYKL4Uenugu8nGlvDt1zz5U6u427yC74/0TGTcMS8GBgdh1KycDFQf0lp83XI6M8neGyycPqAximQJw==
+  dependencies:
+    multibase "^4.0.6"
 
 "@arcblock/did-util@1.16.3", "@arcblock/did-util@^1.16.0":
   version "1.16.3"
@@ -148,6 +180,17 @@
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@arcblock/eslint-config/-/eslint-config-0.1.8.tgz#5005fad0b52b7f6ed6e628943333ab7d290b660e"
   integrity sha512-CCN2YhATB4/I++PeOapZq8rBqXpwms2cAuhMWTGO2BnylKpsUq5Adq4X6w8Tp3GYha/Jtv6wIMXR3IjrcR3WNQ==
+
+"@arcblock/event-client@^1.0.23":
+  version "1.6.3"
+  resolved "https://registry.yarnpkg.com/@arcblock/event-client/-/event-client-1.6.3.tgz#1db088d0b129ee270a7aea5cf7ede87bfe8fa3b3"
+  integrity sha512-fjQq/Rz/hxdC3HCCTgxO6+nUDl1g87mFDbpqH1m7EsSX7oV9nJHptz3hJqu/L3qDehEX+MY+gTLGwZztHAybUg==
+  dependencies:
+    debug "^4.3.1"
+    isomorphic-ws "^4.0.1"
+    phoenix "^1.4.11"
+    wolfy87-eventemitter "^5.2.5"
+    ws "^7.2.0"
 
 "@arcblock/event-hub@1.16.3":
   version "1.16.3"
@@ -1538,6 +1581,16 @@
   version "4.5.5"
   resolved "https://registry.yarnpkg.com/@fontsource/lato/-/lato-4.5.5.tgz#d7371e29600528a44f5076a1604cf223168d1579"
   integrity sha512-0KVmVCq3wZnriKVdbY+n/ZLf7Vy+dQcqpcm8kaVX4QGd6uBTgH6YWLnM1L051TtjKlal2FiE6xc/BLw116a0gQ==
+
+"@fontsource/rubik@^4.5.0":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/rubik/-/rubik-4.5.6.tgz#0a40a59a8b9299ea3f714a51a3969e6bec3d332b"
+  integrity sha512-DhXog9xyXyG2gPrF2XedcKZDFYYFXPLjoiT0y6rKosKV2i5Y+eLVjWFsUF7cD2CPYpHKEThOIR5PVssl6BJMtQ==
+
+"@fontsource/ubuntu-mono@^4.4.5":
+  version "4.5.6"
+  resolved "https://registry.yarnpkg.com/@fontsource/ubuntu-mono/-/ubuntu-mono-4.5.6.tgz#404a81dd5653daa22b691ad50eeff2ddc02840d8"
+  integrity sha512-ioqSsbG8LOKFkbtLONLLsVRjDf88bCZTPuvzbGFBqKQsvt8hjQ1O2LvZLSYnEO51HQjH4e6P+SSKVLpgyja3Pw==
 
 "@hapi/hoek@^9.0.0":
   version "9.2.1"
@@ -4871,6 +4924,11 @@ download@^8.0.0:
     p-event "^2.1.0"
     pify "^4.0.1"
 
+dsbridge@3.1.4:
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/dsbridge/-/dsbridge-3.1.4.tgz#2cd598def017df8f729b40d33bc9c72934d44e19"
+  integrity sha512-0PczJDk+SRiJjyfTRIVvAsdmC4CbSb4nbfa/ajr3ZbluCpkIiiftDLBITygj0KIKvNvXHqMdXbBQGn99rWKT9A==
+
 duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
@@ -6970,6 +7028,11 @@ isobject@^3.0.1:
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-3.0.1.tgz#4e431e92b11a9731636aa1f9c8d1ccbcfdab78df"
   integrity sha1-TkMekrEalzFjaqH5yNHMvP2reN8=
 
+isomorphic-ws@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/isomorphic-ws/-/isomorphic-ws-4.0.1.tgz#55fd4cd6c5e6491e76dc125938dd863f5cd4f2dc"
+  integrity sha512-BhBvN2MBpWTaSHdWRb/bwdZJ1WaehQ2L1KngkCkfLUGF0mAWAT1sQUQacEmQ0jXkFw/czDXPNQSL5u2/Krsz1w==
+
 istanbul-lib-coverage@^3.0.0, istanbul-lib-coverage@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/istanbul-lib-coverage/-/istanbul-lib-coverage-3.2.0.tgz#189e7909d0a39fa5a3dfad5b03f71947770191d3"
@@ -8243,6 +8306,13 @@ multibase@^3.1.1:
     "@multiformats/base-x" "^4.0.1"
     web-encoding "^1.0.6"
 
+multibase@^4.0.6:
+  version "4.0.6"
+  resolved "https://registry.yarnpkg.com/multibase/-/multibase-4.0.6.tgz#6e624341483d6123ca1ede956208cb821b440559"
+  integrity sha512-x23pDe5+svdLz/k5JPGCVdfn7Q5mZVMBETiC+ORfO+sor9Sgs0smJzAjfTbM5tckeCqnaUuMYoz+k3RXMmJClQ==
+  dependencies:
+    "@multiformats/base-x" "^4.0.1"
+
 multicast-dns@^7.2.4:
   version "7.2.4"
   resolved "https://registry.yarnpkg.com/multicast-dns/-/multicast-dns-7.2.4.tgz#cf0b115c31e922aeb20b64e6556cbeb34cf0dd19"
@@ -8853,6 +8923,11 @@ phoenix@1.5.12:
   version "1.5.12"
   resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.5.12.tgz#25c8529320a2ef5247ae0ad5f0d0a1399d2da3b9"
   integrity sha512-794ftgpmGOiEFyQKf96ARuJmxqh5JwQ1arQEqFp22qmDHomVK5ucS+SdJxfPZ9o1ZYXbMn52GWAjOLHzhNywIw==
+
+phoenix@^1.4.11:
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/phoenix/-/phoenix-1.6.6.tgz#16b578e36361d238707a66bf235e3f59ff3fb298"
+  integrity sha512-KLNHVlrZH8UAoEzeCS1XBI9z5juWz0gZ/+No7j5p/byVINnd+del9H5vtBMzQgZa3ZcUjVVZcQR8bKdnH/FmMg==
 
 picocolors@^0.2.1:
   version "0.2.1"
@@ -9633,6 +9708,11 @@ query-string@^5.0.1:
     decode-uri-component "^0.2.0"
     object-assign "^4.1.0"
     strict-uri-encode "^1.0.0"
+
+querystring@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.1.tgz#40d77615bb09d16902a85c3e38aa8b5ed761c2dd"
+  integrity sha512-wkvS7mL/JMugcup3/rMitHmd9ecIGd2lhFhK9N3UUQ450h66d1r3Y9nvXzQAW1Lq+wyx61k/1pfKS5KuKiyEbg==
 
 queue-microtask@^1.2.2:
   version "1.2.3"
@@ -12326,7 +12406,7 @@ write-file-atomic@^3.0.0:
     signal-exit "^3.0.2"
     typedarray-to-buffer "^3.1.5"
 
-ws@^7.4.6:
+ws@^7.2.0, ws@^7.4.6:
   version "7.5.7"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.5.7.tgz#9e0ac77ee50af70d58326ecff7e85eb3fa375e67"
   integrity sha512-KMvVuFzpKBuiIXW3E4u3mySRO2/mCHSyZDJQM5NQ9Q9KHWHWh0NHgfbRMLLrceUK5qAL4ytALJbpRMjixFZh8A==
