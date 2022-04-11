@@ -11,6 +11,11 @@ import About from './pages/about';
 const GlobalStyle = createGlobalStyle`
   body {
     font-family: 'Roboto', sans-serif;
+    min-height: 100%;
+    background-color: #484d5d;
+    background-image: url(/images/bg.png);
+    text-align: center;
+    color: #070c16;
     padding: 0;
     margin: 0;
   }
