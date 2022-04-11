@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Uploader from '../components/uploader';
+import UploadHistory from '../components/history';
 
 const Home = () => {
   return (
@@ -13,15 +14,22 @@ const Home = () => {
         </h1>
         <Uploader />
       </section>
+      <section className="history">
+        <UploadHistory />
+      </section>
     </Div>
   );
 };
 
 const Div = styled.div`
   color: #e2e2e4;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 
   .splash {
-    padding: 20px;
+    padding: 24px;
 
     .page-title {
       font-size: 2em;
@@ -29,6 +37,12 @@ const Div = styled.div`
       margin-top: 0;
       text-shadow: 0 3px 3px rgb(0 0 0 / 50%);
     }
+  }
+
+  .history {
+    padding: 24px;
+    flex: 1;
+    background: rgba(0, 0, 0, 0.5);
   }
 `;
 

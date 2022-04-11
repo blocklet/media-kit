@@ -53,7 +53,7 @@ router.get('/uploads', auth, async (req, res) => {
   const docs = await Upload.find(conditions).sort({ updatedAt: -1 }).paginate(page, pageSize);
   const total = await Upload.count(conditions);
 
-  res.jsonp({ dataList: docs, total, page, pageSize });
+  res.jsonp({ docs, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
 });
 
 module.exports = router;

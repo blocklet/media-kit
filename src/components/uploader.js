@@ -87,7 +87,6 @@ export default function Uploader() {
 
 const Div = styled.div`
   .splash-instructions {
-    padding: 48px 0 0;
     text-align: center;
     color: #070c16;
 
