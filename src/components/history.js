@@ -94,6 +94,7 @@ const Div = styled.div`
       border-radius: 7px;
       padding: 0.1rem 1rem;
       border: gray 1px solid;
+      margin-right: 8px;
       cursor: pointer;
     }
     li.previous a,

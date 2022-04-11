@@ -9,6 +9,7 @@ import { useSessionContext } from '../contexts/session';
 
 const Home = () => {
   const { session } = useSessionContext();
+  const onLogout = () => window.location.reload();
   return (
     <Div>
       <section className="splash">
@@ -16,7 +17,7 @@ const Home = () => {
           <h1 className="page-title">
             ImageBin<span> - Easy Image Uploads</span>
           </h1>
-          <SessionManager session={session} />
+          <SessionManager session={session} onLogout={onLogout} />
         </div>
         <Uploader />
       </section>
