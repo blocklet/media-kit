@@ -29,7 +29,7 @@ const Div = styled.div`
   height: 100vh;
 
   .splash {
-    padding: 24px;
+    padding: 32px;
 
     .page-title {
       font-size: 2em;
@@ -40,7 +40,7 @@ const Div = styled.div`
   }
 
   .history {
-    padding: 24px;
+    padding: 32px;
     flex: 1;
     background: rgba(0, 0, 0, 0.5);
   }

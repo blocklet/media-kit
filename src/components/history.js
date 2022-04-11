@@ -14,7 +14,7 @@ import api from '../libs/api';
 
 function Gallery({ docs }) {
   return (
-    <Grid container spacing={3}>
+    <Grid container spacing={4}>
       {docs.map((x) => (
         <Grid key={x._id} item xs={12} sm={6} md={3}>
           <div className="doc-wrapper">
@@ -85,7 +85,7 @@ export default function Uploads({ pageSize = 8 }) {
 
 const Div = styled.div`
   ul {
-    margin: 24px auto;
+    margin: 32px auto;
     display: inline-flex;
     flex-direction: row;
     justify-content: space-between;

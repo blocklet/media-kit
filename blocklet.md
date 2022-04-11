@@ -1,3 +1,3 @@
-# image-uploader
+# ImageBin
 
-A react template for creating a new blocklet project.
+A simple image upload and hosting blocklet, perfect for personally use.

@@ -1,5 +1,5 @@
 {
-  "name": "image-uploader",
+  "name": "image-bin",
   "version": "0.1.0",
   "scripts": {
     "dev": "craco start",
