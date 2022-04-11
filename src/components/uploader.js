@@ -29,7 +29,7 @@ const uppload = new Uppload({
   maxWidth: 1440,
   maxHeight: 900,
   uploader: xhrUploader({
-    endpoint: `${window.location.origin}/api/upload`,
+    endpoint: `${window.location.origin}/api/uploads`,
     fileKeyName: 'image',
   }),
 });
