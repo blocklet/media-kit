@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   Deploy:
@@ -24,13 +24,11 @@ jobs:
       - name: Blocklet workflow
         uses: blocklet/action-workflow@v1
         with:
+          skip-bundle: false
           skip-upload: false
-          skip-deploy: false
+          skip-deploy: true
+          skip-release: true
           bundle-command: yarn bundle
-          store-endpoint: ${{ secrets.STORE_ENDPOINT }}
-          store-access-token: ${{ secrets.STORE_ACCESS_TOKEN }}
-          server-endpoint: ${{ secrets.SERVER_ENDPOINT }}
-          server-access-key: ${{ secrets.SERVER_ACCESS_KEY }}
-          server-access-secret: ${{ secrets.SERVER_ACCESS_SECRET }}
+          store-endpoint: ${{ secrets.STORE_ENDPOINT_PROD }}
+          store-access-token: ${{ secrets.STORE_ACCESS_TOKEN_PROD }}
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
