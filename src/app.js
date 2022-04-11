@@ -16,12 +16,12 @@ const GlobalStyle = createGlobalStyle`
     background-color: #484d5d !important;
     background-image: url(/images/bg.png);
     text-align: center;
-    color: #070c16;
+    color: #e2e2e4;
     padding: 0;
     margin: 0;
   }
   a {
-    color: ${theme.palette.primary.main};
+    color: #e2e2e4;
     text-decoration: none !important;
   }
   a:hover,

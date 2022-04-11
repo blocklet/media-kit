@@ -62,6 +62,7 @@
     "mime-types": "^2.1.35",
     "multer": "^1.4.4",
     "nanoid": "^3.3.2",
+    "pretty-bytes": "^6.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-paginate": "^8.1.2",
@@ -69,6 +70,7 @@
     "react-scripts": "5.0.0",
     "react-use": "^17.3.2",
     "styled-components": "^5.3.5",
+    "timeago.js": "^4.0.2",
     "uppload": "^3.2.1",
     "url-join": "4.x"
   },
