@@ -135,9 +135,10 @@ const Div = styled.div`
       align-items: center;
 
       img {
-        width: 100%;
+        width: auto;
         height: auto;
-        max-height: 250px;
+        max-height: 100%;
+        max-height: 100%;
       }
     }
 
