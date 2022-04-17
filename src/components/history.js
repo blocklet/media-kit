@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import joinUrl from 'url-join';
 import Paginator from 'react-paginate';
 import styled from 'styled-components';
@@ -19,17 +20,17 @@ function Gallery({ docs }) {
     <Grid container spacing={4}>
       {docs.map((x) => (
         <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
-          <a href={joinUrl('/uploads/', x.filename)} target="_blank" title={x.originalname}>
+          <Link to={joinUrl(window.blocklet.prefix, '/uploads/', x.filename)} target="_blank" title={x.originalname}>
             <div className="doc-wrapper">
               <div className="img-wrapper">
-                <img src={joinUrl('/uploads/', x.filename)} alt={x.originalname} />
+                <img src={joinUrl(window.blocklet.prefix, '/uploads/', x.filename)} alt={x.originalname} />
               </div>
               <div className="img-meta">
                 <span className="img-size">{prettyBytes(x.size)}</span>
                 <span className="img-time">{format(x.createdAt)}</span>
               </div>
             </div>
-          </a>
+          </Link>
         </Grid>
       ))}
     </Grid>

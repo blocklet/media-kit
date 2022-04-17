@@ -25,7 +25,7 @@ const upload = multer({
 router.post('/uploads', user, auth, upload.single('image'), async (req, res) => {
   const obj = new URL(env.appUrl);
   obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-  obj.pathname = joinUrl('/uploads', req.file.filename);
+  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', req.file.filename);
 
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
