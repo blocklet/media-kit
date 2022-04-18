@@ -29,6 +29,6 @@ jobs:
           skip-deploy: true
           skip-release: true
           bundle-command: yarn bundle
-          store-endpoint: ${{ secrets.STORE_ENDPOINT_PROD }}
-          store-access-token: ${{ secrets.STORE_ACCESS_TOKEN_PROD }}
+          store-endpoint: ${{ secrets.STORE_ENDPOINT_TEST }}
+          store-access-token: ${{ secrets.STORE_ACCESS_TOKEN_TEST }}
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
