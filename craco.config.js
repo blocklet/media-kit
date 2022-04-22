@@ -15,6 +15,9 @@ module.exports = {
       '/uploads': {
         target: `http://127.0.0.1:${dappPort}`,
       },
+      '/ws': {
+        target: `http://127.0.0.1:${dappPort}`,
+      },
     },
   },
 };

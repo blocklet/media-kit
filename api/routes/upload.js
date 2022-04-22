@@ -50,10 +50,15 @@ router.get('/uploads', auth, async (req, res) => {
   pageSize = pageSize > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : pageSize;
 
   const conditions = {};
-  const docs = await Upload.find(conditions).sort({ updatedAt: -1 }).paginate(page, pageSize);
+  const uploads = await Upload.find(conditions).sort({ updatedAt: -1 }).paginate(page, pageSize);
   const total = await Upload.count(conditions);
 
-  res.jsonp({ docs, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
+  res.jsonp({ uploads, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
+});
+
+router.get('/uploads/:filename', auth, async (req, res) => {
+  const doc = await Upload.findOne({ filename: req.params.filename });
+  res.jsonp(doc);
 });
 
 module.exports = router;

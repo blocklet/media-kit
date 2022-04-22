@@ -8,7 +8,6 @@ import theme from './libs/theme';
 import { SessionProvider } from './contexts/session';
 
 import Home from './pages/home';
-import About from './pages/about';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -40,8 +39,6 @@ function App() {
           <div className="app">
             <Routes>
               <Route exact path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/home" element={<Home />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>

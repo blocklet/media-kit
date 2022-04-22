@@ -22,6 +22,8 @@ import 'uppload/dist/uppload.css';
 import 'uppload/dist/themes/light.css';
 
 import Copy from './copy';
+import { useUploadContext } from '../contexts/upload';
+import api from '../libs/api';
 
 const uppload = new Uppload({
   lang: en,
@@ -48,9 +50,16 @@ uppload.use([
 uppload.use([new Preview(), new Rotate(), new Crop(), new Blur(), new Contrast(), new Grayscale(), new Saturate()]);
 
 export default function Uploader() {
+  const { prependUpload } = useUploadContext();
   const [url, setUrl] = useState('');
   const handleOpen = () => {
-    uppload.on('upload', setUrl);
+    uppload.on('upload', (doc) => {
+      setUrl(doc);
+      api
+        .get(`/api/uploads/${doc.split('/').pop()}`)
+        .then((res) => prependUpload(res.data))
+        .catch(console.error);
+    });
     uppload.open();
   };
 

@@ -1,24 +1,25 @@
 /* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import joinUrl from 'url-join';
-import Paginator from 'react-paginate';
 import styled from 'styled-components';
-import useAsync from 'react-use/lib/useAsync';
 import prettyBytes from 'pretty-bytes';
 import { format } from 'timeago.js';
 
 import Spinner from '@arcblock/ux/lib/Spinner';
 import Center from '@arcblock/ux/lib/Center';
+import Empty from '@arcblock/ux/lib/Empty';
+import Button from '@arcblock/ux/lib/Button';
+
 import Grid from '@material-ui/core/Grid';
 
-import api from '../libs/api';
+import { useUploadContext } from '../contexts/upload';
 
-function Gallery({ docs }) {
+function Gallery({ uploads }) {
   return (
     <Grid container spacing={4}>
-      {docs.map((x) => (
+      {uploads.map((x) => (
         <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
           <Link to={joinUrl(window.blocklet.prefix, '/uploads/', x.filename)} target="_blank" title={x.originalname}>
             <div className="doc-wrapper">
@@ -37,33 +38,10 @@ function Gallery({ docs }) {
   );
 }
 
-const cache = {};
+export default function Uploads() {
+  const { uploads, loading, hasMore, loadMoreUploads } = useUploadContext();
 
-export default function Uploads({ pageSize = 8 }) {
-  const [docs, setDocs] = useState([]);
-  const [page, setPage] = useState(1);
-
-  const state = useAsync(async () => {
-    const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}`);
-    cache[data.page] = data.docs;
-    setDocs(data.docs);
-    return data;
-  }, []);
-
-  useEffect(() => {
-    if (cache[page]) {
-      setDocs(cache[page]);
-    } else {
-      api.get(`/api/uploads?page=${page}&pageSize=${pageSize}`).then(({ data }) => {
-        cache[page] = data.docs;
-        setDocs(data.docs);
-      });
-    }
-  }, [page]);
-
-  const onSelectPage = (e) => setPage(e.selected + 1);
-
-  if (state.loading) {
+  if (loading) {
     return (
       <Center>
         <Spinner />
@@ -71,20 +49,19 @@ export default function Uploads({ pageSize = 8 }) {
     );
   }
 
+  if (uploads.length === 0) {
+    return <Empty>No uploads found</Empty>;
+  }
+
   return (
     <Div>
-      <Gallery docs={docs} />
-      {state.value.pageCount > 1 && (
-        <Paginator
-          breakLabel="..."
-          nextLabel="next >"
-          initialPage={page - 1}
-          onPageChange={onSelectPage}
-          pageRangeDisplayed={10}
-          pageCount={state.value.pageCount}
-          previousLabel="< previous"
-          renderOnZeroPageCount={null}
-        />
+      <Gallery uploads={uploads} />
+      {hasMore && (
+        <div className="load-more">
+          <Button onClick={loadMoreUploads} disabled={loading} variant="outlined" color="secondary" size="small">
+            Load More
+          </Button>
+        </div>
       )}
     </Div>
   );
@@ -128,8 +105,8 @@ const Div = styled.div`
     cursor: pointer;
 
     .img-wrapper {
-      width: 100%;
       height: 250px;
+      width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -138,7 +115,8 @@ const Div = styled.div`
         width: auto;
         height: auto;
         max-height: 100%;
-        max-height: 100%;
+        max-width: 100%;
+        display: block;
       }
     }
 
@@ -147,5 +125,10 @@ const Div = styled.div`
       display: flex;
       justify-content: space-between;
     }
+  }
+
+  .load-more {
+    padding: 24px 0;
+    text-align: center;
   }
 `;
