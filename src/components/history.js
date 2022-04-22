@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable react/prop-types */
 import React from 'react';
-import { Link } from 'react-router-dom';
 import joinUrl from 'url-join';
 import styled from 'styled-components';
 import prettyBytes from 'pretty-bytes';
@@ -17,21 +16,22 @@ import Grid from '@material-ui/core/Grid';
 import { useUploadContext } from '../contexts/upload';
 
 function Gallery({ uploads }) {
+  const { prefix = '/', CDN_HOST = '' } = window.blocklet;
   return (
     <Grid container spacing={4}>
       {uploads.map((x) => (
         <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
-          <Link to={joinUrl(window.blocklet.prefix, '/uploads/', x.filename)} target="_blank" title={x.originalname}>
+          <a href={joinUrl(CDN_HOST, prefix, '/uploads/', x.filename)} target="_blank" title={x.originalname}>
             <div className="doc-wrapper">
               <div className="img-wrapper">
-                <img src={joinUrl(window.blocklet.prefix, '/uploads/', x.filename)} alt={x.originalname} />
+                <img src={joinUrl(CDN_HOST, prefix, '/uploads/', x.filename)} alt={x.originalname} />
               </div>
               <div className="img-meta">
                 <span className="img-size">{prettyBytes(x.size)}</span>
                 <span className="img-time">{format(x.createdAt)}</span>
               </div>
             </div>
-          </Link>
+          </a>
         </Grid>
       ))}
     </Grid>

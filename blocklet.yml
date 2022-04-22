@@ -54,7 +54,13 @@ requirements:
 scripts:
   preStart: node api/hooks/pre-start.js
   dev: npm run start
-environments: []
+environments:
+  - name: CDN_HOST
+    description: Use CDN Host for image load speed
+    required: false
+    default: ''
+    secure: false
+    shared: true
 capabilities:
   clusterMode: false
   component: true
