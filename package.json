@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "scripts": {
     "dev": "craco start",
     "build": "craco build",
