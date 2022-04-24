@@ -24,7 +24,7 @@ function Gallery({ uploads }) {
           <a href={joinUrl(CDN_HOST, prefix, 'uploads/', x.filename)} target="_blank" title={x.originalname}>
             <div className="doc-wrapper">
               <div className="img-wrapper">
-                <img src={joinUrl(CDN_HOST, prefix, 'uploads/', x.filename)} alt={x.originalname} />
+                <img src={joinUrl(window.location.origin, prefix, 'uploads/', x.filename)} alt={x.originalname} />
               </div>
               <div className="img-meta">
                 <span className="img-size">{prettyBytes(x.size)}</span>
