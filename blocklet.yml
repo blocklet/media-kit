@@ -33,8 +33,8 @@ interfaces:
     services:
       - name: auth
         config:
+          whoCanAccess: invited
           blockUnauthenticated: true
-          invitedUserOnly: 'yes'
           ignoreUrls:
             - /api/did/**
             - /uploads/**
