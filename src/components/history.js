@@ -103,6 +103,9 @@ const Div = styled.div`
 
   .doc-wrapper {
     cursor: pointer;
+    border: 1px solid #282c2c;
+    padding: 8px;
+    border-radius: 5px;
 
     .img-wrapper {
       height: 250px;
