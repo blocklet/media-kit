@@ -1,3 +1,7 @@
+## 0.1.8 (April 24, 2022)
+
+- fix: double slash when join url
+
 ## 0.1.7 (April 24, 2022)
 
 - fix: double slash when join url
