@@ -1,3 +1,7 @@
+## 0.1.6 (April 24, 2022)
+
+- fix: gallery grid style
+
 ## 0.1.5 (April 22, 2022)
 
 - feat: support cdn host for performance
