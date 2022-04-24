@@ -21,10 +21,10 @@ function Gallery({ uploads }) {
     <Grid container spacing={4}>
       {uploads.map((x) => (
         <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
-          <a href={joinUrl(CDN_HOST, prefix, '/uploads/', x.filename)} target="_blank" title={x.originalname}>
+          <a href={joinUrl(CDN_HOST, prefix, 'uploads/', x.filename)} target="_blank" title={x.originalname}>
             <div className="doc-wrapper">
               <div className="img-wrapper">
-                <img src={joinUrl(CDN_HOST, prefix, '/uploads/', x.filename)} alt={x.originalname} />
+                <img src={joinUrl(CDN_HOST, prefix, 'uploads/', x.filename)} alt={x.originalname} />
               </div>
               <div className="img-meta">
                 <span className="img-size">{prettyBytes(x.size)}</span>
