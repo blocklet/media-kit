@@ -2,7 +2,7 @@
   "name": "image-bin",
   "version": "0.1.5",
   "scripts": {
-    "dev": "craco start",
+    "dev": "PUBLIC_URL='./' craco start",
     "build": "craco build",
     "eject": "react-scripts eject",
     "lint": "eslint src api --ext .mjs,.js,.jsx,.ts,.tsx",
@@ -11,7 +11,7 @@
     "start:api": "NODE_ENV=development nodemon api/index.js -w api",
     "clean": "rm -rf .blocklet",
     "bundle": "npm run bundle:client && npm run bundle:api",
-    "bundle:client": "PUBLIC_URL='/.blocklet/proxy/z8ia44pgTMqmRywM1uMjmFpkYwEvyZt1VGy9F' npm run build",
+    "bundle:client": "PUBLIC_URL='/.blocklet/proxy/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9' npm run build",
     "bundle:api": "npm run clean && blocklet bundle --zip --create-release",
     "deploy": "npm run bundle && blocklet deploy .blocklet/bundle",
     "upload": "npm run bundle && blocklet upload .blocklet/release/blocklet.json",
