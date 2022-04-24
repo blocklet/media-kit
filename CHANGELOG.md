@@ -1,3 +1,7 @@
+## 0.1.9 (April 24, 2022)
+
+- fix: blocklet.yml
+
 ## 0.1.8 (April 24, 2022)
 
 - fix: double slash when join url
