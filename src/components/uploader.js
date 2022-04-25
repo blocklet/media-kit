@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import joinUrl from 'url-join';
 import {
   en,
   xhrUploader,
@@ -24,13 +25,16 @@ import 'uppload/dist/themes/light.css';
 import { useUploadContext } from '../contexts/upload';
 import api from '../libs/api';
 
+const obj = new URL(window.location.origin);
+obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
+
 const uppload = new Uppload({
   lang: en,
   defaultService: 'local',
   maxWidth: 1440,
   maxHeight: 900,
   uploader: xhrUploader({
-    endpoint: `${window.location.origin}/api/uploads`,
+    endpoint: obj.href,
     fileKeyName: 'image',
   }),
 });
