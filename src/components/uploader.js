@@ -25,7 +25,7 @@ import 'uppload/dist/themes/light.css';
 import { useUploadContext } from '../contexts/upload';
 import api from '../libs/api';
 
-const obj = new URL(window.location.origin);
+const obj = new window.URL(window.location.origin);
 obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
 
 const uppload = new Uppload({
@@ -141,7 +141,7 @@ const Div = styled.div`
     }
 
     .image-regular {
-      background-image: url(/images/splash-image.png);
+      background-image: url(./images/splash-image.png);
     }
     .image-shine {
       transition: opacity 1s;

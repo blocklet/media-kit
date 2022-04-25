@@ -13,7 +13,7 @@ const GlobalStyle = createGlobalStyle`
   body {
     min-height: 100%;
     background-color: #484d5d !important;
-    background-image: url(/images/bg.png);
+    background-image: url(./images/bg.png);
     text-align: center;
     color: #e2e2e4;
     padding: 0;
