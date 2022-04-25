@@ -21,7 +21,6 @@ import {
 import 'uppload/dist/uppload.css';
 import 'uppload/dist/themes/light.css';
 
-import Copy from './copy';
 import { useUploadContext } from '../contexts/upload';
 import api from '../libs/api';
 
@@ -83,12 +82,6 @@ export default function Uploader() {
         <button onClick={handleOpen} type="button" className="submit">
           Upload Image
         </button>
-        {!!url && (
-          <div className="copy-button">
-            <input type="text" readOnly className="url" value={url} />
-            <Copy content={url} />
-          </div>
-        )}
       </div>
     </Div>
   );

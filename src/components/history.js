@@ -14,26 +14,39 @@ import Button from '@arcblock/ux/lib/Button';
 import Grid from '@material-ui/core/Grid';
 
 import { useUploadContext } from '../contexts/upload';
+import Copy from './copy';
+
+const createImageUrl = (host = window.location.origin, prefix, filename) => {
+  const obj = new URL(host);
+  obj.pathname = joinUrl(prefix, '/uploads/', filename);
+  return obj.href;
+};
 
 function Gallery({ uploads }) {
   const { prefix = '/', CDN_HOST = '' } = window.blocklet;
   return (
     <Grid container spacing={4}>
-      {uploads.map((x) => (
-        <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
-          <a href={joinUrl(CDN_HOST, prefix, 'uploads/', x.filename)} target="_blank" title={x.originalname}>
+      {uploads.map((x) => {
+        const imageUrl = createImageUrl(CDN_HOST, prefix, x.filename);
+        return (
+          <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
             <div className="doc-wrapper">
-              <div className="img-wrapper">
-                <img src={joinUrl(window.location.origin, prefix, 'uploads/', x.filename)} alt={x.originalname} />
-              </div>
+              <a href={imageUrl} target="_blank" title={x.originalname}>
+                <div className="img-wrapper">
+                  <img src={imageUrl} alt={x.originalname} />
+                </div>
+              </a>
               <div className="img-meta">
                 <span className="img-size">{prettyBytes(x.size)}</span>
                 <span className="img-time">{format(x.createdAt)}</span>
+                <span className="img-copy">
+                  <Copy content={imageUrl} />
+                </span>
               </div>
             </div>
-          </a>
-        </Grid>
-      ))}
+          </Grid>
+        );
+      })}
     </Grid>
   );
 }
@@ -127,6 +140,10 @@ const Div = styled.div`
       margin-top: 12px;
       display: flex;
       justify-content: space-between;
+    }
+    .img-copy {
+      width: 90px;
+      text-align: right;
     }
   }
 

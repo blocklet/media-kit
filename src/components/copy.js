@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 export default function ClickToCopy({ content }) {
   const [copied, setCopied] = useState(false);
-  const childrenRef = React.createRef();
 
   const onCopy = () => {
     Copy(content);
@@ -29,7 +28,7 @@ export default function ClickToCopy({ content }) {
   });
 
   return (
-    <Container ref={childrenRef} component="span" onClick={() => onCopy(childrenRef)}>
+    <Container component="span" onClick={onCopy}>
       {copied ? 'Copied' : 'Copy'}
     </Container>
   );
