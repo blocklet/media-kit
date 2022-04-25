@@ -1,3 +1,8 @@
+## 0.2.0 (April 25, 2022)
+
+- fix: upload crash when used as child
+- feat: support copy in upload history
+
 ## 0.1.9 (April 24, 2022)
 
 - fix: blocklet.yml
