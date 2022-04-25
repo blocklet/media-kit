@@ -1,3 +1,7 @@
+## 0.2.1 (April 26, 2022)
+
+- fix: upload crash when used as child: finally
+
 ## 0.2.0 (April 25, 2022)
 
 - fix: upload crash when used as child
