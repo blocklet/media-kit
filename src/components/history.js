@@ -16,8 +16,8 @@ import Grid from '@material-ui/core/Grid';
 import { useUploadContext } from '../contexts/upload';
 import Copy from './copy';
 
-const createImageUrl = (host = window.location.origin, prefix, filename) => {
-  const obj = new URL(host);
+const createImageUrl = (host, prefix, filename) => {
+  const obj = new URL(host || window.location.origin);
   obj.pathname = joinUrl(prefix, '/uploads/', filename);
   return obj.href;
 };
