@@ -1,3 +1,7 @@
+## 0.2.2 (May 07, 2022)
+
+- fix: page crash when CDN_HOST not set
+
 ## 0.2.1 (April 26, 2022)
 
 - fix: upload crash when used as child: finally
