@@ -1,3 +1,7 @@
+## 0.2.3 (May 11, 2022)
+
+- chore(deps): bump ux and blocklet sdk to latest
+
 ## 0.2.2 (May 07, 2022)
 
 - fix: page crash when CDN_HOST not set

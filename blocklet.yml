@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.2.2
+version: 0.2.3
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -14,7 +14,7 @@ author:
 repository:
   type: git
   url: git+https://github.com/blocklet/image-bin.git
-specVersion: 1.2.4
+specVersion: 1.2.7
 logo: logo.png
 files:
   - build
@@ -38,6 +38,13 @@ interfaces:
           ignoreUrls:
             - /api/did/**
             - /uploads/**
+          profileFields:
+            - fullName
+            - email
+            - avatar
+          allowSwitchProfile: true
+          webWalletUrl: https://web.abtwallet.io
+          blockUnauthorized: false
 community: ''
 documentation: ''
 homepage: ''
