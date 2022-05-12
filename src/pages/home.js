@@ -1,28 +1,24 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import React from 'react';
 import styled from 'styled-components';
-import SessionManager from '@arcblock/did-connect/lib/SessionManager';
+import Header from '@blocklet/ui-react/lib/Header';
+// import SessionManager from '@arcblock/did-connect/lib/SessionManager';
 
 import Uploader from '../components/uploader';
 import UploadHistory from '../components/history';
 
-import { useSessionContext } from '../contexts/session';
 import { UploadProvider } from '../contexts/upload';
 
 const Home = () => {
-  const { session } = useSessionContext();
-  const onLogout = () => window.location.reload();
+  const onLogout = () => {
+    console.log('xxxx'); // eslint-disable-line
+    window.location.reload();
+  };
   return (
     <Div>
       <UploadProvider>
         <section className="splash">
-          <div className="page-header">
-            <h1 className="page-title">
-              {window.blocklet.appName}
-              <span> - Easy Image Uploads</span>
-            </h1>
-            <SessionManager session={session} onLogout={onLogout} />
-          </div>
+          <Header className="page-header" sessionManagerProps={{ onLogout }} />
           <Uploader />
         </section>
         <section className="history">
@@ -41,11 +37,13 @@ const Div = styled.div`
   height: 100vh;
 
   .splash {
-    padding: 32px;
+    padding: 8px 32px 32px;
 
     .page-header {
-      display: flex;
-      flex-direction: row;
+      background: transparent;
+      .MuiContainer-maxWidthLg {
+        max-width: 100%;
+      }
     }
 
     .page-title {

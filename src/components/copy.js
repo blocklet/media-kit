@@ -29,7 +29,7 @@ export default function ClickToCopy({ content }) {
 
   return (
     <Container component="span" onClick={onCopy}>
-      {copied ? 'Copied' : 'Copy'}
+      {copied ? 'Copied' : 'Copy URL'}
     </Container>
   );
 }
