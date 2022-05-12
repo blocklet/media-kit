@@ -11,7 +11,6 @@ import { UploadProvider } from '../contexts/upload';
 
 const Home = () => {
   const onLogout = () => {
-    console.log('xxxx'); // eslint-disable-line
     window.location.reload();
   };
   return (

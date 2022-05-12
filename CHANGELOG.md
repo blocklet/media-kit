@@ -1,3 +1,8 @@
+## 0.3.0 (May 13, 2022)
+
+- chore(deps): bump ux and blocklet sdk to latest
+- feat: use header from blocklet-ui-react
+
 ## 0.2.3 (May 11, 2022)
 
 - chore(deps): bump ux and blocklet sdk to latest
