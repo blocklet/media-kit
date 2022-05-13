@@ -11,7 +11,7 @@ import Center from '@arcblock/ux/lib/Center';
 import Empty from '@arcblock/ux/lib/Empty';
 import Button from '@arcblock/ux/lib/Button';
 
-import Grid from '@material-ui/core/Grid';
+import Grid from '@mui/material/Grid';
 
 import { useUploadContext } from '../contexts/upload';
 import Copy from './copy';
