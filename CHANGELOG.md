@@ -1,3 +1,7 @@
+## 0.3.1 (May 13, 2022)
+
+- chore: enable navigation
+
 ## 0.3.0 (May 13, 2022)
 
 - chore(deps): bump ux and blocklet sdk to latest
