@@ -1,3 +1,7 @@
+## 0.4.0 (May 13, 2022)
+
+- chore: chore: upgrade to react v18 and mui v5
+
 ## 0.3.1 (May 13, 2022)
 
 - chore: enable navigation
