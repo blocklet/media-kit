@@ -1,6 +1,5 @@
 module.exports = {
   root: true,
-  parser: 'babel-eslint',
   extends: '@arcblock/eslint-config',
   env: {
     es6: true,
