@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
 import Center from '@arcblock/ux/lib/Center';
@@ -58,7 +58,7 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   };
 
   const state = useAsync(loadInitialPosts, []);
-  useEffect(() => loadInitialPosts, [session.user]);
+  useEffect(() => loadInitialPosts, [session.user]); // eslint-disable-line
 
   if (state.loading) {
     return (

@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Copy from 'copy-to-clipboard';
 
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 export default function ClickToCopy({ content }) {
   const [copied, setCopied] = useState(false);

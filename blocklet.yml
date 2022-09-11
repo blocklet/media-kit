@@ -65,7 +65,7 @@ environments:
     default: ''
     secure: false
     shared: true
-- name: MAX_UPLOAD_SIZE
+  - name: MAX_UPLOAD_SIZE
     description: Set the max upload size limit for images
     required: false
     default: 1MB

@@ -1,8 +1,7 @@
 /* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable react/prop-types */
-import React from 'react';
 import joinUrl from 'url-join';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import prettyBytes from 'pretty-bytes';
 import { format } from 'timeago.js';
 
