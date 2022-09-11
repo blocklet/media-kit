@@ -77,7 +77,8 @@
     "timeago.js": "^4.0.2",
     "uppload": "^3.2.1",
     "url-join": "^4.0.1",
-    "wolfy87-eventemitter": "^5.2.9"
+    "wolfy87-eventemitter": "^5.2.9",
+    "xbytes": "^1.8.0"
   },
   "devDependencies": {
     "@arcblock/eslint-config": "^0.2.3",

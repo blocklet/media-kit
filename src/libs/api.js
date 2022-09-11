@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-axios.interceptors.request.use(
+const api = axios.create();
+
+api.interceptors.request.use(
   (config) => {
     const prefix = window.blocklet ? window.blocklet.prefix : '/';
     config.baseURL = prefix || '';
@@ -11,4 +13,4 @@ axios.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export default axios;
+export default api;

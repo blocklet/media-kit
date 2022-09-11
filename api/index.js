@@ -21,9 +21,8 @@ const app = express();
 
 app.set('trust proxy', true);
 app.use(cookieParser());
-// TODO: make max size configuration
-app.use(express.json({ limit: '1 mb' }));
-app.use(express.urlencoded({ extended: true, limit: '1 mb' }));
+app.use(express.json({ limit: env.maxUploadSize }));
+app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 
 app.use('/uploads', express.static(env.uploadDir));
 
