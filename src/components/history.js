@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import prettyBytes from 'pretty-bytes';
 import { format } from 'timeago.js';
 
-import Spinner from '@arcblock/ux/lib/Spinner';
+import Spinner from '@mui/material/CircularProgress';
 import Center from '@arcblock/ux/lib/Center';
 import Empty from '@arcblock/ux/lib/Empty';
 import Button from '@arcblock/ux/lib/Button';

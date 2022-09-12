@@ -70,7 +70,19 @@ environments:
     required: false
     default: 1MB
     secure: false
-    shared: false
+    shared: true
+  - name: MAX_IMAGE_WIDTH
+    description: Set the image width to compress to before upload
+    required: false
+    default: '1440'
+    secure: false
+    shared: true
+  - name: MAX_IMAGE_HEIGHT
+    description: Set the image height to compress to before upload
+    required: false
+    default: '900'
+    secure: false
+    shared: true
 capabilities:
   clusterMode: false
   component: true

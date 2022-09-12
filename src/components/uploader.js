@@ -31,8 +31,8 @@ obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
 const uppload = new Uppload({
   lang: en,
   defaultService: 'local',
-  maxWidth: 1440,
-  maxHeight: 900,
+  maxWidth: +(window.blocklet.MAX_IMAGE_WIDTH || 1440),
+  maxHeight: +(window.blocklet.MAX_IMAGE_HEIGHT || 900),
   uploader: xhrUploader({
     endpoint: obj.href,
     fileKeyName: 'image',

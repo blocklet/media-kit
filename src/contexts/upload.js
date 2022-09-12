@@ -3,7 +3,7 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
 import Center from '@arcblock/ux/lib/Center';
-import Spinner from '@arcblock/ux/lib/Spinner';
+import Spinner from '@mui/material/CircularProgress';
 import useAsync from 'react-use/lib/useAsync';
 import EventEmitter from 'wolfy87-eventemitter';
 

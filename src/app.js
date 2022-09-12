@@ -39,7 +39,7 @@ export default function App() {
           <Router basename={basename}>
             <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
               <CssBaseline />
-              <Global css={globalStyles} />
+              <Global styles={globalStyles} />
               <div className="app">
                 <Routes>
                   <Route exact path="/" element={<Home />} />
