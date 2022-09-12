@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable react/prop-types */
-import joinUrl from 'url-join';
 import styled from '@emotion/styled';
 import prettyBytes from 'pretty-bytes';
 import { format } from 'timeago.js';
@@ -13,22 +12,16 @@ import Button from '@arcblock/ux/lib/Button';
 import Grid from '@mui/material/Grid';
 
 import { useUploadContext } from '../contexts/upload';
-import Copy from './copy';
-
-const createImageUrl = (host, prefix, filename) => {
-  const obj = new URL(host || window.location.origin);
-  obj.pathname = joinUrl(prefix, '/uploads/', filename);
-  return obj.href;
-};
+import { createImageUrl } from '../libs/api';
+import Actions from './actions';
 
 function Gallery({ uploads }) {
-  const { prefix = '/', CDN_HOST = '' } = window.blocklet;
   return (
     <Grid container spacing={4}>
       {uploads.map((x) => {
-        const imageUrl = createImageUrl(CDN_HOST, prefix, x.filename);
+        const imageUrl = createImageUrl(x.filename);
         return (
-          <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
+          <Grid key={x._id} item xs={12} sm={6} md={4} xl={3}>
             <div className="doc-wrapper">
               <a href={imageUrl} target="_blank" title={x.originalname}>
                 <div className="img-wrapper">
@@ -39,7 +32,7 @@ function Gallery({ uploads }) {
                 <span className="img-size">{prettyBytes(x.size)}</span>
                 <span className="img-time">{format(x.createdAt)}</span>
                 <span className="img-copy">
-                  <Copy content={imageUrl} />
+                  <Actions data={x} />
                 </span>
               </div>
             </div>
@@ -141,7 +134,7 @@ const Div = styled.div`
       justify-content: space-between;
     }
     .img-copy {
-      width: 90px;
+      width: 120px;
       text-align: right;
     }
   }
