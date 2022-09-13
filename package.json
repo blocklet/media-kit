@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "scripts": {
     "dev": "PUBLIC_URL='./' craco start",
     "build": "craco build",

@@ -1,3 +1,9 @@
+## 0.5.0 (September 13, 2022)
+
+- feat: support delete image
+- feat: support move image to folder
+- feat: support filter image by folder
+
 ## 0.4.0 (May 13, 2022)
 
 - chore: chore: upgrade to react v18 and mui v5
