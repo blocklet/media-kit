@@ -61,20 +61,22 @@ export default function Uploads() {
 
   return (
     <Div>
-      <ButtonGroup variant="outlined" aria-label="outlined button group" style={{ marginBottom: 24 }}>
-        <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
-          All
-        </Button>
-        {folders.map((x) => (
-          <Button
-            key={x._id}
-            title={x._id}
-            onClick={() => filterByFolder(x._id)}
-            variant={folderId === x._id ? 'contained' : 'outlined'}>
-            {x.name}
+      {folders.length > 0 && (
+        <ButtonGroup variant="outlined" aria-label="outlined button group" style={{ marginBottom: 24 }}>
+          <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
+            All
           </Button>
-        ))}
-      </ButtonGroup>
+          {folders.map((x) => (
+            <Button
+              key={x._id}
+              title={x._id}
+              onClick={() => filterByFolder(x._id)}
+              variant={folderId === x._id ? 'contained' : 'outlined'}>
+              {x.name}
+            </Button>
+          ))}
+        </ButtonGroup>
+      )}
       <Gallery uploads={uploads} />
       {hasMore && (
         <div className="load-more">
