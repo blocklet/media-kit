@@ -10,7 +10,7 @@ on:
     branches:
       - master
 jobs:
-  main:
+  check-version-bump:
     runs-on: ubuntu-latest
     steps:
       - name: action-version-check

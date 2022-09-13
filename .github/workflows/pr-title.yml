@@ -11,7 +11,7 @@ on:
       - dev
 
 jobs:
-  main:
+  lint-pr-title:
     runs-on: ubuntu-latest
     steps:
       - uses: ArcBlock/action-lint-pull-request-title@master
