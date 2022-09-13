@@ -60,7 +60,7 @@ router.get('/uploads', auth, async (req, res) => {
   const uploads = await Upload.paginate({ condition, sort: { createdAt: -1 }, page, size: pageSize });
   const total = await Upload.count(condition);
 
-  const folders = await Folder.find({});
+  const folders = await Folder.cursor({}).sort({ createdAt: -1 }).exec();
 
   res.jsonp({ uploads, folders, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
 });

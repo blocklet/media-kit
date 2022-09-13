@@ -16,6 +16,7 @@ const { Provider, Consumer } = UploadContext;
 const events = new EventEmitter();
 
 function UploadProvider({ children, pageSize = 20, type = '' }) {
+  const [folderId, setFolderId] = useState('');
   const [uploads, setUploads] = useState([]);
   const [folders, setFolders] = useState([]);
   const [page, setPage] = useState(1);
@@ -23,8 +24,8 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   const [hasMore, setHasMore] = useState(false);
   const { session } = useSessionContext();
 
-  const loadInitialPosts = async () => {
-    const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}`);
+  const loadInitialPosts = async (_fid = folderId) => {
+    const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}&folderId=${_fid}`);
     setUploads(data.uploads);
     setFolders(data.folders);
     setHasMore(data.pageCount > 1);
@@ -34,7 +35,7 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   const loadMoreUploads = () => {
     setLoading(true);
     api
-      .get(`/api/uploads?page=${page + 1}&pageSize=${pageSize}&type=${type}`)
+      .get(`/api/uploads?page=${page + 1}&pageSize=${pageSize}&type=${type}&folderId=${folderId}`)
       .then(({ data }) => {
         setPage(page + 1);
         setHasMore(page + 1 < data.pageCount);
@@ -94,6 +95,11 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
         ensureFolder,
         loadMoreUploads,
         hasMore,
+        folderId,
+        filterByFolder: (x) => {
+          setFolderId(x);
+          loadInitialPosts(x);
+        },
       }}>
       {children}
     </Provider>

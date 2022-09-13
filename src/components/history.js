@@ -3,11 +3,12 @@
 import styled from '@emotion/styled';
 import prettyBytes from 'pretty-bytes';
 import { format } from 'timeago.js';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 import Spinner from '@mui/material/CircularProgress';
 import Center from '@arcblock/ux/lib/Center';
 import Empty from '@arcblock/ux/lib/Empty';
-import Button from '@arcblock/ux/lib/Button';
 
 import Grid from '@mui/material/Grid';
 
@@ -44,7 +45,7 @@ function Gallery({ uploads }) {
 }
 
 export default function Uploads() {
-  const { uploads, loading, hasMore, loadMoreUploads } = useUploadContext();
+  const { uploads, folders, loading, hasMore, loadMoreUploads, folderId, filterByFolder } = useUploadContext();
 
   if (loading) {
     return (
@@ -60,6 +61,20 @@ export default function Uploads() {
 
   return (
     <Div>
+      <ButtonGroup variant="outlined" aria-label="outlined button group" style={{ marginBottom: 24 }}>
+        <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
+          All
+        </Button>
+        {folders.map((x) => (
+          <Button
+            key={x._id}
+            title={x._id}
+            onClick={() => filterByFolder(x._id)}
+            variant={folderId === x._id ? 'contained' : 'outlined'}>
+            {x.name}
+          </Button>
+        ))}
+      </ButtonGroup>
       <Gallery uploads={uploads} />
       {hasMore && (
         <div className="load-more">
