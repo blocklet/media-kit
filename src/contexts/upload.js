@@ -1,9 +1,9 @@
 /* eslint-disable import/no-cycle */
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
 import Center from '@arcblock/ux/lib/Center';
-import Spinner from '@arcblock/ux/lib/Spinner';
+import Spinner from '@mui/material/CircularProgress';
 import useAsync from 'react-use/lib/useAsync';
 import EventEmitter from 'wolfy87-eventemitter';
 
@@ -16,15 +16,18 @@ const { Provider, Consumer } = UploadContext;
 const events = new EventEmitter();
 
 function UploadProvider({ children, pageSize = 20, type = '' }) {
+  const [folderId, setFolderId] = useState('');
   const [uploads, setUploads] = useState([]);
+  const [folders, setFolders] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const { session } = useSessionContext();
 
-  const loadInitialPosts = async () => {
-    const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}`);
+  const loadInitialPosts = async (_fid = folderId) => {
+    const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}&folderId=${_fid}`);
     setUploads(data.uploads);
+    setFolders(data.folders);
     setHasMore(data.pageCount > 1);
     return data;
   };
@@ -32,7 +35,7 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   const loadMoreUploads = () => {
     setLoading(true);
     api
-      .get(`/api/uploads?page=${page + 1}&pageSize=${pageSize}&type=${type}`)
+      .get(`/api/uploads?page=${page + 1}&pageSize=${pageSize}&type=${type}&folderId=${folderId}`)
       .then(({ data }) => {
         setPage(page + 1);
         setHasMore(page + 1 < data.pageCount);
@@ -57,8 +60,20 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
     }
   };
 
+  const ensureFolder = async (name) => {
+    const exist = folders.some((x) => x.name === name);
+    if (exist) {
+      return exist;
+    }
+
+    const { data: folder } = await api.post('/api/folders', { name });
+    setFolders(uniqBy([folder, ...folders], '_id'));
+
+    return folder;
+  };
+
   const state = useAsync(loadInitialPosts, []);
-  useEffect(() => loadInitialPosts, [session.user]);
+  useEffect(() => loadInitialPosts, [session.user]); // eslint-disable-line
 
   if (state.loading) {
     return (
@@ -69,7 +84,23 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   }
 
   return (
-    <Provider value={{ loading, uploads, events, prependUpload, deleteUpload, loadMoreUploads, hasMore }}>
+    <Provider
+      value={{
+        loading,
+        uploads,
+        folders,
+        events,
+        prependUpload,
+        deleteUpload,
+        ensureFolder,
+        loadMoreUploads,
+        hasMore,
+        folderId,
+        filterByFolder: (x) => {
+          setFolderId(x);
+          loadInitialPosts(x);
+        },
+      }}>
       {children}
     </Provider>
   );

@@ -1,35 +1,28 @@
 /* eslint-disable react/jsx-no-target-blank */
 /* eslint-disable react/prop-types */
-import React from 'react';
-import joinUrl from 'url-join';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import prettyBytes from 'pretty-bytes';
 import { format } from 'timeago.js';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
-import Spinner from '@arcblock/ux/lib/Spinner';
+import Spinner from '@mui/material/CircularProgress';
 import Center from '@arcblock/ux/lib/Center';
 import Empty from '@arcblock/ux/lib/Empty';
-import Button from '@arcblock/ux/lib/Button';
 
 import Grid from '@mui/material/Grid';
 
 import { useUploadContext } from '../contexts/upload';
-import Copy from './copy';
-
-const createImageUrl = (host, prefix, filename) => {
-  const obj = new URL(host || window.location.origin);
-  obj.pathname = joinUrl(prefix, '/uploads/', filename);
-  return obj.href;
-};
+import { createImageUrl } from '../libs/api';
+import Actions from './actions';
 
 function Gallery({ uploads }) {
-  const { prefix = '/', CDN_HOST = '' } = window.blocklet;
   return (
     <Grid container spacing={4}>
       {uploads.map((x) => {
-        const imageUrl = createImageUrl(CDN_HOST, prefix, x.filename);
+        const imageUrl = createImageUrl(x.filename);
         return (
-          <Grid key={x._id} item xs={12} sm={6} md={3} xl={2}>
+          <Grid key={x._id} item xs={12} sm={6} md={4} xl={3}>
             <div className="doc-wrapper">
               <a href={imageUrl} target="_blank" title={x.originalname}>
                 <div className="img-wrapper">
@@ -40,7 +33,7 @@ function Gallery({ uploads }) {
                 <span className="img-size">{prettyBytes(x.size)}</span>
                 <span className="img-time">{format(x.createdAt)}</span>
                 <span className="img-copy">
-                  <Copy content={imageUrl} />
+                  <Actions data={x} />
                 </span>
               </div>
             </div>
@@ -52,7 +45,7 @@ function Gallery({ uploads }) {
 }
 
 export default function Uploads() {
-  const { uploads, loading, hasMore, loadMoreUploads } = useUploadContext();
+  const { uploads, folders, loading, hasMore, loadMoreUploads, folderId, filterByFolder } = useUploadContext();
 
   if (loading) {
     return (
@@ -68,6 +61,22 @@ export default function Uploads() {
 
   return (
     <Div>
+      {folders.length > 0 && (
+        <ButtonGroup variant="outlined" aria-label="outlined button group" style={{ marginBottom: 24 }}>
+          <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
+            All
+          </Button>
+          {folders.map((x) => (
+            <Button
+              key={x._id}
+              title={x._id}
+              onClick={() => filterByFolder(x._id)}
+              variant={folderId === x._id ? 'contained' : 'outlined'}>
+              {x.name}
+            </Button>
+          ))}
+        </ButtonGroup>
+      )}
       <Gallery uploads={uploads} />
       {hasMore && (
         <div className="load-more">
@@ -142,7 +151,7 @@ const Div = styled.div`
       justify-content: space-between;
     }
     .img-copy {
-      width: 90px;
+      width: 120px;
       text-align: right;
     }
   }

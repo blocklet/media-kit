@@ -1,15 +1,15 @@
-import React from 'react';
 import get from 'lodash/get';
-import { ThemeProvider, StyledEngineProvider, CssBaseline } from '@mui/material';
-import { ThemeProvider as StyledThemeProvider, createGlobalStyle } from 'styled-components';
+import { ThemeProvider as MuiThemeProvider, StyledEngineProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider as EmotionThemeProvider, css, Global } from '@emotion/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastProvider } from '@arcblock/ux/lib/Toast';
 
 import theme from './libs/theme';
 import { SessionProvider } from './contexts/session';
 
 import Home from './pages/home';
 
-const GlobalStyle = createGlobalStyle`
+const globalStyles = css`
   body {
     min-height: 100%;
     background-color: #484d5d !important;
@@ -29,36 +29,30 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-function App() {
-  return (
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <StyledThemeProvider theme={theme}>
-          <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
-            <CssBaseline />
-            <GlobalStyle />
-            <div className="app">
-              <Routes>
-                <Route exact path="/" element={<Home />} />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </div>
-          </SessionProvider>
-        </StyledThemeProvider>
-      </ThemeProvider>
-    </StyledEngineProvider>
-  );
-}
-
-const WrappedApp = App;
-
-export default () => {
+export default function App() {
   // While the blocklet is deploy to a sub path, this will be work properly.
   const basename = window?.blocklet?.prefix || '/';
 
   return (
-    <Router basename={basename}>
-      <WrappedApp />
-    </Router>
+    <StyledEngineProvider injectFirst>
+      <MuiThemeProvider theme={theme}>
+        <EmotionThemeProvider theme={theme}>
+          <Router basename={basename}>
+            <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
+              <CssBaseline />
+              <Global styles={globalStyles} />
+              <ToastProvider>
+                <div className="app">
+                  <Routes>
+                    <Route exact path="/" element={<Home />} />
+                    <Route path="*" element={<Navigate to="/" />} />
+                  </Routes>
+                </div>
+              </ToastProvider>
+            </SessionProvider>
+          </Router>
+        </EmotionThemeProvider>
+      </MuiThemeProvider>
+    </StyledEngineProvider>
   );
-};
+}

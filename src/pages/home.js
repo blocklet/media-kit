@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
-import React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import Header from '@blocklet/ui-react/lib/Header';
 // import SessionManager from '@arcblock/did-connect/lib/SessionManager';
 
@@ -9,7 +8,7 @@ import UploadHistory from '../components/history';
 
 import { UploadProvider } from '../contexts/upload';
 
-const Home = () => {
+function Home() {
   const onLogout = () => {
     window.location.reload();
   };
@@ -26,7 +25,7 @@ const Home = () => {
       </UploadProvider>
     </Div>
   );
-};
+}
 
 const Div = styled.div`
   color: #e2e2e4;

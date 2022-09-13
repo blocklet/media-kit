@@ -1,30 +1,21 @@
 require('@blocklet/sdk/lib/error-handler');
 require('dotenv-flow').config();
 
-const Client = require('@ocap/client');
+const xbytes = require('xbytes');
 
-const env = require('../libs/env');
 const logger = require('../libs/logger');
-const { wallet } = require('../libs/auth');
 const { name } = require('../../package.json');
+const { maxUploadSize } = require('../libs/env');
 
-const ensureAccountDeclared = async () => {
-  if (env.isComponent) return;
-  if (!env.chainHost) return;
-
-  const client = new Client(env.chainHost);
-  const { state } = await client.getAccountState({ address: wallet.toAddress() }, { ignoreFields: ['context'] });
-  if (!state) {
-    const hash = await client.declare({ moniker: name, wallet });
-    logger.log(`app account declared on chain ${env.chainHost}`, hash);
-  } else {
-    logger.log(`app account already declared on chain ${env.chainHost}`);
+async function verifyMaxUploadSize() {
+  if (!xbytes.isBytes(maxUploadSize)) {
+    throw new Error(`MAX_UPLOAD_SIZE ${maxUploadSize} is not a valid byte string, examples(1MB, 200kb)`);
   }
-};
+}
 
 (async () => {
   try {
-    await ensureAccountDeclared();
+    await verifyMaxUploadSize();
     process.exit(0);
   } catch (err) {
     logger.error(`${name} pre-start error`, err.message);
