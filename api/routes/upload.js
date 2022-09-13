@@ -1,3 +1,5 @@
+const fs = require('fs');
+const path = require('path');
 const multer = require('multer');
 const express = require('express');
 const joinUrl = require('url-join');
@@ -58,6 +60,21 @@ router.get('/uploads', auth, async (req, res) => {
 
 router.get('/uploads/:filename', auth, async (req, res) => {
   const doc = await Upload.findOne({ filename: req.params.filename });
+  res.jsonp(doc);
+});
+
+router.delete('/uploads/:id', auth, async (req, res) => {
+  const doc = await Upload.findOne({ _id: req.params.id });
+  if (!doc) {
+    res.jsonp({ error: 'No such upload' });
+    return;
+  }
+
+  const result = await Upload.remove({ _id: req.params.id });
+  if (result) {
+    fs.unlinkSync(path.join(env.uploadDir, doc.filename));
+  }
+
   res.jsonp(doc);
 });
 

@@ -7,11 +7,16 @@ import styled from '@emotion/styled';
 import Typography from '@mui/material/Typography';
 import SplitButton from '@arcblock/ux/lib/SplitButton';
 import { Confirm } from '@arcblock/ux/lib/Dialog';
-import { createImageUrl } from '../libs/api';
+
+import api, { createImageUrl } from '../libs/api';
+import { useUploadContext } from '../contexts/upload';
 
 export default function ImageActions({ data }) {
-  const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [copied, setCopied] = useState(false);
+  const { deleteUpload } = useUploadContext();
   const imageUrl = createImageUrl(data.filename);
 
   const onCopy = () => {
@@ -39,8 +44,18 @@ export default function ImageActions({ data }) {
   };
 
   const onConfirmDelete = () => {
-    setOpen(false);
-    console.log('confirm to delete');
+    setLoading(true);
+    api
+      .delete(`/api/uploads/${data._id}`)
+      .then(() => {
+        setLoading(false);
+        deleteUpload(data._id);
+        setOpen(false);
+      })
+      .catch((err) => {
+        setLoading(false);
+        setError(err.message);
+      });
   };
 
   const onCancelDelete = () => {
@@ -61,10 +76,11 @@ export default function ImageActions({ data }) {
   ];
 
   const confirmButton = {
-    text: 'Delete',
+    text: error || 'Delete',
     props: {
       variant: 'contained',
       color: 'secondary',
+      disabled: loading,
     },
   };
 
