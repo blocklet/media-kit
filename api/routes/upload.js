@@ -10,6 +10,7 @@ const { customRandom, urlAlphabet, random } = require('nanoid');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
+const Folder = require('../states/folder');
 
 const router = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
@@ -52,17 +53,25 @@ router.get('/uploads', auth, async (req, res) => {
   pageSize = pageSize > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : pageSize;
 
   const condition = {};
-  const uploads = await Upload.paginate({ condition, sort: { updatedAt: -1 }, page, size: pageSize });
+  if (req.query.folderId) {
+    condition.folderId = req.query.folderId;
+  }
+
+  const uploads = await Upload.paginate({ condition, sort: { createdAt: -1 }, page, size: pageSize });
   const total = await Upload.count(condition);
 
-  res.jsonp({ uploads, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
+  const folders = await Folder.find({});
+
+  res.jsonp({ uploads, folders, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
 });
 
+// preview image
 router.get('/uploads/:filename', auth, async (req, res) => {
   const doc = await Upload.findOne({ filename: req.params.filename });
   res.jsonp(doc);
 });
 
+// remove upload
 router.delete('/uploads/:id', auth, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
@@ -76,6 +85,48 @@ router.delete('/uploads/:id', auth, async (req, res) => {
   }
 
   res.jsonp(doc);
+});
+
+// create folder
+router.post('/folders', user, auth, async (req, res) => {
+  const name = req.body.name.trim();
+  if (!name) {
+    res.jsonp({ error: 'folder name required' });
+    return;
+  }
+
+  const exist = await Folder.findOne({ name });
+  if (exist) {
+    res.json(exist);
+    return;
+  }
+
+  const doc = await Folder.insert({
+    name,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    createdBy: req.user.did,
+    updatedBy: req.user.did,
+  });
+
+  res.json(doc);
+});
+
+// move to folder
+router.put('/uploads/:id', auth, async (req, res) => {
+  const doc = await Upload.findOne({ _id: req.params.id });
+  if (!doc) {
+    res.jsonp({ error: 'No such upload' });
+    return;
+  }
+
+  const [, updatedDoc] = await Upload.update(
+    { _id: req.params.id },
+    { $set: pick(req.body, ['folderId']) },
+    { returnUpdatedDocs: true }
+  );
+
+  res.jsonp(updatedDoc);
 });
 
 module.exports = router;

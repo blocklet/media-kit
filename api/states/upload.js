@@ -9,6 +9,7 @@ const Database = require('@blocklet/sdk/lib/database');
  * - remark: string
  * - size: number
  * - filename: string
+ * - folderId: string
  * - minetype: string
  * - originalname: string
  * - createdAt: string

@@ -17,6 +17,7 @@ const events = new EventEmitter();
 
 function UploadProvider({ children, pageSize = 20, type = '' }) {
   const [uploads, setUploads] = useState([]);
+  const [folders, setFolders] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(false);
@@ -25,6 +26,7 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   const loadInitialPosts = async () => {
     const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}`);
     setUploads(data.uploads);
+    setFolders(data.folders);
     setHasMore(data.pageCount > 1);
     return data;
   };
@@ -57,6 +59,18 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
     }
   };
 
+  const ensureFolder = async (name) => {
+    const exist = folders.some((x) => x.name === name);
+    if (exist) {
+      return exist;
+    }
+
+    const { data: folder } = await api.post('/api/folders', { name });
+    setFolders(uniqBy([folder, ...folders], '_id'));
+
+    return folder;
+  };
+
   const state = useAsync(loadInitialPosts, []);
   useEffect(() => loadInitialPosts, [session.user]); // eslint-disable-line
 
@@ -69,7 +83,18 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   }
 
   return (
-    <Provider value={{ loading, uploads, events, prependUpload, deleteUpload, loadMoreUploads, hasMore }}>
+    <Provider
+      value={{
+        loading,
+        uploads,
+        folders,
+        events,
+        prependUpload,
+        deleteUpload,
+        ensureFolder,
+        loadMoreUploads,
+        hasMore,
+      }}>
       {children}
     </Provider>
   );
