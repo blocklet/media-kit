@@ -1,3 +1,7 @@
+## 0.5.1 (September 19, 2022)
+
+- fix: upload image cache headers
+
 ## 0.5.0 (September 13, 2022)
 
 - feat: support delete image
