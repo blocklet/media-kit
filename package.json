@@ -39,8 +39,6 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did-auth": "^1.17.19",
-    "@arcblock/did-auth-storage-nedb": "^1.7.1",
     "@arcblock/did-connect": "^2.4.24",
     "@arcblock/ux": "^2.4.24",
     "@blocklet/sdk": "^1.8.19",
@@ -49,10 +47,6 @@
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.4",
-    "@mui/styles": "^5.10.3",
-    "@ocap/client": "^1.17.19",
-    "@ocap/mcrypto": "^1.17.19",
-    "@ocap/wallet": "^1.17.19",
     "axios": "^0.26.1",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",

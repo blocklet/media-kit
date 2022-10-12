@@ -14,7 +14,7 @@ const Folder = require('../states/folder');
 
 const router = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
-const auth = middleware.auth({ roles: ['owner', 'admin'] });
+const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const upload = multer({
   storage: multer.diskStorage({
@@ -44,7 +44,7 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
-router.get('/uploads', auth, async (req, res) => {
+router.get('/uploads', user, auth, async (req, res) => {
   let page = Number(req.query.page || 1);
   let pageSize = Number(req.query.pageSize || DEFAULT_PAGE_SIZE);
 
@@ -66,13 +66,13 @@ router.get('/uploads', auth, async (req, res) => {
 });
 
 // preview image
-router.get('/uploads/:filename', auth, async (req, res) => {
+router.get('/uploads/:filename', user, auth, async (req, res) => {
   const doc = await Upload.findOne({ filename: req.params.filename });
   res.jsonp(doc);
 });
 
 // remove upload
-router.delete('/uploads/:id', auth, async (req, res) => {
+router.delete('/uploads/:id', user, auth, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -113,7 +113,7 @@ router.post('/folders', user, auth, async (req, res) => {
 });
 
 // move to folder
-router.put('/uploads/:id', auth, async (req, res) => {
+router.put('/uploads/:id', user, auth, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });

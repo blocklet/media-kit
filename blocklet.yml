@@ -33,7 +33,6 @@ interfaces:
           whoCanAccess: invited
           blockUnauthenticated: true
           ignoreUrls:
-            - /api/did/**
             - /uploads/**
           profileFields:
             - fullName
@@ -63,6 +62,12 @@ environments:
     description: Use CDN Host for image load speed
     required: false
     default: ''
+    secure: false
+    shared: true
+  - name: UPLOADER_ROLES
+    description: List of roles that can upload files
+    required: false
+    default: 'owner,admin'
     secure: false
     shared: true
   - name: MAX_UPLOAD_SIZE
