@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.5.1
+version: 0.6.0
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -67,7 +67,7 @@ environments:
   - name: UPLOADER_ROLES
     description: List of roles that can upload files
     required: false
-    default: 'owner,admin'
+    default: owner,admin
     secure: false
     shared: true
   - name: MAX_UPLOAD_SIZE
@@ -92,5 +92,5 @@ capabilities:
   clusterMode: false
   component: true
 screenshots: []
-children: []
 navigation: []
+components: []

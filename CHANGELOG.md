@@ -1,3 +1,7 @@
+## 0.6.0 (October 12, 2022)
+
+- feat: support customize uploader roles
+
 ## 0.5.1 (September 19, 2022)
 
 - fix: upload image cache headers
