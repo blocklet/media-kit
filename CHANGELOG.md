@@ -1,3 +1,7 @@
+## 0.7.0 (October 14, 2022)
+
+- fix: security for non-admin users
+
 ## 0.6.0 (October 12, 2022)
 
 - feat: support customize uploader roles
