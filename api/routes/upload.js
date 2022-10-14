@@ -16,6 +16,7 @@ const router = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
+const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 const upload = multer({
   storage: multer.diskStorage({
     destination: env.uploadDir,
@@ -57,6 +58,10 @@ router.get('/uploads', user, auth, async (req, res) => {
     condition.folderId = req.query.folderId;
   }
 
+  if (['guest', 'member'].includes(req.user.role)) {
+    condition.createdBy = req.user.did;
+  }
+
   const uploads = await Upload.paginate({ condition, sort: { createdAt: -1 }, page, size: pageSize });
   const total = await Upload.count(condition);
 
@@ -72,7 +77,7 @@ router.get('/uploads/:filename', user, auth, async (req, res) => {
 });
 
 // remove upload
-router.delete('/uploads/:id', user, auth, async (req, res) => {
+router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -88,7 +93,7 @@ router.delete('/uploads/:id', user, auth, async (req, res) => {
 });
 
 // create folder
-router.post('/folders', user, auth, async (req, res) => {
+router.post('/folders', user, ensureAdmin, async (req, res) => {
   const name = req.body.name.trim();
   if (!name) {
     res.jsonp({ error: 'folder name required' });
@@ -113,7 +118,7 @@ router.post('/folders', user, auth, async (req, res) => {
 });
 
 // move to folder
-router.put('/uploads/:id', user, auth, async (req, res) => {
+router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
