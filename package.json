@@ -12,9 +12,11 @@
     "start:api": "NODE_ENV=development nodemon api/index.js -w api",
     "clean": "rm -rf .blocklet",
     "bundle": "npm run bundle:client && npm run bundle:api",
+    "bundle:local": "npm run bundle:client && npm run clean && bn bundle --zip --create-release ",
     "bundle:client": "PUBLIC_URL='/.blocklet/proxy/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9' npm run build",
     "bundle:api": "npm run clean && blocklet bundle --zip --create-release",
     "deploy": "npm run bundle && blocklet deploy .blocklet/bundle",
+    "deploy:local": "bn dev remove && npm run bundle:local && bn deploy .blocklet/bundle",
     "upload": "npm run bundle && blocklet upload .blocklet/release/blocklet.json",
     "prepare": "husky install"
   },
