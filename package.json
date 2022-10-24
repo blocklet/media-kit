@@ -18,7 +18,8 @@
     "deploy": "npm run bundle && blocklet deploy .blocklet/bundle",
     "deploy:local": "bn dev remove && npm run bundle:local && bn deploy .blocklet/bundle",
     "upload": "npm run bundle && blocklet upload .blocklet/release/blocklet.json",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "update:deps": "npx -y taze -r -w"
   },
   "lint-staged": {
     "*.{mjs,js,jsx,ts,tsx}": [
