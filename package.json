@@ -2,6 +2,7 @@
   "name": "image-bin",
   "version": "0.7.0",
   "scripts": {
+    "dev:local": "bn dev remove && bn dev",
     "dev": "PUBLIC_URL='./' craco start",
     "build": "craco build",
     "eject": "react-scripts eject",
