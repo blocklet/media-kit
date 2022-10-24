@@ -19,7 +19,15 @@ function StorageAction() {
   const handleGetStorageEndpoint = async () => {
     setStorageEndpointDialog((preValue) => ({ ...preValue, didStorageUrl: window.blocklet.DID_STORAGE_URL }));
   };
-  const handleSaveStorageEndpoint = async () => {};
+  const handleSaveStorageEndpoint = async () => {
+    const url = new URL(window.location.href);
+
+    const endpoint = url.searchParams.get('endpoint');
+
+    if (endpoint) {
+      Toast.error('Storage');
+    }
+  };
   const handleAuthorizeNow = async () => {
     if (isEmpty(storageEndpointDialog?.didStorageUrl)) {
       Toast.error('StorageUrl cannot be empty');
@@ -29,11 +37,11 @@ function StorageAction() {
     setIsLoading(true);
     const authorizeURL = new URL(storageEndpointDialog.didStorageUrl);
     authorizeURL.searchParams.set('action', 'authorize');
-    authorizeURL.searchParams.set('appDid', window.blocklet.appDid);
+    authorizeURL.searchParams.set('appDid', window.blocklet.appId);
     authorizeURL.searchParams.set('appName', 'image bin');
     authorizeURL.searchParams.set('appDescription', 'image bin app');
     authorizeURL.searchParams.set('redirectUrl', new URL(window.location.href).origin);
-    authorizeURL.searchParams.set('scopes', 'list:object,read:object,write:object');
+    authorizeURL.searchParams.set('scopes', 'list:object read:object write:object');
     window.location.href = authorizeURL;
   };
 
