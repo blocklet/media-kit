@@ -1,5 +1,4 @@
 import { Toast } from '@arcblock/ux';
-import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import { isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
 import Dialog from '@arcblock/ux/lib/Dialog';
@@ -8,7 +7,6 @@ import { TextField } from '@mui/material';
 import api from '../libs/api';
 
 function StorageAction() {
-  const { locale } = useLocaleContext();
   const [storageUrl, setStorageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [storageEndpointDialog, setStorageEndpointDialog] = useState(
@@ -39,17 +37,11 @@ function StorageAction() {
   const handleSaveStorageEndpoint = async () => {};
 
   useEffect(() => {
-    api
-      .get('/api/env', {
-        headers: {
-          'x-locale': locale,
-        },
-      })
-      .then((res) => {
-        window.blocklet = Object.assign({}, window.blocklet, res.data);
-        setStorageUrl(window.blocklet.didStorageUrl);
-      });
-  }, [locale]);
+    api.get('/api/env').then((res) => {
+      window.blocklet = Object.assign({}, window.blocklet, res.data);
+      setStorageUrl(window.blocklet.didStorageUrl);
+    });
+  }, []);
 
   return (
     <>
