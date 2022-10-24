@@ -88,6 +88,12 @@ environments:
     default: '900'
     secure: false
     shared: true
+  - name: DID_STORAGE_URL
+    description: Address of DID Storage instance
+    required: false
+    default: https://ae1482b1-znkjt5vbgnezh4p6v4dsaye61e7pxxn3vk4j.did.abtnet.io/
+    secure: false
+    shared: true
 capabilities:
   clusterMode: false
   component: true

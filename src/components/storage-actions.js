@@ -1,31 +1,33 @@
 import { Toast } from '@arcblock/ux';
 import { isEmpty } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Dialog from '@arcblock/ux/lib/Dialog';
 import Button from '@arcblock/ux/lib/Button';
 import { TextField } from '@mui/material';
-import api from '../libs/api';
 
 function StorageAction() {
-  const [storageUrl, setStorageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [storageEndpointDialog, setStorageEndpointDialog] = useState(
     /**
      * @type {{
-     *  name: string
+     *  didStorageUrl: string
      * }}
      */
     (null)
   );
 
   const handleGetStorageEndpoint = async () => {
-    if (isEmpty(storageUrl)) {
+    setStorageEndpointDialog((preValue) => ({ ...preValue, didStorageUrl: window.blocklet.didStorageUrl }));
+  };
+  const handleSaveStorageEndpoint = async () => {};
+  const handleAuthorizeNow = async () => {
+    if (isEmpty(storageEndpointDialog?.didStorageUrl)) {
       Toast.error('StorageUrl cannot be empty');
       return;
     }
 
     setIsLoading(true);
-    const authorizeURL = new URL(storageUrl);
+    const authorizeURL = new URL(storageEndpointDialog.didStorageUrl);
     authorizeURL.searchParams.set('action', 'authorize');
     authorizeURL.searchParams.set('appDid', window.blocklet.appDid);
     authorizeURL.searchParams.set('appName', 'image bin');
@@ -34,14 +36,12 @@ function StorageAction() {
     authorizeURL.searchParams.set('scopes', 'list:object,read:object,write:object');
     window.location.href = authorizeURL;
   };
-  const handleSaveStorageEndpoint = async () => {};
 
-  useEffect(() => {
-    api.get('/api/env').then((res) => {
-      window.blocklet = Object.assign({}, window.blocklet, res.data);
-      setStorageUrl(window.blocklet.didStorageUrl);
-    });
-  }, []);
+  // useEffect(() => {
+  //  api.get('/api/env').then((res) => {
+  //    window.blocklet = Object.assign({}, window.blocklet, res.data);
+  //  });
+  // }, []);
 
   return (
     <>
@@ -61,13 +61,14 @@ function StorageAction() {
           actions={
             <div>
               <Button
+                onClick={handleAuthorizeNow}
                 loading={isLoading}
-                disabled={isLoading || isEmpty(storageEndpointDialog?.name)}
+                disabled={isLoading || isEmpty(storageEndpointDialog?.storageUrl)}
                 color="primary"
                 autoFocus
                 variant="contained"
                 rounded>
-                get endpoint
+                Authorize Now
               </Button>
             </div>
           }>
@@ -76,8 +77,8 @@ function StorageAction() {
             variant="outlined"
             margin="normal"
             label="storage url"
-            value={storageEndpointDialog.name}
-            onChange={(e) => setStorageEndpointDialog((x) => ({ ...x, name: e.target.value }))}
+            value={storageEndpointDialog.didStorageUrl}
+            onChange={(e) => setStorageEndpointDialog((x) => ({ ...x, didStorageUrl: e.target.value }))}
           />
         </Dialog>
       )}
