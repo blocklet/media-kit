@@ -17,7 +17,7 @@ function StorageAction() {
   );
 
   const handleGetStorageEndpoint = async () => {
-    setStorageEndpointDialog((preValue) => ({ ...preValue, didStorageUrl: window.blocklet.didStorageUrl }));
+    setStorageEndpointDialog((preValue) => ({ ...preValue, didStorageUrl: window.blocklet.DID_STORAGE_URL }));
   };
   const handleSaveStorageEndpoint = async () => {};
   const handleAuthorizeNow = async () => {
@@ -36,12 +36,6 @@ function StorageAction() {
     authorizeURL.searchParams.set('scopes', 'list:object,read:object,write:object');
     window.location.href = authorizeURL;
   };
-
-  // useEffect(() => {
-  //  api.get('/api/env').then((res) => {
-  //    window.blocklet = Object.assign({}, window.blocklet, res.data);
-  //  });
-  // }, []);
 
   return (
     <>
@@ -63,7 +57,7 @@ function StorageAction() {
               <Button
                 onClick={handleAuthorizeNow}
                 loading={isLoading}
-                disabled={isLoading || isEmpty(storageEndpointDialog?.storageUrl)}
+                disabled={isLoading || isEmpty(storageEndpointDialog?.didStorageUrl)}
                 color="primary"
                 autoFocus
                 variant="contained"
