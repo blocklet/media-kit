@@ -24,9 +24,11 @@ function StorageAction() {
 
     const endpoint = url.searchParams.get('endpoint');
 
-    if (endpoint) {
-      Toast.error('Storage');
+    if (isEmpty(endpoint)) {
+      Toast.error('Storage endpoint not found');
     }
+
+    Toast.success('Storage endpoint saved');
   };
   const handleAuthorizeNow = async () => {
     if (isEmpty(storageEndpointDialog?.didStorageUrl)) {
