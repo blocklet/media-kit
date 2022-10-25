@@ -12,7 +12,7 @@ const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
 
-const router = express.Router();
+const uploadRouter = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
@@ -26,7 +26,7 @@ const upload = multer({
   }),
 });
 
-router.post('/uploads', user, auth, upload.single('image'), async (req, res) => {
+uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
   const obj = new URL(env.appUrl);
   obj.protocol = req.get('x-forwarded-proto') || req.protocol;
   obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', req.file.filename);
@@ -45,7 +45,7 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
-router.get('/uploads', user, auth, async (req, res) => {
+uploadRouter.get('/', user, auth, async (req, res) => {
   let page = Number(req.query.page || 1);
   let pageSize = Number(req.query.pageSize || DEFAULT_PAGE_SIZE);
 
@@ -71,13 +71,13 @@ router.get('/uploads', user, auth, async (req, res) => {
 });
 
 // preview image
-router.get('/uploads/:filename', user, auth, async (req, res) => {
+uploadRouter.get('/:filename', user, auth, async (req, res) => {
   const doc = await Upload.findOne({ filename: req.params.filename });
   res.jsonp(doc);
 });
 
 // remove upload
-router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
+uploadRouter.delete('/:id', user, ensureAdmin, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -93,7 +93,7 @@ router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
 });
 
 // create folder
-router.post('/folders', user, ensureAdmin, async (req, res) => {
+uploadRouter.post('/folders', user, ensureAdmin, async (req, res) => {
   const name = req.body.name.trim();
   if (!name) {
     res.jsonp({ error: 'folder name required' });
@@ -118,7 +118,7 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
 });
 
 // move to folder
-router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
+uploadRouter.put('/:id', user, ensureAdmin, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -134,4 +134,4 @@ router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
   res.jsonp(updatedDoc);
 });
 
-module.exports = router;
+module.exports = { uploadRouter };

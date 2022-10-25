@@ -5,6 +5,7 @@ import Dialog from '@arcblock/ux/lib/Dialog';
 import Button from '@arcblock/ux/lib/Button';
 import { TextField } from '@mui/material';
 import styled from '@emotion/styled';
+import api from '../libs/api';
 
 function StorageAction() {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,15 +22,27 @@ function StorageAction() {
     setStorageEndpointDialog((preValue) => ({ ...preValue, didStorageUrl: window.blocklet.DID_STORAGE_URL }));
   };
   const handleSaveStorageEndpoint = async () => {
-    const url = new URL(window.location.href);
+    try {
+      const url = new URL(window.location.href);
 
-    const endpoint = url.searchParams.get('endpoint');
+      const endpoint = url.searchParams.get('endpoint');
 
-    if (isEmpty(endpoint)) {
-      Toast.error('Storage endpoint not found');
+      if (isEmpty(endpoint)) {
+        Toast.error('Storage endpoint not found');
+      }
+
+      // eslint-disable-next-line no-console
+      console.log({ endpoint });
+
+      await api.put('/api/storage-endpoint', {
+        endpoint,
+      });
+
+      Toast.success('Storage endpoint saved');
+    } catch (error) {
+      console.error(error);
+      Toast.error(error.message);
     }
-
-    Toast.success('Storage endpoint saved');
   };
   const handleAuthorizeNow = async () => {
     if (isEmpty(storageEndpointDialog?.didStorageUrl)) {

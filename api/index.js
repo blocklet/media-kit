@@ -12,6 +12,8 @@ const fallback = require('express-history-api-fallback');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
+const { storageEndpointRouter } = require('./routes/storage-endpoint');
+const { apiRouter } = require('./routes');
 
 if (fs.existsSync(env.uploadDir) === false) {
   fs.mkdirSync(env.uploadDir, { recursive: true });
@@ -27,7 +29,7 @@ app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 app.use('/uploads', express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }));
 
 const router = express.Router();
-router.use('/api', require('./routes/upload'));
+router.use('/api', apiRouter);
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';
