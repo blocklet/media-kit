@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const multer = require('multer');
 const express = require('express');
@@ -11,6 +11,7 @@ const { customRandom, urlAlphabet, random } = require('nanoid');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
+const { api } = require('../libs/api');
 
 const uploadRouter = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
@@ -30,6 +31,25 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
   const obj = new URL(env.appUrl);
   obj.protocol = req.get('x-forwarded-proto') || req.protocol;
   obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', req.file.filename);
+
+  const buffer = await fs.readFile(req.file.path);
+
+  await api.put(
+    '',
+    {
+      data: buffer,
+    },
+    {
+      headers: {
+        'x-skip-signature': true,
+      },
+    }
+  );
+
+  // FIXME:
+  if (req.file) {
+    throw new Error('upload failed!');
+  }
 
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),

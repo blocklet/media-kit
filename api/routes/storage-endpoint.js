@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const { isEmpty } = require('lodash');
 const path = require('path');
 const { dataDir } = require('../libs/env');
+const { storageEndpointRepository } = require('../states/storage-endpoint');
 
 const storageEndpointRouter = express.Router();
 
@@ -22,7 +23,7 @@ storageEndpointRouter.put(
       return res.status(400).send('endpoint cannot be empty');
     }
 
-    await fs.outputFile(endpointFilePath, endpoint);
+    await storageEndpointRepository.write(endpoint);
 
     return res.send('ok');
   }
@@ -36,11 +37,11 @@ storageEndpointRouter.get(
    * @param {import('express').Response} res
    */
   async (req, res) => {
-    if (!fs.existsSync(endpointFilePath)) {
+    if (!(await storageEndpointRepository.exists())) {
       return '';
     }
 
-    const buffer = await fs.readFile(endpointFilePath);
+    const buffer = await storageEndpointRepository.read();
 
     return res.send(buffer.toString());
   }
