@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Dialog from '@arcblock/ux/lib/Dialog';
 import Button from '@arcblock/ux/lib/Button';
 import { TextField } from '@mui/material';
+import styled from '@emotion/styled';
 
 function StorageAction() {
   const [isLoading, setIsLoading] = useState(false);
@@ -48,13 +49,17 @@ function StorageAction() {
   };
 
   return (
-    <>
-      <button onClick={handleGetStorageEndpoint} type="button" className="submit">
-        Get storage endpoint
-      </button>
-      <button onClick={handleSaveStorageEndpoint} type="button" className="submit">
-        Save storage endpoint
-      </button>
+    <Div>
+      <div className="functions">
+        <button onClick={handleGetStorageEndpoint} type="button" className="submit">
+          Get storage endpoint
+        </button>
+      </div>
+      <div className="functions">
+        <button onClick={handleSaveStorageEndpoint} type="button" className="submit">
+          Save storage endpoint
+        </button>
+      </div>
 
       {storageEndpointDialog && (
         <Dialog
@@ -86,8 +91,31 @@ function StorageAction() {
           />
         </Dialog>
       )}
-    </>
+    </Div>
   );
 }
+
+const Div = styled.div`
+  .functions {
+    margin-top: 8px;
+
+    .submit {
+      padding: 12px 24px;
+      border-radius: 5px;
+      cursor: pointer;
+      color: #eee;
+      width: 100%;
+      max-width: 320px;
+      text-shadow: 0 1px 0 black;
+      text-decoration: none;
+      font-size: 1.2rem;
+      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.2));
+      border: 1px solid #000000;
+      background-color: #166f16;
+      box-shadow: inset 0 1px 1px rgb(255 255 255 / 15%), inset 0 0 5px rgb(255 255 255 / 5%), 0 0 5px rgb(0 0 25 / 50%),
+        0 5px 10px rgb(0 0 25 / 30%);
+    }
+  }
+`;
 
 export default StorageAction;
