@@ -1,13 +1,8 @@
 const express = require('express');
-const fs = require('fs-extra');
 const { isEmpty } = require('lodash');
-const path = require('path');
-const { dataDir } = require('../libs/env');
 const { storageEndpointRepository } = require('../states/storage-endpoint');
 
 const storageEndpointRouter = express.Router();
-
-const endpointFilePath = path.join(dataDir, 'endpoint.txt');
 
 storageEndpointRouter.put(
   '/',
