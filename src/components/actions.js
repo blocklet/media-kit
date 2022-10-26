@@ -113,6 +113,7 @@ export default function ImageActions({ data }) {
       variant: 'contained',
       color: 'secondary',
       disabled: loading,
+      loading,
     },
   };
 
