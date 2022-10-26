@@ -55,11 +55,6 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
     },
   }).catch((error) => console.error(error.message));
 
-  // FIXME:
-  if (req.file) {
-    throw new Error('upload failed!');
-  }
-
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
     remark: req.body.remark || '',
@@ -67,9 +62,10 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
     updatedAt: new Date().toISOString(),
     createdBy: req.user.did,
     updatedBy: req.user.did,
+    objectUrl: putUrl,
   });
 
-  res.json({ url: obj.href, ...doc });
+  return res.json({ url: obj.href, ...doc });
 });
 
 const DEFAULT_PAGE_SIZE = 20;
