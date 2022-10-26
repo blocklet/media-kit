@@ -24,10 +24,11 @@ class StorageEndpointRepository {
   /**
    *
    *
-   * @return {Promise<Buffer>}
+   * @return {Promise<string>}
    */
   async read() {
-    return fs.readFile(endpointFilePath);
+    const buffer = await fs.readFile(endpointFilePath);
+    return buffer.toString();
   }
 }
 

@@ -36,9 +36,9 @@ storageEndpointRouter.get(
       return '';
     }
 
-    const buffer = await storageEndpointRepository.read();
+    const endpoint = await storageEndpointRepository.read();
 
-    return res.send(buffer.toString());
+    return res.send(endpoint);
   }
 );
 

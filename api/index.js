@@ -12,7 +12,6 @@ const fallback = require('express-history-api-fallback');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
-const { storageEndpointRouter } = require('./routes/storage-endpoint');
 const { apiRouter } = require('./routes');
 
 if (fs.existsSync(env.uploadDir) === false) {

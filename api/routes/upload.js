@@ -7,11 +7,12 @@ const pick = require('lodash/pick');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const mime = require('mime-types');
 const { customRandom, urlAlphabet, random } = require('nanoid');
-
+const FormData = require('form-data');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
 const { api } = require('../libs/api');
+const { storageEndpointRepository } = require('../states/storage-endpoint');
 
 const uploadRouter = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
@@ -32,19 +33,28 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
   obj.protocol = req.get('x-forwarded-proto') || req.protocol;
   obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', req.file.filename);
 
-  const buffer = await fs.readFile(req.file.path);
+  const endpoint = await storageEndpointRepository.read();
 
-  await api.put(
-    '',
-    {
-      data: buffer,
+  // const stream = fs.createReadStream(req.file.path);
+  // const buffer = await fs.readFile(req.file.path);
+  const filename = req.file.originalname;
+  const putUrl = joinUrl(endpoint, filename);
+
+  const formData = new FormData();
+  formData.append('data', Buffer.from('abc'));
+
+  // @see: https://github.com/axios/axios#-automatic-serialization-to-formdata
+  await api({
+    url: putUrl,
+    method: 'PUT',
+    data: formData,
+    headers: {
+      'x-app-did': env.appId,
+      'x-skip-signature': true,
     },
-    {
-      headers: {
-        'x-skip-signature': true,
-      },
-    }
-  );
+    maxContentLength: Number.POSITIVE_INFINITY,
+    maxBodyLength: Number.POSITIVE_INFINITY,
+  }).catch(console.error);
 
   // FIXME:
   if (req.file) {
