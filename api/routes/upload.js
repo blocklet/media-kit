@@ -103,18 +103,27 @@ uploadRouter.get('/:filename', user, auth, async (req, res) => {
 
 // remove upload
 uploadRouter.delete('/:id', user, ensureAdmin, async (req, res) => {
+  /**
+   * @type {ImageBin.Upload}
+   */
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
-    res.jsonp({ error: 'No such upload' });
-    return;
+    return res.jsonp({ error: 'No such upload' });
   }
+
+  await api.delete(doc.objectUrl, {
+    headers: {
+      'x-app-did': env.appId,
+      'x-skip-signature': true,
+    },
+  });
 
   const result = await Upload.remove({ _id: req.params.id });
   if (result) {
     fs.unlinkSync(path.join(env.uploadDir, doc.filename));
   }
 
-  res.jsonp(doc);
+  return res.jsonp(doc);
 });
 
 // create folder
