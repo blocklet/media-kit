@@ -35,13 +35,13 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
 
   const endpoint = await storageEndpointRepository.read();
 
-  // const stream = fs.createReadStream(req.file.path);
+  const stream = fs.createReadStream(req.file.path);
   // const buffer = await fs.readFile(req.file.path);
   const filename = req.file.originalname;
   const putUrl = joinUrl(endpoint, filename);
 
   const formData = new FormData();
-  formData.append('data', Buffer.from('abc'));
+  formData.append('data', stream);
 
   // @see: https://github.com/axios/axios#-automatic-serialization-to-formdata
   await api({
@@ -51,10 +51,9 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
     headers: {
       'x-app-did': env.appId,
       'x-skip-signature': true,
+      ...formData.getHeaders(),
     },
-    maxContentLength: Number.POSITIVE_INFINITY,
-    maxBodyLength: Number.POSITIVE_INFINITY,
-  }).catch(console.error);
+  }).catch((error) => console.error(error.message));
 
   // FIXME:
   if (req.file) {
