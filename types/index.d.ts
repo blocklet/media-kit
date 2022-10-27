@@ -10,6 +10,6 @@ declare module ImageBin {
     createdBy: string;
     updateBy: string;
     folderId?: string;
-    objectUrl: string;
+    publicUrl: string;
   }
 }

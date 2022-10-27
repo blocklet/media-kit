@@ -1,5 +1,4 @@
 const fs = require('fs-extra');
-const path = require('path');
 const multer = require('multer');
 const express = require('express');
 const joinUrl = require('url-join');
@@ -13,6 +12,7 @@ const Upload = require('../states/upload');
 const Folder = require('../states/folder');
 const { api } = require('../libs/api');
 const { storageEndpointRepository } = require('../states/storage-endpoint');
+const { getPublicUrl } = require('../libs/storage-endpoint');
 
 const uploadRouter = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
@@ -36,7 +36,6 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
   const endpoint = await storageEndpointRepository.read();
 
   const stream = fs.createReadStream(req.file.path);
-  // const buffer = await fs.readFile(req.file.path);
   const filename = req.file.originalname;
   const putUrl = joinUrl(endpoint, filename);
 
@@ -55,6 +54,8 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
     },
   }).catch((error) => console.error(error.message));
 
+  const publicUrl = getPublicUrl(endpoint, filename);
+
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
     remark: req.body.remark || '',
@@ -63,9 +64,13 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
     createdBy: req.user.did,
     updatedBy: req.user.did,
     objectUrl: putUrl,
+    publicUrl,
   });
 
-  return res.json({ url: obj.href, ...doc });
+  // eslint-disable-next-line no-console
+  console.log({ publicUrl });
+
+  return res.json({ url: doc.publicUrl, ...doc });
 });
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -111,17 +116,16 @@ uploadRouter.delete('/:id', user, ensureAdmin, async (req, res) => {
     return res.jsonp({ error: 'No such upload' });
   }
 
-  await api.delete(doc.objectUrl, {
-    headers: {
-      'x-app-did': env.appId,
-      'x-skip-signature': true,
-    },
-  });
-
-  const result = await Upload.remove({ _id: req.params.id });
-  if (result) {
-    fs.unlinkSync(path.join(env.uploadDir, doc.filename));
+  if (doc.objectUrl) {
+    await api.delete(doc.objectUrl, {
+      headers: {
+        'x-app-did': env.appId,
+        'x-skip-signature': true,
+      },
+    });
   }
+
+  await Upload.remove({ _id: req.params.id });
 
   return res.jsonp(doc);
 });
