@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.7.0
+version: 0.7.1
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -86,6 +86,12 @@ environments:
     description: Set the image height to compress to before upload
     required: false
     default: '900'
+    secure: false
+    shared: true
+  - name: DID_STORAGE_URL
+    description: Address of DID Storage instance
+    required: false
+    default: http://cedcaa27-znkga5fuxuwntawzo6ugwlps92i9alparpfh.did.abtnet.io
     secure: false
     shared: true
 capabilities:

@@ -20,7 +20,7 @@ function Gallery({ uploads }) {
   return (
     <Grid container spacing={4}>
       {uploads.map((x) => {
-        const imageUrl = createImageUrl(x.filename);
+        const imageUrl = x.publicUrl ?? createImageUrl(x.filename);
         return (
           <Grid key={x._id} item xs={12} sm={6} md={4} xl={3}>
             <div className="doc-wrapper">

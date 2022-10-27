@@ -1,4 +1,5 @@
-const fs = require('fs-extra');
+const fs = require('fs');
+const path = require('path');
 const multer = require('multer');
 const express = require('express');
 const joinUrl = require('url-join');
@@ -6,13 +7,10 @@ const pick = require('lodash/pick');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const mime = require('mime-types');
 const { customRandom, urlAlphabet, random } = require('nanoid');
-const FormData = require('form-data');
+
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
-const { api } = require('../libs/api');
-const { storageEndpointRepository } = require('../states/storage-endpoint');
-const { getPublicUrl } = require('../libs/storage-endpoint');
 
 const uploadRouter = express.Router();
 const nanoid = customRandom(urlAlphabet, 24, random);
@@ -33,29 +31,6 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
   obj.protocol = req.get('x-forwarded-proto') || req.protocol;
   obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', req.file.filename);
 
-  const endpoint = await storageEndpointRepository.read();
-
-  const stream = fs.createReadStream(req.file.path);
-  const filename = req.file.originalname;
-  const putUrl = joinUrl(endpoint, filename);
-
-  const formData = new FormData();
-  formData.append('data', stream);
-
-  // @see: https://github.com/axios/axios#-automatic-serialization-to-formdata
-  await api({
-    url: putUrl,
-    method: 'PUT',
-    data: formData,
-    headers: {
-      'x-app-did': env.appId,
-      'x-skip-signature': true,
-      ...formData.getHeaders(),
-    },
-  }).catch((error) => console.error(error.message));
-
-  const publicUrl = getPublicUrl(endpoint, filename);
-
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
     remark: req.body.remark || '',
@@ -63,14 +38,9 @@ uploadRouter.post('/', user, auth, upload.single('image'), async (req, res) => {
     updatedAt: new Date().toISOString(),
     createdBy: req.user.did,
     updatedBy: req.user.did,
-    objectUrl: putUrl,
-    publicUrl,
   });
 
-  // eslint-disable-next-line no-console
-  console.log({ publicUrl });
-
-  return res.json({ url: doc.publicUrl, ...doc });
+  res.json({ url: obj.href, ...doc });
 });
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -108,26 +78,18 @@ uploadRouter.get('/:filename', user, auth, async (req, res) => {
 
 // remove upload
 uploadRouter.delete('/:id', user, ensureAdmin, async (req, res) => {
-  /**
-   * @type {ImageBin.Upload}
-   */
   const doc = await Upload.findOne({ _id: req.params.id });
   if (!doc) {
-    return res.jsonp({ error: 'No such upload' });
+    res.jsonp({ error: 'No such upload' });
+    return;
   }
 
-  if (doc.objectUrl) {
-    await api.delete(doc.objectUrl, {
-      headers: {
-        'x-app-did': env.appId,
-        'x-skip-signature': true,
-      },
-    });
+  const result = await Upload.remove({ _id: req.params.id });
+  if (result) {
+    fs.unlinkSync(path.join(env.uploadDir, doc.filename));
   }
 
-  await Upload.remove({ _id: req.params.id });
-
-  return res.jsonp(doc);
+  res.jsonp(doc);
 });
 
 // create folder

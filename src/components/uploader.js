@@ -24,6 +24,7 @@ import 'uppload/dist/themes/light.css';
 
 import { useUploadContext } from '../contexts/upload';
 import api from '../libs/api';
+import StorageAction from './storage-actions';
 
 const obj = new window.URL(window.location.origin);
 obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
@@ -86,6 +87,9 @@ export default function Uploader() {
         <button onClick={handleOpen} type="button" className="submit">
           Upload Image
         </button>
+      </div>
+      <div>
+        <StorageAction />
       </div>
     </Div>
   );
