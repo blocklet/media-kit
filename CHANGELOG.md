@@ -1,3 +1,7 @@
+## 0.7.1 (十月 27, 2022)
+
+- feat: use did storage as the storage engine 
+
 ## 0.7.0 (October 14, 2022)
 
 - fix: security for non-admin users
