@@ -31,9 +31,6 @@ function StorageAction() {
         Toast.error('Storage endpoint not found');
       }
 
-      // eslint-disable-next-line no-console
-      console.log({ endpoint });
-
       await api.put('/api/storage-endpoint', {
         endpoint,
       });
