@@ -33,6 +33,7 @@ const uppload = new Uppload({
   defaultService: 'local',
   maxWidth: +(window.blocklet.MAX_IMAGE_WIDTH || 1440),
   maxHeight: +(window.blocklet.MAX_IMAGE_HEIGHT || 900),
+  compressionFromMimes: [],
   uploader: xhrUploader({
     endpoint: obj.href,
     fileKeyName: 'image',
