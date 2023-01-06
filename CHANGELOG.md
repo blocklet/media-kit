@@ -1,3 +1,7 @@
+## 0.7.1 (January 06, 2023)
+
+- fix: upload original image
+
 ## 0.7.0 (October 14, 2022)
 
 - fix: security for non-admin users

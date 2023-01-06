@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.7.0
+version: 0.7.1
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -39,7 +39,6 @@ interfaces:
             - email
             - avatar
           allowSwitchProfile: true
-          webWalletUrl: https://web.abtwallet.io
           blockUnauthorized: false
 community: ''
 documentation: ''
@@ -91,6 +90,7 @@ environments:
 capabilities:
   clusterMode: false
   component: true
+  navigation: true
 screenshots: []
 navigation: []
 components: []
