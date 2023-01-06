@@ -90,7 +90,7 @@ environments:
 capabilities:
   clusterMode: false
   component: true
-  navigation: true
+  navigation: false
 screenshots: []
 navigation: []
 components: []
