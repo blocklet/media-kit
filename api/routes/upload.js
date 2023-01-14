@@ -17,11 +17,13 @@ const nanoid = customRandom(urlAlphabet, 24, random);
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
+const generateFilename = () => `${Date.now()}-${nanoid()}`;
+
 const upload = multer({
   storage: multer.diskStorage({
     destination: env.uploadDir,
     filename: (req, file, cb) => {
-      cb(null, `${Date.now()}-${nanoid()}.${mime.extension(file.mimetype)}`);
+      cb(null, `${generateFilename()}.${mime.extension(file.mimetype)}`);
     },
   }),
 });
@@ -38,6 +40,49 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
     updatedAt: new Date().toISOString(),
     createdBy: req.user.did,
     updatedBy: req.user.did,
+  });
+
+  res.json({ url: obj.href, ...doc });
+});
+
+router.post('/sdk/uploads', middleware.component.verifySig, async (req, res) => {
+  const { type, filename: originalFilename, data } = req.body;
+  if (!type || !originalFilename || !data) {
+    res.json({ error: 'missing required body `type` or `filename` or `data`' });
+    return;
+  }
+
+  const filename = `${generateFilename()}${path.extname(originalFilename).replace(/\.+$/, '')}`;
+  const filePath = path.join(env.uploadDir, filename);
+
+  if (type === 'base64') {
+    fs.writeFileSync(filePath, Buffer.from(data, 'base64'));
+  } else if (type === 'path') {
+    if (!fs.existsSync(data)) {
+      res.json({ error: 'upload file is not exists' });
+      return;
+    }
+    fs.cpSync(data, filePath);
+  } else {
+    res.json({ error: 'invalid upload type' });
+    return;
+  }
+
+  if (!fs.existsSync(filePath)) {
+    res.json({ error: 'invalid file' });
+    return;
+  }
+
+  const file = { size: fs.lstatSync(filePath).size, filename, originalFilename, mimetype: mime.lookup(filename) || '' };
+
+  const obj = new URL(env.appUrl);
+  obj.protocol = req.get('x-forwarded-proto') || req.protocol;
+  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', file.filename);
+
+  const doc = await Upload.insert({
+    ...pick(file, ['size', 'filename', 'mimetype', 'originalname']),
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   });
 
   res.json({ url: obj.href, ...doc });
