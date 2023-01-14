@@ -1,3 +1,7 @@
+## 0.7.2 (January 14, 2023)
+
+- feat: add a sdk api to upload file for `component.call`
+
 ## 0.7.1 (January 06, 2023)
 
 - fix: upload original image
