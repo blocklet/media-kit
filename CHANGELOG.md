@@ -1,3 +1,7 @@
+## 0.7.3 (February 21, 2023)
+
+- feat: support cache with blocklet cacheable
+
 ## 0.7.2 (January 14, 2023)
 
 - feat: add a sdk api to upload file for `component.call`

@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.7.2
+version: 0.7.3
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -14,7 +14,7 @@ author:
 repository:
   type: git
   url: git+https://github.com/blocklet/image-bin.git
-specVersion: 1.2.7
+specVersion: 1.2.8
 logo: logo.png
 files:
   - build
