@@ -27,6 +27,8 @@ interfaces:
     prefix: '*'
     port: BLOCKLET_PORT
     protocol: http
+    cacheable:
+      - /uploads
     services:
       - name: auth
         config:

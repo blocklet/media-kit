@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
+const serveStatic = require('serve-static');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const fallback = require('express-history-api-fallback');
@@ -41,9 +42,20 @@ if (isProduction) {
   app.use(compression());
 
   const staticDir = path.resolve(__dirname, '../', 'build');
-  app.use(express.static(staticDir, { index: 'index.html' }));
+  app.use(
+    express.static(staticDir, {
+      maxAge: '365d',
+      extensions: ['html', 'htm'],
+      index: ['index.html', 'index.htm'],
+      setHeaders: (res, file) => {
+        if (serveStatic.mime.lookup(file) === 'text/html') {
+          res.setHeader('Cache-Control', 'public, max-age=0');
+        }
+      },
+    })
+  );
   app.use(router);
-  app.use(fallback('index.html', { root: staticDir }));
+  app.use(fallback('index.html', { root: staticDir, maxAge: 0 }));
 
   app.use((req, res) => {
     res.status(404).send('404 NOT FOUND');

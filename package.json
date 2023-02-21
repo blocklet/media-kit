@@ -39,10 +39,10 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did-connect": "^2.4.24",
-    "@arcblock/ux": "^2.4.24",
-    "@blocklet/sdk": "^1.8.19",
-    "@blocklet/ui-react": "^2.4.24",
+    "@arcblock/did-connect": "^2.5.0",
+    "@arcblock/ux": "^2.5.0",
+    "@blocklet/sdk": "^1.8.65",
+    "@blocklet/ui-react": "^2.5.0",
     "@craco/craco": "^6.4.5",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
@@ -67,6 +67,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.0",
     "react-use": "^17.4.0",
+    "serve-static": "^1.15.0",
     "timeago.js": "^4.0.2",
     "uppload": "^3.2.1",
     "url-join": "^4.0.1",
