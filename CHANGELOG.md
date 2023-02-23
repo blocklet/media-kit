@@ -1,3 +1,7 @@
+## 0.7.4 (February 23, 2023)
+
+- chore: upload to production store
+
 ## 0.7.3 (February 21, 2023)
 
 - feat: support cache with blocklet cacheable
