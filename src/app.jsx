@@ -8,6 +8,7 @@ import theme from './libs/theme';
 import { SessionProvider } from './contexts/session';
 
 import Home from './pages/home';
+import EmbedRecent from './pages/embed/recent';
 
 const globalStyles = css`
   body {
@@ -44,8 +45,10 @@ export default function App() {
               <ToastProvider>
                 <div className="app">
                   <Routes>
-                    <Route exact path="/" element={<Home />} />
-                    <Route path="*" element={<Navigate to="/" />} />
+                    <Route exact path="/" element={<Navigate to="/app" />} />
+                    <Route exact path="/embed/recent" element={<EmbedRecent />} />
+                    <Route exact path="/app" element={<Home />} />
+                    <Route path="*" element={<Navigate to="/app" />} />
                   </Routes>
                 </div>
               </ToastProvider>

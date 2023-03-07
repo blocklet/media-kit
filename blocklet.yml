@@ -35,7 +35,11 @@ interfaces:
           whoCanAccess: invited
           blockUnauthenticated: true
           ignoreUrls:
+            - /
             - /uploads/**
+            - /embed/recent
+            - /api/embed
+            - /api/embed/recent
           profileFields:
             - fullName
             - email
