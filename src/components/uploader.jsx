@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import joinUrl from 'url-join';
 import {
@@ -55,17 +55,36 @@ uppload.use([new Preview(), new Rotate(), new Crop(), new Blur(), new Contrast()
 
 export default function Uploader() {
   const { prependUpload } = useUploadContext();
+  const activeService = useRef('local');
+  const uploading = useRef(false);
   const [url, setUrl] = useState('');
-  const handleOpen = () => {
-    uppload.on('upload', (doc) => {
-      setUrl(doc);
-      api
-        .get(`/api/uploads/${doc.split('/').pop()}`)
-        .then((res) => prependUpload(res.data))
-        .catch(console.error);
+  useEffect(() => {
+    uppload.on('close', () => {
+      if (uploading.current) {
+        uploading.current = false;
+      } else {
+        activeService.current = uppload.activeService;
+      }
     });
+    uppload.on('before-upload', () => {
+      uploading.current = true;
+      activeService.current = uppload.activeService;
+    });
+    uppload.on('upload', async (doc) => {
+      setUrl(doc);
+      try {
+        const { data } = await api.get(`/api/uploads/${doc.split('/').pop()}`);
+        prependUpload(data);
+      } catch (e) {
+        console.error(e);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const handleOpen = useCallback(() => {
     uppload.open();
-  };
+    uppload.navigate(activeService.current);
+  }, []);
 
   return (
     <Div>

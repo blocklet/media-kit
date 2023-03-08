@@ -1,3 +1,8 @@
+## 0.7.5 (March 07, 2023)
+
+- feat: add "Recent Images" embed
+- fix: correct reopen activeService
+
 ## 0.7.4 (February 23, 2023)
 
 - chore: upload to production store

@@ -28,6 +28,7 @@ app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 app.use('/uploads', express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }));
 
 const router = express.Router();
+router.use('/api/embed', require('./routes/embed'));
 router.use('/api', require('./routes/upload'));
 
 const isDevelopment = process.env.NODE_ENV === 'development';

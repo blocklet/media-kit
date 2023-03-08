@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.7.4
+version: 0.7.5
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -35,7 +35,11 @@ interfaces:
           whoCanAccess: invited
           blockUnauthenticated: true
           ignoreUrls:
+            - /
             - /uploads/**
+            - /embed/recent
+            - /api/embed
+            - /api/embed/recent
           profileFields:
             - fullName
             - email
