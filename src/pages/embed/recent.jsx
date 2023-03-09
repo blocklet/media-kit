@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { css, Global } from '@emotion/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { useSize } from 'ahooks';
 import { Scrollbar, Navigation, Mousewheel, FreeMode } from 'swiper';
 import { useMessage } from '@blocklet/sdk/lib/embed/message';
-import { useSize } from 'ahooks';
+import Empty from '@arcblock/ux/lib/Empty';
 
 // Import Swiper styles
 // eslint-disable-next-line import/no-unresolved
@@ -44,29 +45,32 @@ function EmbedRecent() {
     <>
       <Global styles={globalStyles} />
       <div ref={rootRef}>
-        <Swiper
-          freeMode
-          navigation
-          grabCursor
-          mousewheel
-          centerInsufficientSlides
-          spaceBetween={20}
-          slidesPerView="auto"
-          scrollbar={{ draggable: true }}
-          modules={[FreeMode, Mousewheel, Scrollbar, Navigation]}
-          className="mySwiper">
-          {imageList.map((item) => {
-            return (
-              <SwiperSlide style={{ width: '200px', height: '200px' }}>
-                <img
-                  style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                  src={createImageUrl(item.filename)}
-                  alt={item.originalname}
-                />
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+        {imageList.length === 0 && <Empty>No uploads found</Empty>}
+        {imageList.length > 0 && (
+          <Swiper
+            freeMode
+            navigation
+            grabCursor
+            mousewheel
+            centerInsufficientSlides
+            spaceBetween={20}
+            slidesPerView="auto"
+            scrollbar={{ draggable: true }}
+            modules={[FreeMode, Mousewheel, Scrollbar, Navigation]}
+            className="mySwiper">
+            {imageList.map((item) => {
+              return (
+                <SwiperSlide style={{ width: '200px', height: '200px' }}>
+                  <img
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    src={createImageUrl(item.filename)}
+                    alt={item.originalname}
+                  />
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+        )}
       </div>
     </>
   );

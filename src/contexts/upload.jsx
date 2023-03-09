@@ -1,11 +1,12 @@
 /* eslint-disable import/no-cycle */
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
 import Center from '@arcblock/ux/lib/Center';
 import Spinner from '@mui/material/CircularProgress';
 import useAsync from 'react-use/lib/useAsync';
 import EventEmitter from 'wolfy87-eventemitter';
+import { useReactive } from 'ahooks';
 
 import api from '../libs/api';
 import { useSessionContext } from './session';
@@ -16,58 +17,60 @@ const { Provider, Consumer } = UploadContext;
 const events = new EventEmitter();
 
 function UploadProvider({ children, pageSize = 20, type = '' }) {
-  const [folderId, setFolderId] = useState('');
-  const [uploads, setUploads] = useState([]);
-  const [folders, setFolders] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
+  const pageState = useReactive({
+    folderId: '',
+    uploads: [],
+    folders: [],
+    page: 1,
+    loading: false,
+    hasMore: false,
+  });
   const { session } = useSessionContext();
 
-  const loadInitialPosts = async (_fid = folderId) => {
+  const loadInitialPosts = async (_fid = pageState.folderId) => {
     const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}&folderId=${_fid}`);
-    setUploads(data.uploads);
-    setFolders(data.folders);
-    setHasMore(data.pageCount > 1);
+    pageState.uploads = data.uploads;
+    pageState.folders = data.folders;
+    pageState.hasMore = data.pageCount > 1;
     return data;
   };
 
   const loadMoreUploads = () => {
-    setLoading(true);
+    pageState.loading = true;
     api
-      .get(`/api/uploads?page=${page + 1}&pageSize=${pageSize}&type=${type}&folderId=${folderId}`)
+      .get(`/api/uploads?page=${pageState.page + 1}&pageSize=${pageSize}&type=${type}&folderId=${pageState.folderId}`)
       .then(({ data }) => {
-        setPage(page + 1);
-        setHasMore(page + 1 < data.pageCount);
-        setUploads(uniqBy([...uploads, ...data.uploads], '_id'));
-        setLoading(false);
+        pageState.page += 1;
+        pageState.hasMore = state.page + 1 < data.pageCount;
+        pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
+        pageState.loading = false;
       })
       .catch(console.error);
   };
 
   const prependUpload = (upload) => {
     if (upload) {
-      setUploads(uniqBy([upload, ...uploads], '_id'));
+      pageState.uploads = uniqBy([upload, ...pageState.uploads], '_id');
       events.emit('upload.added', upload);
     }
   };
 
   const deleteUpload = (postId) => {
-    const index = uploads.findIndex((p) => p._id === postId);
+    const index = pageState.uploads.findIndex((p) => p._id === postId);
     if (index > -1) {
-      setUploads(uniqBy([...uploads.slice(0, index), ...uploads.slice(index + 1)], '_id'));
+      pageState.uploads = uniqBy([...pageState.uploads.slice(0, index), ...pageState.uploads.slice(index + 1)], '_id');
       events.emit('upload.removed', postId);
     }
   };
 
   const ensureFolder = async (name) => {
-    const exist = folders.some((x) => x.name === name);
+    const exist = pageState.folders.some((x) => x.name === name);
     if (exist) {
       return exist;
     }
 
     const { data: folder } = await api.post('/api/folders', { name });
-    setFolders(uniqBy([folder, ...folders], '_id'));
+    pageState.folders = uniqBy([folder, ...pageState.folders], '_id');
 
     return folder;
   };
@@ -86,18 +89,14 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   return (
     <Provider
       value={{
-        loading,
-        uploads,
-        folders,
+        ...pageState,
         events,
         prependUpload,
         deleteUpload,
         ensureFolder,
         loadMoreUploads,
-        hasMore,
-        folderId,
         filterByFolder: (x) => {
-          setFolderId(x);
+          pageState.folderId = x;
           loadInitialPosts(x);
         },
       }}>

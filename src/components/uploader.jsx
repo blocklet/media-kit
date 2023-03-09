@@ -83,7 +83,7 @@ export default function Uploader() {
   }, []);
   const handleOpen = useCallback(() => {
     uppload.open();
-    uppload.navigate(activeService.current);
+    uppload.navigate(activeService.current || 'local');
   }, []);
 
   return (
