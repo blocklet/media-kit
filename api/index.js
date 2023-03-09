@@ -31,18 +31,13 @@ const router = express.Router();
 router.use('/api/embed', require('./routes/embed'));
 router.use('/api', require('./routes/upload'));
 
-const isDevelopment = process.env.NODE_ENV === 'development';
 const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';
-
-if (isDevelopment) {
-  process.env.BLOCKLET_PORT = 3030;
-}
+app.use(cors());
+app.use(router);
 
 if (isProduction) {
-  app.use(cors());
   app.use(compression());
-
-  const staticDir = path.resolve(__dirname, '../', 'build');
+  const staticDir = path.resolve(process.env.BLOCKLET_APP_DIR, 'dist');
   app.use(
     express.static(staticDir, {
       maxAge: '365d',
@@ -55,7 +50,6 @@ if (isProduction) {
       },
     })
   );
-  app.use(router);
   app.use(fallback('index.html', { root: staticDir, maxAge: 0 }));
 
   app.use((req, res) => {
@@ -65,8 +59,6 @@ if (isProduction) {
     logger.error(err.stack);
     res.status(500).send('Something broke!');
   });
-} else {
-  app.use(router);
 }
 
 const port = parseInt(process.env.BLOCKLET_PORT, 10) || 3030;
@@ -75,3 +67,5 @@ app.listen(port, (err) => {
   if (err) throw err;
   logger.info(`> ${name} v${version} ready on ${port}`);
 });
+
+module.exports = { app };
