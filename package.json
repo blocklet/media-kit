@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "scripts": {
     "dev": "bn dev",
     "dev:child": "bn dev --app-did=zNKZdduKKNnjLW8QErVeMxsj6UqLGpyfPvts --mount-point=/image",

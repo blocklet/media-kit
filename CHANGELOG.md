@@ -1,3 +1,7 @@
+## 0.7.6 (March 09, 2023)
+
+- fix: after upload second pic, history should not show only one pic
+
 ## 0.7.5 (March 07, 2023)
 
 - feat: add "Recent Images" embed
