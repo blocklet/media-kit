@@ -36,10 +36,10 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did-connect": "^2.5.0",
-    "@arcblock/ux": "^2.5.0",
-    "@blocklet/sdk": "^1.8.68-beta-500af7e5",
-    "@blocklet/ui-react": "^2.5.0",
+    "@arcblock/did-connect": "^2.5.18",
+    "@arcblock/ux": "^2.5.18",
+    "@blocklet/sdk": "^1.16.1",
+    "@blocklet/ui-react": "^2.5.18",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.4",
@@ -70,7 +70,7 @@
     "uppload": "^3.2.1",
     "url-join": "^4.0.1",
     "vite": "^4.1.4",
-    "vite-plugin-blocklet": "^0.5.18",
+    "vite-plugin-blocklet": "^0.5.20",
     "wolfy87-eventemitter": "^5.2.9",
     "xbytes": "^1.8.0"
   },
