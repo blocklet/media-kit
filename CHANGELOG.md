@@ -1,3 +1,7 @@
+## 0.8.0 (April 02, 2023)
+
+- chore: bump deps to latest
+
 ## 0.7.6 (March 09, 2023)
 
 - fix: after upload second pic, history should not show only one pic
