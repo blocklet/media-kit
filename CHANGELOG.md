@@ -1,3 +1,7 @@
+## 0.8.2 (April 11, 2023)
+
+- chore: support more image mime types
+
 ## 0.8.1 (April 10, 2023)
 
 - chore: update readme and screenshot
