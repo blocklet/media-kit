@@ -97,6 +97,7 @@ capabilities:
   clusterMode: false
   component: true
   navigation: false
-screenshots: []
+screenshots:
+  - upload.png
 navigation: []
 components: []
