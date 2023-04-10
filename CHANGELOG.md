@@ -1,3 +1,7 @@
+## 0.8.1 (April 10, 2023)
+
+- chore: update readme and screenshot
+
 ## 0.8.0 (April 02, 2023)
 
 - chore: bump deps to latest
