@@ -42,7 +42,7 @@ const uppload = new Uppload({
 
 // services
 uppload.use([
-  new Local({ mimeTypes: ['image/png', 'image/jpeg', 'image/gif'] }),
+  new Local({ mimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/bmp', 'image/webp'] }),
   new Camera(),
   new Screenshot(),
   new URL(),
