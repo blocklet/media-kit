@@ -1,3 +1,7 @@
+## 0.8.3 (April 14, 2023)
+
+- chore: update deps
+
 ## 0.8.2 (April 11, 2023)
 
 - chore: support more image mime types
