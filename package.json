@@ -38,10 +38,10 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did-connect": "^2.5.25",
-    "@arcblock/ux": "^2.5.25",
+    "@arcblock/did-connect": "^2.5.33",
+    "@arcblock/ux": "^2.5.33",
     "@blocklet/sdk": "^1.16.5",
-    "@blocklet/ui-react": "^2.5.25",
+    "@blocklet/ui-react": "^2.5.33",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.4",
