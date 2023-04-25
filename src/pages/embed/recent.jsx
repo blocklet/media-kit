@@ -3,8 +3,8 @@ import { css, Global } from '@emotion/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useSize } from 'ahooks';
 import { Scrollbar, Navigation, Mousewheel, FreeMode } from 'swiper';
-import { useMessage } from '@blocklet/sdk/lib/embed/message';
 import Empty from '@arcblock/ux/lib/Empty';
+import { useMessage } from '@blocklet/embed/lib/message';
 
 // Import Swiper styles
 // eslint-disable-next-line import/no-unresolved
@@ -35,10 +35,13 @@ function EmbedRecent() {
   }, []);
   useEffect(() => {
     getData();
+    return () => {
+      message?.close();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    message.send('resize', size);
+    message?.send('resize', size);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [size]);
   return (

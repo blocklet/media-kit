@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.8.4",
+  "version": "0.8.5",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -38,10 +38,11 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did-connect": "^2.5.33",
-    "@arcblock/ux": "^2.5.33",
+    "@arcblock/did-connect": "^2.5.34",
+    "@arcblock/ux": "^2.5.34",
+    "@blocklet/embed": "^0.0.3",
     "@blocklet/sdk": "^1.16.5",
-    "@blocklet/ui-react": "^2.5.33",
+    "@blocklet/ui-react": "^2.5.34",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.4",
@@ -72,7 +73,7 @@
     "uppload": "^3.2.1",
     "url-join": "^4.0.1",
     "vite": "^4.1.4",
-    "vite-plugin-blocklet": "^0.6.1",
+    "vite-plugin-blocklet": "^0.6.2",
     "wolfy87-eventemitter": "^5.2.9",
     "xbytes": "^1.8.0"
   },
@@ -83,7 +84,7 @@
     "lint-staged": "^12.5.0",
     "nodemon": "^2.0.19",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.7.1"
+    "prettier": "^2.8.8"
   },
   "resolutions": {
     "caniuse-lite": "1.0.30001373"
