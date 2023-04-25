@@ -35,6 +35,9 @@ function EmbedRecent() {
   }, []);
   useEffect(() => {
     getData();
+    return () => {
+      message?.close();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
