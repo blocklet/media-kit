@@ -1,3 +1,7 @@
+## 0.8.6 (April 26, 2023)
+
+chore: update @blocklet/embed
+
 ## 0.8.5 (April 25, 2023)
 
 - feat: add @blocklet/embed
