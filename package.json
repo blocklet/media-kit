@@ -40,7 +40,7 @@
   "dependencies": {
     "@arcblock/did-connect": "^2.5.34",
     "@arcblock/ux": "^2.5.34",
-    "@blocklet/embed": "^0.0.3",
+    "@blocklet/embed": "^0.0.4",
     "@blocklet/sdk": "^1.16.5",
     "@blocklet/ui-react": "^2.5.34",
     "@emotion/react": "^11.10.4",
