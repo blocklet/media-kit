@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.8.6",
+  "version": "0.8.7",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -38,11 +38,11 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did-connect": "^2.5.34",
-    "@arcblock/ux": "^2.5.34",
+    "@arcblock/did-connect": "^2.5.37",
+    "@arcblock/ux": "^2.5.37",
     "@blocklet/embed": "^0.0.4",
     "@blocklet/sdk": "^1.16.5",
-    "@blocklet/ui-react": "^2.5.34",
+    "@blocklet/ui-react": "^2.5.37",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.4",

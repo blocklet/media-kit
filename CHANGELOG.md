@@ -1,6 +1,10 @@
+## 0.8.7 (May 05, 2023)
+
+- chore: update deps
+
 ## 0.8.6 (April 26, 2023)
 
-chore: update @blocklet/embed
+- chore: update @blocklet/embed
 
 ## 0.8.5 (April 25, 2023)
 
