@@ -9,7 +9,7 @@
     "clean": "rm -rf .blocklet",
     "bundle": "npm run bundle:client && npm run bundle:api",
     "bundle:client": "npm run build",
-    "bundle:api": "npm run clean && blocklet bundle --zip --create-release",
+    "bundle:api": "npm run clean && bn bundle --zip --create-release",
     "deploy": "npm run bundle && blocklet deploy .blocklet/bundle",
     "upload": "npm run bundle && blocklet upload .blocklet/release/blocklet.json",
     "update:deps": "npx taze -n '/arcblock|ocap|abtnode|blocklet|did-connect|did-comment|nedb/' -w && yarn && npm run dedupe",
@@ -38,11 +38,11 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did-connect": "^2.5.37",
-    "@arcblock/ux": "^2.5.37",
+    "@arcblock/did-connect": "^2.5.42",
+    "@arcblock/ux": "^2.5.42",
     "@blocklet/embed": "^0.0.4",
-    "@blocklet/sdk": "^1.16.5",
-    "@blocklet/ui-react": "^2.5.37",
+    "@blocklet/sdk": "^1.16.9",
+    "@blocklet/ui-react": "^2.5.42",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
     "@mui/material": "^5.10.4",
@@ -73,7 +73,7 @@
     "uppload": "^3.2.1",
     "url-join": "^4.0.1",
     "vite": "^4.1.4",
-    "vite-plugin-blocklet": "^0.6.2",
+    "vite-plugin-blocklet": "^0.6.3",
     "wolfy87-eventemitter": "^5.2.9",
     "xbytes": "^1.8.0"
   },
