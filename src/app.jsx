@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react';
 import get from 'lodash/get';
 import { ThemeProvider as MuiThemeProvider, StyledEngineProvider, CssBaseline } from '@mui/material';
 import { ThemeProvider as EmotionThemeProvider, css, Global } from '@emotion/react';
@@ -7,8 +8,8 @@ import { ToastProvider } from '@arcblock/ux/lib/Toast';
 import theme from './libs/theme';
 import { SessionProvider } from './contexts/session';
 
-import Home from './pages/home';
-import EmbedRecent from './pages/embed/recent';
+const Home = lazy(() => import('./pages/home'));
+const EmbedRecent = lazy(() => import('./pages/embed/recent'));
 
 const globalStyles = css`
   body {
@@ -35,27 +36,29 @@ export default function App() {
   const basename = window?.blocklet?.prefix || '/';
 
   return (
-    <StyledEngineProvider injectFirst>
-      <MuiThemeProvider theme={theme}>
-        <EmotionThemeProvider theme={theme}>
-          <Router basename={basename}>
-            <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
-              <CssBaseline />
-              <Global styles={globalStyles} />
-              <ToastProvider>
-                <div className="app">
-                  <Routes>
-                    <Route exact path="/" element={<Navigate to="/app" />} />
-                    <Route exact path="/embed/recent" element={<EmbedRecent />} />
-                    <Route exact path="/app" element={<Home />} />
-                    <Route path="*" element={<Navigate to="/app" />} />
-                  </Routes>
-                </div>
-              </ToastProvider>
-            </SessionProvider>
-          </Router>
-        </EmotionThemeProvider>
-      </MuiThemeProvider>
-    </StyledEngineProvider>
+    <Suspense fallback={null}>
+      <StyledEngineProvider injectFirst>
+        <MuiThemeProvider theme={theme}>
+          <EmotionThemeProvider theme={theme}>
+            <Router basename={basename}>
+              <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
+                <CssBaseline />
+                <Global styles={globalStyles} />
+                <ToastProvider>
+                  <div className="app">
+                    <Routes>
+                      <Route exact path="/" element={<Navigate to="/app" />} />
+                      <Route exact path="/embed/recent" element={<EmbedRecent />} />
+                      <Route exact path="/app" element={<Home />} />
+                      <Route path="*" element={<Navigate to="/app" />} />
+                    </Routes>
+                  </div>
+                </ToastProvider>
+              </SessionProvider>
+            </Router>
+          </EmotionThemeProvider>
+        </MuiThemeProvider>
+      </StyledEngineProvider>
+    </Suspense>
   );
 }
