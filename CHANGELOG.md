@@ -1,3 +1,8 @@
+## 0.8.9 (May 24, 2023)
+
+- chore: update deps
+- feat: performance optimization
+
 ## 0.8.8 (May 24, 2023)
 
 
