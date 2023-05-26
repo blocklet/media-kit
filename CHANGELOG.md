@@ -1,10 +1,13 @@
+## 0.8.10 (五月 26, 2023)
+
+support filer images by tags
+
 ## 0.8.9 (May 24, 2023)
 
 - chore: update deps
 - feat: performance optimization
 
 ## 0.8.8 (May 24, 2023)
-
 
 ## 0.8.7 (May 05, 2023)
 
@@ -19,7 +22,6 @@
 - feat: add @blocklet/embed
 
 ## 0.8.4 (April 24, 2023)
-
 
 ## 0.8.3 (April 14, 2023)
 
