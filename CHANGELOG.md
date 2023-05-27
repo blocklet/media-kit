@@ -1,6 +1,6 @@
 ## 0.8.10 (五月 26, 2023)
 
-support filer images by tags
+- chore: support filer images by tags
 
 ## 0.8.9 (May 24, 2023)
 
