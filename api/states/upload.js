@@ -14,6 +14,7 @@ const Database = require('@blocklet/sdk/lib/database');
  * - originalname: string
  * - createdAt: string
  * - updatedAt: string
+ * - tags: string[]
  */
 
 class Upload extends Database {

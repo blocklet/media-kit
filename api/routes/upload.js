@@ -36,6 +36,7 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
     remark: req.body.remark || '',
+    tags: req.body.tags || [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     createdBy: req.user.did,
@@ -81,6 +82,7 @@ router.post('/sdk/uploads', middleware.component.verifySig, async (req, res) => 
 
   const doc = await Upload.insert({
     ...pick(file, ['size', 'filename', 'mimetype', 'originalname']),
+    tags: req.body.tags || [],
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   });
@@ -105,6 +107,11 @@ router.get('/uploads', user, auth, async (req, res) => {
 
   if (['guest', 'member'].includes(req.user.role)) {
     condition.createdBy = req.user.did;
+  }
+
+  if (req.query.tags && req.query.tags.length > 0) {
+    const tags = Array.isArray(req.query.tags) ? req.query.tags : [req.query.tags];
+    condition.tags = { $in: tags };
   }
 
   const uploads = await Upload.paginate({ condition, sort: { createdAt: -1 }, page, size: pageSize });
