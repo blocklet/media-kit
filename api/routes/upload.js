@@ -36,7 +36,7 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
     remark: req.body.remark || '',
-    tags: (req.query.tags || '')
+    tags: (req.body.tags || '')
       .split(',')
       .map((x) => x.trim())
       .filter(Boolean),
@@ -85,7 +85,7 @@ router.post('/sdk/uploads', middleware.component.verifySig, async (req, res) => 
 
   const doc = await Upload.insert({
     ...pick(file, ['size', 'filename', 'mimetype', 'originalname']),
-    tags: (req.query.tags || '')
+    tags: (req.body.tags || '')
       .split(',')
       .map((x) => x.trim())
       .filter(Boolean),
