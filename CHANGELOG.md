@@ -1,4 +1,4 @@
-## 0.8.10 (五月 26, 2023)
+## 0.8.11 (五月 27, 2023)
 
 - chore: support filer images by tags
 

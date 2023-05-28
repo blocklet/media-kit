@@ -36,7 +36,10 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
   const doc = await Upload.insert({
     ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
     remark: req.body.remark || '',
-    tags: req.body.tags || [],
+    tags: (req.body.tags || '')
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     createdBy: req.user.did,
@@ -82,7 +85,10 @@ router.post('/sdk/uploads', middleware.component.verifySig, async (req, res) => 
 
   const doc = await Upload.insert({
     ...pick(file, ['size', 'filename', 'mimetype', 'originalname']),
-    tags: req.body.tags || [],
+    tags: (req.body.tags || '')
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean),
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   });
@@ -109,8 +115,11 @@ router.get('/uploads', user, auth, async (req, res) => {
     condition.createdBy = req.user.did;
   }
 
-  if (req.query.tags && req.query.tags.length > 0) {
-    const tags = Array.isArray(req.query.tags) ? req.query.tags : [req.query.tags];
+  if (req.query.tags) {
+    const tags = req.query.tags
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean);
     condition.tags = { $in: tags };
   }
 
