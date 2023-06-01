@@ -1,3 +1,7 @@
+## 0.8.12 (June 01, 2023)
+
+- chore: update deps
+
 ## 0.8.11 (五月 27, 2023)
 
 - chore: support filer images by tags
