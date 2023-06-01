@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.8.11",
+  "version": "0.8.12",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@blocklet/embed": "^0.0.4",
-    "@blocklet/sdk": "^1.16.9",
+    "@blocklet/sdk": "^1.16.10",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -55,10 +55,10 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.5.43",
+    "@arcblock/did-connect": "^2.5.47",
     "@arcblock/eslint-config": "^0.2.3",
-    "@arcblock/ux": "^2.5.43",
-    "@blocklet/ui-react": "^2.5.43",
+    "@arcblock/ux": "^2.5.47",
+    "@blocklet/ui-react": "^2.5.47",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.2",
@@ -83,7 +83,7 @@
     "timeago.js": "^4.0.2",
     "uppload": "^3.2.1",
     "vite": "^4.3.8",
-    "vite-plugin-blocklet": "^0.6.3",
+    "vite-plugin-blocklet": "^0.6.5",
     "wolfy87-eventemitter": "^5.2.9"
   },
   "resolutions": {
