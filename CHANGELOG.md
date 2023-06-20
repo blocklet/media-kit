@@ -1,5 +1,10 @@
+## 0.8.15 (June 20, 2023)
+
+- chore: update deps
+
 ## 0.8.14 (June 18, 2023)
 
+- chore: update deps
 
 ## 0.8.13 (June 13, 2023)
 
