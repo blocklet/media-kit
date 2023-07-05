@@ -140,7 +140,7 @@ export default function ImageActions({ data }) {
           Are you sure you want to delete image <strong>{data.originalname}</strong>, this operation is not recoverable.
         </Typography>
         <ImagePreview>
-          <img src={imageUrl} alt={data.originalname} />
+          <object data={imageUrl} alt={data.originalname} />
         </ImagePreview>
       </Confirm>
       <Confirm
@@ -211,7 +211,7 @@ const ImagePreview = styled.div`
   justify-content: center;
   align-items: center;
 
-  img {
+  object {
     width: auto;
     height: auto;
     max-height: 100%;

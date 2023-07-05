@@ -64,9 +64,9 @@ function EmbedRecent() {
             {imageList.map((item) => {
               return (
                 <SwiperSlide style={{ width: '200px', height: '200px' }}>
-                  <img
+                  <object
                     style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                    src={createImageUrl(item.filename)}
+                    data={createImageUrl(item.filename)}
                     alt={item.originalname}
                   />
                 </SwiperSlide>

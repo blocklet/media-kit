@@ -26,7 +26,7 @@ function Gallery({ uploads }) {
             <div className="doc-wrapper">
               <a href={imageUrl} target="_blank" title={x.originalname}>
                 <div className="img-wrapper">
-                  <img src={imageUrl} alt={x.originalname} />
+                  <object data={imageUrl} alt={x.originalname} />
                 </div>
               </a>
               <div className="img-meta">
@@ -136,7 +136,7 @@ const Div = styled.div`
       justify-content: center;
       align-items: center;
 
-      img {
+      object {
         width: auto;
         height: auto;
         max-height: 100%;

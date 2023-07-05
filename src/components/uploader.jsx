@@ -91,7 +91,7 @@ export default function Uploader() {
       <div className="splash-instructions">
         {!!url && (
           <div className="preview-image">
-            <img alt="preview" src={url} />
+            <object alt="preview" data={url} />
           </div>
         )}
         {!url && (
@@ -152,7 +152,7 @@ const Div = styled.div`
       justify-content: center;
       align-items: center;
 
-      img {
+      object {
         width: auto;
         height: auto;
         max-width: 320px;
