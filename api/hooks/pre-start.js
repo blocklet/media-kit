@@ -7,15 +7,15 @@ const logger = require('../libs/logger');
 const { name } = require('../../package.json');
 const { maxUploadSize } = require('../libs/env');
 
-async function verifyMaxUploadSize() {
+function verifyMaxUploadSize() {
   if (!xbytes.isBytes(maxUploadSize)) {
     throw new Error(`MAX_UPLOAD_SIZE ${maxUploadSize} is not a valid byte string, examples(1MB, 200kb)`);
   }
 }
 
-(async () => {
+(() => {
   try {
-    await verifyMaxUploadSize();
+    verifyMaxUploadSize();
     process.exit(0);
   } catch (err) {
     logger.error(`${name} pre-start error`, err.message);

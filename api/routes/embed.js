@@ -4,7 +4,7 @@ const Upload = require('../states/upload');
 
 const router = express.Router();
 
-router.get('', async (req, res) => {
+router.get('', (req, res) => {
   const embedData = generateBlockletEmbed();
   embedData.embed.push({
     title: 'Recent Images',

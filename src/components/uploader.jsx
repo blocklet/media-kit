@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import joinUrl from 'url-join';

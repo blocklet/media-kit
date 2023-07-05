@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { css, Global } from '@emotion/react';
 import { Swiper, SwiperSlide } from 'swiper/react';
