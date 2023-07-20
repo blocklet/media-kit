@@ -38,15 +38,14 @@
     ]
   },
   "dependencies": {
-    "@blocklet/embed": "^0.1.4",
-    "@blocklet/sdk": "^1.16.13",
+    "@blocklet/embed": "^0.1.5",
+    "@blocklet/sdk": "1.16.14-beta-c2843ec5",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv-flow": "^3.2.0",
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
-    "express-history-api-fallback": "^2.2.1",
     "mime-types": "^2.1.35",
     "multer": "^1.4.4",
     "nanoid": "^3.3.6",
@@ -55,10 +54,10 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.5.58",
+    "@arcblock/did-connect": "^2.6.2",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.5.58",
-    "@blocklet/ui-react": "^2.5.58",
+    "@arcblock/ux": "^2.6.2",
+    "@blocklet/ui-react": "^2.6.2",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.2",

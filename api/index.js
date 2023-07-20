@@ -8,7 +8,7 @@ const express = require('express');
 const serveStatic = require('serve-static');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
-const fallback = require('express-history-api-fallback');
+const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
 
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
@@ -38,18 +38,7 @@ app.use(router);
 if (isProduction) {
   app.use(compression());
   const staticDir = path.resolve(process.env.BLOCKLET_APP_DIR, 'dist');
-  app.use(
-    express.static(staticDir, {
-      maxAge: '365d',
-      extensions: ['html', 'htm'],
-      index: ['index.html', 'index.htm'],
-      setHeaders: (res, file) => {
-        if (serveStatic.mime.lookup(file) === 'text/html') {
-          res.setHeader('Cache-Control', 'public, max-age=0');
-        }
-      },
-    })
-  );
+  app.use(express.static(staticDir, { maxAge: '365d', index: false }));
   app.use(fallback('index.html', { root: staticDir, maxAge: 0 }));
 
   app.use((req, res) => {

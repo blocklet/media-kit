@@ -143,6 +143,7 @@ const Div = styled.div`
         max-height: 100%;
         max-width: 100%;
         display: block;
+        pointer-events: none;
       }
     }
 
