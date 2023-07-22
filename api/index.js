@@ -29,6 +29,7 @@ app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 // eslint-disable-next-line consistent-return
 app.use('/uploads/:filename.webp', (req, res, next) => {
   const filePath = `${req.params.filename}.webp`;
+  const sourcePath = path.join(env.uploadDir, req.params.filename);
 
   // requesting the source file
   if (filePath.endsWith('.webp') === false) {
@@ -41,10 +42,16 @@ app.use('/uploads/:filename.webp', (req, res, next) => {
     return next();
   }
 
-  // source already webp?
-  const sourcePath = path.join(env.uploadDir, filePath.replace('.webp', ''));
-  if (sourcePath.endsWith('.webp') && fs.existsSync(sourcePath)) {
-    return res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
+  if (fs.existsSync(sourcePath)) {
+    // source already webp?
+    if (sourcePath.endsWith('.webp')) {
+      return res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
+    }
+
+    // cannot convert to webp
+    if (['.png', '.jpg', '.jpeg'].some((ext) => sourcePath.endsWith(ext)) === false) {
+      return res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
+    }
   }
 
   // do the convert
