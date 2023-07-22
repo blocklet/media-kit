@@ -120,14 +120,14 @@
     semver "^7.3.8"
     tweetnacl-sealedbox-js "^1.2.0"
 
-"@arcblock/did-connect@^2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@arcblock/did-connect/-/did-connect-2.6.2.tgz#f7aff9bb47841f8c09df955c94f9589ab6f754cb"
-  integrity sha512-hatJi9zy/JFI2qq16HXl2UddavJzcgF4AnaSvdfZNSXU8n4Hybj+46CLV8oYWHRPBKsjNYC/JG5xHOV1ZpAlGQ==
+"@arcblock/did-connect@^2.6.4":
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/@arcblock/did-connect/-/did-connect-2.6.4.tgz#e4dede87faf74efedec523655d3f493c22208bb8"
+  integrity sha512-KyxEQJcov0rQxKbPXZWyWlJ9zFYGtFeBf+1woctkoQaZdPvxlOlpzZcrgGgz5Bj97UX3y9M/lKWBc78m74MtOg==
   dependencies:
-    "@arcblock/icons" "^2.6.2"
-    "@arcblock/react-hooks" "^2.6.2"
-    "@arcblock/ux" "^2.6.2"
+    "@arcblock/icons" "^2.6.4"
+    "@arcblock/react-hooks" "^2.6.4"
+    "@arcblock/ux" "^2.6.4"
     "@arcblock/ws" "^1.18.85"
     "@auth0/auth0-react" "^2.0.1"
     "@emotion/react" "^11.10.4"
@@ -222,10 +222,10 @@
     amp-message "~0.1.2"
     axon "^2.0.3"
 
-"@arcblock/icons@^2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@arcblock/icons/-/icons-2.6.2.tgz#fd09f57ac5dd23a3c5e501bfee085d17ccb83483"
-  integrity sha512-+dM6Mcq1DY4sXZbIXEY58LhrOi4X7337WBMSOJgdOQCoW/gZyAtjCd5F46iWzsWZVqBv8mevg+3oYCVUZrITig==
+"@arcblock/icons@^2.6.4":
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/@arcblock/icons/-/icons-2.6.4.tgz#712b5c4a744fba7290bde7e8ea4933504f632ee4"
+  integrity sha512-Z1GLq0+qFWVHf3x2idrdbNhhlxdpOhA4x5BwxNcj0783xLaHcGuWtsXpdnkUILyh1maDhp0YRBa5D5eUmEEb5Q==
 
 "@arcblock/jwt@1.18.87", "@arcblock/jwt@^1.18.87":
   version "1.18.87"
@@ -239,10 +239,10 @@
     json-stable-stringify "^1.0.1"
     semver "^7.3.8"
 
-"@arcblock/react-hooks@^2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@arcblock/react-hooks/-/react-hooks-2.6.2.tgz#04a0f79f28e146d40b41c6564afb4c3892bac0f8"
-  integrity sha512-6g0ktMGNZguplUlY3Ll3qhxB4Od+o1e6uUl9BmnnXZuEuUntsAcc2PnhDxCgzCr66UATrZyYW80e9ELPGzhm7A==
+"@arcblock/react-hooks@^2.6.4":
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/@arcblock/react-hooks/-/react-hooks-2.6.4.tgz#08ebc8f738cdf135b75f494a92630b483e25a12e"
+  integrity sha512-9XmTA6KDA/tbacotuX0DfGGhiAu6K2cK8rpuYQlWdKkscALIgelTgCAIEwYz3Dt2raXuCyYrRZGIsM4GeR2dIw==
   dependencies:
     core-js "^3.25.5"
     event-target-shim "^5.0.1"
@@ -260,14 +260,14 @@
     lodash.isnull "^3.0.0"
     lodash.set "^4.3.2"
 
-"@arcblock/ux@^2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@arcblock/ux/-/ux-2.6.2.tgz#e4ac43d3e75c21fe53bb689c1d32e9f7031db726"
-  integrity sha512-pe3zK2zEHYFokWxJTL9YwBI9J2wqwSXO4BuoxaVdHCzxmFpxFrEzLo6r3IaJJjlzOuIZ87ChPpH8VLuhdjV5zA==
+"@arcblock/ux@^2.6.4":
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/@arcblock/ux/-/ux-2.6.4.tgz#6a6623e1562b8ae6cb655ba821001661964a5e68"
+  integrity sha512-IOFKG/qmR8fMZxdilpSaHrX6kloyVUJ8kTbOLqeFudaTBMSFKMLAv85NASxGmPzNb1AmATzgMcXT8rCDE6i8OA==
   dependencies:
     "@arcblock/did-motif" "^1.1.13"
-    "@arcblock/icons" "^2.6.2"
-    "@arcblock/react-hooks" "^2.6.2"
+    "@arcblock/icons" "^2.6.4"
+    "@arcblock/react-hooks" "^2.6.4"
     "@babel/plugin-syntax-dynamic-import" "^7.8.3"
     "@emotion/react" "^11.10.4"
     "@emotion/styled" "^11.10.4"
@@ -675,13 +675,13 @@
     ufo "^1.1.1"
     url-join "^4.0.1"
 
-"@blocklet/ui-react@^2.6.2":
-  version "2.6.2"
-  resolved "https://registry.yarnpkg.com/@blocklet/ui-react/-/ui-react-2.6.2.tgz#f7dabd5927afaa26d9522763abd3cb701e6abe20"
-  integrity sha512-gtwjBnrnPpCXwwzkG7pm0w/uiRXJ0mZh+tbjRu5aFhGHoJeQR8K4qVmEXRoCW33gdmTGEd2FkfSpYo9OMbIbVA==
+"@blocklet/ui-react@^2.6.4":
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/@blocklet/ui-react/-/ui-react-2.6.4.tgz#b03f604bbf7237907eae6f34b094ebb34fed24ef"
+  integrity sha512-O4sWOUJUlQwjDfNdIr2Muk+DbAI3F45ZjFOQJeveC468RZIqI3DrcrxiAWHyRPajbOvN8DMSv6xYtdksVSTahg==
   dependencies:
-    "@arcblock/did-connect" "^2.6.2"
-    "@arcblock/ux" "^2.6.2"
+    "@arcblock/did-connect" "^2.6.4"
+    "@arcblock/ux" "^2.6.4"
     "@emotion/react" "^11.10.4"
     "@emotion/styled" "^11.10.4"
     "@iconify/iconify" "^2.2.1"

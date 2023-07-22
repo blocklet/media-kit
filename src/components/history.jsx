@@ -27,7 +27,7 @@ function Gallery({ uploads }) {
             <div className="doc-wrapper">
               <a href={imageUrl} target="_blank" title={x.originalname}>
                 <div className="img-wrapper">
-                  <object data={imageUrl} alt={x.originalname} />
+                  <object data={`${imageUrl}?imageFilter=resize&h=250`} alt={x.originalname} />
                 </div>
               </a>
               <div className="img-meta">
