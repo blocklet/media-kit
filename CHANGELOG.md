@@ -1,3 +1,7 @@
+## 0.8.18 (July 22, 2023)
+
+- chore: update deps
+
 ## 0.8.17 (July 20, 2023)
 
 - feat: use inline blocklet.js
