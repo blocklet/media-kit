@@ -1,3 +1,7 @@
+## 0.9.0 (July 22, 2023)
+
+- feat: support convert images to webp on the fly
+
 ## 0.8.18 (July 22, 2023)
 
 - chore: update deps
