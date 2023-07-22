@@ -5,12 +5,12 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
-const serveStatic = require('serve-static');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
 
 const { name, version } = require('../package.json');
+const { any2webp } = require('./libs/image');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
 
@@ -24,6 +24,40 @@ app.set('trust proxy', true);
 app.use(cookieParser());
 app.use(express.json({ limit: env.maxUploadSize }));
 app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
+
+// Convert images to webp on the fly
+// eslint-disable-next-line consistent-return
+app.use('/uploads/:filename.webp', (req, res, next) => {
+  const filePath = `${req.params.filename}.webp`;
+
+  // requesting the source file
+  if (filePath.endsWith('.webp') === false) {
+    return next();
+  }
+
+  // already converted?
+  const destPath = path.join(env.uploadDir, filePath);
+  if (fs.existsSync(destPath)) {
+    return next();
+  }
+
+  // source already webp?
+  const sourcePath = path.join(env.uploadDir, filePath.replace('.webp', ''));
+  if (sourcePath.endsWith('.webp') && fs.existsSync(sourcePath)) {
+    return res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
+  }
+
+  // do the convert
+  any2webp(sourcePath, destPath)
+    .then(() => {
+      logger.info(`Converted ${sourcePath} to webp`);
+      next();
+    })
+    .catch((err) => {
+      console.error(`Failed to convert ${sourcePath} to webp`, err);
+      res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
+    });
+});
 
 app.use('/uploads', express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }));
 

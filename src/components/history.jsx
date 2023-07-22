@@ -21,13 +21,12 @@ function Gallery({ uploads }) {
   return (
     <Grid container spacing={4}>
       {uploads.map((x) => {
-        const imageUrl = createImageUrl(x.filename);
         return (
           <Grid key={x._id} item xs={12} sm={6} md={4} xl={3}>
             <div className="doc-wrapper">
-              <a href={imageUrl} target="_blank" title={x.originalname}>
+              <a href={createImageUrl(x.filename, 0, 0)} target="_blank" title={x.originalname}>
                 <div className="img-wrapper">
-                  <object data={`${imageUrl}?imageFilter=resize&h=250`} alt={x.originalname} />
+                  <object data={createImageUrl(x.filename, 0, 250)} alt={x.originalname} />
                 </div>
               </a>
               <div className="img-meta">

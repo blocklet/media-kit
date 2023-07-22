@@ -26,10 +26,10 @@ export default function ImageActions({ data }) {
   const [copied, setCopied] = useState(false);
   const [value, setValue] = useState(null);
   const { folders, deleteUpload, ensureFolder } = useUploadContext();
-  const imageUrl = createImageUrl(data.filename);
+  const imageUrl = createImageUrl(data.filename, 450);
 
   const onCopy = () => {
-    Copy(imageUrl);
+    Copy(data.filename);
     setCopied(true);
   };
 
@@ -213,6 +213,7 @@ const ImagePreview = styled.div`
   align-items: center;
 
   object {
+    pointer-events: none;
     width: auto;
     height: auto;
     max-height: 100%;
