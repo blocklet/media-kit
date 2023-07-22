@@ -1,3 +1,7 @@
+## 0.9.1 (July 22, 2023)
+
+- fix: do not convert unsupported images to webp
+
 ## 0.9.0 (July 22, 2023)
 
 - feat: support convert images to webp on the fly
