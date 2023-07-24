@@ -1,3 +1,7 @@
+## 0.9.6 (July 25, 2023)
+
+- chore: update deps
+
 ## 0.9.5 (July 25, 2023)
 
 - feat: offload brotli/gzip compression to server
