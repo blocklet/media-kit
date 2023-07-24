@@ -27,42 +27,41 @@ app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 
 // Convert images to webp on the fly
 // eslint-disable-next-line consistent-return
-app.use('/uploads/:filename.webp', (req, res, next) => {
-  const filePath = `${req.params.filename}.webp`;
-  const sourcePath = path.join(env.uploadDir, req.params.filename);
+app.use('/uploads/:filename', (req, res, next) => {
+  if (req.query.f !== 'webp') {
+    return next();
+  }
 
-  // requesting the source file
-  if (filePath.endsWith('.webp') === false) {
+  if (req.accepts('image/webp') === false) {
+    return next();
+  }
+
+  // already webp?
+  if (req.params.filename.endsWith('.webp')) {
+    return next();
+  }
+
+  // cannot convert to webp
+  const srcPath = path.join(env.uploadDir, req.params.filename);
+  if (['.png', '.jpg', '.jpeg'].some((ext) => srcPath.endsWith(ext)) === false) {
     return next();
   }
 
   // already converted?
-  const destPath = path.join(env.uploadDir, filePath);
+  const destPath = path.join(env.uploadDir, `${req.params.filename}.webp`);
   if (fs.existsSync(destPath)) {
-    return next();
-  }
-
-  if (fs.existsSync(sourcePath)) {
-    // source already webp?
-    if (sourcePath.endsWith('.webp')) {
-      return res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
-    }
-
-    // cannot convert to webp
-    if (['.png', '.jpg', '.jpeg'].some((ext) => sourcePath.endsWith(ext)) === false) {
-      return res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
-    }
+    return res.sendFile(destPath, { maxAge: '356d', immutable: true });
   }
 
   // do the convert
-  any2webp(sourcePath, destPath)
+  any2webp(srcPath, destPath)
     .then(() => {
-      logger.info(`Converted ${sourcePath} to webp`);
-      next();
+      logger.info(`Converted ${srcPath} to webp`);
+      res.sendFile(destPath, { maxAge: '356d', immutable: true });
     })
     .catch((err) => {
-      console.error(`Failed to convert ${sourcePath} to webp`, err);
-      res.sendFile(sourcePath, { maxAge: '356d', immutable: true });
+      console.error(`Failed to convert ${srcPath} to webp`, err);
+      next();
     });
 });
 
