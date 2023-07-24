@@ -5,7 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
 const express = require('express');
-const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
 
@@ -89,7 +88,6 @@ app.use(cors());
 app.use(router);
 
 if (isProduction) {
-  app.use(compression());
   const staticDir = path.resolve(process.env.BLOCKLET_APP_DIR, 'dist');
   app.use(express.static(staticDir, { maxAge: '365d', index: false }));
   app.use(fallback('index.html', { root: staticDir, maxAge: 0 }));
