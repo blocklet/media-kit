@@ -1,0 +1,113 @@
+{
+  "form": {
+    "labelCol": 6,
+    "wrapperCol": 12,
+    "layout": "vertical",
+    "colon": false,
+    "style": {
+      "padding": "16px 16px 16px 16px"
+    }
+  },
+  "schema": {
+    "type": "object",
+    "properties": {
+      "types": {
+        "type": "Array<string | number>",
+        "title": "Supported Media Types",
+        "x-decorator": "FormItem",
+        "x-component": "Checkbox.Group",
+        "enum": [
+          {
+            "children": [],
+            "label": "JPEG/JPG",
+            "value": "image/jpeg"
+          },
+          {
+            "children": [],
+            "label": "PNG",
+            "value": "image/png"
+          },
+          {
+            "children": [],
+            "label": "GIF",
+            "value": "image/gif"
+          },
+          {
+            "children": [],
+            "label": "SVG",
+            "value": "image/svg+xml"
+          },
+          {
+            "children": [],
+            "label": "WEBP",
+            "value": "image/webp"
+          },
+          {
+            "children": [],
+            "label": "AVIF",
+            "value": "image/avif"
+          },
+          {
+            "children": [],
+            "label": "BMP",
+            "value": "image/bmp"
+          },
+          {
+            "children": [],
+            "label": "MP3",
+            "value": "audio/mpeg"
+          },
+          {
+            "children": [],
+            "label": "MP4",
+            "value": "video/mp4"
+          },
+          {
+            "children": [],
+            "label": "PDF",
+            "value": "application/pdf"
+          },
+          {
+            "children": [],
+            "label": "PPT",
+            "value": "application/vnd.ms-powerpoint"
+          },
+          {
+            "children": [],
+            "label": "PPTX",
+            "value": "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+          },
+          {
+            "children": [],
+            "label": "DOC",
+            "value": "application/msword"
+          },
+          {
+            "children": [],
+            "label": "DOCX",
+            "value": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          },
+          {
+            "children": [],
+            "label": "XLS",
+            "value": "application/vnd.ms-excel"
+          },
+          {
+            "children": [],
+            "label": "XLSX",
+            "value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          }
+        ],
+        "x-validator": [],
+        "x-decorator-props": {},
+        "required": true,
+        "name": "types",
+        "description": "Only selected media types are allowed to upload.",
+        "default": "'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/bmp', 'image/webp'",
+        "x-designable-id": "o9udxb7gpzp",
+        "x-index": 0
+      }
+    },
+    "x-designable-id": "tkph55lquye"
+  }
+}

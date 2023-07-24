@@ -41,9 +41,11 @@ const uppload = new Uppload({
   }),
 });
 
+const defaultTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/bmp', 'image/webp'];
+
 // services
 uppload.use([
-  new Local({ mimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/bmp', 'image/webp'] }),
+  new Local({ mimeTypes: window.blocklet.preferences.types || defaultTypes }),
   new Camera(),
   new Screenshot(),
   new URL(),
