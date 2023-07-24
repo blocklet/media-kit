@@ -56,10 +56,10 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.6.4",
+    "@arcblock/did-connect": "^2.6.6",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.6.4",
-    "@blocklet/ui-react": "^2.6.4",
+    "@arcblock/ux": "^2.6.6",
+    "@blocklet/ui-react": "^2.6.6",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.2",
