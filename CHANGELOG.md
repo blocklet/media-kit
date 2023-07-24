@@ -1,3 +1,7 @@
+## 0.9.3 (July 24, 2023)
+
+- fix: avoid concurrent webp converting
+
 ## 0.9.2 (July 24, 2023)
 
 - fix: convert to webp using query params

@@ -25,6 +25,9 @@ app.use(cookieParser());
 app.use(express.json({ limit: env.maxUploadSize }));
 app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 
+// Tasks of converting webp
+const webpTasks = {};
+
 // Convert images to webp on the fly
 // eslint-disable-next-line consistent-return
 app.use('/uploads/:filename', (req, res, next) => {
@@ -54,7 +57,13 @@ app.use('/uploads/:filename', (req, res, next) => {
   }
 
   // do the convert
-  any2webp(srcPath, destPath)
+  webpTasks[destPath] ??= any2webp(srcPath, destPath).finally(() => {
+    setTimeout(() => {
+      delete webpTasks[destPath];
+    }, 1000);
+  });
+
+  webpTasks[destPath]
     .then(() => {
       logger.info(`Converted ${srcPath} to webp`);
       res.sendFile(destPath, { maxAge: '356d', immutable: true });
