@@ -44,8 +44,12 @@ app.use('/uploads/:filename', (req, res, next) => {
     return next();
   }
 
-  // cannot convert to webp
   const srcPath = path.join(env.uploadDir, req.params.filename);
+  // source not exist
+  if (fs.existsSync(srcPath) === false) {
+    return next();
+  }
+  // cannot convert to webp
   if (['.png', '.jpg', '.jpeg'].some((ext) => srcPath.endsWith(ext)) === false) {
     return next();
   }
