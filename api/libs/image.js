@@ -10,7 +10,7 @@ function any2webp(input, output) {
     const dest = fs.createWriteStream(output);
 
     // Handle success and error events
-    dest.on('finish', () => {
+    dest.on('close', () => {
       resolve(output);
     });
 

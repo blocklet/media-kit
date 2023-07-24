@@ -23,7 +23,12 @@ const upload = multer({
   storage: multer.diskStorage({
     destination: env.uploadDir,
     filename: (req, file, cb) => {
-      cb(null, `${generateFilename()}.${mime.extension(file.mimetype)}`);
+      const filename = `${generateFilename()}.${mime.extension(file.mimetype)}`;
+      if (env.preferences.types.includes(file.mimetype) === false) {
+        cb(new Error(`${file.mimetype} files are not allowed`), filename);
+      } else {
+        cb(null, filename);
+      }
     },
   }),
 });

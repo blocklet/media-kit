@@ -1,3 +1,9 @@
+## 0.9.2 (July 24, 2023)
+
+- fix: convert to webp using query params
+- fix: convert to webp when client supports
+- feat: support customize uploadable media types
+
 ## 0.9.1 (July 22, 2023)
 
 - fix: do not convert unsupported images to webp
