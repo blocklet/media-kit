@@ -1,3 +1,7 @@
+## 0.9.5 (July 25, 2023)
+
+- feat: offload brotli/gzip compression to server
+
 ## 0.9.4 (July 24, 2023)
 
 - fix: check file existence before converting
