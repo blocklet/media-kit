@@ -1,3 +1,7 @@
+## 0.9.4 (July 24, 2023)
+
+- fix: check file existence before converting
+
 ## 0.9.3 (July 24, 2023)
 
 - fix: avoid concurrent webp converting
