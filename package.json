@@ -84,7 +84,7 @@
     "timeago.js": "^4.0.2",
     "uppload": "^3.2.1",
     "vite": "^4.3.8",
-    "vite-plugin-blocklet": "^0.6.6",
+    "vite-plugin-blocklet": "^0.6.7",
     "wolfy87-eventemitter": "^5.2.9"
   },
   "resolutions": {
