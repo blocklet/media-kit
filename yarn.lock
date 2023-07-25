@@ -9413,10 +9413,10 @@ versor@^0.0.4:
   resolved "https://registry.yarnpkg.com/versor/-/versor-0.0.4.tgz#2589e52bd317d670baa4ce33809a64b535a1fcb0"
   integrity sha512-XuQlSNcGYzIX25DK6tUfblQNJPBCmMUDrk74F1PHm4ELdK8gDHXPcE5/unNmW0azHlOLQyWoEeCNvGpGnkvZPg==
 
-vite-plugin-blocklet@^0.6.7:
-  version "0.6.7"
-  resolved "https://registry.yarnpkg.com/vite-plugin-blocklet/-/vite-plugin-blocklet-0.6.7.tgz#ab984a39a185f120daec2f8ab3c7bc8ccf39d262"
-  integrity sha512-WZxQ3HmQF00bB+yFnneJJjU1ogiREMT7kv4213h4c2XrNpSjaJhRbnR3BS7CyyDSMUO1SI6s7W8/w/h43QRxXA==
+vite-plugin-blocklet@^0.6.8:
+  version "0.6.8"
+  resolved "https://registry.yarnpkg.com/vite-plugin-blocklet/-/vite-plugin-blocklet-0.6.8.tgz#a8f34b14fe09c5dc63f6d0b250265ec7a6f9d543"
+  integrity sha512-+/Q2HunitWFce7NlbPZhupoElqakepgFlrXrM68f38BNuP9MZa5MvgdE0hCYa+rjP8+8Ue6yQ5YM3zFHPEUJdg==
   dependencies:
     "@arcblock/did" "^1.18.87"
     "@ocap/mcrypto" "^1.18.87"
