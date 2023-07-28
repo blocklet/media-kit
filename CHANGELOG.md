@@ -1,5 +1,12 @@
+## 0.9.9 (July 28, 2023)
+
+- feat: disable webp auto convert
+- fix: blocklet preference type check
+- fix: blocklet preference default value
+
 ## 0.9.8 (July 25, 2023)
 
+- chore: update deps
 
 ## 0.9.7 (July 25, 2023)
 
