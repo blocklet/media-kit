@@ -1,3 +1,7 @@
+## 0.9.11 (July 28, 2023)
+
+- chore: trigger new release
+
 ## 0.9.10 (July 28, 2023)
 
 - feat: support optimize image after upload
