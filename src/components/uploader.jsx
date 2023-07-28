@@ -45,7 +45,9 @@ const defaultTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', '
 
 // services
 uppload.use([
-  new Local({ mimeTypes: window.blocklet.preferences.types || defaultTypes }),
+  new Local({
+    mimeTypes: Array.isArray(window.blocklet.preferences.types) ? window.blocklet.preferences.types : defaultTypes,
+  }),
   new Camera(),
   new Screenshot(),
   new URL(),
