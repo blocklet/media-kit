@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.9.8",
+  "version": "0.9.9",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -56,10 +56,10 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.6.6",
+    "@arcblock/did-connect": "^2.6.9",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.6.6",
-    "@blocklet/ui-react": "^2.6.6",
+    "@arcblock/ux": "^2.6.9",
+    "@blocklet/ui-react": "^2.6.9",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.2",
@@ -84,7 +84,7 @@
     "timeago.js": "^4.0.2",
     "uppload": "^3.2.1",
     "vite": "^4.3.8",
-    "vite-plugin-blocklet": "^0.6.8",
+    "vite-plugin-blocklet": "^0.6.9",
     "wolfy87-eventemitter": "^5.2.9"
   },
   "resolutions": {
