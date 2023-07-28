@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.9.10
+version: 0.9.8
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -84,13 +84,13 @@ environments:
   - name: MAX_IMAGE_WIDTH
     description: The max image width to compress to after upload
     required: false
-    default: '1800'
+    default: '2000'
     secure: false
     shared: true
   - name: MAX_IMAGE_HEIGHT
     description: The max image height to compress to after upload
     required: false
-    default: '1125'
+    default: '1200'
     secure: false
     shared: true
 capabilities:
