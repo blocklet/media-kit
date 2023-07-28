@@ -103,7 +103,7 @@
         "required": true,
         "name": "types",
         "description": "Only selected media types are allowed to upload.",
-        "default": "'image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/bmp', 'image/webp'",
+        "default": ["image/png", "image/jpeg", "image/gif", "image/svg+xml", "image/bmp", "image/webp"],
         "x-designable-id": "o9udxb7gpzp",
         "x-index": 0
       }
