@@ -78,19 +78,19 @@ environments:
   - name: MAX_UPLOAD_SIZE
     description: Set the max upload size limit for images
     required: false
-    default: 1MB
+    default: 30MB
     secure: false
     shared: true
   - name: MAX_IMAGE_WIDTH
-    description: Set the image width to compress to before upload
+    description: The max image width to compress to after upload
     required: false
-    default: '1440'
+    default: '1800'
     secure: false
     shared: true
   - name: MAX_IMAGE_HEIGHT
-    description: Set the image height to compress to before upload
+    description: The max image height to compress to after upload
     required: false
-    default: '900'
+    default: '1125'
     secure: false
     shared: true
 capabilities:

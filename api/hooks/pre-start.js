@@ -7,11 +7,10 @@ const { spawnSync } = require('child_process');
 
 const logger = require('../libs/logger');
 const { name } = require('../../package.json');
-const { maxUploadSize } = require('../libs/env');
 
 function verifyMaxUploadSize() {
-  if (!xbytes.isBytes(maxUploadSize)) {
-    throw new Error(`MAX_UPLOAD_SIZE ${maxUploadSize} is not a valid byte string, examples(1MB, 200kb)`);
+  if (!xbytes.isBytes(process.env.MAX_UPLOAD_SIZE)) {
+    throw new Error('MAX_UPLOAD_SIZE is not a valid byte string, examples(1MB, 200kb)');
   }
 }
 

@@ -21,13 +21,16 @@ export function createImageUrl(filename, width = 0, height = 0) {
   const obj = new URL(CDN_HOST || window.location.origin);
   obj.pathname = joinUrl(prefix, '/uploads/', filename);
 
-  if (width) {
-    obj.searchParams.set('imageFilter', 'resize');
-    obj.searchParams.set('w', width);
-  }
-  if (height) {
-    obj.searchParams.set('imageFilter', 'resize');
-    obj.searchParams.set('h', height);
+  const extension = filename.split('.').pop();
+  if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
+    if (width) {
+      obj.searchParams.set('imageFilter', 'resize');
+      obj.searchParams.set('w', width.toString());
+    }
+    if (height) {
+      obj.searchParams.set('imageFilter', 'resize');
+      obj.searchParams.set('h', height.toString());
+    }
   }
 
   return obj.href;
