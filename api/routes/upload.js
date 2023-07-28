@@ -1,45 +1,69 @@
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const crypto = require('crypto');
+const sharp = require('sharp');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const mime = require('mime-types');
-const { customRandom, urlAlphabet, random } = require('nanoid');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
 
 const router = express.Router();
-const nanoid = customRandom(urlAlphabet, 24, random);
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
-const generateFilename = () => `${Date.now()}-${nanoid()}`;
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: env.uploadDir,
-    filename: (req, file, cb) => {
-      const filename = `${generateFilename()}.${mime.extension(file.mimetype)}`;
-      if (env.preferences.types.includes(file.mimetype) === false) {
-        cb(new Error(`${file.mimetype} files are not allowed`), filename);
-      } else {
-        cb(null, filename);
-      }
-    },
-  }),
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    if (env.preferences.types.includes(file.mimetype) === false) {
+      cb(new Error(`${file.mimetype} files are not allowed`));
+    } else {
+      cb(null, true);
+    }
+  },
 });
 
 router.post('/uploads', user, auth, upload.single('image'), async (req, res) => {
+  let { buffer } = req.file;
+  if (buffer.byteLength > +env.maxUploadSize) {
+    res.status(400).send({ error: `your upload exceeds the maximum size ${env.maxUploadSize}` });
+    return;
+  }
+
+  const hasher = crypto.createHash('md5');
+  const [type, extension] = req.file.mimetype.split('/');
+  if (type === 'image' && ['jpeg', 'png', 'webp'].includes(extension)) {
+    buffer = await sharp(buffer)
+      .resize({
+        width: +process.env.MAX_IMAGE_WIDTH,
+        height: +process.env.MAX_IMAGE_HEIGHT,
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .rotate()
+      .ensureAlpha()
+      .toBuffer();
+  }
+
+  hasher.update(buffer);
+  const filename = `${hasher.digest('hex')}.${mime.extension(req.file.mimetype)}`;
+  const destPath = path.join(env.uploadDir, filename);
+  fs.writeFileSync(destPath, buffer);
+
   const obj = new URL(env.appUrl);
   obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', req.file.filename);
+  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
 
   const doc = await Upload.insert({
-    ...pick(req.file, ['size', 'filename', 'mimetype', 'originalname']),
+    ...pick(req.file, ['mimetype', 'originalname']),
+    filename,
+    size: fs.statSync(destPath).size,
     remark: req.body.remark || '',
     tags: (req.body.tags || '')
       .split(',')

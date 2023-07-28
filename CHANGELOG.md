@@ -1,3 +1,9 @@
+## 0.9.10 (July 28, 2023)
+
+- feat: support optimize image after upload
+- feat: support naming uploaded files with its content digest
+- feat: support limit file width, height, size on upload
+
 ## 0.9.9 (July 28, 2023)
 
 - feat: disable webp auto convert
