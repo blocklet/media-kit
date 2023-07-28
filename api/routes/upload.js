@@ -1,39 +1,49 @@
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const crypto = require('crypto');
+const sharp = require('sharp');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const mime = require('mime-types');
-const { customRandom, urlAlphabet, random } = require('nanoid');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
 
 const router = express.Router();
-const nanoid = customRandom(urlAlphabet, 24, random);
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
-const generateFilename = () => `${Date.now()}-${nanoid()}`;
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: env.uploadDir,
-    filename: (req, file, cb) => {
-      const filename = `${generateFilename()}.${mime.extension(file.mimetype)}`;
-      if (env.preferences.types.includes(file.mimetype) === false) {
-        cb(new Error(`${file.mimetype} files are not allowed`), filename);
-      } else {
-        cb(null, filename);
-      }
-    },
-  }),
+  storage: multer.memoryStorage(),
+  fileFilter: (req, file, cb) => {
+    if (env.preferences.types.includes(file.mimetype) === false) {
+      cb(new Error(`${file.mimetype} files are not allowed`));
+    } else {
+      cb(null, true);
+    }
+  },
 });
 
 router.post('/uploads', user, auth, upload.single('image'), async (req, res) => {
+  const hasher = crypto.createHash('sha256');
+  hasher.update(req.file.buffer);
+  const digest = hasher.digest('hex');
+  const destPath = path.join(env.uploadDir, `${digest}.${mime.extension(req.file.mimetype)}`);
+  const [type, extension] = req.file.mimetype.split('/');
+  if (type === 'image' && ['jpeg', 'png', 'webp', 'avif'].includes(extension)) {
+    await sharp(req.file.buffer)
+      .resize({ width: 2048, fit: 'inside', withoutEnlargement: true })
+      .ensureAlpha()
+      .toFile(destPath);
+  } else {
+    fs.writeFileSync(destPath, req.file.buffer);
+  }
+
   const obj = new URL(env.appUrl);
   obj.protocol = req.get('x-forwarded-proto') || req.protocol;
   obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', req.file.filename);
