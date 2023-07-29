@@ -85,26 +85,19 @@ router.post('/sdk/uploads', middleware.component.verifySig, async (req, res) => 
     return;
   }
 
-  const filename = `${generateFilename()}${path.extname(originalFilename).replace(/\.+$/, '')}`;
-  const filePath = path.join(env.uploadDir, filename);
-
-  if (type === 'base64') {
-    fs.writeFileSync(filePath, Buffer.from(data, 'base64'));
-  } else if (type === 'path') {
-    if (!fs.existsSync(data)) {
-      res.json({ error: 'upload file is not exists' });
-      return;
-    }
-    fs.cpSync(data, filePath);
-  } else {
+  // eslint-disable-next-line no-nested-ternary
+  const buffer = type === 'base64' ? Buffer.from(data, 'base64') : type === 'path' ? fs.readFileSync(data) : null;
+  if (!buffer) {
     res.json({ error: 'invalid upload type' });
     return;
   }
 
-  if (!fs.existsSync(filePath)) {
-    res.json({ error: 'invalid file' });
-    return;
-  }
+  const hash = crypto.createHash('md5');
+  hash.update(buffer);
+  const filename = `${hash.digest('hex')}${path.extname(originalFilename).replace(/\.+$/, '')}`;
+  const filePath = path.join(env.uploadDir, filename);
+
+  fs.writeFileSync(filePath, buffer);
 
   const file = { size: fs.lstatSync(filePath).size, filename, originalFilename, mimetype: mime.lookup(filename) || '' };
 
