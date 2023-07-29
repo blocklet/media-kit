@@ -1,3 +1,7 @@
+## 0.9.12 (July 29, 2023)
+
+- fix: sdk api not working
+
 ## 0.9.11 (July 28, 2023)
 
 - chore: trigger new release
