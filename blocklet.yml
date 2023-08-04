@@ -96,8 +96,18 @@ environments:
 capabilities:
   clusterMode: false
   component: true
-  navigation: false
 screenshots:
   - upload.png
-navigation: []
 components: []
+navigation:
+  - title:
+      en: Media Gallery
+      zh: 资源库
+    id: images
+    link: /admin/images
+    icon: ic:outline-photo-library
+    section:
+      - dashboard
+    role:
+      - admin
+      - owner

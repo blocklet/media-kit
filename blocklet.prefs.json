@@ -19,7 +19,7 @@
         "enum": [
           {
             "children": [],
-            "label": "JPEG/JPG",
+            "label": "JPEG",
             "value": "image/jpeg"
           },
           {
@@ -61,6 +61,11 @@
             "children": [],
             "label": "MP4",
             "value": "video/mp4"
+          },
+          {
+            "children": [],
+            "label": "WEBM",
+            "value": "video/webm"
           },
           {
             "children": [],

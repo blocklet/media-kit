@@ -18,6 +18,11 @@ const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
+const ensureComponentDId = (req, res, next) => {
+  req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
+  next();
+};
+
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (req, file, cb) => {
@@ -29,7 +34,7 @@ const upload = multer({
   },
 });
 
-router.post('/uploads', user, auth, upload.single('image'), async (req, res) => {
+router.post('/uploads', user, auth, ensureComponentDId, upload.single('image'), async (req, res) => {
   let { buffer } = req.file;
   if (buffer.byteLength > +env.maxUploadSize) {
     res.status(400).send({ error: `your upload exceeds the maximum size ${env.maxUploadSize}` });
@@ -69,6 +74,7 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
       .split(',')
       .map((x) => x.trim())
       .filter(Boolean),
+    componentDid: req.componentDid,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     createdBy: req.user.did,
@@ -78,7 +84,7 @@ router.post('/uploads', user, auth, upload.single('image'), async (req, res) => 
   res.json({ url: obj.href, ...doc });
 });
 
-router.post('/sdk/uploads', middleware.component.verifySig, async (req, res) => {
+router.post('/sdk/uploads', middleware.component.verifySig, ensureComponentDId, async (req, res) => {
   const { type, filename: originalFilename, data } = req.body;
   if (!type || !originalFilename || !data) {
     res.json({ error: 'missing required body `type` or `filename` or `data`' });
@@ -111,6 +117,7 @@ router.post('/sdk/uploads', middleware.component.verifySig, async (req, res) => 
       .split(',')
       .map((x) => x.trim())
       .filter(Boolean),
+    componentDid: req.componentDid,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   });

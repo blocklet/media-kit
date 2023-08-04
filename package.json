@@ -39,8 +39,8 @@
   },
   "dependencies": {
     "@blocklet/embed": "^0.1.5",
-    "@blocklet/logger": "^1.16.14-beta-5ac0c68b",
-    "@blocklet/sdk": "1.16.14-beta-c2843ec5",
+    "@blocklet/logger": "^1.16.14",
+    "@blocklet/sdk": "1.16.14",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -56,10 +56,10 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.6.9",
+    "@arcblock/did-connect": "^2.7.6",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.6.9",
-    "@blocklet/ui-react": "^2.6.9",
+    "@arcblock/ux": "^2.7.6",
+    "@blocklet/ui-react": "^2.7.6",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.2",
@@ -84,7 +84,7 @@
     "timeago.js": "^4.0.2",
     "uppload": "^3.2.1",
     "vite": "^4.3.8",
-    "vite-plugin-blocklet": "^0.6.9",
+    "vite-plugin-blocklet": "^0.6.10",
     "wolfy87-eventemitter": "^5.2.9"
   },
   "resolutions": {

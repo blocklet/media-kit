@@ -125,7 +125,7 @@ const Div = styled.div`
 
   .doc-wrapper {
     cursor: pointer;
-    border: 1px solid #282c2c;
+    border: 1px solid #eee;
     padding: 8px;
     border-radius: 5px;
 
