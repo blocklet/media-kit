@@ -1,3 +1,8 @@
+## 0.9.13 (August 05, 2023)
+
+- feat: support component as folders
+- feat: better dashboard nav and ux
+
 ## 0.9.12 (July 29, 2023)
 
 - fix: sdk api not working

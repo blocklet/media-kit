@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.9.12
+version: 0.9.13
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -96,6 +96,7 @@ environments:
 capabilities:
   clusterMode: false
   component: true
+  navigation: true
 screenshots:
   - upload.png
 components: []
