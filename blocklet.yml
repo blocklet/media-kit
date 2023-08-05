@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.9.12
+version: 0.9.13
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -96,8 +96,19 @@ environments:
 capabilities:
   clusterMode: false
   component: true
-  navigation: false
+  navigation: true
 screenshots:
   - upload.png
-navigation: []
 components: []
+navigation:
+  - title:
+      en: Media Gallery
+      zh: 资源库
+    id: images
+    link: /admin/images
+    icon: ic:outline-photo-library
+    section:
+      - dashboard
+    role:
+      - admin
+      - owner

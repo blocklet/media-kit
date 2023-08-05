@@ -5,6 +5,7 @@ import styled from '@emotion/styled';
 import prettyBytes from 'pretty-bytes';
 import { format } from 'timeago.js';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 import Spinner from '@mui/material/CircularProgress';
@@ -19,7 +20,7 @@ import Actions from './actions';
 
 function Gallery({ uploads }) {
   return (
-    <Grid container spacing={4}>
+    <Grid container spacing={3}>
       {uploads.map((x) => {
         return (
           <Grid key={x._id} item xs={12} sm={6} md={4} xl={3}>
@@ -61,7 +62,7 @@ export default function Uploads() {
 
   return (
     <Div>
-      {folders.length > 0 && (
+      <Box>
         <ButtonGroup variant="outlined" aria-label="outlined button group" style={{ marginBottom: 24 }}>
           <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
             All
@@ -76,7 +77,7 @@ export default function Uploads() {
             </Button>
           ))}
         </ButtonGroup>
-      )}
+      </Box>
       <Gallery uploads={uploads} />
       {hasMore && (
         <div className="load-more">
@@ -125,7 +126,7 @@ const Div = styled.div`
 
   .doc-wrapper {
     cursor: pointer;
-    border: 1px solid #282c2c;
+    border: 1px solid #eee;
     padding: 8px;
     border-radius: 5px;
 
