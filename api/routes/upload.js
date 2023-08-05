@@ -7,6 +7,7 @@ const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
 const middleware = require('@blocklet/sdk/lib/middlewares');
+const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 
 const env = require('../libs/env');
@@ -18,8 +19,27 @@ const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
-const ensureComponentDId = (req, res, next) => {
+const ensureComponentDId = async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
+
+  const component = config.components.find((x) => x.did === req.componentDid);
+  if (!component) {
+    res.status(400).send({ error: `component ${req.componentDid} is not registered` });
+    return;
+  }
+
+  const folder = await Folder.findOne({ _id: req.componentDid });
+  if (!folder) {
+    await Folder.insert({
+      _id: req.componentDid,
+      name: component.title || component.name,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: req.user.did,
+      updatedBy: req.user.did,
+    });
+  }
+
   next();
 };
 
@@ -74,7 +94,7 @@ router.post('/uploads', user, auth, ensureComponentDId, upload.single('image'), 
       .split(',')
       .map((x) => x.trim())
       .filter(Boolean),
-    componentDid: req.componentDid,
+    folderId: req.componentDid,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     createdBy: req.user.did,
@@ -117,7 +137,7 @@ router.post('/sdk/uploads', middleware.component.verifySig, ensureComponentDId, 
       .split(',')
       .map((x) => x.trim())
       .filter(Boolean),
-    componentDid: req.componentDid,
+    folderId: req.componentDid,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   });

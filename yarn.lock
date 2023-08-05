@@ -675,7 +675,7 @@
   dependencies:
     "@blocklet/constant" "1.16.14"
 
-"@blocklet/logger@^1.16.14":
+"@blocklet/logger@1.16.14":
   version "1.16.14"
   resolved "https://registry.yarnpkg.com/@blocklet/logger/-/logger-1.16.14.tgz#587704864df6c278beed96b3051353525bcc4aa5"
   integrity sha512-3W9CJLGYegBPHf0ui8qOsFICzc5zhmcK5mqFOzaGUCVMcoqlMQ1O73RubXjpgH+mTk/rUmNPZ7rXxsfbjygyFw==
@@ -720,10 +720,10 @@
     utility-types "^3.10.0"
     validate-npm-package-name "^3.0.0"
 
-"@blocklet/sdk@1.16.14":
-  version "1.16.14"
-  resolved "https://registry.yarnpkg.com/@blocklet/sdk/-/sdk-1.16.14.tgz#656f12bc6c491d577415af8da03bd630e5e87b42"
-  integrity sha512-0h5iaKWpA0rgbHcojAMD1TFgQiR8Zy5DW5lq2h/P83iNlCHOuljkpeo97kNTxjXyOCXxEcYBqQVuFHSsJ+fu1A==
+"@blocklet/sdk@1.16.15-beta-7e0c580a":
+  version "1.16.15-beta-7e0c580a"
+  resolved "https://registry.yarnpkg.com/@blocklet/sdk/-/sdk-1.16.15-beta-7e0c580a.tgz#048d35df9166b23f5a2cd745575f90a3900a3fa9"
+  integrity sha512-dOZZm/AAE8deVFHm/VDP8H4YEr89xlIvCy2aFAsILFP0O/VaIKq8yuiQ3E/rSflmnt9pJw0s9F2OkDJcKUgzvw==
   dependencies:
     "@abtnode/client" "1.16.14"
     "@abtnode/constant" "1.16.14"
