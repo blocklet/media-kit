@@ -19,7 +19,7 @@ const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
-const ensureComponentDId = async (req, res, next) => {
+const ensureComponentDid = async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
 
   const component = config.components.find((x) => x.did === req.componentDid);
@@ -54,7 +54,7 @@ const upload = multer({
   },
 });
 
-router.post('/uploads', user, auth, ensureComponentDId, upload.single('image'), async (req, res) => {
+router.post('/uploads', user, auth, ensureComponentDid, upload.single('image'), async (req, res) => {
   let { buffer } = req.file;
   if (buffer.byteLength > +env.maxUploadSize) {
     res.status(400).send({ error: `your upload exceeds the maximum size ${env.maxUploadSize}` });
@@ -104,7 +104,7 @@ router.post('/uploads', user, auth, ensureComponentDId, upload.single('image'), 
   res.json({ url: obj.href, ...doc });
 });
 
-router.post('/sdk/uploads', middleware.component.verifySig, ensureComponentDId, async (req, res) => {
+router.post('/sdk/uploads', middleware.component.verifySig, ensureComponentDid, async (req, res) => {
   const { type, filename: originalFilename, data } = req.body;
   if (!type || !originalFilename || !data) {
     res.json({ error: 'missing required body `type` or `filename` or `data`' });
