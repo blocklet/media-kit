@@ -35,8 +35,8 @@ const ensureComponentDid = async (req, res, next) => {
       name: component.title || component.name,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: req.user.did,
-      updatedBy: req.user.did,
+      createdBy: req.user?.did,
+      updatedBy: req.user?.did,
     });
   }
 
@@ -140,6 +140,8 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureComponen
     folderId: req.componentDid,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    createdBy: req.user?.did,
+    updatedBy: req.user?.did,
   });
 
   res.json({ url: obj.href, ...doc });
@@ -195,8 +197,10 @@ router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
   }
 
   const result = await Upload.remove({ _id: req.params.id });
+
   if (result) {
-    fs.unlinkSync(path.join(env.uploadDir, doc.filename));
+    const count = await Upload.count({ filename: doc.filename });
+    if (count === 0) fs.unlinkSync(path.join(env.uploadDir, doc.filename));
   }
 
   res.jsonp(doc);
