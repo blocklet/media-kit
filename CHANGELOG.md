@@ -1,3 +1,6 @@
+## 0.9.16 (August 09, 2023)
+
+
 ## 0.9.15 (August 09, 2023)
 
 - fix: user.did is optional
