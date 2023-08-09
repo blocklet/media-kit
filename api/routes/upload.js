@@ -35,8 +35,8 @@ const ensureComponentDid = async (req, res, next) => {
       name: component.title || component.name,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: req.user.did,
-      updatedBy: req.user.did,
+      createdBy: req.user?.did,
+      updatedBy: req.user?.did,
     });
   }
 
@@ -140,6 +140,8 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureComponen
     folderId: req.componentDid,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    createdBy: req.user?.did,
+    updatedBy: req.user?.did,
   });
 
   res.json({ url: obj.href, ...doc });
