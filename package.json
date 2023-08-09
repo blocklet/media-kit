@@ -39,8 +39,8 @@
   },
   "dependencies": {
     "@blocklet/embed": "^0.1.5",
-    "@blocklet/logger": "1.16.14",
-    "@blocklet/sdk": "1.16.15-beta-7e0c580a",
+    "@blocklet/logger": "1.16.15-beta-933eb977",
+    "@blocklet/sdk": "1.16.15-beta-933eb977",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
