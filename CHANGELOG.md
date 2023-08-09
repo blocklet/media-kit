@@ -1,3 +1,7 @@
+## 0.9.14 (August 09, 2023)
+
+- fix: add `user` middleware to sdk upload api
+
 ## 0.9.13 (August 05, 2023)
 
 - feat: support component as folders

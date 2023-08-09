@@ -104,7 +104,7 @@ router.post('/uploads', user, auth, ensureComponentDid, upload.single('image'), 
   res.json({ url: obj.href, ...doc });
 });
 
-router.post('/sdk/uploads', middleware.component.verifySig, ensureComponentDid, async (req, res) => {
+router.post('/sdk/uploads', user, middleware.component.verifySig, ensureComponentDid, async (req, res) => {
   const { type, filename: originalFilename, data } = req.body;
   if (!type || !originalFilename || !data) {
     res.json({ error: 'missing required body `type` or `filename` or `data`' });
