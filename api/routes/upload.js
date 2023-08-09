@@ -197,8 +197,10 @@ router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
   }
 
   const result = await Upload.remove({ _id: req.params.id });
+
   if (result) {
-    fs.unlinkSync(path.join(env.uploadDir, doc.filename));
+    const count = await Upload.count({ filename: doc.filename });
+    if (count === 0) fs.unlinkSync(path.join(env.uploadDir, doc.filename));
   }
 
   res.jsonp(doc);
