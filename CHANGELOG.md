@@ -1,3 +1,8 @@
+## 0.9.15 (August 09, 2023)
+
+- fix: user.did is optional
+- fix: check reference before deleting file
+
 ## 0.9.14 (August 09, 2023)
 
 - fix: add `user` middleware to sdk upload api
