@@ -56,10 +56,6 @@ export default function Uploads() {
     );
   }
 
-  if (uploads.length === 0) {
-    return <Empty>No uploads found</Empty>;
-  }
-
   return (
     <Div>
       <Box>
@@ -78,13 +74,20 @@ export default function Uploads() {
           ))}
         </ButtonGroup>
       </Box>
-      <Gallery uploads={uploads} />
-      {hasMore && (
-        <div className="load-more">
-          <Button onClick={loadMoreUploads} disabled={loading} variant="outlined" color="secondary" size="small">
-            Load More
-          </Button>
-        </div>
+
+      {uploads.length === 0 ? (
+        <Empty>No uploads found</Empty>
+      ) : (
+        <>
+          <Gallery uploads={uploads} />
+          {hasMore && (
+            <div className="load-more">
+              <Button onClick={loadMoreUploads} disabled={loading} variant="outlined" color="secondary" size="small">
+                Load More
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </Div>
   );
