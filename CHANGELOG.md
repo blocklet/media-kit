@@ -1,5 +1,8 @@
-## 0.9.16 (August 09, 2023)
+## 0.9.17 (August 10, 2023)
 
+- fix: always show folders
+
+## 0.9.16 (August 09, 2023)
 
 ## 0.9.15 (August 09, 2023)
 
