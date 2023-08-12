@@ -1,3 +1,7 @@
+## 0.9.18 (August 12, 2023)
+
+- fix: copy action does not include appUrl
+
 ## 0.9.17 (August 10, 2023)
 
 - fix: always show folders
