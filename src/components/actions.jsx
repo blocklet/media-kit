@@ -29,7 +29,7 @@ export default function ImageActions({ data }) {
   const imageUrl = createImageUrl(data.filename, 450);
 
   const onCopy = () => {
-    Copy(data.filename);
+    Copy(createImageUrl(data.filename, 0, 0));
     setCopied(true);
   };
 
