@@ -1,3 +1,7 @@
+## 0.9.19 (August 16, 2023)
+
+- chore: ensure smaller logo and favicon size
+
 ## 0.9.18 (August 12, 2023)
 
 - fix: copy action does not include appUrl
