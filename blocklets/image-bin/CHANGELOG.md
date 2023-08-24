@@ -1,3 +1,7 @@
+## 0.9.21 (August 24, 2023)
+
+- fix: resolve the bug of github action branch
+
 ## 0.9.20 (August 24, 2023)
 
 - chore: polish repo to monorepo
