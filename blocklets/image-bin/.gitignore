@@ -5,7 +5,6 @@
 .pnp.js
 .DS_Store
 node_modules
-.env.development
 
 # testing
 /coverage
@@ -13,11 +12,7 @@ node_modules
 # production
 /build
 /dist
-/uploads
 .blocklet
-.yalc
-yalc.lock
-**/dist
 
 # local env files
 .env.local
@@ -37,3 +32,4 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+

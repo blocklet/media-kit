@@ -1,0 +1,12 @@
+name: "Auto Cancellation Running Job"
+on: pull_request
+
+jobs:
+  cancel:
+    name: Auto Cancellation Running Job
+    runs-on: ubuntu-latest
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    steps:
+      - uses: fauguste/auto-cancellation-running-action@0.1.4
+        with:
+          githubToken: ${{ secrets.GIT_HUB_TOKEN }}

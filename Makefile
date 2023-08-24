@@ -2,8 +2,8 @@
 
 dep:
 	@echo "Install dependencies required for this repo..."
-	@npm install
-	@npm install -g @blocklet/cli
+	@pnpm setup
+	@pnpm install
 
 test:
 	@echo "Running test suites..."
@@ -13,9 +13,12 @@ build:
 
 bundle:
 	@echo "Bundling the software..."
-	@npm run bundle
+	@pnpm run bundle
 
 github-init:
+	@make dep
+
+init:
 	@make dep
 
 include .makefiles/*.mk

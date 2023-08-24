@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.9.19
+version: 0.9.20
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -24,7 +24,7 @@ interfaces:
   - type: web
     name: publicUrl
     path: /
-    prefix: '*'
+    prefix: "*"
     port: BLOCKLET_PORT
     protocol: http
     cacheable:
@@ -46,19 +46,19 @@ interfaces:
             - avatar
           allowSwitchProfile: true
           blockUnauthorized: false
-community: ''
-documentation: ''
-homepage: ''
-license: ''
+community: ""
+documentation: ""
+homepage: ""
+license: ""
 payment:
   price: []
   share: []
 timeout:
   start: 60
 requirements:
-  server: '>=1.6.29'
-  os: '*'
-  cpu: '*'
+  server: ">=1.6.29"
+  os: "*"
+  cpu: "*"
 scripts:
   preStart: node api/hooks/pre-start.js
   dev: npm run start
@@ -66,7 +66,7 @@ environments:
   - name: CDN_HOST
     description: Use CDN Host for image load speed
     required: false
-    default: ''
+    default: ""
     secure: false
     shared: true
   - name: UPLOADER_ROLES
@@ -84,13 +84,13 @@ environments:
   - name: MAX_IMAGE_WIDTH
     description: The max image width to compress to after upload
     required: false
-    default: '2000'
+    default: "2000"
     secure: false
     shared: true
   - name: MAX_IMAGE_HEIGHT
     description: The max image height to compress to after upload
     required: false
-    default: '1200'
+    default: "1200"
     secure: false
     shared: true
 capabilities:

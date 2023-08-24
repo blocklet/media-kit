@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+      - release
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    if: "! contains(toJSON(github.event.commits.*.message), 'WIP') && ! contains(toJSON(github.event.commits.*.message), 'wip')"
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v2.0.1
+        with:
+          version: latest
+      - name: Use Node.js 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          cache: "pnpm"
+
+      - name: Setup
+        run: npm add -g @antfu/ni
+
+      - name: Install
+        run: nci
+
+      - name: Lint
+        run: pnpm run -r lint

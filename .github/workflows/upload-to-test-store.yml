@@ -1,4 +1,4 @@
-name: "Upload To Prod Store"
+name: "Upload To Test Store"
 
 env:
   NODE_OPTIONS: "--max_old_space_size=6144"
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - release
+      - main
 
 jobs:
   check-version:
@@ -16,7 +16,7 @@ jobs:
 
   upload:
     if: "!contains(toJSON(github.event.commits.*.message) , '[skip ci]')"
-    name: Upload to prod store
+    name: Upload to test store
     needs: check-version
     runs-on: ubuntu-latest
     strategy:
@@ -44,11 +44,19 @@ jobs:
         run: yarn global add @blocklet/cli@beta
         shell: bash
 
-      - name: Upload to prod store
+      - name: Publish to NPM
+        if: "contains(matrix.dir , 'packages/')"
+        run: |
+          npm config set '//registry.npmjs.org/:_authToken' "${{ secrets.NPM_TOKEN }}"
+          VERSION=$(cat version | awk '{$1=$1;print}')
+          echo "publish version ${VERSION}"
+          pnpm -r publish --access public --no-git-checks
+
+      - name: Upload to test store
         uses: blocklet/action-workflow@v1
         if: "contains(matrix.dir , 'blocklets/')"
         env:
-          COMPONENT_STORE_URL: ${{ secrets.STORE_ENDPOINT_PROD }}
+          COMPONENT_STORE_URL: ${{ secrets.STORE_ENDPOINT_TEST }}
         with:
           skip-deps: true
           skip-upload: false
@@ -56,6 +64,6 @@ jobs:
           skip-release: true
           bundle-command: pnpm run bundle
           working-directory: ${{ matrix.dir }}
-          store-endpoint: ${{ secrets.STORE_ENDPOINT_PROD }}
-          store-access-token: ${{ secrets.STORE_ACCESS_TOKEN_PROD }}
+          store-endpoint: ${{ secrets.STORE_ENDPOINT_TEST }}
+          store-access-token: ${{ secrets.STORE_ACCESS_TOKEN_TEST }}
           slack-webhook: ${{ secrets.SLACK_WEBHOOK }}

@@ -1,3 +1,7 @@
+## 0.9.20 (August 24, 2023)
+
+- chore: polish repo to monorepo
+
 ## 0.9.19 (August 16, 2023)
 
 - chore: ensure smaller logo and favicon size
