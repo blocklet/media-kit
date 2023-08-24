@@ -46,7 +46,7 @@ const date = dateRes.stdout.trim();
 let newChangelog = "";
 
 try {
-  const gitRes = await $`git log --pretty=format:"- %s" "master"...HEAD`;
+  const gitRes = await $`git log --pretty=format:"- %s" "origin/master"...HEAD`;
   newChangelog = gitRes.stdout.trim();
 } catch {
   console.error(
