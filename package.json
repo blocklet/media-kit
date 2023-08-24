@@ -1,5 +1,5 @@
 {
-  "name": "nft-studio",
+  "name": "image-bin",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -19,17 +19,5 @@
     "prettier": "^2.8.8",
     "prompts": "^2.4.2",
     "zx": "^7.2.3"
-  },
-  "resolutions": {
-    "@abtnode/cron": "1.16.15-beta-78ad21d3",
-    "@abtnode/queue": "1.16.15-beta-78ad21d3",
-    "@abtnode/client": "1.16.15-beta-78ad21d3",
-    "@abtnode/constant": "1.16.15-beta-78ad21d3",
-    "@abtnode/util": "1.16.15-beta-78ad21d3",
-    "@blocklet/constant": "1.16.15-beta-78ad21d3",
-    "@blocklet/env": "1.16.15-beta-78ad21d3",
-    "@blocklet/meta": "1.16.15-beta-78ad21d3",
-    "@blocklet/sdk": "1.16.15-beta-78ad21d3",
-    "@blocklet/tracker": "1.16.15-beta-78ad21d3"
   }
 }
