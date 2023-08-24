@@ -14,7 +14,7 @@ on:
       - synchronize
       - edited
     branches:
-      - main
+      - master
 
 jobs:
   check-files:
