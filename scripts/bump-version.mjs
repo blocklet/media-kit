@@ -8,17 +8,21 @@ const data = YAML.parse(file);
 const dirs = [];
 for (const pattern of data.packages) {
   const prefix = pattern.replace("/**", "");
-  const folders = fs
-    .readdirSync(prefix)
-    .map((folder) => {
-      if (folder.startsWith(".")) {
-        return;
-      }
-      return `${prefix}/${folder}`;
-    })
-    .filter(Boolean);
+  try {
+    const folders = fs
+      .readdirSync(prefix)
+      .map((folder) => {
+        if (folder.startsWith(".")) {
+          return;
+        }
+        return `${prefix}/${folder}`;
+      })
+      .filter(Boolean);
 
-  dirs.push(...folders);
+    dirs.push(...folders);
+  } catch (error) {
+    // ignore error
+  }
 }
 
 const canSelectDirs = dirs.map((item) => {
@@ -42,7 +46,7 @@ const date = dateRes.stdout.trim();
 let newChangelog = "";
 
 try {
-  const gitRes = await $`git log --pretty=format:"- %s" "main"...HEAD`;
+  const gitRes = await $`git log --pretty=format:"- %s" "master"...HEAD`;
   newChangelog = gitRes.stdout.trim();
 } catch {
   console.error(
