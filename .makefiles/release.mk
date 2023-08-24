@@ -18,8 +18,6 @@ delete-release:
 bump-version:
 	@echo "Bump version..."
 	@.makefiles/bump_version.sh
-	@test -f "package.json" && .makefiles/bump_node_version.sh
-	@test -f "blocklet.yml" && .makefiles/bump_blocklet_version.sh
 
 create-pr:
 	@echo "Creating pull request..."
