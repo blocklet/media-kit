@@ -1,11 +1,12 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, lazy } from 'react';
 import Button from '@arcblock/ux/lib/Button';
-// eslint-disable-next-line import/no-unresolved
-import { Uploader as UploaderComponent } from '@blocklet/uploader/react';
 import joinUrl from 'url-join';
 import xbytes from 'xbytes';
 import { useUploadContext } from '../contexts/upload';
+
+// eslint-disable-next-line import/no-unresolved
+const UploaderComponent = lazy(() => import('@blocklet/uploader/react').then((res) => ({ default: res.Uploader })));
 
 const obj = new window.URL(window.location.origin);
 obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
