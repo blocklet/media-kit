@@ -1,14 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-const multer = require('multer');
 const crypto = require('crypto');
-const sharp = require('sharp');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
+const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader/middlewares');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
@@ -43,66 +42,126 @@ const ensureComponentDid = async (req, res, next) => {
   next();
 };
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-  fileFilter: (req, file, cb) => {
-    if (env.preferences.types.includes(file.mimetype) === false) {
-      cb(new Error(`${file.mimetype} files are not allowed`));
-    } else {
-      cb(null, true);
-    }
-  },
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
+router.get('/uploads', user, auth, async (req, res) => {
+  let page = Number(req.query.page || 1);
+  let pageSize = Number(req.query.pageSize || DEFAULT_PAGE_SIZE);
+
+  page = Number.isNaN(page) ? 1 : page;
+  pageSize = Number.isNaN(pageSize) ? DEFAULT_PAGE_SIZE : pageSize;
+  pageSize = pageSize > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : pageSize;
+
+  const condition = {};
+  if (req.query.folderId) {
+    condition.folderId = req.query.folderId;
+  }
+
+  if (['guest', 'member'].includes(req.user.role)) {
+    condition.createdBy = req.user.did;
+  }
+
+  if (req.query.tags) {
+    const tags = req.query.tags
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean);
+    condition.tags = { $in: tags };
+  }
+
+  const uploads = await Upload.paginate({ condition, sort: { createdAt: -1 }, page, size: pageSize });
+  const total = await Upload.count(condition);
+
+  const folders = await Folder.cursor({}).sort({ createdAt: -1 }).exec();
+
+  res.jsonp({ uploads, folders, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
 });
 
-router.post('/uploads', user, auth, ensureComponentDid, upload.single('image'), async (req, res) => {
-  let { buffer } = req.file;
-  if (buffer.byteLength > +env.maxUploadSize) {
-    res.status(400).send({ error: `your upload exceeds the maximum size ${env.maxUploadSize}` });
+// remove upload
+router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
+  const doc = await Upload.findOne({ _id: req.params.id });
+  if (!doc) {
+    res.jsonp({ error: 'No such upload' });
     return;
   }
 
-  const hasher = crypto.createHash('md5');
-  const [type, extension] = req.file.mimetype.split('/');
-  if (type === 'image' && ['jpeg', 'png', 'webp'].includes(extension)) {
-    buffer = await sharp(buffer)
-      .resize({
-        width: +process.env.MAX_IMAGE_WIDTH,
-        height: +process.env.MAX_IMAGE_HEIGHT,
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .rotate()
-      .ensureAlpha()
-      .toBuffer();
+  const result = await Upload.remove({ _id: req.params.id });
+
+  if (result) {
+    const count = await Upload.count({ filename: doc.filename });
+    if (count === 0) fs.unlinkSync(path.join(env.uploadDir, doc.filename));
   }
 
-  hasher.update(buffer);
-  const filename = `${hasher.digest('hex')}.${mime.extension(req.file.mimetype)}`;
-  const destPath = path.join(env.uploadDir, filename);
-  fs.writeFileSync(destPath, buffer);
-
-  const obj = new URL(env.appUrl);
-  obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
-
-  const doc = await Upload.insert({
-    ...pick(req.file, ['mimetype', 'originalname']),
-    filename,
-    size: fs.statSync(destPath).size,
-    remark: req.body.remark || '',
-    tags: (req.body.tags || '')
-      .split(',')
-      .map((x) => x.trim())
-      .filter(Boolean),
-    folderId: req.componentDid,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: req.user.did,
-    updatedBy: req.user.did,
-  });
-
-  res.json({ url: obj.href, ...doc });
+  res.jsonp(doc);
 });
+
+// move to folder
+router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
+  const doc = await Upload.findOne({ _id: req.params.id });
+  if (!doc) {
+    res.jsonp({ error: 'No such upload' });
+    return;
+  }
+
+  const [, updatedDoc] = await Upload.update(
+    { _id: req.params.id },
+    { $set: pick(req.body, ['folderId']) },
+    { returnUpdatedDocs: true }
+  );
+
+  res.jsonp(updatedDoc);
+});
+
+// init uploader server
+const localStorageServer = initLocalStorageServer({
+  path: env.uploadDir,
+  express,
+  onUploadFinish: async (req, res, uploadMetadata) => {
+    const {
+      id: filename,
+      size,
+      metadata: { filename: originalname, filetype: mimetype },
+    } = uploadMetadata;
+
+    const obj = new URL(env.appUrl);
+    obj.protocol = req.get('x-forwarded-proto') || req.protocol;
+    obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
+
+    const doc = await Upload.insert({
+      mimetype,
+      originalname,
+      filename,
+      size,
+      remark: req.body.remark || '',
+      tags: (req.body.tags || '')
+        .split(',')
+        .map((x) => x.trim())
+        .filter(Boolean),
+      folderId: req.componentDid,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: req.user.did,
+      updatedBy: req.user.did,
+    });
+
+    const resData = { url: obj.href, ...doc };
+
+    return resData;
+  },
+});
+
+router.use('/uploads', user, auth, ensureComponentDid, localStorageServer.handle);
+
+// companion
+const companion = initCompanion({
+  tempPath: env.uploadDir,
+  express,
+  providerOptions: env.providerOptions,
+  uploadUrls: [env.appUrl],
+});
+
+router.use('/companion', user, auth, ensureComponentDid, companion.handle);
 
 router.post('/sdk/uploads', user, middleware.component.verifySig, ensureComponentDid, async (req, res) => {
   const { type, filename: originalFilename, data } = req.body;
@@ -147,65 +206,6 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureComponen
   res.json({ url: obj.href, ...doc });
 });
 
-const DEFAULT_PAGE_SIZE = 20;
-const MAX_PAGE_SIZE = 100;
-router.get('/uploads', user, auth, async (req, res) => {
-  let page = Number(req.query.page || 1);
-  let pageSize = Number(req.query.pageSize || DEFAULT_PAGE_SIZE);
-
-  page = Number.isNaN(page) ? 1 : page;
-  pageSize = Number.isNaN(pageSize) ? DEFAULT_PAGE_SIZE : pageSize;
-  pageSize = pageSize > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : pageSize;
-
-  const condition = {};
-  if (req.query.folderId) {
-    condition.folderId = req.query.folderId;
-  }
-
-  if (['guest', 'member'].includes(req.user.role)) {
-    condition.createdBy = req.user.did;
-  }
-
-  if (req.query.tags) {
-    const tags = req.query.tags
-      .split(',')
-      .map((x) => x.trim())
-      .filter(Boolean);
-    condition.tags = { $in: tags };
-  }
-
-  const uploads = await Upload.paginate({ condition, sort: { createdAt: -1 }, page, size: pageSize });
-  const total = await Upload.count(condition);
-
-  const folders = await Folder.cursor({}).sort({ createdAt: -1 }).exec();
-
-  res.jsonp({ uploads, folders, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
-});
-
-// preview image
-router.get('/uploads/:filename', user, auth, async (req, res) => {
-  const doc = await Upload.findOne({ filename: req.params.filename });
-  res.jsonp(doc);
-});
-
-// remove upload
-router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
-  const doc = await Upload.findOne({ _id: req.params.id });
-  if (!doc) {
-    res.jsonp({ error: 'No such upload' });
-    return;
-  }
-
-  const result = await Upload.remove({ _id: req.params.id });
-
-  if (result) {
-    const count = await Upload.count({ filename: doc.filename });
-    if (count === 0) fs.unlinkSync(path.join(env.uploadDir, doc.filename));
-  }
-
-  res.jsonp(doc);
-});
-
 // create folder
 router.post('/folders', user, ensureAdmin, async (req, res) => {
   const name = req.body.name.trim();
@@ -229,23 +229,6 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
   });
 
   res.json(doc);
-});
-
-// move to folder
-router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
-  const doc = await Upload.findOne({ _id: req.params.id });
-  if (!doc) {
-    res.jsonp({ error: 'No such upload' });
-    return;
-  }
-
-  const [, updatedDoc] = await Upload.update(
-    { _id: req.params.id },
-    { $set: pick(req.body, ['folderId']) },
-    { returnUpdatedDocs: true }
-  );
-
-  res.jsonp(updatedDoc);
 });
 
 module.exports = router;

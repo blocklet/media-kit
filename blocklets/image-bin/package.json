@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.9.21",
+  "version": "0.9.22",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -39,6 +39,7 @@
     "@blocklet/embed": "^0.1.5",
     "@blocklet/logger": "1.16.15-beta-933eb977",
     "@blocklet/sdk": "1.16.15-beta-933eb977",
+    "@blocklet/uploader": "workspace:^",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -46,7 +47,6 @@
     "express": "^4.18.2",
     "express-async-errors": "^3.1.1",
     "mime-types": "^2.1.35",
-    "multer": "^1.4.4",
     "nanoid": "^3.3.6",
     "serve-static": "^1.15.0",
     "sharp": "^0.32.4",
@@ -79,7 +79,6 @@
     "react-use": "^17.4.0",
     "swiper": "^9.3.2",
     "timeago.js": "^4.0.2",
-    "uppload": "^3.2.1",
     "vite": "^4.3.8",
     "vite-plugin-blocklet": "^0.6.11",
     "wolfy87-eventemitter": "^5.2.9"

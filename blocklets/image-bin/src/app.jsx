@@ -12,7 +12,8 @@ import { SessionProvider } from './contexts/session';
 import { UploadProvider } from './contexts/upload';
 import Layout from './components/layout';
 
-const ImageList = lazy(() => import('./pages/images'));
+// const ImageList = lazy(() => import('./pages/images'));
+const ImageList = lazy(() => import('./pages/images/index'));
 const EmbedRecent = lazy(() => import('./pages/embed/recent'));
 
 const globalStyles = css`

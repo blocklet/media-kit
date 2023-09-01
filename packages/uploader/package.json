@@ -1,0 +1,88 @@
+{
+  "name": "@blocklet/uploader",
+  "version": "0.0.2",
+  "description": "blocklet upload component",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts"
+    },
+    "./middlewares": {
+      "require": "./lib/middlewares.cjs",
+      "import": "./lib/middlewares.mjs",
+      "types": "./lib/middlewares.d.ts"
+    },
+    "./react": {
+      "require": "./lib/react.cjs",
+      "import": "./lib/react.mjs",
+      "types": "./lib/react.d.ts"
+    },
+    "./lib/": "./lib/"
+  },
+  "main": "./lib/index.cjs",
+  "module": "./lib/index.mjs",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "coverage": "pnpm test -- --coverage",
+    "test": "vitest tests",
+    "build": "unbuild",
+    "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' ",
+    "dev": "pnpm run build:watch"
+  },
+  "keywords": [
+    "blocklet",
+    "uploader"
+  ],
+  "author": "Yongzhuo Liang <yongchao@arcblock.io> https://github.com/FireTable",
+  "license": "ISC",
+  "dependencies": {
+    "@mui/material": "^5.13.2",
+    "@tus/file-store": "1.0.0-beta.2",
+    "@tus/server": "1.0.0-beta.7",
+    "@uppy/companion": "^4.8.1",
+    "@uppy/core": "^3.4.0",
+    "@uppy/dashboard": "^3.5.1",
+    "@uppy/drag-drop": "^3.0.3",
+    "@uppy/file-input": "^3.0.2",
+    "@uppy/golden-retriever": "^3.1.0",
+    "@uppy/image-editor": "^2.1.3",
+    "@uppy/progress-bar": "^3.0.3",
+    "@uppy/react": "^3.1.3",
+    "@uppy/status-bar": "^3.2.4",
+    "@uppy/tus": "^3.1.3",
+    "@uppy/unsplash": "^3.2.2",
+    "@uppy/url": "^3.3.3",
+    "@uppy/webcam": "^3.3.2",
+    "ahooks": "^3.7.7",
+    "axios": "^1.4.0",
+    "crypto": "^1.0.1",
+    "lodash": "^4.17.21",
+    "mime-types": "^2.1.35",
+    "preact": "^10.17.1",
+    "ufo": "^1.1.2",
+    "url-join": "^4.0.1"
+  },
+  "devDependencies": {
+    "@arcblock/eslint-config-ts": "^0.2.3",
+    "@types/express": "^4.17.17",
+    "@types/lodash": "^4.14.195",
+    "@types/node": "^20.2.5",
+    "@types/react": "^18.2.8",
+    "@types/url-join": "^4.0.1",
+    "@vitest/coverage-c8": "^0.31.1",
+    "jsdom": "^22.1.0",
+    "typescript": "^5.0.4",
+    "unbuild": "^1.2.1",
+    "vitest": "^0.31.1",
+    "vitest-fetch-mock": "^0.2.2"
+  }
+}
