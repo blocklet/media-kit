@@ -239,7 +239,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         id="uploader-container"
         onClick={(e) => e.stopPropagation()}
         sx={{
-          width: isMobile ? 400 : 720,
+          width: isMobile ? '90vw' : 720,
           '.uploaded': {
             width: '100%',
             height: '100%',
