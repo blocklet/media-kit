@@ -5,6 +5,7 @@ const path = require('path');
 const crypto = require('crypto');
 const mime = require('mime-types');
 const joinUrl = require('url-join');
+const component = require('@blocklet/sdk/lib/component');
 
 export function initLocalStorageServer({
   path,
@@ -44,13 +45,6 @@ export function initLocalStorageServer({
     },
     ...restProps,
   });
-
-  // default root path
-  // newServer.get('/', async (req: any, res: any) => {
-  //   const files = await fs.readdir(newServer.datastore.directory);
-  //   // Format and return
-  //   res.json(files);
-  // });
 
   app.all('*', setContentType, newServer.handle.bind(newServer));
 
@@ -108,16 +102,22 @@ export function getLocalStorageFile({ server }: any) {
 
 export function setContentType(req: any, res: any, next?: Function) {
   let { method, headers } = req;
+
+  method = method.toLowerCase();
+
   // get file name
   const fileName = getFileNameParam(req, res, {
     isRequired: false,
   });
 
-  method = method.toLowerCase();
+  const { BLOCKLET_COMPONENT_DID } = process.env;
 
-  // resolve the bug of component mount
-  if (method === 'post' && !req.baseUrl.startsWith(headers['x-path-prefix'])) {
-    req.baseUrl = joinUrl(headers['x-path-prefix'], req.baseUrl);
+  const mountPoint =
+    (BLOCKLET_COMPONENT_DID && component.getComponentMountPoint(BLOCKLET_COMPONENT_DID)) || headers['x-path-prefix'];
+
+  // resolve the bug of after nginx proxy missing prefix bug, cause Location baseUrl Error
+  if (method === 'post' && !req.baseUrl.startsWith(mountPoint)) {
+    req.baseUrl = joinUrl(mountPoint === '/' ? '' : mountPoint, req.baseUrl);
   }
 
   if (method === 'get' && fileName) {
