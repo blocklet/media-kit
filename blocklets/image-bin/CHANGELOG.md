@@ -1,3 +1,7 @@
+## 0.10.1 (September 04, 2023)
+
+- fix: resolve the bug of CI missing @blocklet/uploader lib
+
 ## 0.10.0 (September 02, 2023)
 
 - chore: bump version
