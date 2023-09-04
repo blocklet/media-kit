@@ -44,6 +44,10 @@ jobs:
         run: yarn global add @blocklet/cli@beta
         shell: bash
 
+      - name: Prebuild deps
+        if: "contains(matrix.dir , 'blocklets/')"
+        run: pnpm -r prebuild:dep
+
       - name: Upload to prod store
         uses: blocklet/action-workflow@v1
         if: "contains(matrix.dir , 'blocklets/')"

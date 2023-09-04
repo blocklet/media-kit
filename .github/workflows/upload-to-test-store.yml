@@ -52,6 +52,10 @@ jobs:
           echo "publish version ${VERSION}"
           pnpm -r publish --access public --no-git-checks
 
+      - name: Prebuild deps
+        if: "contains(matrix.dir , 'blocklets/')"
+        run: pnpm -r prebuild:dep
+
       - name: Upload to test store
         uses: blocklet/action-workflow@v1
         if: "contains(matrix.dir , 'blocklets/')"
