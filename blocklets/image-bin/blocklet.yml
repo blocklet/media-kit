@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.9.21
+version: 0.10.0
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -93,6 +93,18 @@ environments:
     default: "1200"
     secure: false
     shared: true
+  - name: UNSPLASH_KEY
+    description: The Unsplash API key, you can get on https://unsplash.com/developers
+    required: false
+    default: ""
+    secure: false
+    shared: true
+  - name: UNSPLASH_SECRET
+    description: The Unsplash API secret, you can get on https://unsplash.com/developers
+    required: false
+    default: ""
+    secure: true
+    shared: false
 capabilities:
   clusterMode: false
   component: true

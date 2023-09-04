@@ -7,7 +7,7 @@ import Uploader from './uploader';
 
 export default function Layout({ title }) {
   return (
-    <Main dense title={title} headerAddons={(exists) => [<Uploader />, ...exists]}>
+    <Main dense title={title} headerAddons={(exists) => [<Uploader key="uploader-addon" />, ...exists]}>
       <Outlet />
     </Main>
   );

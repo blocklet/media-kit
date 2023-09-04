@@ -6,7 +6,7 @@ import UploadHistory from '../../components/history';
 function ImageList() {
   return (
     <Div>
-      <section className="history">
+      <section id="image-list" className="history">
         <UploadHistory />
       </section>
     </Div>

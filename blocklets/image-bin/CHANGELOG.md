@@ -1,3 +1,12 @@
+## 0.10.0 (September 02, 2023)
+
+- chore: bump version
+- chore: remove useless code
+
+## 0.9.22 (September 01, 2023)
+
+- chore: refactor image-bin uploader
+
 ## 0.9.21 (August 24, 2023)
 
 - fix: resolve the bug of github action branch
