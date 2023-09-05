@@ -173,7 +173,7 @@ router.use('/companion', user, auth, ensureComponentDid, companion.handle);
 router.post(
   '/sdk/uploads',
   user,
-  // middleware.component.verifySig,
+  middleware.component.verifySig,
   upload.single('data'),
   ensureComponentDid,
   async (req, res) => {
