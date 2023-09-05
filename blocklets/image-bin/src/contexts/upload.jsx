@@ -1,15 +1,12 @@
 /* eslint-disable import/no-cycle */
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
-import Center from '@arcblock/ux/lib/Center';
-import Spinner from '@mui/material/CircularProgress';
 import useAsync from 'react-use/lib/useAsync';
 import EventEmitter from 'wolfy87-eventemitter';
 import { useReactive } from 'ahooks';
 
 import api from '../libs/api';
-import { useSessionContext } from './session';
 
 const UploadContext = createContext({});
 const { Provider, Consumer } = UploadContext;
@@ -23,29 +20,47 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
     folders: [],
     page: 1,
     loading: false,
-    hasMore: false,
+    hasMore: true,
   });
-  const { session } = useSessionContext();
 
-  const loadInitialPosts = async (_fid = pageState.folderId) => {
-    const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}&folderId=${_fid}`);
+  const loadInitialPosts = async (folderId = pageState.folderId) => {
+    pageState.page = 1;
+    const { data } = await api.get('/api/uploads', {
+      params: {
+        page: pageState.page,
+        pageSize,
+        type,
+        folderId,
+      },
+    });
     pageState.uploads = data.uploads;
     pageState.folders = data.folders;
     pageState.hasMore = data.pageCount > 1;
     return data;
   };
 
-  const loadMoreUploads = () => {
-    pageState.loading = true;
-    api
-      .get(`/api/uploads?page=${pageState.page + 1}&pageSize=${pageSize}&type=${type}&folderId=${pageState.folderId}`)
-      .then(({ data }) => {
-        pageState.page += 1;
-        pageState.hasMore = state.page + 1 < data.pageCount;
-        pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
-        pageState.loading = false;
-      })
-      .catch(console.error);
+  const loadMoreUploads = async () => {
+    if (pageState.hasMore) {
+      pageState.loading = true;
+      pageState.page += 1;
+      await api
+        .get('/api/uploads', {
+          params: {
+            page: pageState.page,
+            pageSize,
+            type,
+            folderId: pageState.folderId,
+          },
+        })
+        .then(({ data }) => {
+          pageState.hasMore = pageState.page < data.pageCount;
+          pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
+          pageState.loading = false;
+        })
+        .catch(console.error);
+    }
+
+    return pageState;
   };
 
   const prependUpload = (upload) => {
@@ -75,16 +90,7 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
     return folder;
   };
 
-  const state = useAsync(loadInitialPosts, []);
-  useEffect(() => loadInitialPosts, [session.user]); // eslint-disable-line
-
-  if (state.loading) {
-    return (
-      <Center>
-        <Spinner />
-      </Center>
-    );
-  }
+  useAsync(loadInitialPosts, []);
 
   return (
     <Provider

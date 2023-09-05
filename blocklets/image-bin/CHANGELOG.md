@@ -1,3 +1,8 @@
+## 0.10.2 (September 05, 2023)
+
+- feat: support uploaded component in dashboard
+- fix: resolve the bug of api load more
+
 ## 0.10.1 (September 04, 2023)
 
 - fix: resolve the bug of CI missing @blocklet/uploader lib

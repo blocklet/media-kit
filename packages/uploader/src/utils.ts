@@ -40,8 +40,15 @@ export function getDownloadUrl(src: string) {
   return url.href;
 }
 
+export const getImageBinComponent = () =>
+  // @ts-ignore
+  window?.blocklet?.componentMountPoints?.find((item: any) => item.did === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9');
+
 // @ts-ignore
-export const prefixPath = window.blocklet ? window.blocklet.prefix : '/';
+export const imageBinMountPoint = getImageBinComponent().mountPoint;
+
+// @ts-ignore
+export const prefixPath = imageBinMountPoint || (window.blocklet ? window.blocklet.prefix : '/');
 
 export const api = axios.create();
 
@@ -54,6 +61,27 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+export function createImageUrl(filename: string, width = 0, height = 0) {
+  // @ts-ignore
+  const { CDN_HOST = '' } = window.blocklet;
+  const obj = new URL(CDN_HOST || window.location.origin);
+  obj.pathname = joinUrl(prefixPath, '/uploads/', filename);
+
+  const extension = filename.split('.').pop() || '';
+  if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
+    if (width) {
+      obj.searchParams.set('imageFilter', 'resize');
+      obj.searchParams.set('w', width.toString());
+    }
+    if (height) {
+      obj.searchParams.set('imageFilter', 'resize');
+      obj.searchParams.set('h', height.toString());
+    }
+  }
+
+  return obj.href;
+}
 
 export function getUploaderEndpoint(apiPath: string | undefined) {
   return joinUrl(window.location.origin, prefixPath === '/' ? '' : prefixPath, apiPath || '');
