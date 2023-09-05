@@ -1,5 +1,6 @@
 import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
+import isEmpty from 'lodash/isEmpty';
 import { useReactive } from 'ahooks';
 import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle } from 'react';
 import Backdrop from '@mui/material/Backdrop';
@@ -27,7 +28,7 @@ import '@uppy/status-bar/dist/style.min.css';
 import Uploaded from './plugins/uploaded';
 // @ts-ignore
 import PrepareUpload from './plugins/prepare-upload';
-import { getExt, getUploaderEndpoint, prefixPath } from '../utils';
+import { getExt, getUploaderEndpoint } from '../utils';
 
 const getPluginList = (props: UploaderProps) => {
   const { apiPathProps } = props;
@@ -44,9 +45,7 @@ const getPluginList = (props: UploaderProps) => {
     {
       id: 'Uploaded',
       plugin: Uploaded,
-      options: {
-        companionUrl,
-      },
+      options: {},
     },
     {
       id: 'Url',
@@ -117,6 +116,9 @@ function useUploader(props: UploaderProps) {
       req.setHeader('x-uploader-file-name', `${hashFileName}`);
       req.setHeader('x-uploader-file-id', `${id}`);
       req.setHeader('x-uploader-file-ext', `${ext}`);
+
+      // @ts-ignore get folderId when upload using
+      req.setHeader('x-component-did', (window.blocklet?.componentId || '').split('/').pop());
     },
     onAfterResponse: async (req, res) => {
       const result = {} as any;
@@ -167,13 +169,21 @@ function useUploader(props: UploaderProps) {
 }
 
 const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFrameElement>, ref: any) => {
-  const pluginList = getPluginList(props);
+  // apiPathProps default is use image-bin
+  const apiPathProps = props?.apiPathProps || {
+    uploader: '/api/uploads',
+    companion: '/api/companion',
+  };
+
+  const pluginList = getPluginList({ ...props, apiPathProps });
 
   const {
     plugins: _plugins = pluginList.map((item) => item.id),
     id = 'Uploader',
     popup = false,
     uploadedProps,
+    onOpen,
+    onClose,
   } = props;
 
   // get pluginMap tp get plugin some props
@@ -182,7 +192,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   const plugins = uniq([..._plugins, ...pluginList.filter((item) => item.alwayUse).map((item) => item.id)]);
 
   // @ts-ignore
-  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
   const state = useReactive({
     open: false,
@@ -190,20 +200,35 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       ...props,
       id,
       plugins,
+      apiPathProps,
     }),
   });
 
-  function close() {
-    state.open = false;
+  function open() {
+    state.open = true;
+    onOpen?.();
   }
 
-  useImperativeHandle(ref, () => ({
-    getUploader: () => state.uppy,
-    open: () => {
-      state.open = true;
-    },
-    close,
-  }));
+  function close() {
+    // @ts-ignore
+    state.uppy.getPlugin('upload-dashboard')?.hideAllPanels();
+    state.open = false;
+    onClose?.();
+  }
+
+  useImperativeHandle(
+    ref,
+    () =>
+      ({
+        getUploader: () => state.uppy,
+        open,
+        close,
+      } as {
+        getUploader: Function;
+        open: Function;
+        close: Function;
+      })
+  );
 
   // custom plugin
   useEffect(() => {
@@ -221,15 +246,18 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   const wrapperProps = popup
     ? {
         sx: {
-          zIndex: (theme: any) => theme.zIndex.drawer + 1,
+          zIndex: 99999,
           '& > *': {
             display: !state.open ? 'none' : 'unset', // hide uppy when close
           },
         },
         open: state.open,
         onClick: close,
+        ...props.wrapperProps,
       }
-    : ({} as any);
+    : ({
+        ...props.wrapperProps,
+      } as any);
 
   return (
     <Wrapper key="uploader-wrapper" {...wrapperProps}>
@@ -240,9 +268,18 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         onClick={(e) => e.stopPropagation()}
         sx={{
           width: isMobile ? '90vw' : 720,
+          '.uppy-Dashboard-AddFiles-title': {
+            whiteSpace: 'normal',
+          },
           '.uploaded': {
             width: '100%',
             height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            flexDirection: 'column',
+            '& > div': {
+              width: '100%',
+            },
             '& .uppy-ProviderBrowser-header': {
               // hide the logout
               display: 'none',

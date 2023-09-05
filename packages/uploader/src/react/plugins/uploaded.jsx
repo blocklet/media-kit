@@ -1,8 +1,31 @@
 // @jsxImportSource preact
 import { UIPlugin } from '@uppy/core';
-import { Provider } from '@uppy/companion-client';
 import { ProviderViews } from '@uppy/provider-views';
+import uniqBy from 'lodash/uniqBy';
+import debounce from 'lodash/debounce';
+import { api, createImageUrl } from '../../utils';
 
+const initUploadedAPIData = {
+  data: [], // origin data
+  files: [], // format file
+  pageSize: 16,
+  page: 1,
+  loading: false,
+  hasMore: true,
+  folderId: '',
+};
+
+const initPluginState = {
+  authenticated: true,
+  files: [],
+  folders: [],
+  breadcrumbs: [],
+  filterInput: '',
+  isSearchVisible: false,
+  currentSelection: [],
+  loading: true,
+  loadAllFiles: true,
+};
 /**
  * Uploaded
  *
@@ -15,7 +38,7 @@ class Uploaded extends UIPlugin {
     this.type = 'acquirer';
     this.uppy = uppy;
 
-    Provider.initPlugin(this, opts, {});
+    this.uploadedAPIData = { ...initUploadedAPIData };
 
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 1024 1024">
@@ -34,7 +57,104 @@ class Uploaded extends UIPlugin {
   }
 
   render(state) {
-    return <div className="uploaded">{this.view.render(state)}</div>;
+    if (!this.uploadedAPIData.loading && this.uploadedAPIData.files?.length === 0) {
+      this.queryUploadedFromImageBin();
+    }
+
+    return (
+      <div id="uploaded" className="uploaded">
+        {this.view.render(state)}
+      </div>
+    );
+  }
+
+  queryUploadedFromImageBin = async () => {
+    const { pageSize, page, files, hasMore, loading } = this.uploadedAPIData;
+
+    if (hasMore && !loading) {
+      // set loading flag
+      this.uploadedAPIData.loading = true;
+      this.uploadedAPIData.page += 1;
+
+      const folderId = (window.blocklet?.componentId || '').split('/').pop();
+
+      // use image-bin uploads api, so can hard code /api/uploads
+      const { data } = await api.get(`/api/uploads`, {
+        params: {
+          page,
+          pageSize,
+          folderId,
+        },
+        headers: {
+          'x-component-did': folderId,
+        },
+      });
+
+      this.uploadedAPIData.loading = false;
+      this.uploadedAPIData.hasMore = this.uploadedAPIData.page <= data.pageCount;
+
+      this.uploadedAPIData.files = uniqBy(
+        [
+          ...files,
+          // format data
+          ...data.uploads.map((item) => {
+            const { filename, _id, originalname, mimetype } = item;
+            let previewUrl = 'file';
+            const fileUrl = createImageUrl(filename);
+
+            previewUrl = createImageUrl(filename, 400);
+
+            return {
+              ...item,
+              // provider view props
+              id: _id,
+              name: originalname,
+              icon: previewUrl,
+              previewUrl,
+              fileUrl,
+            };
+          }),
+        ],
+        '_id'
+      );
+
+      this.uploaded.setPluginState({
+        files: this.uploadedAPIData.files,
+        loading: false,
+      });
+
+      this.canConvertImgToObject = true;
+    }
+  };
+
+  convertImgToObject = debounce(
+    () => {
+      if (this.canConvertImgToObject) {
+        const imgElementList = document.querySelectorAll('#uploaded img');
+
+        // hacker uppy image element
+        imgElementList.forEach((imgElement) => {
+          if (['.mp4', '.webm'].find((item) => imgElement.src?.indexOf(item) > -1)) {
+            const objectElement = document.createElement('object');
+            objectElement.data = imgElement.src;
+            objectElement.width = imgElement.width;
+            objectElement.height = imgElement.height;
+            objectElement.style = 'pointer-events: none;';
+            // replace img element
+            imgElement.parentNode.replaceChild(objectElement, imgElement);
+          }
+        });
+
+        this.canConvertImgToObject = false;
+      }
+    },
+    {
+      wait: 200,
+    }
+  );
+
+  update() {
+    this.convertImgToObject();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -42,38 +162,69 @@ class Uploaded extends UIPlugin {
     // do nothing
   }
 
+  resetState = () => {
+    this.uploadedAPIData = { ...initUploadedAPIData };
+    this.uploaded.setPluginState({ ...initPluginState });
+  };
+
   install() {
     // provider views
     this.view = new ProviderViews(this, {
       viewType: 'grid',
       showBreadcrumbs: false,
-      showFilter: true,
+      showFilter: false,
     });
 
     // uploaded
     this.uploaded = this.view.plugin;
 
-    this.uploaded.setPluginState({
-      authenticated: true,
-      files: [
-        // {
-        //   name: '1',
-        //   id: '1',
-        //   icon: 'https://bbqasj5yrz4unkundhmuwzaq5krgooiatbtyzaetio4.did.abtnet.io/uploads/22352457ab537e081fbcc51c19bb591e.gif',
-        // },
-      ],
-      folders: [],
-      breadcrumbs: [],
-      filterInput: '',
-      isSearchVisible: true,
-      currentSelection: [],
-    });
+    this.uploaded.setPluginState({ ...initPluginState });
+
+    this.uploaded.uppy.on('dashboard:show-panel', this.resetState);
+
+    // hacker toggleCheckbox
+    this.view.toggleCheckbox = (event, file) => {
+      const { currentSelection } = this.uploaded.getPluginState();
+      const maxNumberOfFiles = this.uploaded.uppy.opts.restrictions.maxNumberOfFiles;
+      const canAdd = maxNumberOfFiles ? currentSelection.length < maxNumberOfFiles : true;
+
+      // not include
+      if (!currentSelection.find((item) => item._id === file._id)) {
+        if (!canAdd) {
+          currentSelection.pop();
+        }
+
+        this.uploaded.setPluginState({
+          currentSelection: [...currentSelection, file],
+        });
+      } else {
+        // remove
+        this.uploaded.setPluginState({
+          currentSelection: [...currentSelection.filter((item) => item._id !== file._id)],
+        });
+      }
+    };
 
     // hacker donePicking
     this.view.donePicking = () => {
       const { currentSelection } = this.uploaded.getPluginState();
+
       this.uppy.emit('uploaded:selected', currentSelection);
       this.uploaded.parent.hideAllPanels();
+    };
+
+    // hacker uppy.validateRestrictions
+    this.uploaded.uppy.validateRestrictions = () => {
+      return false;
+    };
+
+    // hacker handle scroll
+    this.view.handleScroll = (event) => {
+      const { scrollHeight, scrollTop, offsetHeight } = event.target;
+      const scrollPosition = scrollHeight - (scrollTop + offsetHeight);
+      if (scrollPosition < 30) {
+        this.queryUploadedFromImageBin();
+      }
     };
 
     const { target } = this.opts;
@@ -85,6 +236,7 @@ class Uploaded extends UIPlugin {
 
   uninstall() {
     this.unmount();
+    this.uploaded.uppy.off('dashboard:show-panel', this.resetState);
   }
 }
 

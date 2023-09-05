@@ -47,6 +47,7 @@ class DownloadRemoteFiles extends UIPlugin {
 
   prepareUploadWrapper = async (uppyFile) => {
     await this.tryDownloadRemoteFile(uppyFile);
+    await this.getPreviewFromData(uppyFile);
     await this.setHashFileName(uppyFile);
   };
 
@@ -150,6 +151,27 @@ class DownloadRemoteFiles extends UIPlugin {
     }
   };
 
+  getPreviewFromData = (uppyFile) => {
+    const { id } = uppyFile;
+
+    const { preview, data, type } = this.uppy.getFile(id); // get real time file
+
+    const isGif = type.indexOf('gif') > -1;
+
+    const shouldGetPreviewFromData = (isGif || !preview) && data && type.indexOf('image') > -1;
+    if (shouldGetPreviewFromData) {
+      setTimeout(
+        () => {
+          this.uppy.setFileState(id, {
+            preview: getObjectURL(data),
+          });
+        },
+        // fix gif preview error
+        type.indexOf('gif') > -1 ? 1000 : 0
+      );
+    }
+  };
+
   prepareUpload = (fileIDs) => {
     const promises = fileIDs.map(async (fileID) => {
       const file = this.uppy.getFile(fileID);
@@ -183,13 +205,7 @@ class DownloadRemoteFiles extends UIPlugin {
       this.prepareUploadWrapper(file);
     });
     this.uppy.on('file-editor:complete', (file) => {
-      const { data, preview, id, type } = file;
-
-      if (data && !preview && type.indexOf('image') > -1) {
-        this.uppy.setFileState(id, {
-          preview: getObjectURL(data),
-        });
-      }
+      this.getPreviewFromData(file);
     });
   }
 

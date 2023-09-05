@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
+const multer = require('multer');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
@@ -22,6 +23,7 @@ const ensureComponentDid = async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
 
   const component = config.components.find((x) => x.did === req.componentDid);
+
   if (!component) {
     res.status(400).send({ error: `component ${req.componentDid} is not registered` });
     return;
@@ -41,6 +43,11 @@ const ensureComponentDid = async (req, res, next) => {
 
   next();
 };
+
+// multer only use for /sdk/uploads, not filter allow type
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -163,48 +170,70 @@ const companion = initCompanion({
 
 router.use('/companion', user, auth, ensureComponentDid, companion.handle);
 
-router.post('/sdk/uploads', user, middleware.component.verifySig, ensureComponentDid, async (req, res) => {
-  const { type, filename: originalFilename, data } = req.body;
-  if (!type || !originalFilename || !data) {
-    res.json({ error: 'missing required body `type` or `filename` or `data`' });
-    return;
+router.post(
+  '/sdk/uploads',
+  user,
+  // middleware.component.verifySig,
+  upload.single('data'),
+  ensureComponentDid,
+  async (req, res) => {
+    // data maybe a file buffer format by multer
+    const { type, filename: originalFilename, data = req?.file?.buffer } = req.body;
+
+    if (!type || !originalFilename || !data) {
+      res.json({ error: 'missing required body `type` or `filename` or `data`' });
+      return;
+    }
+
+    let buffer = null;
+
+    if (type === 'base64') {
+      buffer = Buffer.from(data, 'base64');
+    } else if (type === 'path') {
+      buffer = fs.readFileSync(data);
+    } else if (type === 'file') {
+      buffer = data;
+    }
+
+    if (!buffer) {
+      res.json({ error: 'invalid upload type, should be [file, path, base64]' });
+      return;
+    }
+
+    const hash = crypto.createHash('md5');
+    hash.update(buffer);
+    const filename = `${hash.digest('hex')}${path.extname(originalFilename).replace(/\.+$/, '')}`;
+    const filePath = path.join(env.uploadDir, filename);
+
+    fs.writeFileSync(filePath, buffer);
+
+    const file = {
+      size: fs.lstatSync(filePath).size,
+      filename,
+      originalFilename,
+      mimetype: mime.lookup(filename) || '',
+    };
+
+    const obj = new URL(env.appUrl);
+    obj.protocol = req.get('x-forwarded-proto') || req.protocol;
+    obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', file.filename);
+
+    const doc = await Upload.insert({
+      ...pick(file, ['size', 'filename', 'mimetype', 'originalname']),
+      tags: (req.body.tags || '')
+        .split(',')
+        .map((x) => x.trim())
+        .filter(Boolean),
+      folderId: req.componentDid,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: req.user?.did,
+      updatedBy: req.user?.did,
+    });
+
+    res.json({ url: obj.href, ...doc });
   }
-
-  // eslint-disable-next-line no-nested-ternary
-  const buffer = type === 'base64' ? Buffer.from(data, 'base64') : type === 'path' ? fs.readFileSync(data) : null;
-  if (!buffer) {
-    res.json({ error: 'invalid upload type' });
-    return;
-  }
-
-  const hash = crypto.createHash('md5');
-  hash.update(buffer);
-  const filename = `${hash.digest('hex')}${path.extname(originalFilename).replace(/\.+$/, '')}`;
-  const filePath = path.join(env.uploadDir, filename);
-
-  fs.writeFileSync(filePath, buffer);
-
-  const file = { size: fs.lstatSync(filePath).size, filename, originalFilename, mimetype: mime.lookup(filename) || '' };
-
-  const obj = new URL(env.appUrl);
-  obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', file.filename);
-
-  const doc = await Upload.insert({
-    ...pick(file, ['size', 'filename', 'mimetype', 'originalname']),
-    tags: (req.body.tags || '')
-      .split(',')
-      .map((x) => x.trim())
-      .filter(Boolean),
-    folderId: req.componentDid,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: req.user?.did,
-    updatedBy: req.user?.did,
-  });
-
-  res.json({ url: obj.href, ...doc });
-});
+);
 
 // create folder
 router.post('/folders', user, ensureAdmin, async (req, res) => {

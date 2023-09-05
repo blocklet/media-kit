@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
 import Center from '@arcblock/ux/lib/Center';
@@ -9,7 +9,6 @@ import EventEmitter from 'wolfy87-eventemitter';
 import { useReactive } from 'ahooks';
 
 import api from '../libs/api';
-import { useSessionContext } from './session';
 
 const UploadContext = createContext({});
 const { Provider, Consumer } = UploadContext;
@@ -25,7 +24,6 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
     loading: false,
     hasMore: false,
   });
-  const { session } = useSessionContext();
 
   const loadInitialPosts = async (_fid = pageState.folderId) => {
     const { data } = await api.get(`/api/uploads?page=1&pageSize=${pageSize}&type=${type}&folderId=${_fid}`);
@@ -37,11 +35,11 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
 
   const loadMoreUploads = () => {
     pageState.loading = true;
+    pageState.page += 1;
     api
-      .get(`/api/uploads?page=${pageState.page + 1}&pageSize=${pageSize}&type=${type}&folderId=${pageState.folderId}`)
+      .get(`/api/uploads?page=${pageState.page}&pageSize=${pageSize}&type=${type}&folderId=${pageState.folderId}`)
       .then(({ data }) => {
-        pageState.page += 1;
-        pageState.hasMore = state.page + 1 < data.pageCount;
+        pageState.hasMore = pageState.page < data.pageCount;
         pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
         pageState.loading = false;
       })
@@ -76,7 +74,6 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
   };
 
   const state = useAsync(loadInitialPosts, []);
-  useEffect(() => loadInitialPosts, [session.user]); // eslint-disable-line
 
   if (state.loading) {
     return (

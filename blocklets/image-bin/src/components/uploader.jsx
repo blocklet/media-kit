@@ -49,13 +49,13 @@ export default function Uploader() {
       onUploadFinish={(result) => {
         prependUpload(result.data);
       }}
-      plugins={['ImageEditor', 'Url', 'Webcam', canUseUnsplash && 'Unsplash'].filter(Boolean)}
-      // @FIXME
-      // uploadedProps={{
-      //   onSelectedFiles: (files) => {
-      //     console.warn('onSelectedFiles: ', files);
-      //   },
-      // }}
+      plugins={[
+        // 'Uploaded', // image-bin unused, but leave it to debug later
+        'ImageEditor',
+        'Url',
+        'Webcam',
+        canUseUnsplash && 'Unsplash',
+      ].filter(Boolean)}
       coreProps={{
         restrictions: {
           allowedFileTypes,
