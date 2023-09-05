@@ -7,12 +7,13 @@ import { format } from 'timeago.js';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-
+import { useRef } from 'react';
 import Spinner from '@mui/material/CircularProgress';
-import Center from '@arcblock/ux/lib/Center';
+import Divider from '@mui/material/Divider';
 import Empty from '@arcblock/ux/lib/Empty';
 
 import Grid from '@mui/material/Grid';
+import { useInfiniteScroll } from 'ahooks';
 
 import { useUploadContext } from '../contexts/upload';
 import { createImageUrl } from '../libs/api';
@@ -46,18 +47,26 @@ function Gallery({ uploads }) {
 }
 
 export default function Uploads() {
-  const { uploads, folders, loading, hasMore, loadMoreUploads, folderId, filterByFolder } = useUploadContext();
+  const uploadState = useUploadContext();
 
-  if (loading) {
-    return (
-      <Center>
-        <Spinner />
-      </Center>
-    );
-  }
+  const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder } = uploadState;
+  const wrapperRef = useRef(null);
+
+  useInfiniteScroll(loadMoreUploads, {
+    target: wrapperRef,
+    isNoMore: () => {
+      return !uploadState.hasMore;
+    },
+  });
 
   return (
-    <Div>
+    <Div
+      ref={wrapperRef}
+      style={{
+        height: 'calc(100vh - 64px - 80px)',
+        padding: '24px',
+        overflowY: 'auto',
+      }}>
       <Box>
         <ButtonGroup variant="outlined" aria-label="outlined button group" style={{ marginBottom: 24 }}>
           <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
@@ -76,17 +85,16 @@ export default function Uploads() {
       </Box>
 
       {uploads.length === 0 ? (
-        <Empty>No uploads found</Empty>
+        <Empty>No Uploads Found</Empty>
       ) : (
         <>
           <Gallery uploads={uploads} />
-          {hasMore && (
+          {loading && (
             <div className="load-more">
-              <Button onClick={loadMoreUploads} disabled={loading} variant="outlined" color="secondary" size="small">
-                Load More
-              </Button>
+              <Spinner />
             </div>
           )}
+          {!uploadState.hasMore && <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)' }}>No More</Divider>}
         </>
       )}
     </Div>

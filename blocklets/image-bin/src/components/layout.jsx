@@ -16,6 +16,7 @@ export default function Layout({ title }) {
 const Main = styled(Dashboard)`
   position: relative;
   height: 100%;
+  margin-top: 0;
 
   .dashboard-sidebar {
     width: 120px;
@@ -24,8 +25,22 @@ const Main = styled(Dashboard)`
     margin-top: 0;
   }
 
+  .dashboard-main {
+    overflow-y: hidden;
+  }
+
   .dashboard-content {
     max-width: 1680px;
+    padding: 0 !important;
+    & > div {
+      padding: 0 !important;
+    }
+  }
+
+  // footer
+  .dashboard-content ~ div {
+    margin-top: 0;
+    padding: 12px 0;
   }
 `;
 
