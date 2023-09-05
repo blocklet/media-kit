@@ -1,3 +1,7 @@
+## 0.0.4 (September 05, 2023)
+
+- fix: CI missing prepublish script before publish to npm.js
+
 ## 0.0.3 (September 05, 2023)
 
 - feat: support uploaded component in dashboard
