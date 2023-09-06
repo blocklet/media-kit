@@ -116,7 +116,7 @@ router.use('/uploads', user, auth, ensureComponentDid, localStorageServer.handle
 // if you need to load file from remote
 // companion
 const companion = initCompanion({
-  tempPath: env.uploadDir,
+  path: env.uploadDir,
   express,
   providerOptions: env.providerOptions,
   uploadUrls: [env.appUrl],

@@ -1,3 +1,8 @@
+## 0.10.3 (September 06, 2023)
+
+- chore: update deps
+- chore: polish companion params 'tempPath' to 'path'
+
 ## 0.10.2 (September 05, 2023)
 
 - feat: support uploaded component in dashboard

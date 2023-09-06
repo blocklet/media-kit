@@ -1,3 +1,8 @@
+## 0.0.5 (September 06, 2023)
+
+- chore: update deps
+- chore: polish companion params 'tempPath' to 'path'
+
 ## 0.0.4 (September 05, 2023)
 
 - fix: CI missing prepublish script before publish to npm.js
