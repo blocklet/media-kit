@@ -9,12 +9,12 @@ const crypto = require('crypto');
 const secret = crypto.randomBytes(32).toString('hex');
 
 export function initCompanion({
-  tempPath,
+  path,
   express,
   providerOptions,
   ...restProps
 }: {
-  tempPath: string;
+  path: string;
   express: Function;
   providerOptions?: Object;
 }) {
@@ -41,7 +41,7 @@ export function initCompanion({
       host: 'UNUSED_HOST', // unused
       path: 'UNUSED_PATH', // unused
     },
-    filePath: tempPath,
+    filePath: path,
     streamingUpload: true,
     ...restProps,
   };
