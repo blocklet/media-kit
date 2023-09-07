@@ -76,7 +76,7 @@ class Uploaded extends UIPlugin {
       this.uploadedAPIData.loading = true;
       this.uploadedAPIData.page += 1;
 
-      const folderId = (window.blocklet?.componentId || '').split('/').pop();
+      const folderId = (window?.blocklet?.componentId || '').split('/').pop();
 
       // use image-bin uploads api, so can hard code /api/uploads
       const { data } = await api.get(`/api/uploads`, {
