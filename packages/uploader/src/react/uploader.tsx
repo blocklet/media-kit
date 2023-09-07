@@ -118,7 +118,10 @@ function useUploader(props: UploaderProps) {
       req.setHeader('x-uploader-file-ext', `${ext}`);
 
       // @ts-ignore get folderId when upload using
-      req.setHeader('x-component-did', (window.blocklet?.componentId || '').split('/').pop());
+      if (window?.blocklet?.componentId) {
+        // @ts-ignore
+        req.setHeader('x-component-did', (window.blocklet.componentId || '').split('/').pop());
+      }
     },
     onAfterResponse: async (req, res) => {
       const result = {} as any;

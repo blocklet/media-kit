@@ -1,3 +1,7 @@
+## 0.0.6 (September 07, 2023)
+
+- fix: resolve the bug of window.blocklet not exist
+
 ## 0.0.5 (September 06, 2023)
 
 - chore: update deps

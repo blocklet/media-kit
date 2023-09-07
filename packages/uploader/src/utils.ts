@@ -45,10 +45,10 @@ export const getImageBinComponent = () =>
   window?.blocklet?.componentMountPoints?.find((item: any) => item.did === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9');
 
 // @ts-ignore
-export const imageBinMountPoint = getImageBinComponent().mountPoint;
+export const imageBinMountPoint = getImageBinComponent()?.mountPoint;
 
 // @ts-ignore
-export const prefixPath = imageBinMountPoint || (window.blocklet ? window.blocklet.prefix : '/');
+export const prefixPath = imageBinMountPoint || window?.blocklet?.prefix || '/';
 
 export const api = axios.create();
 
@@ -64,7 +64,7 @@ api.interceptors.request.use(
 
 export function createImageUrl(filename: string, width = 0, height = 0) {
   // @ts-ignore
-  const { CDN_HOST = '' } = window.blocklet;
+  const { CDN_HOST = '' } = window?.blocklet || {};
   const obj = new URL(CDN_HOST || window.location.origin);
   obj.pathname = joinUrl(prefixPath, '/uploads/', filename);
 
