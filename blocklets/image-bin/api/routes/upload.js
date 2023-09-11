@@ -8,6 +8,8 @@ const multer = require('multer');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
+const Component = require('@blocklet/sdk/lib/component');
+
 const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader/middlewares');
 
 const env = require('../libs/env');
@@ -258,6 +260,25 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
   });
 
   res.json(doc);
+});
+
+router.post('/image/generations', async (req, res) => {
+  const { prompt, number, sizeWidth, responseFormat } = req.body;
+
+  const response = await Component.call({
+    name: 'ai-kit',
+    path: '/api/v1/sdk/image/generations',
+    method: 'POST',
+    data: {
+      prompt,
+      n: parseInt(number, 10),
+      size: `${sizeWidth}x${sizeWidth}`,
+      response_format: responseFormat,
+    },
+    responseType: 'stream',
+  });
+  res.set('Content-Type', response.headers['content-type']);
+  response.data.pipe(res);
 });
 
 module.exports = router;

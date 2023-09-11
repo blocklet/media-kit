@@ -50,7 +50,8 @@ export default function Uploader() {
         prependUpload(result.data);
       }}
       plugins={[
-        // 'Uploaded', // image-bin unused, but leave it to debug later
+        'Uploaded', // image-bin unused, but leave it to debug later
+        'AIImage',
         'ImageEditor',
         'Url',
         'Webcam',

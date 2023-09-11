@@ -2,7 +2,8 @@ import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
 import isEmpty from 'lodash/isEmpty';
 import { useReactive } from 'ahooks';
-import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle, lazy } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -28,6 +29,13 @@ import '@uppy/status-bar/dist/style.min.css';
 import Uploaded from './plugins/uploaded';
 // @ts-ignore
 import PrepareUpload from './plugins/prepare-upload';
+// @ts-ignore
+import AIImage from './plugins/ai-image';
+// @ts-ignore
+import AIImage from './plugins/ai-image';
+// @ts-ignore
+const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
+
 import { getExt, getUploaderEndpoint } from '../utils';
 
 const getPluginList = (props: UploaderProps) => {
@@ -37,15 +45,39 @@ const getPluginList = (props: UploaderProps) => {
   return [
     {
       id: 'ImageEditor',
-      plugin: ImageEditor,
+      plugin: ImageEditor, // use image editor
       options: {
         quality: 1,
       },
     },
     {
       id: 'Uploaded',
-      plugin: Uploaded,
+      plugin: Uploaded, //
       options: {},
+    },
+    {
+      id: 'AIImage',
+      plugin: AIImage,
+      options: {
+        companionUrl,
+      },
+      onShowPanel: () => {
+        // wait for render
+        setTimeout(() => {
+          const root = document.getElementById('ai-image');
+          // @ts-ignore
+          createRoot(root).render(
+            <AIImageShowPanel
+              embed
+              onSelect={(res) => {
+                console.warn(res);
+              }}
+              api={() => {}}
+              disabledSize={false}
+            />
+          );
+        }, 100);
+      },
     },
     {
       id: 'Url',
@@ -243,19 +275,33 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         close();
       });
     }
+
+    // @ts-ignore
+    state.uppy.on('dashboard:show-panel', (source) => {
+      const { onShowPanel } = pluginMap[source];
+      if (onShowPanel) {
+        onShowPanel();
+      }
+    });
   }, plugins);
+
+  const target = 'uploader-container';
 
   const Wrapper = popup ? Backdrop : Fragment;
   const wrapperProps = popup
     ? {
         sx: {
-          zIndex: 99999,
           '& > *': {
-            display: !state.open ? 'none' : 'unset', // hide uppy when close
+            display: !state.open ? 'none' : 'block', // hide uppy when close
           },
         },
         open: state.open,
-        onClick: close,
+        onClick: (e: any) => {
+          if (document.activeElement === document.body) {
+            e.stopPropagation();
+            close();
+          }
+        },
         ...props.wrapperProps,
       }
     : ({
@@ -267,14 +313,14 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       {/* ignore backdrop trigger */}
       <Box
         key="uploader-container"
-        id="uploader-container"
+        id={target}
         onClick={(e) => e.stopPropagation()}
         sx={{
           width: isMobile ? '90vw' : 720,
           '.uppy-Dashboard-AddFiles-title': {
             whiteSpace: 'normal',
           },
-          '.uploaded': {
+          '.uploaded, .ai-image': {
             width: '100%',
             height: '100%',
             display: 'flex',
@@ -282,6 +328,15 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             flexDirection: 'column',
             '& > div': {
               width: '100%',
+            },
+            '& .uppy-ProviderBrowser-body': {
+              background: '#fff',
+            },
+            '& .uppy-ProviderBrowser-list': {
+              // flexDirection: 'column',
+              // justifyContent: 'flex-start',
+              // display: '-webkit-inline-box',
+              height: 'fit-content',
             },
             '& .uppy-ProviderBrowser-header': {
               // hide the logout
@@ -301,7 +356,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         <Dashboard
           inline
           // @ts-ignore
-          target="#uploader-container"
+          target={`#${target}`}
           id="upload-dashboard"
           uppy={state.uppy}
           plugins={plugins}

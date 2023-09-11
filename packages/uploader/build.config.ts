@@ -1,6 +1,12 @@
 import { copyFileSync } from 'node:fs';
 import { defineBuildConfig } from 'unbuild';
 
+const alias = {
+  react: 'preact/compat',
+  'react-dom': 'preact/compat',
+  'react/jsx-runtime': 'preact/jsx-runtime',
+};
+
 export default defineBuildConfig({
   entries: ['./src/index', './src/react', './src/middlewares'],
   declaration: true,
@@ -11,7 +17,11 @@ export default defineBuildConfig({
     esbuild: {
       jsx: 'automatic',
     },
+    // alias: {
+    //   entries: alias,
+    // },
   },
+  // alias,
   failOnWarn: false,
   externals: ['react', 'ahooks', 'preact'],
   hooks: {
