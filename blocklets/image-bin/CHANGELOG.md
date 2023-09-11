@@ -1,3 +1,7 @@
+## 0.10.5 (September 12, 2023)
+
+- chore: update session manager nav items
+
 ## 0.10.4 (September 12, 2023)
 
 - chore: update deps
