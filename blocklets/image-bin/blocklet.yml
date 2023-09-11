@@ -121,6 +121,7 @@ navigation:
     icon: ic:outline-photo-library
     section:
       - dashboard
+      - sessionManager
     role:
       - admin
       - owner
