@@ -19,5 +19,9 @@
     "prettier": "^2.8.8",
     "prompts": "^2.4.2",
     "zx": "^7.2.3"
+  },
+  "resolutions": {
+    "@blocklet/logger": "1.16.16-beta-d6c5ed65",
+    "@blocklet/sdk": "1.16.16-beta-d6c5ed65"
   }
 }
