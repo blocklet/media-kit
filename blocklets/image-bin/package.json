@@ -55,10 +55,10 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.7.16",
+    "@arcblock/did-connect": "^2.7.17",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.7.16",
-    "@blocklet/ui-react": "^2.7.16",
+    "@arcblock/ux": "^2.7.17",
+    "@blocklet/ui-react": "^2.7.17",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.8",
@@ -66,7 +66,7 @@
     "ahooks": "^3.7.8",
     "axios": "^1.5.0",
     "copy-to-clipboard": "^3.3.3",
-    "eslint": "^8.48.0",
+    "eslint": "^8.49.0",
     "lint-staged": "^13.3.0",
     "lodash": "^4.17.21",
     "nodemon": "^2.0.22",
