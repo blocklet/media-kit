@@ -14,10 +14,14 @@
   "devDependencies": {
     "@arcblock/eslint-config": "0.2.2",
     "bumpp": "^7.2.0",
-    "eslint": "^8.48.0",
+    "eslint": "^8.49.0",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
     "prompts": "^2.4.2",
     "zx": "^7.2.3"
+  },
+  "resolutions": {
+    "@blocklet/logger": "1.16.16-beta-d6c5ed65",
+    "@blocklet/sdk": "1.16.16-beta-d6c5ed65"
   }
 }

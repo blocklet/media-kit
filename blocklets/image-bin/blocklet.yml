@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.10.3
+version: 0.10.6
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -121,6 +121,7 @@ navigation:
     icon: ic:outline-photo-library
     section:
       - dashboard
+      - sessionManager
     role:
       - admin
       - owner
