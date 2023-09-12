@@ -103,9 +103,11 @@ function useUploader(props: UploaderProps) {
     },
     ...coreProps,
   }).use(Tus, {
-    chunkSize: 1024 * 1024 * 20, // 20MB
+    chunkSize: 1024 * 1024 * 10, // 10MB
     // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
     withCredentials: true,
+    // @ts-ignore
+    // uploadUrl: getUploaderEndpoint(apiPathProps?.uploader as string),
     endpoint: getUploaderEndpoint(apiPathProps?.uploader as string),
     async onBeforeRequest(req, file) {
       // @ts-ignore
@@ -116,6 +118,7 @@ function useUploader(props: UploaderProps) {
       req.setHeader('x-uploader-file-name', `${hashFileName}`);
       req.setHeader('x-uploader-file-id', `${id}`);
       req.setHeader('x-uploader-file-ext', `${ext}`);
+      req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
 
       // @ts-ignore get folderId when upload using
       if (window?.blocklet?.componentId) {
@@ -123,6 +126,7 @@ function useUploader(props: UploaderProps) {
         req.setHeader('x-component-did', (window.blocklet.componentId || '').split('/').pop());
       }
     },
+
     onAfterResponse: async (req, res) => {
       const result = {} as any;
       const xhr = req.getUnderlyingObject();
@@ -139,21 +143,60 @@ function useUploader(props: UploaderProps) {
       result.url = req.getURL();
       result.status = xhr.status;
       // @ts-ignore
-      result.headers = req._headers;
+      result.headers = {
+        // @ts-ignore
+        ...req._headers,
+      };
 
-      // each time a response is received
+      const allResponseHeaders = xhr.getAllResponseHeaders();
 
-      if (_onAfterResponse) {
-        await _onAfterResponse?.(xhr);
+      // format headers
+      if (allResponseHeaders) {
+        const headers = allResponseHeaders.split('\r\n');
+        headers.forEach((item: string) => {
+          const [key, value] = item.split(': ');
+          if (key && value) {
+            result.headers[key] = value;
+          }
+        });
       }
 
       // only call onUploadFinish if it's a PATCH / POST request
-      if (['PATCH', 'POST'].includes(result.method) && result.status === 200) {
-        // remove uppy record
-        Object.keys(localStorage).forEach((item) =>
-          item.indexOf(result.headers['x-uploader-file-id']) != -1 ? localStorage.removeItem(item) : ''
-        );
-        await _onUploadFinish?.(result);
+      if (['PATCH', 'POST'].includes(result.method) && [200, 500].includes(result.status)) {
+        const isExist = [true, 'true'].includes(result.headers['x-uploader-file-exist']);
+
+        // exist but not upload
+        if (isExist) {
+          // 更新 uppy 进度
+          const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
+
+          if (file) {
+            currentUppy.pauseResume(file.id);
+            currentUppy.emit('upload-success', file, res);
+          }
+        }
+
+        if (result.status === 200) {
+          await _onUploadFinish?.(result);
+        }
+
+        if (result.method === 'PATCH') {
+          // remove uppy record
+          Object.keys(localStorage).forEach((item) => {
+            if (item.indexOf(result.headers['x-uploader-file-id']) !== -1) {
+              try {
+                localStorage.removeItem(item);
+              } catch (error) {
+                // do noting
+              }
+            }
+          });
+        }
+      }
+
+      // each time a response is received
+      if (_onAfterResponse) {
+        await _onAfterResponse?.(xhr);
       }
     },
   });
