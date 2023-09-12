@@ -213,7 +213,7 @@ export default function Output({
             }}>
             {onClose && (
               <Button color="primary" variant="outlined" onClick={onClose}>
-                <CloseIcon />
+                <CloseIcon fontSize="20px" />
               </Button>
             )}
 
