@@ -17,7 +17,6 @@ const LoadingImage = forwardRef(
       selected,
       onLoad,
       src,
-      width,
       ...rest
     }: {
       onDelete: (src: string) => void;
@@ -67,8 +66,6 @@ const LoadingImage = forwardRef(
             animation="wave"
             variant="rectangular"
             style={{
-              width: width,
-              height: width,
               position: 'absolute',
               top: 0,
             }}
@@ -79,9 +76,9 @@ const LoadingImage = forwardRef(
           <DeleteIcon sx={{ fontSize: 20 }} />
         </DeleteButton>
 
-        <Box sx={{ position: 'absolute', right: 10, top: 10 }} onClick={rest?.onClick}>
+        <Box sx={{ position: 'absolute', right: 8, top: 8 }} onClick={rest?.onClick}>
           {selected ? (
-            <CheckCircleIcon sx={{ fontSize: 30, color: '#2482F6' }} />
+            <CheckCircleIcon sx={{ fontSize: 30 }} />
           ) : (
             <RadioButtonUncheckedIcon sx={{ fontSize: 30, color: '#fff' }} />
           )}
@@ -112,7 +109,11 @@ const DeleteButton = styled(IconButton)`
 `;
 
 const CheckCircleIcon = styled(CheckCircleTwoToneIcon)`
-  & > svg > path:first-child {
+  & path:first-of-type {
+    fill: #2482f6;
     opacity: 1;
+  }
+  & path:last-child {
+    fill: white;
   }
 `;

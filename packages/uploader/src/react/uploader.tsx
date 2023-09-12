@@ -1,6 +1,5 @@
 import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
-import isEmpty from 'lodash/isEmpty';
 import { useReactive } from 'ahooks';
 import { createRoot } from 'react-dom/client';
 import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle, lazy } from 'react';
@@ -25,6 +24,7 @@ import '@uppy/image-editor/dist/style.min.css';
 import '@uppy/drag-drop/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
+import { api, setPrefixPath, isMediaKit, getExt, getUploaderEndpoint, base64ToFile, getAIKitComponent } from '../utils';
 // @ts-ignore
 import Uploaded from './plugins/uploaded';
 // @ts-ignore
@@ -32,15 +32,19 @@ import PrepareUpload from './plugins/prepare-upload';
 // @ts-ignore
 import AIImage from './plugins/ai-image';
 // @ts-ignore
-import AIImage from './plugins/ai-image';
-// @ts-ignore
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
-
-import { getExt, getUploaderEndpoint } from '../utils';
 
 const getPluginList = (props: UploaderProps) => {
   const { apiPathProps } = props;
+
   const companionUrl = getUploaderEndpoint(apiPathProps?.companion as string);
+
+  const getAIImageAPI = async (payload: any) => {
+    const result = await api.post('/api/image/generations', payload);
+    return result.data;
+  };
+
+  const restrictions = props?.coreProps?.restrictions || {};
 
   return [
     {
@@ -50,32 +54,50 @@ const getPluginList = (props: UploaderProps) => {
         quality: 1,
       },
     },
-    {
+    // other blocklet may can use this plugin
+    !isMediaKit() && {
       id: 'Uploaded',
       plugin: Uploaded, //
       options: {},
     },
-    {
+    // with AI Kit
+    getAIKitComponent() && {
       id: 'AIImage',
       plugin: AIImage,
       options: {
         companionUrl,
       },
-      onShowPanel: () => {
+      onShowPanel: (ref: any) => {
         // wait for render
         setTimeout(() => {
           const root = document.getElementById('ai-image');
-          // @ts-ignore
-          createRoot(root).render(
-            <AIImageShowPanel
-              embed
-              onSelect={(res) => {
-                console.warn(res);
-              }}
-              api={() => {}}
-              disabledSize={false}
-            />
-          );
+          // render AIImageShowPanel
+          if (root) {
+            createRoot(root).render(
+              <AIImageShowPanel
+                api={getAIImageAPI}
+                restrictions={restrictions}
+                onSelect={(data: any) => {
+                  const uploader = ref.current.getUploader();
+                  uploader?.emit('ai-image:selected', data);
+
+                  data.forEach((base64: any, index: number) => {
+                    const fileName = `AI Image [${index + 1}].png`; // must be png
+
+                    const formatFile = {
+                      name: fileName,
+                      type: 'image/png', // must be png
+                      data: base64ToFile(base64, fileName),
+                      source: 'AIImage',
+                      isRemote: false,
+                    };
+
+                    uploader?.addFile(formatFile);
+                  });
+                }}
+              />
+            );
+          }
         }, 100);
       },
     },
@@ -91,7 +113,9 @@ const getPluginList = (props: UploaderProps) => {
       plugin: Webcam,
       options: {},
     },
-    {
+    // with Unsplash key
+    // @ts-ignore
+    !!window.blocklet.UNSPLASH_KEY && {
       id: 'Unsplash',
       plugin: Unsplash,
       options: {
@@ -128,6 +152,8 @@ function useUploader(props: UploaderProps) {
   // Adding to global `meta` will add it to every file.
   // Every Uppy instance needs a unique ID.
 
+  const endpoint = getUploaderEndpoint(apiPathProps?.uploader as string);
+
   const currentUppy = new Uppy({
     id,
     meta: {
@@ -138,9 +164,7 @@ function useUploader(props: UploaderProps) {
     chunkSize: 1024 * 1024 * 10, // 10MB
     // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
     withCredentials: true,
-    // @ts-ignore
-    // uploadUrl: getUploaderEndpoint(apiPathProps?.uploader as string),
-    endpoint: getUploaderEndpoint(apiPathProps?.uploader as string),
+    endpoint,
     async onBeforeRequest(req, file) {
       // @ts-ignore
       const { hashFileName, id } = file;
@@ -248,9 +272,11 @@ function useUploader(props: UploaderProps) {
 
 const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFrameElement>, ref: any) => {
   // apiPathProps default is use image-bin
-  const apiPathProps = props?.apiPathProps || {
+  const apiPathProps = {
     uploader: '/api/uploads',
     companion: '/api/companion',
+    disableMediaKitPrefix: false,
+    ...props?.apiPathProps,
   };
 
   const pluginList = getPluginList({ ...props, apiPathProps });
@@ -308,6 +334,10 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       })
   );
 
+  useEffect(() => {
+    setPrefixPath(apiPathProps.disableMediaKitPrefix);
+  }, [apiPathProps.disableMediaKitPrefix]);
+
   // custom plugin
   useEffect(() => {
     // handle uploaded:selected
@@ -322,9 +352,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     // @ts-ignore
     state.uppy.on('dashboard:show-panel', (source) => {
       const { onShowPanel } = pluginMap[source];
-      if (onShowPanel) {
-        onShowPanel();
-      }
+      onShowPanel?.(ref);
     });
   }, plugins);
 
@@ -357,7 +385,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       <Box
         key="uploader-container"
         id={target}
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e: any) => e.stopPropagation()}
         sx={{
           width: isMobile ? '90vw' : 720,
           '.uppy-Dashboard-AddFiles-title': {

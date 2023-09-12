@@ -3,43 +3,44 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useState } from 'react';
 import { useReactive, useAsyncEffect } from 'ahooks';
 
-import { useAiImageContext, AiImagePromptProps } from '../context';
+import { useAIImageContext, AIImagePromptProps } from '../context';
 import LoadingImage from './loading-image';
 import Lottie from './lottie';
 import lottieJsonErrorUrl from './lottie-error.json';
 import lottieJsonLoadingUrl from './lottie-loading.json';
 import lottieJsonWelcomeUrl from './lottie-welcome.json';
-import { api } from '../../../../../utils';
 
 export default function Output({
   options,
   handleApi,
   onSelect,
   onFinish,
+  onClose,
+  isMobile,
 }: {
-  options?: AiImagePromptProps;
+  options?: AIImagePromptProps;
   handleApi: (data: any) => any;
   onSelect: (data?: string[]) => void;
   onFinish: () => void;
+  onClose?: Function | boolean;
+  isMobile?: boolean;
 }) {
-  const { loading, multiple, embed, onLoading } = useAiImageContext();
+  const { loading, onLoading, restrictions } = useAIImageContext();
   const [response, setResponse] = useState<{ src: string; width: number }[]>([]);
   const [error, setError] = useState<Error>();
+
+  const maxNumberOfFiles = restrictions?.maxNumberOfFiles;
 
   const selected = useReactive<{ [key: string]: boolean }>({});
   const selectedUrls: string[] = Object.keys(selected).filter((key) => selected[key]);
 
-  const myApi = async (payload: any) => {
-    const result = await api.post('/api/image/generations', payload);
-    return result.data;
-  };
-
   const imageWrapperProps = {
-    xs: 12,
+    xs: 6,
     sm: 6,
   };
 
@@ -51,15 +52,13 @@ export default function Output({
 
     onLoading(true);
     try {
-      const res = await myApi({ ...options, responseFormat: embed ? 'b64_json' : 'url' });
+      const res = await handleApi({ ...options, responseFormat: 'b64_json' });
       if (res.data) {
         const list = res.data || [];
-        const arr = embed
-          ? list.map((item: { b64_json: string }) => ({
-              src: `data:image/png;base64,${item.b64_json}`,
-              width: options.sizeWidth,
-            }))
-          : list.map((item: { url: string }) => ({ src: `${item.url}`, width: options.sizeWidth }));
+        const arr = list.map((item: { b64_json: string }) => ({
+          src: `data:image/png;base64,${item.b64_json}`,
+          width: options.sizeWidth,
+        }));
 
         if (response) {
           setResponse([...arr, ...response]);
@@ -70,7 +69,7 @@ export default function Output({
         setError(res);
       }
     } catch (err) {
-      console.error('AiImage generate error: ', err);
+      console.error('AIImage generate error: ', err);
       setError((err as any)?.response?.data || err);
     } finally {
       onLoading(false);
@@ -79,7 +78,27 @@ export default function Output({
   }, [options?.number, options?.prompt, options?.sizeWidth]);
 
   const onSelectImage = (src: string) => {
-    selected[src] = !selected[src];
+    const selectedUrls: string[] = Object.keys(selected).filter((key) => selected[key]);
+
+    const canAdd = maxNumberOfFiles ? selectedUrls.length < maxNumberOfFiles : true;
+
+    // Add if it can be added and doesn't already exist
+    // If it already exists, then delete it
+    // If it's already full and click on another image, then automatically delete the last one
+    if (canAdd) {
+      if (!selected[src]) {
+        selected[src] = true;
+      } else {
+        selected[src] = false;
+      }
+    } else {
+      const removeSrc = selectedUrls.pop();
+      if (removeSrc !== src) {
+        // @ts-ignore
+        selected[removeSrc] = false;
+      }
+      selected[src] = !selected[src];
+    }
   };
 
   const onDelete = (src: string) => {
@@ -94,6 +113,14 @@ export default function Output({
   };
 
   const Loading = () => {
+    // get width and height from first ai image
+    const loadingProps = {
+      // @ts-ignore
+      width: document.querySelector('.photo-item img')?.offsetWidth || 0,
+      // @ts-ignore
+      height: document.querySelector('.photo-item img')?.offsetHeight || 0,
+    };
+
     return (
       <>
         {Array.from({ length: options?.number || 1 }).map((_, index) => {
@@ -108,9 +135,8 @@ export default function Output({
                 animation="wave"
                 variant="rectangular"
                 style={{
-                  width: '100%',
-                  height: '100%',
                   borderRadius: '12px',
+                  ...loadingProps,
                 }}
               />
             </Grid>
@@ -123,7 +149,7 @@ export default function Output({
   const render = () => {
     if (error) {
       return (
-        <Box width={300} height={300} m="auto" mt="100px">
+        <Box width={300} height={300} m="auto">
           <Lottie key="error" src={lottieJsonErrorUrl} />
           <Box
             sx={{
@@ -141,7 +167,7 @@ export default function Output({
       return (
         <>
           <Box flexGrow={1} sx={{ height: 0, overflowX: 'hidden', overflowY: 'auto' }}>
-            <ResponseItemRoot sx={{ p: 2 }}>
+            <ResponseItemRoot sx={isMobile ? { p: 0, border: 'none !important' } : { p: 2 }}>
               <Grid spacing={2} container className="photo-wrapper">
                 {loading && <Loading />}
 
@@ -156,7 +182,7 @@ export default function Output({
                           cursor: 'pointer',
                           transition: 'all 0.3s',
                           border: selected[item.src] ? '2px solid #2482F6' : '2px solid transparent',
-                          '-webkit-user-drag': 'none',
+                          WebkitUserDrag: 'none',
                           width: '100%',
                           height: '100%',
                         }}
@@ -174,28 +200,41 @@ export default function Output({
             </ResponseItemRoot>
           </Box>
 
-          <Button
-            size="small"
-            color="primary"
-            variant="contained"
-            sx={{ alignSelf: 'end', mt: 2 }}
-            disabled={!Boolean(selectedUrls.length) || loading}
-            onClick={() => {
-              onSelect(selectedUrls);
+          <Box
+            sx={{
+              mt: 2,
+              display: 'flex',
+              justifyContent: onClose ? 'space-between' : 'flex-end',
+              button: {
+                borderRadius: '30px',
+                height: 40,
+                textTransform: 'none',
+              },
             }}>
-            {Boolean(selectedUrls.length) ? 'Use selected images' : 'Please select images'}
-          </Button>
+            {onClose && (
+              <Button color="primary" variant="outlined" onClick={onClose}>
+                <CloseIcon />
+              </Button>
+            )}
+
+            <Button
+              color="primary"
+              variant="contained"
+              disabled={!Boolean(selectedUrls.length) || loading}
+              onClick={() => {
+                onSelect(selectedUrls);
+              }}>
+              {Boolean(selectedUrls.length) ? 'Use selected images' : 'Please select images'}
+            </Button>
+          </Box>
         </>
       );
     }
 
     if (options) {
       return (
-        <Box width={200} height={200} m="auto">
+        <Box width={220} height={220} m="auto">
           <Lottie key="loading" src={lottieJsonLoadingUrl} />
-          <Box textAlign="center" color="#25292F" fontSize={14} className="tips">
-            {`Generating image...`}
-          </Box>
         </Box>
       );
     }

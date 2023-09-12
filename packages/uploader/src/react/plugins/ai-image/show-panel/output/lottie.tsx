@@ -1,8 +1,6 @@
-// import { lazy } from 'react';
+import { lazy } from 'react';
 
-// const Lottie = lazy(() => import('lottie-react'));
-
-import Lottie from 'lottie-react';
+const Lottie = lazy(() => import('lottie-react'));
 
 export interface LottieProps {
   src: any;

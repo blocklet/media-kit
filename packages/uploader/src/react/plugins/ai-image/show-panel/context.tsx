@@ -1,54 +1,39 @@
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { useGetState } from 'ahooks';
 
-interface AiImageContextType {
-  disabledSize: boolean;
-  multiple: boolean;
+interface AIImageContextType {
   loading: boolean;
-  embed: boolean;
   onLoading: (loading: boolean) => void;
+  restrictions?: any;
 }
 
-interface AiImageProviderProps {
+interface AIImageProviderProps {
   children: ReactNode;
-  multiple?: boolean;
-  disabledSize: boolean;
-  embed: boolean;
+  restrictions?: any;
 }
 
-interface AiImageContextState {
-  multiple: boolean;
+interface AIImageContextState {
   loading: boolean;
-  disabledSize: boolean;
-  embed: boolean;
 }
 
-export interface AiImagePromptProps {
+export interface AIImagePromptProps {
   prompt: string;
   sizeWidth: number;
   number: number;
 }
 
-export const AiImageContext = createContext<AiImageContextType>({} as AiImageContextType);
+export const AIImageContext = createContext<AIImageContextType>({} as AIImageContextType);
 
-export const useAiImageContext = () => useContext(AiImageContext);
+export const useAIImageContext = () => useContext(AIImageContext);
 
-export function AiImageProvider({
-  multiple = false,
-  disabledSize = false,
-  embed = false,
-  children,
-}: AiImageProviderProps) {
-  const [state, setState] = useGetState<AiImageContextState>({
-    embed,
-    multiple,
+export function AIImageProvider({ children, restrictions }: AIImageProviderProps) {
+  const [state, setState] = useGetState<AIImageContextState>({
     loading: false,
-    disabledSize,
   });
 
   const onLoading = (loading: boolean) => setState((prev) => ({ ...prev, loading }));
 
-  const value = useMemo<AiImageContextType>(() => ({ ...state, onLoading }), [state]);
+  const value = useMemo<AIImageContextType>(() => ({ ...state, onLoading, restrictions }), [state]);
 
-  return <AiImageContext.Provider value={value}>{children}</AiImageContext.Provider>;
+  return <AIImageContext.Provider value={value}>{children}</AIImageContext.Provider>;
 }

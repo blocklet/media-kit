@@ -59,7 +59,7 @@ class Uploaded extends UIPlugin {
 
   render(state) {
     if (!this.uploadedAPIData.loading && this.uploadedAPIData.files?.length === 0) {
-      this.queryUploadedFromImageBin();
+      this.queryUploadedFromMediaKit();
     }
 
     return (
@@ -69,7 +69,7 @@ class Uploaded extends UIPlugin {
     );
   }
 
-  queryUploadedFromImageBin = async () => {
+  queryUploadedFromMediaKit = async () => {
     const { pageSize, page, files, hasMore, loading } = this.uploadedAPIData;
 
     if (hasMore && !loading) {
@@ -99,8 +99,10 @@ class Uploaded extends UIPlugin {
           ...files,
           // format data
           ...data.uploads.map((item) => {
-            const { filename, _id, originalname, mimetype } = item;
             let previewUrl = 'file';
+
+            const { filename, _id, originalname } = item;
+
             const fileUrl = createImageUrl(filename);
 
             previewUrl = createImageUrl(filename, 400);
@@ -224,7 +226,7 @@ class Uploaded extends UIPlugin {
       const { scrollHeight, scrollTop, offsetHeight } = event.target;
       const scrollPosition = scrollHeight - (scrollTop + offsetHeight);
       if (scrollPosition < 30) {
-        this.queryUploadedFromImageBin();
+        this.queryUploadedFromMediaKit();
       }
     };
 

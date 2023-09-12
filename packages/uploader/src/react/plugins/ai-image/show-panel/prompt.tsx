@@ -9,7 +9,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 
-import { useAiImageContext, AiImagePromptProps } from './context';
+import { useAIImageContext, AIImagePromptProps } from './context';
 
 const marks = [
   {
@@ -29,10 +29,10 @@ function valueLabelFormat(value: number) {
   return marks.findIndex((mark) => mark.value === value) + 1;
 }
 
-export default function Prompt({ onSubmit }: { onSubmit: (value: AiImagePromptProps) => void }) {
-  const { loading } = useAiImageContext();
+export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptProps) => void }) {
+  const { loading } = useAIImageContext();
 
-  const values = useReactive<AiImagePromptProps>({
+  const values = useReactive<AIImagePromptProps>({
     prompt: '',
     sizeWidth: 256,
     number: 1,
@@ -57,7 +57,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AiImagePromptPr
   };
 
   return (
-    <Root onSubmit={(e) => e.preventDefault()}>
+    <Root onSubmit={(e: any) => e.preventDefault()}>
       <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
         <Grid container gap={2.5}>
           <Grid item xs={12}>
@@ -70,12 +70,12 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AiImagePromptPr
               size="small"
               type="text"
               required
-              label="Prompt"
+              // label="Prompt"
               placeholder="Please enter Prompt"
               multiline
-              minRows={5}
+              minRows={7}
               value={values.prompt ?? ''}
-              onChange={(e) => {
+              onChange={(e: any) => {
                 e.stopPropagation();
                 values.prompt = e.target.value;
               }}
@@ -105,7 +105,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AiImagePromptPr
                     max={1024}
                     defaultValue={512}
                     value={values.sizeWidth as number}
-                    onChange={(e, newValue) => {
+                    onChange={(e: any, newValue: string) => {
                       values.sizeWidth = Number(newValue);
                     }}
                     valueLabelFormat={valueLabelFormat}
@@ -147,7 +147,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AiImagePromptPr
                 min={1}
                 max={10}
                 value={values.number as number}
-                onChange={(e, newValue) => {
+                onChange={(e: any, newValue: string) => {
                   e.stopPropagation();
                   values.number = Number(newValue);
                 }}
@@ -164,7 +164,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AiImagePromptPr
         onClick={run}
         disabled={loading}
         style={{ transition: 'all 0.3s' }}>
-        {loading ? 'Generate...' : 'Generate'}
+        {loading ? 'Generating...' : 'Generate'}
       </Button>
     </Root>
   );
@@ -189,7 +189,7 @@ const Root = styled(Box)`
   }
 
   .submit-ai {
-    height: 43px;
+    height: 40px;
     width: 100%;
     background: linear-gradient(90deg, #45e4fa 0%, #8a45fa 52.08%, #fa45bc 100%);
     border-radius: 30px;

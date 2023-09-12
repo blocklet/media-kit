@@ -1,28 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-
+import { useSize } from 'ahooks';
 import Prompt from './prompt';
 import Output from './output';
-import { AiImageProvider, AiImagePromptProps } from './context';
+import { AIImageProvider, AIImagePromptProps } from './context';
 import { getAIKitComponent } from '../../../../utils';
 
 interface Props {
   onSelect: (data: any) => void;
+  restrictions?: any;
   api: any;
-  width?: number | string;
-  height?: number | string;
-  embed?: boolean;
-  disabledSize?: boolean;
 }
 
-function AiImage({ onSelect, api, width, height, embed = false, disabledSize = false }: Props) {
-  const [parameters, setParameters] = useState<AiImagePromptProps>();
+function AIImage({ onSelect, api, restrictions }: Props) {
+  const [parameters, setParameters] = useState<AIImagePromptProps>();
   const [open, setOpen] = useState<boolean>(false);
   const onFinish = () => setParameters(undefined);
   const onClose = () => setOpen(false);
+  const size = useSize(document.body);
+  let isMobile = size && size.width < 768 ? true : false;
 
   if (!getAIKitComponent()) {
     return (
@@ -32,8 +29,14 @@ function AiImage({ onSelect, api, width, height, embed = false, disabledSize = f
     );
   }
 
+  // isMobile
+  const openPrompt = !isMobile || (isMobile && !open);
+  const openOutput = !isMobile || (isMobile && open);
+
+  const onCloseOutput = isMobile ? onClose : false;
+
   return (
-    <AiImageProvider disabledSize={disabledSize} embed={embed}>
+    <AIImageProvider restrictions={restrictions}>
       <Box
         sx={{
           display: 'flex',
@@ -41,20 +44,45 @@ function AiImage({ onSelect, api, width, height, embed = false, disabledSize = f
           height: '100%',
           bgcolor: '#fff',
         }}>
-        <Grid container sx={{ flexGrow: 1 }} spacing={{ xs: 2 }}>
-          <Grid item xs={12} sm={4} sx={{ borderRight: { sm: '1px solid #eee', height: '100%' } }}>
+        <Grid container sx={{ flexGrow: 1, height: '100%' }}>
+          <Grid
+            item
+            xs={12}
+            sm={4}
+            sx={{ borderRight: { sm: '1px solid #eee' }, display: openPrompt ? 'unset' : 'none' }}>
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
-              <Prompt onSubmit={setParameters} />
+              <Prompt
+                onSubmit={(...props) => {
+                  setOpen(true);
+                  setParameters(...props);
+                }}
+              />
             </Box>
           </Grid>
 
-          <Grid item xs={12} sm={8} sx={{ height: '100%', overflow: 'hidden', p: 2, pt: 4 }}>
-            <Output options={parameters} handleApi={api} onSelect={onSelect} onFinish={onFinish} />
+          <Grid
+            item
+            xs={12}
+            sm={8}
+            sx={{
+              height: '100%',
+              overflow: 'hidden',
+              p: 2,
+              display: openOutput ? 'unset' : 'none',
+            }}>
+            <Output
+              isMobile={isMobile}
+              options={parameters}
+              handleApi={api}
+              onSelect={onSelect}
+              onFinish={onFinish}
+              onClose={onCloseOutput}
+            />
           </Grid>
         </Grid>
       </Box>
-    </AiImageProvider>
+    </AIImageProvider>
   );
 }
 
-export default AiImage;
+export default AIImage;
