@@ -1,3 +1,7 @@
+## 0.0.8 (September 12, 2023)
+
+- feat: support symlink to other dir after upload
+
 ## 0.0.7 (September 12, 2023)
 
 - chore: update deps
