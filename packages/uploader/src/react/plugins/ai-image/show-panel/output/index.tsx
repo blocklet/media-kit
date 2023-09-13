@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
-import CloseIcon from '@mui/icons-material/Close';
+import { Close as CloseIcon } from '@mui/icons-material';
 
 import { useState } from 'react';
 import { useReactive, useAsyncEffect } from 'ahooks';
@@ -172,10 +172,8 @@ export default function Output({
                 {loading && <Loading />}
 
                 {response.map((item, index) => {
-                  const key = item.src.slice(0, 500);
-
                   return (
-                    <Grid item {...imageWrapperProps} key={key} className="photo-item">
+                    <Grid item {...imageWrapperProps} key={item.src} className="photo-item">
                       <LoadingImage
                         {...item}
                         selected={selected[item.src]}

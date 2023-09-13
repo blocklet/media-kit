@@ -68,37 +68,42 @@ const getPluginList = (props: UploaderProps) => {
         companionUrl,
       },
       onShowPanel: (ref: any) => {
-        // wait for render
-        setTimeout(() => {
-          const root = document.getElementById('ai-image');
-          // render AIImageShowPanel
-          if (root) {
-            createRoot(root).render(
-              <AIImageShowPanel
-                api={getAIImageAPI}
-                restrictions={restrictions}
-                onSelect={(data: any) => {
-                  const uploader = ref.current.getUploader();
-                  uploader?.emit('ai-image:selected', data);
+        function renderAIImageShowPanel() {
+          // wait for render
+          setTimeout(() => {
+            const root = document.getElementById('ai-image');
+            // render AIImageShowPanel
+            if (root) {
+              createRoot(root).render(
+                <AIImageShowPanel
+                  api={getAIImageAPI}
+                  restrictions={restrictions}
+                  onSelect={(data: any) => {
+                    const uploader = ref.current.getUploader();
+                    uploader?.emit('ai-image:selected', data);
 
-                  data.forEach((base64: any, index: number) => {
-                    const fileName = `AI Image [${index + 1}].png`; // must be png
+                    data.forEach((base64: any, index: number) => {
+                      const fileName = `AI Image [${index + 1}].png`; // must be png
 
-                    const formatFile = {
-                      name: fileName,
-                      type: 'image/png', // must be png
-                      data: base64ToFile(base64, fileName),
-                      source: 'AIImage',
-                      isRemote: false,
-                    };
+                      const formatFile = {
+                        name: fileName,
+                        type: 'image/png', // must be png
+                        data: base64ToFile(base64, fileName),
+                        source: 'AIImage',
+                        isRemote: false,
+                      };
 
-                    uploader?.addFile(formatFile);
-                  });
-                }}
-              />
-            );
-          }
-        }, 100);
+                      uploader?.addFile(formatFile);
+                    });
+                  }}
+                />
+              );
+            } else {
+              renderAIImageShowPanel();
+            }
+          }, 100);
+        }
+        renderAIImageShowPanel();
       },
     },
     {
@@ -132,7 +137,7 @@ const getPluginList = (props: UploaderProps) => {
       },
       alwayUse: true,
     },
-  ];
+  ].filter(Boolean);
 };
 
 function useUploader(props: UploaderProps) {
