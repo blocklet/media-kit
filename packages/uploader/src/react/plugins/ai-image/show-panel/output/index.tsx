@@ -172,8 +172,10 @@ export default function Output({
                 {loading && <Loading />}
 
                 {response.map((item, index) => {
+                  const key = item.src.slice(0, 500);
+
                   return (
-                    <Grid item {...imageWrapperProps} key={item.src} className="photo-item">
+                    <Grid item {...imageWrapperProps} key={key} className="photo-item">
                       <LoadingImage
                         {...item}
                         selected={selected[item.src]}

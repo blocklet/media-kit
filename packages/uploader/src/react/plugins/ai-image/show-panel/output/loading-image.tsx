@@ -95,8 +95,6 @@ const DeleteButton = styled(IconButton)`
   width: 36px;
   padding: 0;
   background: rgba(0, 0, 0, 0.42);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
   color: #f7f8f8;
   display: flex;
   justify-content: center;
