@@ -1,3 +1,7 @@
+## 0.10.8 (September 13, 2023)
+
+- chore: bump version to rebuild
+
 ## 0.10.7 (September 13, 2023)
 
 - feat: support AI Image in uploader
