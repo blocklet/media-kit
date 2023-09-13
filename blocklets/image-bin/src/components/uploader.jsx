@@ -20,8 +20,6 @@ const allowedFileTypes = Array.isArray(window.blocklet.preferences.types)
 // not use iec
 const maxFileSize = xbytes.parseSize(window.blocklet.MAX_UPLOAD_SIZE, { iec: false });
 
-const canUseUnsplash = !!window.blocklet.UNSPLASH_KEY;
-
 export default function Uploader() {
   const { prependUpload } = useUploadContext();
 
@@ -49,17 +47,11 @@ export default function Uploader() {
       onUploadFinish={(result) => {
         prependUpload(result.data);
       }}
-      plugins={[
-        // 'Uploaded', // image-bin unused, but leave it to debug later
-        'ImageEditor',
-        'Url',
-        'Webcam',
-        canUseUnsplash && 'Unsplash',
-      ].filter(Boolean)}
       coreProps={{
         restrictions: {
           allowedFileTypes,
           maxFileSize,
+          // maxNumberOfFiles: 2, // use to debug
         },
       }}
       apiPathProps={{

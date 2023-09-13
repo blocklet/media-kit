@@ -1,8 +1,8 @@
 import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
-import isEmpty from 'lodash/isEmpty';
 import { useReactive } from 'ahooks';
-import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle, lazy } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -24,28 +24,82 @@ import '@uppy/image-editor/dist/style.min.css';
 import '@uppy/drag-drop/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
+import { api, setPrefixPath, isMediaKit, getExt, getUploaderEndpoint, base64ToFile, getAIKitComponent } from '../utils';
 // @ts-ignore
 import Uploaded from './plugins/uploaded';
 // @ts-ignore
 import PrepareUpload from './plugins/prepare-upload';
-import { getExt, getUploaderEndpoint } from '../utils';
+// @ts-ignore
+import AIImage from './plugins/ai-image';
+// @ts-ignore
+const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 const getPluginList = (props: UploaderProps) => {
   const { apiPathProps } = props;
+
   const companionUrl = getUploaderEndpoint(apiPathProps?.companion as string);
+
+  const getAIImageAPI = async (payload: any) => {
+    const result = await api.post('/api/image/generations', payload);
+    return result.data;
+  };
+
+  const restrictions = props?.coreProps?.restrictions || {};
 
   return [
     {
       id: 'ImageEditor',
-      plugin: ImageEditor,
+      plugin: ImageEditor, // use image editor
       options: {
         quality: 1,
       },
     },
-    {
+    // other blocklet may can use this plugin
+    !isMediaKit() && {
       id: 'Uploaded',
-      plugin: Uploaded,
+      plugin: Uploaded, //
       options: {},
+    },
+    // with AI Kit
+    getAIKitComponent() && {
+      id: 'AIImage',
+      plugin: AIImage,
+      options: {
+        companionUrl,
+      },
+      onShowPanel: (ref: any) => {
+        // wait for render
+        setTimeout(() => {
+          const root = document.getElementById('ai-image');
+          // render AIImageShowPanel
+          if (root) {
+            createRoot(root).render(
+              <AIImageShowPanel
+                api={getAIImageAPI}
+                restrictions={restrictions}
+                onSelect={(data: any) => {
+                  const uploader = ref.current.getUploader();
+                  uploader?.emit('ai-image:selected', data);
+
+                  data.forEach((base64: any, index: number) => {
+                    const fileName = `AI Image [${index + 1}].png`; // must be png
+
+                    const formatFile = {
+                      name: fileName,
+                      type: 'image/png', // must be png
+                      data: base64ToFile(base64, fileName),
+                      source: 'AIImage',
+                      isRemote: false,
+                    };
+
+                    uploader?.addFile(formatFile);
+                  });
+                }}
+              />
+            );
+          }
+        }, 100);
+      },
     },
     {
       id: 'Url',
@@ -59,7 +113,9 @@ const getPluginList = (props: UploaderProps) => {
       plugin: Webcam,
       options: {},
     },
-    {
+    // with Unsplash key
+    // @ts-ignore
+    !!window.blocklet.UNSPLASH_KEY && {
       id: 'Unsplash',
       plugin: Unsplash,
       options: {
@@ -96,6 +152,8 @@ function useUploader(props: UploaderProps) {
   // Adding to global `meta` will add it to every file.
   // Every Uppy instance needs a unique ID.
 
+  const endpoint = getUploaderEndpoint(apiPathProps?.uploader as string);
+
   const currentUppy = new Uppy({
     id,
     meta: {
@@ -106,9 +164,7 @@ function useUploader(props: UploaderProps) {
     chunkSize: 1024 * 1024 * 10, // 10MB
     // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
     withCredentials: true,
-    // @ts-ignore
-    // uploadUrl: getUploaderEndpoint(apiPathProps?.uploader as string),
-    endpoint: getUploaderEndpoint(apiPathProps?.uploader as string),
+    endpoint,
     async onBeforeRequest(req, file) {
       // @ts-ignore
       const { hashFileName, id } = file;
@@ -216,9 +272,11 @@ function useUploader(props: UploaderProps) {
 
 const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFrameElement>, ref: any) => {
   // apiPathProps default is use image-bin
-  const apiPathProps = props?.apiPathProps || {
+  const apiPathProps = {
     uploader: '/api/uploads',
     companion: '/api/companion',
+    disableMediaKitPrefix: false,
+    ...props?.apiPathProps,
   };
 
   const pluginList = getPluginList({ ...props, apiPathProps });
@@ -276,6 +334,10 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       })
   );
 
+  useEffect(() => {
+    setPrefixPath(apiPathProps.disableMediaKitPrefix);
+  }, [apiPathProps.disableMediaKitPrefix]);
+
   // custom plugin
   useEffect(() => {
     // handle uploaded:selected
@@ -286,19 +348,31 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         close();
       });
     }
+
+    // @ts-ignore
+    state.uppy.on('dashboard:show-panel', (source) => {
+      const { onShowPanel } = pluginMap[source];
+      onShowPanel?.(ref);
+    });
   }, plugins);
+
+  const target = 'uploader-container';
 
   const Wrapper = popup ? Backdrop : Fragment;
   const wrapperProps = popup
     ? {
         sx: {
-          zIndex: 99999,
           '& > *': {
-            display: !state.open ? 'none' : 'unset', // hide uppy when close
+            display: !state.open ? 'none' : 'block', // hide uppy when close
           },
         },
         open: state.open,
-        onClick: close,
+        onClick: (e: any) => {
+          if (document.activeElement === document.body) {
+            e.stopPropagation();
+            close();
+          }
+        },
         ...props.wrapperProps,
       }
     : ({
@@ -310,14 +384,14 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       {/* ignore backdrop trigger */}
       <Box
         key="uploader-container"
-        id="uploader-container"
-        onClick={(e) => e.stopPropagation()}
+        id={target}
+        onClick={(e: any) => e.stopPropagation()}
         sx={{
           width: isMobile ? '90vw' : 720,
           '.uppy-Dashboard-AddFiles-title': {
             whiteSpace: 'normal',
           },
-          '.uploaded': {
+          '.uploaded, .ai-image': {
             width: '100%',
             height: '100%',
             display: 'flex',
@@ -325,6 +399,15 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             flexDirection: 'column',
             '& > div': {
               width: '100%',
+            },
+            '& .uppy-ProviderBrowser-body': {
+              background: '#fff',
+            },
+            '& .uppy-ProviderBrowser-list': {
+              // flexDirection: 'column',
+              // justifyContent: 'flex-start',
+              // display: '-webkit-inline-box',
+              height: 'fit-content',
             },
             '& .uppy-ProviderBrowser-header': {
               // hide the logout
@@ -344,7 +427,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         <Dashboard
           inline
           // @ts-ignore
-          target="#uploader-container"
+          target={`#${target}`}
           id="upload-dashboard"
           uppy={state.uppy}
           plugins={plugins}

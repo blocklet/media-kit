@@ -18,5 +18,6 @@ export type UploaderProps = {
   apiPathProps?: {
     uploader?: string;
     companion?: string;
+    disableMediaKitPrefix?: boolean;
   };
 };

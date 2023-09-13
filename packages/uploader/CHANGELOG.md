@@ -1,3 +1,7 @@
+## 0.0.9 (September 13, 2023)
+
+- feat: support AI Image in uploader
+
 ## 0.0.8 (September 12, 2023)
 
 - feat: support symlink to other dir after upload

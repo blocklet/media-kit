@@ -2,10 +2,9 @@
 import { UIPlugin } from '@uppy/core';
 import { ProviderViews } from '@uppy/provider-views';
 import uniqBy from 'lodash/uniqBy';
-import debounce from 'lodash/debounce';
-import { api, createImageUrl } from '../../utils';
+import { api, createImageUrl } from '../../../utils';
 
-const initUploadedAPIData = {
+const initAIImageAPIData = {
   data: [], // origin data
   files: [], // format file
   pageSize: 16,
@@ -27,49 +26,42 @@ const initPluginState = {
   loadAllFiles: true,
 };
 /**
- * Uploaded
+ * AIImage
  *
  */
-
-class Uploaded extends UIPlugin {
+class AIImage extends UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
-    this.id = this.opts.id || 'Uploaded';
-    this.title = this.opts.title || 'Uploaded';
+    this.id = this.opts.id || 'AIImage';
+    this.title = this.opts.title || 'AI Image';
     this.type = 'acquirer';
     this.uppy = uppy;
 
-    this.uploadedAPIData = { ...initUploadedAPIData };
+    this.uploadedAPIData = { ...initAIImageAPIData };
 
     this.icon = () => (
-      <svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 1024 1024">
-        <path
-          d="M145.6 0c-44.8 0-80 36.8-80 81.6V944c0 44.8 35.2 80 80 80h732.8c44.8 0 81.6-35.2 81.6-80V326.4L657.6 0h-512z"
-          fill="#49C9A7"
-        />
-        <path d="M960 326.4v16H755.2s-100.8-20.8-99.2-108.8c0 0 4.8 92.8 97.6 92.8H960z" fill="#49C9A7" />
-        <path d="M657.6 0v233.6c0 25.6 17.6 92.8 97.6 92.8H960L657.6 0z" fill="#37BB91" />
-        <path
-          d="M225.6 859.2V524.8H560v334.4H225.6z m300.8-300.8H259.2v201.6h267.2V558.4z m-153.6 134.4l62.4-84.8 20.8 33.6 20.8-6.4 16 89.6H283.2l56-52.8 33.6 20.8z m-60.8-59.2c-14.4 0-27.2-9.6-27.2-24 0-12.8 12.8-24 27.2-24 14.4 0 25.6 11.2 25.6 24 0 14.4-11.2 24-25.6 24z"
-          fill="#FFFFFF"
-        />
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <g fill="none" stroke="#a482fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+          <path d="M15 8h.01M10 21H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v5" />
+          <path d="m3 16l5-5c.928-.893 2.072-.893 3 0l1 1m2 9v-4a2 2 0 1 1 4 0v4m-4-2h4m3-4v6" />
+        </g>
       </svg>
     );
   }
 
   render(state) {
     if (!this.uploadedAPIData.loading && this.uploadedAPIData.files?.length === 0) {
-      this.queryUploadedFromMediaKit();
+      this.queryAIImageFromAIKit();
     }
 
     return (
-      <div id="uploaded" className="uploaded">
-        {this.view.render(state)}
+      <div id="ai-image" className="ai-image">
+        {/* {this.view.render(state)} */}
       </div>
     );
   }
 
-  queryUploadedFromMediaKit = async () => {
+  queryAIImageFromAIKit = async () => {
     const { pageSize, page, files, hasMore, loading } = this.uploadedAPIData;
 
     if (hasMore && !loading) {
@@ -99,10 +91,8 @@ class Uploaded extends UIPlugin {
           ...files,
           // format data
           ...data.uploads.map((item) => {
+            const { filename, _id, originalname, mimetype } = item;
             let previewUrl = 'file';
-
-            const { filename, _id, originalname } = item;
-
             const fileUrl = createImageUrl(filename);
 
             previewUrl = createImageUrl(filename, 400);
@@ -130,34 +120,8 @@ class Uploaded extends UIPlugin {
     }
   };
 
-  convertImgToObject = debounce(
-    () => {
-      if (this.canConvertImgToObject) {
-        const imgElementList = document.querySelectorAll('#uploaded img');
-
-        // hacker uppy image element
-        imgElementList.forEach((imgElement) => {
-          if (['.mp4', '.webm'].find((item) => imgElement.src?.indexOf(item) > -1)) {
-            const objectElement = document.createElement('object');
-            objectElement.data = imgElement.src;
-            objectElement.width = imgElement.width;
-            objectElement.height = imgElement.height;
-            objectElement.style = 'pointer-events: none;';
-            // replace img element
-            imgElement.parentNode.replaceChild(objectElement, imgElement);
-          }
-        });
-
-        this.canConvertImgToObject = false;
-      }
-    },
-    {
-      wait: 200,
-    }
-  );
-
   update() {
-    this.convertImgToObject();
+    // do noting
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -166,7 +130,7 @@ class Uploaded extends UIPlugin {
   }
 
   resetState = () => {
-    this.uploadedAPIData = { ...initUploadedAPIData };
+    this.uploadedAPIData = { ...initAIImageAPIData };
     this.uploaded.setPluginState({ ...initPluginState });
   };
 
@@ -183,7 +147,9 @@ class Uploaded extends UIPlugin {
 
     this.uploaded.setPluginState({ ...initPluginState });
 
-    this.uploaded.uppy.on('dashboard:show-panel', this.resetState);
+    this.uploaded.uppy.on('dashboard:show-panel', () => {
+      this.resetState();
+    });
 
     // hacker toggleCheckbox
     this.view.toggleCheckbox = (event, file) => {
@@ -226,7 +192,7 @@ class Uploaded extends UIPlugin {
       const { scrollHeight, scrollTop, offsetHeight } = event.target;
       const scrollPosition = scrollHeight - (scrollTop + offsetHeight);
       if (scrollPosition < 30) {
-        this.queryUploadedFromMediaKit();
+        this.queryAIImageFromAIKit();
       }
     };
 
@@ -243,4 +209,4 @@ class Uploaded extends UIPlugin {
   }
 }
 
-export default Uploaded;
+export default AIImage;
