@@ -1,3 +1,7 @@
+## 0.0.10 (September 13, 2023)
+
+- fix: resolve the bug of icon import
+
 ## 0.0.9 (September 13, 2023)
 
 - feat: support AI Image in uploader
