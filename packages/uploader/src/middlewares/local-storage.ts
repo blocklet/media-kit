@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
 const mime = require('mime-types');
+const joinUrl = require('url-join');
 
 export function initLocalStorageServer({
   path: _path,
@@ -174,7 +175,7 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
   method = method.toUpperCase();
 
   // check if file exists
-  if (method === 'POST') {
+  if (['PATCH', 'POST'].includes(method)) {
     const fileName = namingFunction(req);
     const filePath = path.join(uploaderProps.server.datastore.directory, fileName);
     const isExist = await fs.stat(filePath).catch(() => false);
@@ -184,10 +185,17 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
 
       // is upload exist and size enough
       if (isExist?.size > 0 && isExist?.size === metaData?.size) {
-        const result = await uploaderProps.onUploadFinish(req, res, metaData);
-
         res.setHeader('x-uploader-file-exist', true);
-        res.json(result);
+
+        const prepareUpload = method === 'POST';
+
+        if (prepareUpload) {
+          res.status(200); // set 200 will be recognized by fontend component
+          res.setHeader('Location', joinUrlPlus(req.headers['x-uploader-base-url'], fileName));
+        }
+
+        const uploadResult = await uploaderProps.onUploadFinish(req, res, metaData);
+        res.json(uploadResult);
 
         return;
       }
@@ -231,4 +239,14 @@ export async function symlinkFileToNewPath(oldPath: string, newPath: string) {
       await fs.symlink(oldPath, newPath);
     }
   }
+}
+
+export function joinUrlPlus(...args: string[]) {
+  const realArgs = args.filter(Boolean).map((item) => {
+    if (item === '/') {
+      return '';
+    }
+    return item;
+  });
+  return joinUrl(...realArgs);
 }

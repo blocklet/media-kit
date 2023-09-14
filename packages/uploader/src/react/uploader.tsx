@@ -24,7 +24,17 @@ import '@uppy/image-editor/dist/style.min.css';
 import '@uppy/drag-drop/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
-import { api, setPrefixPath, isMediaKit, getExt, getUploaderEndpoint, base64ToFile, getAIKitComponent } from '../utils';
+import {
+  api,
+  setPrefixPath,
+  isMediaKit,
+  getExt,
+  getUploaderEndpoint,
+  base64ToFile,
+  getAIKitComponent,
+  getUrl,
+} from '../utils';
+
 // @ts-ignore
 import Uploaded from './plugins/uploaded';
 // @ts-ignore
@@ -33,6 +43,8 @@ import PrepareUpload from './plugins/prepare-upload';
 import AIImage from './plugins/ai-image';
 // @ts-ignore
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
+
+const UPLOADER_UPLOAD_SUCCESS = 'uploader-upload-success';
 
 const getPluginList = (props: UploaderProps) => {
   const { apiPathProps } = props;
@@ -164,6 +176,7 @@ function useUploader(props: UploaderProps) {
     meta: {
       uploaderId: id,
     },
+    debug: localStorage.getItem('uppy_debug') === 'true',
     ...coreProps,
   }).use(Tus, {
     chunkSize: 1024 * 1024 * 10, // 10MB
@@ -228,17 +241,29 @@ function useUploader(props: UploaderProps) {
 
         // exist but not upload
         if (isExist) {
-          // 更新 uppy 进度
           const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
-
+          const uploadURL = getUrl(result.url, result.headers['x-uploader-file-name']); // upload URL with file name
           if (file) {
+            // pause first
             currentUppy.pauseResume(file.id);
-            currentUppy.emit('upload-success', file, res);
+
+            // only trigger uppy event when exist
+            currentUppy.emit('upload-success', file, {
+              uploadURL,
+            });
           }
         }
 
         if (result.status === 200) {
           await _onUploadFinish?.(result);
+
+          const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
+
+          // custom event
+          currentUppy.emit(UPLOADER_UPLOAD_SUCCESS, file, {
+            ...result,
+            uploadURL: getUrl(result.url, result.headers['x-uploader-file-name']), // upload URL with file name
+          });
         }
 
         if (result.method === 'PATCH') {
@@ -271,6 +296,40 @@ function useUploader(props: UploaderProps) {
       plugin && currentUppy.use(plugin, options);
     }
   });
+
+  // @ts-ignore handler upload success
+  currentUppy.onceUploadSuccess = (callback: Function) => {
+    // @ts-ignore always remove old listener
+    currentUppy.off(UPLOADER_UPLOAD_SUCCESS);
+    // @ts-ignore listen uploader upload success
+    currentUppy.once(UPLOADER_UPLOAD_SUCCESS, (file: any, response: any) => {
+      callback({ file, response });
+    });
+  };
+
+  // @ts-ignore handler upload file
+  currentUppy.uploadFile = async (blobFile: Blob) => {
+    return new Promise(async (resolve, reject) => {
+      const { name, type } = blobFile;
+
+      // @ts-ignore listen uploader upload success
+      currentUppy.onceUploadSuccess(resolve);
+
+      currentUppy.once('error', (error) => {
+        reject(error);
+      });
+
+      await currentUppy.addFile({
+        name,
+        type,
+        data: blobFile, // file blob
+        source: 'Local',
+        isRemote: false,
+      });
+
+      await currentUppy.upload();
+    });
+  };
 
   return currentUppy;
 }
@@ -313,8 +372,24 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     }),
   });
 
-  function open() {
+  function open(pluginName?: string | undefined) {
     state.open = true;
+
+    if (pluginName) {
+      pluginName = pluginName.replace(/\s/g, '');
+      setTimeout(() => {
+        // @ts-ignore if plugin exist, click the plugin Button
+        if (['MyDevice', ...plugins].includes(pluginName)) {
+          let selectorKey = `div[data-uppy-acquirer-id="${pluginName}"] > button`;
+          document
+            ?.getElementById('upload-dashboard')
+            ?.querySelector(selectorKey)
+            // @ts-ignore
+            ?.click?.();
+        }
+      }, 200);
+    }
+
     onOpen?.();
   }
 
