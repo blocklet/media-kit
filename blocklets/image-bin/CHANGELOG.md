@@ -1,3 +1,7 @@
+## 0.10.10 (September 15, 2023)
+
+- fix: resolve the bug of uploaded plugin can not scroll
+
 ## 0.10.9 (September 14, 2023)
 
 - feat: polish @blocklet/uploader logic

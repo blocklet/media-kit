@@ -45,6 +45,7 @@ import AIImage from './plugins/ai-image';
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 export const UPLOADER_UPLOAD_SUCCESS = 'uploader-upload-success';
+const target = 'uploader-container';
 
 const getPluginList = (props: UploaderProps) => {
   const { apiPathProps } = props;
@@ -459,8 +460,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     });
   }, plugins);
 
-  const target = 'uploader-container';
-
   const Wrapper = popup ? Backdrop : Fragment;
   const wrapperProps = popup
     ? {
@@ -495,7 +494,12 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             whiteSpace: 'normal',
           },
           '.uppy-ProviderBrowser-body': {
-            overflowY: 'auto',
+            background: '#fff',
+            height: '100%',
+          },
+          '.uppy-ProviderBrowser-list': {
+            height: 'fit-content',
+            maxHeight: '100%',
           },
           '.uploaded, .ai-image': {
             width: '100%',
@@ -505,15 +509,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             flexDirection: 'column',
             '& > div': {
               width: '100%',
-            },
-            '& .uppy-ProviderBrowser-body': {
-              background: '#fff',
-            },
-            '& .uppy-ProviderBrowser-list': {
-              // flexDirection: 'column',
-              // justifyContent: 'flex-start',
-              // display: '-webkit-inline-box',
-              height: 'fit-content',
             },
             '& .uppy-ProviderBrowser-header': {
               // hide the logout

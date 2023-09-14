@@ -88,15 +88,23 @@ router.get('/uploads', user, auth, async (req, res) => {
 });
 
 // remove upload
-router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
+router.delete('/uploads/:id', user, ensureAdmin, ensureComponentDid, async (req, res) => {
+  const mediaKitDid = env.currentComponentInfo.did;
+
+  if (req.componentDid !== mediaKitDid) {
+    res.jsonp({ error: `Can not remove file by ${req.componentDid}` });
+    return;
+  }
+
   const doc = await Upload.findOne({ _id: req.params.id });
+
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
     return;
   }
 
-  if (doc.folderId !== env.currentComponentInfo.did) {
-    res.jsonp({ error: 'Can not remove other blocklet upload file' });
+  if (doc.folderId !== mediaKitDid) {
+    res.jsonp({ error: 'Can not remove file which upload from other blocklet' });
     return;
   }
 
@@ -232,6 +240,7 @@ router.post(
 
     const hash = crypto.createHash('md5');
     hash.update(buffer);
+
     const filename = `${hash.digest('hex')}${path.extname(originalFilename).replace(/\.+$/, '')}`;
     const filePath = path.join(env.uploadDir, filename);
 
