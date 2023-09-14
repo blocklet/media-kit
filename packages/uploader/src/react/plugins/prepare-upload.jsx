@@ -202,7 +202,10 @@ class DownloadRemoteFiles extends UIPlugin {
   install() {
     this.uppy.addPreProcessor(this.prepareUpload);
     this.uppy.on('file-added', async (file) => {
-      this.prepareUploadWrapper(file);
+      // wait for animation
+      setTimeout(() => {
+        this.prepareUploadWrapper(file);
+      }, 200);
     });
     this.uppy.on('file-editor:complete', (file) => {
       this.getPreviewFromData(file);

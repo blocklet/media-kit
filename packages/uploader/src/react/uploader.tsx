@@ -382,13 +382,18 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   const state = useReactive({
     open: false,
-    uppy: useUploader({
+    uppy: null as any,
+  });
+
+  useEffect(() => {
+    // @ts-ignore
+    state.uppy = useUploader({
       ...props,
       id,
       plugins,
       apiPathProps,
-    }),
-  });
+    });
+  }, [id, JSON.stringify(plugins)]);
 
   function open(pluginName?: string | undefined) {
     state.open = true;
@@ -525,21 +530,23 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
           },
         }}>
         {/* @ts-ignore */}
-        <Dashboard
-          inline
-          // @ts-ignore
-          target={`#${target}`}
-          id="upload-dashboard"
-          uppy={state.uppy}
-          plugins={plugins}
-          fileManagerSelectionType="both"
-          proudlyDisplayPoweredByUppy={false}
-          showProgressDetails
-          waitForThumbnailsBeforeUpload
-          // theme="light"
-          note=""
-          {...props.dashboardProps}
-        />
+        {state.uppy && (
+          <Dashboard
+            inline
+            // @ts-ignore
+            target={`#${target}`}
+            id="upload-dashboard"
+            uppy={state.uppy}
+            plugins={plugins}
+            fileManagerSelectionType="both"
+            proudlyDisplayPoweredByUppy={false}
+            showProgressDetails
+            waitForThumbnailsBeforeUpload
+            // theme="light"
+            note=""
+            {...props.dashboardProps}
+          />
+        )}
       </Box>
     </Wrapper>
   );
