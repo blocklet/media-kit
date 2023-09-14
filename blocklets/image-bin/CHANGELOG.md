@@ -1,3 +1,7 @@
+## 0.10.9 (September 14, 2023)
+
+- feat: polish @blocklet/uploader logic
+
 ## 0.10.8 (September 13, 2023)
 
 - chore: bump version to rebuild

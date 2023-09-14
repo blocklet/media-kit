@@ -1,6 +1,9 @@
 const path = require('path');
 const xbytes = require('xbytes');
 const env = require('@blocklet/sdk/lib/env');
+const config = require('@blocklet/sdk/lib/config');
+
+const currentComponentInfo = config.components.find((x) => x.did === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9');
 
 module.exports = {
   ...env,
@@ -15,4 +18,5 @@ module.exports = {
       secret: process.env.UNSPLASH_SECRET,
     },
   },
+  currentComponentInfo,
 };

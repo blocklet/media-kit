@@ -90,6 +90,16 @@ export function getUploaderEndpoint(apiPath: string | undefined) {
   return joinUrl(window.location.origin, prefixPath === '/' ? '' : prefixPath, apiPath || '');
 }
 
+export function getUrl(...args: string[]) {
+  const realArgs = args.filter(Boolean).map((item) => {
+    if (item === '/') {
+      return '';
+    }
+    return item;
+  });
+  return joinUrl(...realArgs);
+}
+
 export function createImageUrl(filename: string, width = 0, height = 0) {
   // @ts-ignore
   const { CDN_HOST = '' } = window?.blocklet || {};

@@ -95,6 +95,11 @@ router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
     return;
   }
 
+  if (doc.folderId !== env.currentComponentInfo.did) {
+    res.jsonp({ error: 'Can not remove other blocklet upload file' });
+    return;
+  }
+
   const result = await Upload.remove({ _id: req.params.id });
 
   if (result) {
@@ -134,6 +139,21 @@ router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
 const localStorageServer = initLocalStorageServer({
   path: env.uploadDir,
   express,
+  symlinkPath: (req) => {
+    // not current component
+    if (req.componentDid !== env.currentComponentInfo.did) {
+      const component = config.components.find((x) => x.did === req.componentDid);
+      // if exist component, use component name as symlink path
+      if (component) {
+        const symlinkPath = path.join(env.uploadDir.replace(env.currentComponentInfo.name, component.name));
+        // if symlink path dir exist, use it
+        if (fs.existsSync(symlinkPath)) {
+          return symlinkPath;
+        }
+      }
+    }
+    return null;
+  },
   onUploadFinish: async (req, res, uploadMetadata) => {
     const {
       id: filename,
