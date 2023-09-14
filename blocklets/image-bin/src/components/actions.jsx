@@ -56,7 +56,10 @@ export default function ImageActions({ data }) {
     setLoading(true);
     api
       .delete(`/api/uploads/${data._id}`)
-      .then(() => {
+      .then((res) => {
+        if (res?.data?.error) {
+          throw new Error(res.data.error);
+        }
         setLoading(false);
         deleteUpload(data._id);
         setDeleteOpen(false);
@@ -64,6 +67,7 @@ export default function ImageActions({ data }) {
       })
       .catch((err) => {
         setLoading(false);
+        console.warn(err);
         Toast.error(`Image delete failed: ${err.message}`);
       });
   };
@@ -103,8 +107,12 @@ export default function ImageActions({ data }) {
     setValue(null);
   };
 
+  const isMediaKitFile =
+    (data.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
+
   const actions = [
-    { children: 'Delete', onClick: onDelete },
+    // can't delete other blocklet files
+    { children: 'Delete', disabled: !isMediaKitFile, onClick: onDelete },
     { children: 'Move to Folder', onClick: onMove },
   ];
 
@@ -153,7 +161,6 @@ export default function ImageActions({ data }) {
         <Autocomplete
           value={value}
           onChange={(e, newValue) => {
-            console.log('onChange', newValue);
             if (typeof newValue === 'string') {
               setValue({ name: newValue });
             } else if (newValue && newValue.inputValue) {

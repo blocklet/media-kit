@@ -2,7 +2,7 @@
 import { createContext, useContext } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
-import useAsync from 'react-use/lib/useAsync';
+import debounce from 'lodash/debounce';
 import EventEmitter from 'wolfy87-eventemitter';
 import { useReactive } from 'ahooks';
 
@@ -18,26 +18,10 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
     folderId: '',
     uploads: [],
     folders: [],
-    page: 1,
+    page: 0,
     loading: false,
     hasMore: true,
   });
-
-  const loadInitialPosts = async (folderId = pageState.folderId) => {
-    pageState.page = 1;
-    const { data } = await api.get('/api/uploads', {
-      params: {
-        page: pageState.page,
-        pageSize,
-        type,
-        folderId,
-      },
-    });
-    pageState.uploads = data.uploads;
-    pageState.folders = data.folders;
-    pageState.hasMore = data.pageCount > 1;
-    return data;
-  };
 
   const loadMoreUploads = async () => {
     if (pageState.hasMore) {
@@ -55,6 +39,7 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
         .then(({ data }) => {
           pageState.hasMore = pageState.page < data.pageCount;
           pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
+          pageState.folders = data.folders;
           pageState.loading = false;
         })
         .catch(console.error);
@@ -90,8 +75,6 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
     return folder;
   };
 
-  useAsync(loadInitialPosts, []);
-
   return (
     <Provider
       value={{
@@ -100,10 +83,13 @@ function UploadProvider({ children, pageSize = 20, type = '' }) {
         prependUpload,
         deleteUpload,
         ensureFolder,
-        loadMoreUploads,
-        filterByFolder: (x) => {
-          pageState.folderId = x;
-          loadInitialPosts(x);
+        loadMoreUploads: debounce(loadMoreUploads, 50),
+        filterByFolder: (folderId) => {
+          pageState.uploads = [];
+          pageState.folderId = folderId;
+          pageState.page = 0;
+          pageState.hasMore = true;
+          loadMoreUploads();
         },
       }}>
       {children}

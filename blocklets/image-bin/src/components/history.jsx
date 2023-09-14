@@ -11,43 +11,95 @@ import { useRef } from 'react';
 import Spinner from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Empty from '@arcblock/ux/lib/Empty';
-
-import Grid from '@mui/material/Grid';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+import ImageListItemBar from '@mui/material/ImageListItemBar';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useInfiniteScroll } from 'ahooks';
 
 import { useUploadContext } from '../contexts/upload';
 import { createImageUrl } from '../libs/api';
 import Actions from './actions';
 
+function BlockletLogo(props) {
+  const { did, ...restProps } = props;
+  const src = `/.well-known/service/blocklet/logo-bundle/${did}`;
+  return <img width={24} height={24} src={src} alt={did} {...restProps} />;
+}
+
 function Gallery({ uploads }) {
+  // @ts-ignore
+  const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
+
   return (
-    <Grid container spacing={3}>
-      {uploads.map((x) => {
-        return (
-          <Grid key={x._id} item xs={12} sm={6} md={4} xl={3}>
-            <div className="doc-wrapper">
-              <a href={createImageUrl(x.filename, 0, 0)} target="_blank" title={x.originalname}>
-                <div className="img-wrapper">
-                  <object data={createImageUrl(x.filename, 0, 250)} alt={x.originalname} />
-                </div>
-              </a>
-              <div className="img-meta">
-                <span className="img-size">{prettyBytes(x.size)}</span>
-                <span className="img-time">{format(x.createdAt)}</span>
-                <span className="img-copy">
-                  <Actions data={x} />
-                </span>
-              </div>
-            </div>
-          </Grid>
-        );
-      })}
-    </Grid>
+    <ImageList variant="masonry" cols={isMobile ? 1 : 3} gap={16}>
+      {uploads.map((x) => (
+        <ImageListItem
+          key={x._id}
+          sx={{
+            border: '1px solid rgba(0,0,0,0.1)',
+            position: 'relative',
+            borderRadius: '4px',
+          }}>
+          <a href={createImageUrl(x.filename, 0, 0)} target="_blank" title={x.originalname}>
+            <object
+              width="100%"
+              height="100%"
+              data={createImageUrl(x.filename, 500)}
+              alt={x.originalname}
+              loading="lazy"
+              style={{
+                WebkitUserDrag: 'none',
+                objectFit: 'cover',
+              }}
+            />
+          </a>
+          <ImageListItemBar
+            position="below"
+            title={<>{prettyBytes(x.size)}</>}
+            subtitle={format(x.createdAt)}
+            actionIcon={
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}>
+                <BlockletLogo
+                  did={x.folderId}
+                  style={{
+                    marginRight: 8,
+                  }}
+                  width={32}
+                  height={32}
+                />
+                <Actions data={x} />
+              </Box>
+            }
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              px: 1.5,
+              borderTop: '1px solid rgba(0,0,0,0.1)',
+              mt: '-6px',
+              '& .MuiImageListItemBar-titleWrap': {
+                py: 1,
+                '& > div': {
+                  lineHeight: '1.25',
+                },
+              },
+            }}
+          />
+        </ImageListItem>
+      ))}
+    </ImageList>
   );
 }
 
 export default function Uploads() {
   const uploadState = useUploadContext();
+
+  // @ts-ignore
+  const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
   const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder } = uploadState;
   const wrapperRef = useRef(null);
@@ -68,7 +120,7 @@ export default function Uploads() {
         overflowY: 'auto',
       }}>
       <Box>
-        <ButtonGroup variant="outlined" aria-label="outlined button group" style={{ marginBottom: 24 }}>
+        <ButtonGroup size={isMobile ? 'small' : 'medium'} variant="outlined" aria-label="outlined button group">
           <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
             All
           </Button>
@@ -77,6 +129,7 @@ export default function Uploads() {
               key={x._id}
               title={x._id}
               onClick={() => filterByFolder(x._id)}
+              startIcon={<BlockletLogo did={x._id} />}
               variant={folderId === x._id ? 'contained' : 'outlined'}>
               {x.name}
             </Button>
@@ -102,73 +155,6 @@ export default function Uploads() {
 }
 
 const Div = styled.div`
-  ul {
-    margin: 32px auto;
-    display: inline-flex;
-    flex-direction: row;
-    justify-content: space-between;
-    list-style-type: none;
-    li a {
-      border-radius: 7px;
-      padding: 0.1rem 1rem;
-      border: gray 1px solid;
-      margin-right: 8px;
-      cursor: pointer;
-    }
-    li.previous a,
-    li.next a,
-    li.break a {
-      border-color: transparent;
-    }
-    li.active a {
-      background-color: #0366d6;
-      border-color: transparent;
-      color: white;
-      min-width: 32px;
-    }
-    li.disabled a {
-      color: grey;
-    }
-    li.disable,
-    li.disabled a {
-      cursor: default;
-    }
-  }
-
-  .doc-wrapper {
-    cursor: pointer;
-    border: 1px solid #eee;
-    padding: 8px;
-    border-radius: 5px;
-
-    .img-wrapper {
-      height: 250px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      object {
-        width: auto;
-        height: auto;
-        max-height: 100%;
-        max-width: 100%;
-        display: block;
-        pointer-events: none;
-      }
-    }
-
-    .img-meta {
-      margin-top: 12px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .img-copy {
-      width: 120px;
-      text-align: right;
-    }
-  }
-
   .load-more {
     padding: 24px 0;
     text-align: center;

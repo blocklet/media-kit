@@ -44,7 +44,7 @@ import AIImage from './plugins/ai-image';
 // @ts-ignore
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
-const UPLOADER_UPLOAD_SUCCESS = 'uploader-upload-success';
+export const UPLOADER_UPLOAD_SUCCESS = 'uploader-upload-success';
 
 const getPluginList = (props: UploaderProps) => {
   const { apiPathProps } = props;
@@ -238,32 +238,28 @@ function useUploader(props: UploaderProps) {
       // only call onUploadFinish if it's a PATCH / POST request
       if (['PATCH', 'POST'].includes(result.method) && [200, 500].includes(result.status)) {
         const isExist = [true, 'true'].includes(result.headers['x-uploader-file-exist']);
+        const uploadURL = getUrl(result.url, result.headers['x-uploader-file-name']); // upload URL with file name
+        const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
+
+        result.file = file;
+        result.uploadURL = uploadURL;
 
         // exist but not upload
-        if (isExist) {
-          const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
-          const uploadURL = getUrl(result.url, result.headers['x-uploader-file-name']); // upload URL with file name
-          if (file) {
-            // pause first
-            currentUppy.pauseResume(file.id);
+        if (isExist && file) {
+          // pause first
+          currentUppy.pauseResume(file.id);
 
-            // only trigger uppy event when exist
-            currentUppy.emit('upload-success', file, {
-              uploadURL,
-            });
-          }
+          // only trigger uppy event when exist
+          currentUppy.emit('upload-success', file, {
+            uploadURL,
+          });
         }
 
         if (result.status === 200) {
           await _onUploadFinish?.(result);
 
-          const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
-
           // custom event
-          currentUppy.emit(UPLOADER_UPLOAD_SUCCESS, file, {
-            ...result,
-            uploadURL: getUrl(result.url, result.headers['x-uploader-file-name']), // upload URL with file name
-          });
+          currentUppy.emit(UPLOADER_UPLOAD_SUCCESS, file, result);
         }
 
         if (result.method === 'PATCH') {
@@ -298,13 +294,35 @@ function useUploader(props: UploaderProps) {
   });
 
   // @ts-ignore handler upload success
-  currentUppy.onceUploadSuccess = (callback: Function) => {
+  currentUppy.offUploadSuccess = () => {
     // @ts-ignore always remove old listener
     currentUppy.off(UPLOADER_UPLOAD_SUCCESS);
+  };
+
+  // @ts-ignore handler upload success
+  currentUppy.onceUploadSuccess = (callback: Function) => {
+    // @ts-ignore always remove old listener
+    currentUppy.offUploadSuccess();
     // @ts-ignore listen uploader upload success
     currentUppy.once(UPLOADER_UPLOAD_SUCCESS, (file: any, response: any) => {
       callback({ file, response });
     });
+  };
+
+  // @ts-ignore handler upload success
+  currentUppy.onUploadSuccess = (callback: Function) => {
+    // @ts-ignore always remove old listener
+    currentUppy.offUploadSuccess();
+    // @ts-ignore listen uploader upload success
+    currentUppy.on(UPLOADER_UPLOAD_SUCCESS, (file: any, response: any) => {
+      callback({ file, response });
+    });
+  };
+
+  // @ts-ignore handler upload success
+  currentUppy.emitUploadSuccess = (file: any, response: any) => {
+    // @ts-ignore listen uploader upload success
+    currentUppy.emit(UPLOADER_UPLOAD_SUCCESS, file, response);
   };
 
   // @ts-ignore handler upload file
@@ -470,6 +488,9 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
           width: isMobile ? '90vw' : 720,
           '.uppy-Dashboard-AddFiles-title': {
             whiteSpace: 'normal',
+          },
+          '.uppy-ProviderBrowser-body': {
+            overflowY: 'auto',
           },
           '.uploaded, .ai-image': {
             width: '100%',

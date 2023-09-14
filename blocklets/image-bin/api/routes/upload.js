@@ -95,6 +95,11 @@ router.delete('/uploads/:id', user, ensureAdmin, async (req, res) => {
     return;
   }
 
+  if (doc.folderId !== env.currentComponentInfo.did) {
+    res.jsonp({ error: 'Can not remove other blocklet upload file' });
+    return;
+  }
+
   const result = await Upload.remove({ _id: req.params.id });
 
   if (result) {

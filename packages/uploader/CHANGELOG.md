@@ -1,3 +1,7 @@
+## 0.0.11 (September 14, 2023)
+
+- feat: polish @blocklet/uploader logic
+
 ## 0.0.10 (September 13, 2023)
 
 - fix: resolve the bug of icon import

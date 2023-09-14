@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -55,13 +55,13 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.7.17",
+    "@arcblock/did-connect": "^2.7.18",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.7.17",
-    "@blocklet/ui-react": "^2.7.17",
+    "@arcblock/ux": "^2.7.18",
+    "@blocklet/ui-react": "^2.7.18",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.8",
+    "@mui/material": "^5.14.9",
     "@vitejs/plugin-react": "^4.0.4",
     "ahooks": "^3.7.8",
     "axios": "^1.5.0",
@@ -76,7 +76,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.15.0",
+    "react-router-dom": "^6.16.0",
     "react-use": "^17.4.0",
     "swiper": "^9.4.1",
     "timeago.js": "^4.0.2",
