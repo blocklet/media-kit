@@ -15,11 +15,14 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useInfiniteScroll } from 'ahooks';
+import { useInfiniteScroll, useResponsive } from 'ahooks';
 
 import { useUploadContext } from '../contexts/upload';
 import { createImageUrl } from '../libs/api';
 import Actions from './actions';
+
+const borderRadius = '4px !important';
+const transformY = '4px';
 
 function BlockletLogo(props) {
   const { did, ...restProps } = props;
@@ -31,43 +34,101 @@ function Gallery({ uploads }) {
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
+  const responsive = useResponsive();
+  // eslint-disable-next-line no-nested-ternary
+  const cols = responsive.xl ? 4 : responsive.md ? 3 : 1;
+
+  const gap = 16;
   return (
-    <ImageList variant="masonry" cols={isMobile ? 1 : 3} gap={16}>
+    <ImageList
+      // variant="masonry"
+      cols={cols}
+      gap={gap}
+      sx={{
+        pt: transformY,
+        mt: `calc(16px - ${transformY})`,
+        overflow: 'hidden',
+      }}>
       {uploads.map((x) => (
         <ImageListItem
           key={x._id}
           sx={{
             border: '1px solid rgba(0,0,0,0.1)',
             position: 'relative',
-            borderRadius: '4px',
+            borderRadius,
             '&, & *': {
               transition: 'all 0.25s ease-in-out',
             },
             '&:hover': {
-              transform: 'translateY(-4px) ',
-              border: (theme) => `1px solid ${theme.palette.primary.main}`,
-              // boxShadow: (theme) => `4px 4px 0 0px ${theme.palette.primary.main}`,
+              transform: `translateY(-${transformY})`,
+              border: (theme) => `1px solid ${theme?.palette?.primary?.main}`,
+              // boxShadow: (theme) => `4px 4px 0 0px ${theme?.palette?.primary?.main}`,
+              object: {
+                animation: 'scroll 2s linear 1', // 'scroll 4s linear infinite',
+                '@keyframes scroll': {
+                  '0%': {
+                    objectPosition: 'center',
+                  },
+                  '25%': {
+                    objectPosition: 'top',
+                  },
+                  '75%': {
+                    objectPosition: 'bottom',
+                  },
+                  '100%': {
+                    objectPosition: 'center',
+                  },
+                },
+              },
             },
           }}>
-          <a href={createImageUrl(x.filename, 0, 0)} target="_blank" title={x.originalname}>
+          <a
+            href={createImageUrl(x.filename, 0, 0)}
+            target="_blank"
+            title={x.originalname}
+            style={{
+              width: '100%',
+              position: 'relative',
+              height: isMobile
+                ? 'calc(100vw - 24px - 24px)'
+                : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
+            }}>
             <object
               width="100%"
               height="100%"
               data={createImageUrl(x.filename, 500)}
               alt={x.originalname}
-              loading="lazy"
+              // loading="lazy"
               style={{
                 WebkitUserDrag: 'none',
                 objectFit: 'cover',
-                minWidth: 200,
-                minHeight: 200,
-                overflow: 'hidden',
               }}
+            />
+            <BlockletLogo
+              did={x.folderId}
+              style={{
+                position: 'absolute',
+                right: 0,
+                bottom: 0,
+                opacity: 0.85,
+                // borderRadius,
+              }}
+              width={24}
+              height={24}
             />
           </a>
           <ImageListItemBar
             position="below"
-            title={<>{prettyBytes(x.size)}</>}
+            title={
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontSize: 14,
+                }}>
+                {prettyBytes(x.size)}
+              </Box>
+            }
             subtitle={format(x.createdAt)}
             actionIcon={
               <Box
@@ -75,14 +136,6 @@ function Gallery({ uploads }) {
                   display: 'flex',
                   alignItems: 'center',
                 }}>
-                <BlockletLogo
-                  did={x.folderId}
-                  style={{
-                    marginRight: 8,
-                  }}
-                  width={32}
-                  height={32}
-                />
                 <Actions data={x} />
               </Box>
             }
@@ -91,7 +144,6 @@ function Gallery({ uploads }) {
               alignItems: 'center',
               px: 1.5,
               borderTop: '1px solid rgba(0,0,0,0.1)',
-              mt: '-6px',
               '& .MuiImageListItemBar-titleWrap': {
                 py: 1,
                 '& > div': {
@@ -127,15 +179,28 @@ export default function Uploads() {
       ref={wrapperRef}
       style={{
         height: 'calc(100vh - 64px - 80px)',
-        padding: '24px',
         overflowY: 'auto',
+        padding: '24px',
       }}>
       <Box>
-        <ButtonGroup size={isMobile ? 'small' : 'medium'} variant="outlined" aria-label="outlined button group">
+        <ButtonGroup
+          size={isMobile ? 'small' : 'medium'}
+          variant="outlined"
+          aria-label="outlined button group"
+          sx={{
+            flexWrap: 'wrap',
+            '&  button': {
+              border: '1px solid currentColor !important',
+              mr: 1,
+              mb: 1,
+              ml: '0px !important',
+              borderRadius,
+            },
+          }}>
           <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
             All
           </Button>
-          {folders.map((x) => (
+          {[...folders].map((x) => (
             <Button
               key={x._id}
               title={x._id}
@@ -151,7 +216,7 @@ export default function Uploads() {
       {uploads.length === 0 ? (
         <Empty>No Uploads Found</Empty>
       ) : (
-        <>
+        <Box>
           <Gallery uploads={uploads} />
           {loading && (
             <div className="load-more">
@@ -159,7 +224,7 @@ export default function Uploads() {
             </div>
           )}
           {!uploadState.hasMore && <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)' }}>No More</Divider>}
-        </>
+        </Box>
       )}
     </Div>
   );

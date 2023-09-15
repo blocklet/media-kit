@@ -120,3 +120,176 @@ export function createImageUrl(filename: string, width = 0, height = 0) {
 
   return obj.href;
 }
+
+export const UPLOADER_UPLOAD_SUCCESS = 'uploader-upload-success';
+export const OPEN = 'uploader-open';
+export const CLOSE = 'uploader-close';
+
+export function initUppy(currentUppy: any) {
+  currentUppy.getUploadSuccessKey = (file: any) => {
+    if (file?.id) {
+      return `${UPLOADER_UPLOAD_SUCCESS}:${file.id}`;
+    }
+    return UPLOADER_UPLOAD_SUCCESS;
+  };
+
+  currentUppy.offUploadSuccess = (file: any) => {
+    currentUppy.off(currentUppy.getUploadSuccessKey(file));
+  };
+
+  currentUppy.uploadSuccessHandler = (file: any, callback: Function, useOnce: boolean) => {
+    if (typeof file === 'function') {
+      callback = file;
+      file = {};
+    }
+
+    const eventKey = currentUppy.getUploadSuccessKey(file);
+
+    currentUppy.offUploadSuccess(file);
+
+    if (useOnce) {
+      currentUppy.once(eventKey, (file: any, response: any) => {
+        callback({ file, response });
+      });
+    } else {
+      currentUppy.on(eventKey, (file: any, response: any) => {
+        callback({ file, response });
+      });
+    }
+  };
+
+  currentUppy.onceUploadSuccess = (file: any, callback: Function) => {
+    currentUppy.uploadSuccessHandler(file, callback, true);
+  };
+
+  currentUppy.onUploadSuccess = (file: any, callback: Function) => {
+    currentUppy.uploadSuccessHandler(file, callback, false);
+  };
+
+  currentUppy.emitUploadSuccess = (file: any, response: any) => {
+    const eventKey = currentUppy.getUploadSuccessKey(file);
+    currentUppy.emit(eventKey, file, response);
+  };
+
+  // upload file
+  currentUppy.uploadFile = async (blobFile: Blob) => {
+    return new Promise((resolve, reject) => {
+      const { name, type } = blobFile;
+
+      const uppyFileId = currentUppy.addFile({
+        name,
+        type,
+        data: blobFile, // file blob
+        source: 'function-upload-file',
+        isRemote: false,
+      });
+
+      const uppyFile = currentUppy.getFile(uppyFileId);
+
+      // listen uploader upload success
+      currentUppy.onceUploadSuccess(uppyFile, (result: any) => {
+        currentUppy.removeFiles([uppyFileId]);
+        resolve(result);
+      });
+
+      currentUppy.once('error', (error: any) => {
+        // @ts-ignore always remove old listener
+        currentUppy.offUploadSuccess(uppyFile);
+        reject(error);
+      });
+
+      currentUppy.upload();
+    });
+  };
+
+  // rewrite removeFiles
+  currentUppy.removeFiles = (fileIDs: string[]) => {
+    const { files, currentUploads } = currentUppy.getState();
+    const updatedFiles = { ...files };
+    const updatedUploads = { ...currentUploads };
+
+    const removedFiles = Object.create(null);
+    fileIDs.forEach((fileID: string) => {
+      if (files[fileID]) {
+        removedFiles[fileID] = files[fileID];
+        delete updatedFiles[fileID];
+      }
+    });
+
+    // Remove files from the `fileIDs` list in each upload.
+    function fileIsNotRemoved(uploadFileID: string) {
+      return removedFiles[uploadFileID] === undefined;
+    }
+
+    Object.keys(updatedUploads).forEach((uploadID) => {
+      const newFileIDs = currentUploads[uploadID].fileIDs.filter(fileIsNotRemoved);
+
+      // Remove the upload if no files are associated with it anymore.
+      if (newFileIDs.length === 0) {
+        delete updatedUploads[uploadID];
+        return;
+      }
+
+      const { capabilities } = currentUppy.getState();
+      if (newFileIDs.length !== currentUploads[uploadID].fileIDs.length && !capabilities.individualCancellation) {
+        throw new Error('individualCancellation is disabled');
+      }
+
+      updatedUploads[uploadID] = {
+        ...currentUploads[uploadID],
+        fileIDs: newFileIDs,
+      };
+    });
+
+    const stateUpdate = {
+      currentUploads: updatedUploads,
+      files: updatedFiles,
+    };
+
+    // If all files were removed - allow new uploads,
+    // and clear recoveredState
+    if (Object.keys(updatedFiles).length === 0) {
+      // @ts-ignore
+      stateUpdate.allowNewUpload = true;
+      // @ts-ignore
+      stateUpdate.error = null;
+      // @ts-ignore
+      stateUpdate.recoveredState = null;
+    }
+
+    currentUppy.setState(stateUpdate);
+    currentUppy.calculateTotalProgress();
+
+    const removedFileIDs = Object.keys(removedFiles);
+    // not emit file-removed
+    // removedFileIDs.forEach((fileID) => {
+    //   currentUppy.emit('file-removed', removedFiles[fileID], reason);
+    // });
+
+    if (removedFileIDs.length > 5) {
+      currentUppy.log(`Removed ${removedFileIDs.length} files`);
+    } else {
+      currentUppy.log(`Removed files: ${removedFileIDs.join(', ')}`);
+    }
+  };
+
+  currentUppy.emitOpen = (...args: any[]) => {
+    currentUppy.emit(OPEN, ...args);
+  };
+
+  currentUppy.onOpen = (callback: Function) => {
+    currentUppy.off(OPEN);
+    currentUppy.once(OPEN, callback);
+  };
+
+  currentUppy.emitClose = (...args: any[]) => {
+    currentUppy.emit(CLOSE, ...args);
+  };
+
+  currentUppy.onClose = (callback: Function) => {
+    currentUppy.off(CLOSE);
+    currentUppy.once(CLOSE, callback);
+  };
+
+  return currentUppy;
+}
