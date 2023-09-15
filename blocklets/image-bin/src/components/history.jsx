@@ -40,6 +40,14 @@ function Gallery({ uploads }) {
             border: '1px solid rgba(0,0,0,0.1)',
             position: 'relative',
             borderRadius: '4px',
+            '&, & *': {
+              transition: 'all 0.25s ease-in-out',
+            },
+            '&:hover': {
+              transform: 'translateY(-4px) ',
+              border: (theme) => `1px solid ${theme.palette.primary.main}`,
+              // boxShadow: (theme) => `4px 4px 0 0px ${theme.palette.primary.main}`,
+            },
           }}>
           <a href={createImageUrl(x.filename, 0, 0)} target="_blank" title={x.originalname}>
             <object
@@ -51,6 +59,9 @@ function Gallery({ uploads }) {
               style={{
                 WebkitUserDrag: 'none',
                 objectFit: 'cover',
+                minWidth: 200,
+                minHeight: 200,
+                overflow: 'hidden',
               }}
             />
           </a>

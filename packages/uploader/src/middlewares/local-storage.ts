@@ -21,7 +21,7 @@ export function initLocalStorageServer({
   const app = express();
   const datastore = new FileStore({ directory: _path });
   const onUploadFinish = async (req: any, res: any, uploadMetadata: any) => {
-    // handle dynamic path
+    // handler dynamic path
     if (_symlinkPath) {
       const { id: fileName } = uploadMetadata || {};
       const currentFilePath = path.join(newServer.datastore.directory, fileName);
@@ -235,8 +235,31 @@ export async function symlinkFileToNewPath(oldPath: string, newPath: string) {
     const newFileExists = await fs.stat(newPath).catch(() => false);
 
     if (!newFileExists) {
-      // create symlink to newPath
-      await fs.symlink(oldPath, newPath);
+      let retryCount = 0;
+
+      async function createSymlink() {
+        // create symlink to newPath
+        await fs.symlink(oldPath, newPath);
+
+        // sleep 10ms * retryCount to wait for symlink file created
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(null);
+          }, 10 * retryCount);
+        });
+
+        // check if symlink file exists
+        const isExist = await fs.readFile(newPath).catch(() => false);
+
+        // if symlink file not exists, try again, max 3 times
+        if (!isExist && retryCount < 3) {
+          retryCount += 1;
+          // if symlink file not exists, try again
+          await createSymlink();
+        }
+      }
+
+      await createSymlink();
     }
   }
 }
