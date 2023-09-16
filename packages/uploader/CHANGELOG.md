@@ -1,3 +1,7 @@
+## 0.0.14 (September 16, 2023)
+
+- chore: bump deps to latest
+
 ## 0.0.13 (September 16, 2023)
 
 - feat: polish the uploader listener logic
