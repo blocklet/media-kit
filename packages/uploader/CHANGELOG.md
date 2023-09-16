@@ -1,3 +1,7 @@
+## 0.0.13 (September 16, 2023)
+
+- feat: polish the uploader listener logic
+
 ## 0.0.12 (September 15, 2023)
 
 - fix: resolve the bug of uploaded plugin can not scroll

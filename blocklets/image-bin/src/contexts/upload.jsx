@@ -13,7 +13,7 @@ const { Provider, Consumer } = UploadContext;
 
 const events = new EventEmitter();
 
-function UploadProvider({ children, pageSize = 20, type = '' }) {
+function UploadProvider({ children, pageSize = 12, type = '' }) {
   const pageState = useReactive({
     folderId: '',
     uploads: [],
@@ -104,7 +104,7 @@ UploadProvider.propTypes = {
 };
 
 UploadProvider.defaultProps = {
-  pageSize: 16,
+  pageSize: 12,
   type: '',
 };
 

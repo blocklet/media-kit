@@ -25,24 +25,26 @@ class DownloadRemoteFiles extends UIPlugin {
 
     const file = this.uppy.getFile(id); // get real time file
 
-    const { data } = file;
+    if (file) {
+      const { data } = file;
 
-    const chunkSize = 1024 * 1024 * 5; // 5 MB
-    const blobSlice = data.slice(0, chunkSize); // use slice to get hash
+      const chunkSize = 1024 * 1024 * 5; // 5 MB
+      const blobSlice = data.slice(0, chunkSize); // use slice to get hash
 
-    // read file contents, get it MD5 hash
-    const hash = crypto
-      .createHash('md5')
-      .update(await blobSlice.text())
-      .digest('hex');
+      // read file contents, get it MD5 hash
+      const hash = crypto
+        .createHash('md5')
+        .update(await blobSlice.text())
+        .digest('hex');
 
-    const ext = getExt(file);
+      const ext = getExt(file);
 
-    const hashFileName = `${hash}${ext ? `.${ext}` : ''}`;
+      const hashFileName = `${hash}${ext ? `.${ext}` : ''}`;
 
-    this.uppy.setFileState(id, {
-      hashFileName,
-    });
+      this.uppy.setFileState(id, {
+        hashFileName,
+      });
+    }
   };
 
   prepareUploadWrapper = async (uppyFile) => {
@@ -154,27 +156,31 @@ class DownloadRemoteFiles extends UIPlugin {
   getPreviewFromData = (uppyFile) => {
     const { id } = uppyFile;
 
-    const { preview, data, type } = this.uppy.getFile(id); // get real time file
+    const file = this.uppy.getFile(id); // get real time file
 
-    const isGif = type.indexOf('gif') > -1;
+    if (file) {
+      const { data, type, preview } = file;
 
-    const shouldGetPreviewFromData = (isGif || !preview) && data && type.indexOf('image') > -1;
-    if (shouldGetPreviewFromData) {
-      setTimeout(
-        () => {
-          this.uppy.setFileState(id, {
-            preview: getObjectURL(data),
-          });
-        },
-        // fix gif preview error
-        type.indexOf('gif') > -1 ? 1000 : 0
-      );
+      const isGif = type.indexOf('gif') > -1;
+
+      const shouldGetPreviewFromData = (isGif || !preview) && data && type.indexOf('image') > -1;
+      if (shouldGetPreviewFromData) {
+        setTimeout(
+          () => {
+            this.uppy.setFileState(id, {
+              preview: getObjectURL(data),
+            });
+          },
+          // fix gif preview error
+          type.indexOf('gif') > -1 ? 1000 : 0
+        );
+      }
     }
   };
 
   prepareUpload = (fileIDs) => {
-    const promises = fileIDs.map(async (fileID) => {
-      const file = this.uppy.getFile(fileID);
+    const promises = fileIDs.map(async (id) => {
+      const file = this.uppy.getFile(id);
       // had some file downloading
       if (file.isDownloading) {
         this.uppy.emit('preprocess-progress', file, {
@@ -186,8 +192,8 @@ class DownloadRemoteFiles extends UIPlugin {
     });
 
     const emitPreprocessCompleteForAll = () => {
-      fileIDs.forEach((fileID) => {
-        const file = this.uppy.getFile(fileID);
+      fileIDs.forEach((id) => {
+        const file = this.uppy.getFile(id);
         this.uppy.emit('preprocess-complete', file);
       });
     };

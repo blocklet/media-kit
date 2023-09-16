@@ -28,11 +28,13 @@ import {
   api,
   setPrefixPath,
   isMediaKit,
+  getMediaKitComponent,
   getExt,
   getUploaderEndpoint,
   base64ToFile,
   getAIKitComponent,
   getUrl,
+  initUppy,
 } from '../utils';
 
 // @ts-ignore
@@ -44,7 +46,6 @@ import AIImage from './plugins/ai-image';
 // @ts-ignore
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
-export const UPLOADER_UPLOAD_SUCCESS = 'uploader-upload-success';
 const target = 'uploader-container';
 
 const getPluginList = (props: UploaderProps) => {
@@ -68,11 +69,12 @@ const getPluginList = (props: UploaderProps) => {
       },
     },
     // other blocklet may can use this plugin
-    !isMediaKit() && {
-      id: 'Uploaded',
-      plugin: Uploaded, //
-      options: {},
-    },
+    getMediaKitComponent() &&
+      !isMediaKit() && {
+        id: 'Uploaded',
+        plugin: Uploaded, //
+        options: {},
+      },
     // with AI Kit
     getAIKitComponent() && {
       id: 'AIImage',
@@ -82,6 +84,8 @@ const getPluginList = (props: UploaderProps) => {
       },
       onShowPanel: (ref: any) => {
         function renderAIImageShowPanel() {
+          const uploader = ref.current.getUploader();
+
           // wait for render
           setTimeout(() => {
             const root = document.getElementById('ai-image');
@@ -172,7 +176,7 @@ function useUploader(props: UploaderProps) {
 
   const endpoint = getUploaderEndpoint(apiPathProps?.uploader as string);
 
-  const currentUppy = new Uppy({
+  let currentUppy = new Uppy({
     id,
     meta: {
       uploaderId: id,
@@ -189,6 +193,7 @@ function useUploader(props: UploaderProps) {
       const { hashFileName, id } = file;
 
       const ext = getExt(file);
+
       // put the hash in the header
       req.setHeader('x-uploader-file-name', `${hashFileName}`);
       req.setHeader('x-uploader-file-id', `${id}`);
@@ -259,8 +264,8 @@ function useUploader(props: UploaderProps) {
         if (result.status === 200) {
           await _onUploadFinish?.(result);
 
-          // custom event
-          currentUppy.emit(UPLOADER_UPLOAD_SUCCESS, file, result);
+          // @ts-ignore custom event
+          currentUppy.emitUploadSuccess(file, result);
         }
 
         if (result.method === 'PATCH') {
@@ -294,61 +299,7 @@ function useUploader(props: UploaderProps) {
     }
   });
 
-  // @ts-ignore handler upload success
-  currentUppy.offUploadSuccess = () => {
-    // @ts-ignore always remove old listener
-    currentUppy.off(UPLOADER_UPLOAD_SUCCESS);
-  };
-
-  // @ts-ignore handler upload success
-  currentUppy.onceUploadSuccess = (callback: Function) => {
-    // @ts-ignore always remove old listener
-    currentUppy.offUploadSuccess();
-    // @ts-ignore listen uploader upload success
-    currentUppy.once(UPLOADER_UPLOAD_SUCCESS, (file: any, response: any) => {
-      callback({ file, response });
-    });
-  };
-
-  // @ts-ignore handler upload success
-  currentUppy.onUploadSuccess = (callback: Function) => {
-    // @ts-ignore always remove old listener
-    currentUppy.offUploadSuccess();
-    // @ts-ignore listen uploader upload success
-    currentUppy.on(UPLOADER_UPLOAD_SUCCESS, (file: any, response: any) => {
-      callback({ file, response });
-    });
-  };
-
-  // @ts-ignore handler upload success
-  currentUppy.emitUploadSuccess = (file: any, response: any) => {
-    // @ts-ignore listen uploader upload success
-    currentUppy.emit(UPLOADER_UPLOAD_SUCCESS, file, response);
-  };
-
-  // @ts-ignore handler upload file
-  currentUppy.uploadFile = async (blobFile: Blob) => {
-    return new Promise(async (resolve, reject) => {
-      const { name, type } = blobFile;
-
-      // @ts-ignore listen uploader upload success
-      currentUppy.onceUploadSuccess(resolve);
-
-      currentUppy.once('error', (error) => {
-        reject(error);
-      });
-
-      await currentUppy.addFile({
-        name,
-        type,
-        data: blobFile, // file blob
-        source: 'Local',
-        isRemote: false,
-      });
-
-      await currentUppy.upload();
-    });
-  };
+  initUppy(currentUppy);
 
   return currentUppy;
 }
@@ -394,6 +345,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       plugins,
       apiPathProps,
     });
+    state.uppy.open = open;
+    state.uppy.close = close;
   }, [id, JSON.stringify(plugins)]);
 
   function open(pluginName?: string | undefined) {
@@ -411,16 +364,16 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             // @ts-ignore
             ?.click?.();
         }
-      }, 200);
+      }, 200); // delay 200ms to open plugin
     }
-
+    state.uppy.emitOpen();
     onOpen?.();
   }
 
   function close() {
-    // @ts-ignore
     state.uppy.getPlugin('upload-dashboard')?.hideAllPanels();
     state.open = false;
+    state.uppy.emitClose();
     onClose?.();
   }
 
@@ -445,16 +398,30 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   // custom plugin
   useEffect(() => {
     // handle uploaded:selected
-    if (plugins.includes('Uploaded') && uploadedProps?.onSelectedFiles) {
+    if (plugins.includes('Uploaded')) {
+      state.uppy.off('uploaded:selected');
       // @ts-ignore
       state.uppy.on('uploaded:selected', (files: Object[]) => {
-        uploadedProps?.onSelectedFiles(files);
+        files.forEach((data: any) => {
+          // emit to upload success, mock http response
+          state.uppy.emitUploadSuccess(
+            {
+              id: data._id, // mock id
+            },
+            {
+              data,
+              isMock: true,
+            }
+          );
+        });
+        uploadedProps?.onSelectedFiles?.(files);
+        // auto close
         close();
       });
     }
 
-    // @ts-ignore
-    state.uppy.on('dashboard:show-panel', (source) => {
+    state.uppy.off('dashboard:show-panel');
+    state.uppy.on('dashboard:show-panel', (source: string) => {
       const { onShowPanel } = pluginMap[source];
       onShowPanel?.(ref);
     });
@@ -464,6 +431,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   const wrapperProps = popup
     ? {
         sx: {
+          zIndex: 999999,
           '& > *': {
             display: !state.open ? 'none' : 'block', // hide uppy when close
           },
@@ -490,6 +458,17 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         onClick={(e: any) => e.stopPropagation()}
         sx={{
           width: isMobile ? '90vw' : 720,
+          '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
+            justifyContent: 'flex-end',
+          },
+          '.uppy-ProviderBrowser-footer': {
+            button: {
+              marginRight: '0 !important',
+              '&:last-child': {
+                display: 'none',
+              },
+            },
+          },
           '.uppy-Dashboard-AddFiles-title': {
             whiteSpace: 'normal',
           },
