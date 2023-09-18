@@ -103,6 +103,7 @@ router.get('/uploads', user, auth, async (req, res) => {
   pageSize = pageSize > MAX_PAGE_SIZE ? MAX_PAGE_SIZE : pageSize;
 
   const condition = {};
+
   if (req.query.folderId) {
     condition.folderId = req.query.folderId;
   }

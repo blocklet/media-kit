@@ -17,6 +17,7 @@ import { isValid as isValidDid } from '@arcblock/did';
 
 import api, { createImageUrl } from '../libs/api';
 import { useUploadContext } from '../contexts/upload';
+import MediaItem from './media-item';
 
 const filter = createFilterOptions();
 
@@ -27,7 +28,6 @@ export default function ImageActions({ data }) {
   const [copied, setCopied] = useState(false);
   const [value, setValue] = useState(null);
   const { folders, deleteUpload, ensureFolder, folderId } = useUploadContext();
-  const imageUrl = createImageUrl(data.filename, 450);
 
   const onCopy = () => {
     Copy(createImageUrl(data.filename, 0, 0));
@@ -151,7 +151,7 @@ export default function ImageActions({ data }) {
           Are you sure you want to delete image <strong>{data.originalname}</strong>, this operation is not recoverable.
         </Typography>
         <ImagePreview>
-          <object data={imageUrl} alt={data.originalname} />
+          <MediaItem {...data} />
         </ImagePreview>
       </Confirm>
       <Confirm
@@ -219,8 +219,10 @@ const ImagePreview = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 24px;
 
-  object {
+  object,
+  video {
     pointer-events: none;
     width: auto;
     height: auto;

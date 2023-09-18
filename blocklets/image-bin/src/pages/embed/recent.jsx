@@ -6,6 +6,7 @@ import { useSize } from 'ahooks';
 import { Scrollbar, Navigation, Mousewheel, FreeMode } from 'swiper';
 import Empty from '@arcblock/ux/lib/Empty';
 import { useMessage } from '@blocklet/embed/lib/message';
+import MediaItem from '../../components/media-item';
 
 // Import Swiper styles
 // eslint-disable-next-line import/no-unresolved
@@ -16,7 +17,7 @@ import 'swiper/css/free-mode';
 import 'swiper/css/scrollbar';
 // eslint-disable-next-line import/no-unresolved
 import 'swiper/css/navigation';
-import api, { createImageUrl } from '../../libs/api';
+import api from '../../libs/api';
 
 const globalStyles = css`
   body {
@@ -65,11 +66,7 @@ function EmbedRecent() {
             {imageList.map((item) => {
               return (
                 <SwiperSlide style={{ width: '200px', height: '200px' }}>
-                  <object
-                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
-                    data={createImageUrl(item.filename)}
-                    alt={item.originalname}
-                  />
+                  <MediaItem {...item} />
                 </SwiperSlide>
               );
             })}
