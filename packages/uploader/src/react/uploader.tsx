@@ -69,11 +69,12 @@ const getPluginList = (props: UploaderProps) => {
       },
     },
     // other blocklet may can use this plugin
-    {
-      id: 'Uploaded',
-      plugin: Uploaded, //
-      options: {},
-    },
+    getMediaKitComponent() &&
+      !isMediaKit() && {
+        id: 'Uploaded',
+        plugin: Uploaded, //
+        options: {},
+      },
     // with AI Kit
     getAIKitComponent() && {
       id: 'AIImage',
