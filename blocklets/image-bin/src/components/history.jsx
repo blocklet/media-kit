@@ -22,6 +22,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import { useUploadContext } from '../contexts/upload';
 import { createImageUrl } from '../libs/api';
 import Actions from './actions';
+import MediaItem from './media-item';
 
 const borderRadius = '4px !important';
 const transformY = '4px';
@@ -63,112 +64,104 @@ function Gallery({ uploads }) {
         mt: `calc(16px - ${transformY})`,
         overflow: 'hidden',
       }}>
-      {uploads.map((x) => (
-        <ImageListItem
-          key={x._id}
-          sx={{
-            border: '1px solid rgba(0,0,0,0.1)',
-            position: 'relative',
-            borderRadius,
-            '&, & *': {
-              transition: 'all 0.25s ease-in-out',
-            },
-            '&:hover': {
-              transform: `translateY(-${transformY})`,
-              border: (theme) => `1px solid ${theme?.palette?.primary?.main}`,
-              // boxShadow: (theme) => `4px 4px 0 0px ${theme?.palette?.primary?.main}`,
-              object: {
-                animation: 'scroll 2s linear 1', // 'scroll 4s linear infinite',
-                '@keyframes scroll': {
-                  '0%': {
-                    objectPosition: 'center',
-                  },
-                  '25%': {
-                    objectPosition: 'top',
-                  },
-                  '75%': {
-                    objectPosition: 'bottom',
-                  },
-                  '100%': {
-                    objectPosition: 'center',
-                  },
-                },
-              },
-            },
-          }}>
-          <a
-            href={createImageUrl(x.filename, 0, 0)}
-            target="_blank"
-            title={x.originalname}
-            style={{
-              width: '100%',
-              position: 'relative',
-              height: isMobile
-                ? 'calc(100vw - 24px - 24px)'
-                : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
-            }}>
-            <object
-              width="100%"
-              height="100%"
-              data={createImageUrl(x.filename, 500)}
-              alt={x.originalname}
-              // loading="lazy"
-              style={{
-                WebkitUserDrag: 'none',
-                objectFit: 'cover',
-              }}
-            />
-            <BlockletLogo
-              did={x.folderId}
-              style={{
-                position: 'absolute',
-                right: 0,
-                bottom: 0,
-                opacity: 0.85,
-                // borderRadius,
-              }}
-              color="primary"
-              width={24}
-              height={24}
-            />
-          </a>
-          <ImageListItemBar
-            position="below"
-            title={
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontSize: 14,
-                }}>
-                {prettyBytes(x.size)}
-              </Box>
-            }
-            subtitle={format(x.createdAt)}
-            actionIcon={
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}>
-                <Actions data={x} />
-              </Box>
-            }
+      {uploads.map((x) => {
+        return (
+          <ImageListItem
+            key={x._id}
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              px: 1.5,
-              borderTop: '1px solid rgba(0,0,0,0.1)',
-              '& .MuiImageListItemBar-titleWrap': {
-                py: 1,
-                '& > div': {
-                  lineHeight: '1.25',
+              border: '1px solid rgba(0,0,0,0.1)',
+              position: 'relative',
+              borderRadius,
+              '&, & *': {
+                transition: 'all 0.25s ease-in-out',
+              },
+              '&:hover': {
+                transform: `translateY(-${transformY})`,
+                border: (theme) => `1px solid ${theme?.palette?.primary?.main}`,
+                // boxShadow: (theme) => `4px 4px 0 0px ${theme?.palette?.primary?.main}`,
+                object: {
+                  animation: 'scroll 2s linear 1', // 'scroll 4s linear infinite',
+                  '@keyframes scroll': {
+                    '0%': {
+                      objectPosition: 'center',
+                    },
+                    '25%': {
+                      objectPosition: 'top',
+                    },
+                    '75%': {
+                      objectPosition: 'bottom',
+                    },
+                    '100%': {
+                      objectPosition: 'center',
+                    },
+                  },
                 },
               },
-            }}
-          />
-        </ImageListItem>
-      ))}
+            }}>
+            <a
+              href={createImageUrl(x.filename, 0, 0)}
+              target="_blank"
+              title={x.originalname}
+              style={{
+                width: '100%',
+                position: 'relative',
+                height: isMobile
+                  ? 'calc(100vw - 24px - 24px)'
+                  : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
+              }}>
+              <MediaItem {...x} />
+              <BlockletLogo
+                did={x.folderId}
+                style={{
+                  position: 'absolute',
+                  right: 0,
+                  bottom: 0,
+                  opacity: 0.85,
+                  // borderRadius,
+                }}
+                color="primary"
+                width={24}
+                height={24}
+              />
+            </a>
+            <ImageListItemBar
+              position="below"
+              title={
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontSize: 14,
+                  }}>
+                  {prettyBytes(x.size)}
+                </Box>
+              }
+              subtitle={format(x.createdAt)}
+              actionIcon={
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}>
+                  <Actions data={x} />
+                </Box>
+              }
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                px: 1.5,
+                borderTop: '1px solid rgba(0,0,0,0.1)',
+                '& .MuiImageListItemBar-titleWrap': {
+                  py: 1,
+                  '& > div': {
+                    lineHeight: '1.25',
+                  },
+                },
+              }}
+            />
+          </ImageListItem>
+        );
+      })}
     </ImageList>
   );
 }

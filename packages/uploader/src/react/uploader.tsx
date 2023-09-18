@@ -84,8 +84,6 @@ const getPluginList = (props: UploaderProps) => {
       },
       onShowPanel: (ref: any) => {
         function renderAIImageShowPanel() {
-          const uploader = ref.current.getUploader();
-
           // wait for render
           setTimeout(() => {
             const root = document.getElementById('ai-image');
@@ -421,7 +419,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       });
     }
 
-    state.uppy.off('dashboard:show-panel');
     state.uppy.on('dashboard:show-panel', (source: string) => {
       const { onShowPanel } = pluginMap[source];
       onShowPanel?.(ref);
@@ -459,6 +456,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         onClick={(e: any) => e.stopPropagation()}
         sx={{
           width: isMobile ? '90vw' : 720,
+
           '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
             justifyContent: 'flex-end',
           },
@@ -519,6 +517,10 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             waitForThumbnailsBeforeUpload
             // theme="light"
             note=""
+            doneButtonHandler={() => {
+              state.uppy.cancelAll();
+              close();
+            }}
             {...props.dashboardProps}
           />
         )}

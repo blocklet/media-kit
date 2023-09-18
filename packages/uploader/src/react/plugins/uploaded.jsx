@@ -138,13 +138,16 @@ class Uploaded extends UIPlugin {
         // hacker uppy image element
         imgElementList.forEach((imgElement) => {
           if (['.mp4', '.webm'].find((item) => imgElement.src?.indexOf(item) > -1)) {
-            const objectElement = document.createElement('object');
-            objectElement.data = imgElement.src;
-            objectElement.width = imgElement.width;
-            objectElement.height = imgElement.height;
-            objectElement.style = 'pointer-events: none;';
+            const videoElement = document.createElement('video');
+            videoElement.src = imgElement.src;
+            videoElement.width = imgElement.width;
+            videoElement.height = imgElement.height;
+            videoElement.autoplay = true;
+            videoElement.muted = true;
+            videoElement.loop = true;
+            videoElement.style = 'pointer-events: none;';
             // replace img element
-            imgElement.parentNode.replaceChild(objectElement, imgElement);
+            imgElement.parentNode.replaceChild(videoElement, imgElement);
           }
         });
 

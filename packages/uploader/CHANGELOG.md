@@ -1,3 +1,7 @@
+## 0.0.16 (September 18, 2023)
+
+- chore: polish the suggestions about bug bash
+
 ## 0.0.15 (September 18, 2023)
 
 - feat: adjust folder logic in Image Bin
