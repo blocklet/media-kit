@@ -201,9 +201,10 @@ function useUploader(props: UploaderProps) {
       req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
 
       // @ts-ignore get folderId when upload using
-      if (window?.blocklet?.componentId) {
+      const componentDid = window?.uploaderComponentId || window?.blocklet?.componentId;
+      if (componentDid) {
         // @ts-ignore
-        req.setHeader('x-component-did', (window.blocklet.componentId || '').split('/').pop());
+        req.setHeader('x-component-did', (componentDid || '').split('/').pop());
       }
     },
 

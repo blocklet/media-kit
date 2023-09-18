@@ -13,6 +13,7 @@ import Toast from '@arcblock/ux/lib/Toast';
 
 import SplitButton from '@arcblock/ux/lib/SplitButton';
 import { Confirm } from '@arcblock/ux/lib/Dialog';
+import { isValid as isValidDid } from '@arcblock/did';
 
 import api, { createImageUrl } from '../libs/api';
 import { useUploadContext } from '../contexts/upload';
@@ -25,7 +26,7 @@ export default function ImageActions({ data }) {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [value, setValue] = useState(null);
-  const { folders, deleteUpload, ensureFolder } = useUploadContext();
+  const { folders, deleteUpload, ensureFolder, folderId } = useUploadContext();
   const imageUrl = createImageUrl(data.filename, 450);
 
   const onCopy = () => {
@@ -52,9 +53,9 @@ export default function ImageActions({ data }) {
     setDeleteOpen(true);
   };
 
-  const onConfirmDelete = () => {
+  const onConfirmDelete = async () => {
     setLoading(true);
-    api
+    await api
       .delete(`/api/uploads/${data._id}`)
       .then((res) => {
         if (res?.data?.error) {
@@ -81,7 +82,6 @@ export default function ImageActions({ data }) {
   };
 
   const onConfirmMove = async () => {
-    console.log(value);
     setLoading(true);
     let folder = value;
     if (value.createNew) {
@@ -89,11 +89,12 @@ export default function ImageActions({ data }) {
       folder = await ensureFolder(value.name);
     }
 
-    api
+    await api
       .put(`/api/uploads/${data._id}`, { folderId: folder._id })
       .then(() => {
         setLoading(false);
         setMoveOpen(false);
+        deleteUpload(data._id);
         Toast.success('Image updated successfully');
       })
       .catch((err) => {
@@ -108,12 +109,13 @@ export default function ImageActions({ data }) {
   };
 
   const isMediaKitFile =
-    (data.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
+    (data.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9' ||
+    !isValidDid(data.folderId);
 
   const actions = [
     // can't delete other blocklet files
     { children: 'Delete', disabled: !isMediaKitFile, onClick: onDelete },
-    { children: 'Move to Folder', onClick: onMove },
+    { children: 'Move to Folder', disabled: !isMediaKitFile, onClick: onMove },
   ];
 
   const deleteConfirmButton = {
@@ -171,7 +173,6 @@ export default function ImageActions({ data }) {
             }
           }}
           filterOptions={(options, params) => {
-            console.log('filterOptions', options, params);
             const filtered = filter(options, params);
 
             const { inputValue } = params;
@@ -189,7 +190,7 @@ export default function ImageActions({ data }) {
           selectOnFocus
           clearOnBlur
           handleHomeEndKeys
-          options={folders}
+          options={folders.filter((item) => item._id !== folderId)}
           getOptionLabel={(option) => {
             // Value selected with enter, right from the input
             if (typeof option === 'string') {

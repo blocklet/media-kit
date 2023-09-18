@@ -21,7 +21,7 @@ const allowedFileTypes = Array.isArray(window.blocklet.preferences.types)
 const maxFileSize = xbytes.parseSize(window.blocklet.MAX_UPLOAD_SIZE, { iec: false });
 
 export default function Uploader() {
-  const { prependUpload } = useUploadContext();
+  const { prependUpload, currentFolderInfo } = useUploadContext();
 
   const uploaderRef = useRef(null);
 
@@ -38,7 +38,7 @@ export default function Uploader() {
       type="button"
       className="submit"
       style={{ marginRight: 16 }}>
-      Upload to Media Library
+      Upload to {currentFolderInfo?.name}
     </Button>,
     <UploaderComponent
       key="uploader"

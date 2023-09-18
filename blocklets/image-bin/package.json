@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.10.12",
+  "version": "0.10.13",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -36,10 +36,12 @@
     ]
   },
   "dependencies": {
+    "@arcblock/did": "^1.18.90",
     "@blocklet/embed": "^0.1.5",
     "@blocklet/logger": "^1.16.15",
     "@blocklet/sdk": "^1.16.15",
     "@blocklet/uploader": "workspace:^",
+    "@mui/icons-material": "^5.14.9",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

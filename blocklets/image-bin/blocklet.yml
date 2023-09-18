@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.10.12
+version: 0.10.13
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -79,18 +79,6 @@ environments:
     description: Set the max upload size limit for images
     required: false
     default: 30MB
-    secure: false
-    shared: true
-  - name: MAX_IMAGE_WIDTH
-    description: The max image width to compress to after upload
-    required: false
-    default: "2000"
-    secure: false
-    shared: true
-  - name: MAX_IMAGE_HEIGHT
-    description: The max image height to compress to after upload
-    required: false
-    default: "1200"
     secure: false
     shared: true
   - name: UNSPLASH_KEY
