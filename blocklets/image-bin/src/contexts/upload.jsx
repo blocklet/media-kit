@@ -75,16 +75,22 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
     return folder;
   };
 
+  const currentFolderInfo = pageState.folders?.find(
+    (item) => item._id === (pageState.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9')
+  );
+
   return (
     <Provider
       value={{
         ...pageState,
+        currentFolderInfo,
         events,
         prependUpload,
         deleteUpload,
         ensureFolder,
         loadMoreUploads: debounce(loadMoreUploads, 50),
         filterByFolder: (folderId) => {
+          window.uploaderComponentId = folderId || window.blocklet?.componentId;
           pageState.uploads = [];
           pageState.folderId = folderId;
           pageState.page = 0;

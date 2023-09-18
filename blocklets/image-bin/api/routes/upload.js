@@ -9,8 +9,8 @@ const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
-
-const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader/middlewares');
+const { isValid: isValidDid } = require('@arcblock/did');
+const { initLocalStorageServer, initCompanion, symlinkFileToNewPath } = require('@blocklet/uploader/middlewares');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
@@ -21,17 +21,17 @@ const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
-const ensureComponentDid = async (req, res, next) => {
+const ensureFolderId = async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
 
   const component = config.components.find((x) => x.did === req.componentDid);
+  const folder = await Folder.findOne({ _id: req.componentDid });
 
-  if (!component) {
-    res.status(400).send({ error: `component ${req.componentDid} is not registered` });
+  if (!component && !folder) {
+    res.status(400).send({ error: `component or folderId ${req.componentDid} is not registered` });
     return;
   }
 
-  const folder = await Folder.findOne({ _id: req.componentDid });
   if (!folder) {
     await Folder.insert({
       _id: req.componentDid,
@@ -44,6 +44,46 @@ const ensureComponentDid = async (req, res, next) => {
   }
 
   next();
+};
+
+const getSymlinkPath = (req) => {
+  // not current component
+  if (isValidDid(req.componentDid) && req.componentDid !== env.currentComponentInfo.did) {
+    const component = config.components.find((x) => x.did === req.componentDid);
+    // if exist component, use component name as symlink path
+    if (component) {
+      const symlinkPath = path.join(env.uploadDir.replace(env.currentComponentInfo.name, component.name));
+      // if symlink path dir exist, use it
+      if (fs.existsSync(symlinkPath)) {
+        return symlinkPath;
+      }
+    }
+  }
+  return null;
+};
+
+const symlinkWrapper = async ({ req, fileName, filePath, componentDid }) => {
+  // rewrite
+  if (componentDid) {
+    req.componentDid = componentDid;
+  }
+  // try to symlink
+  let symlinkFilePath = await getSymlinkPath(req);
+
+  if (typeof symlinkFilePath === 'string' && symlinkFilePath) {
+    if (symlinkFilePath?.indexOf(fileName) === -1) {
+      // symlinkFilePath may be not with fileName
+      symlinkFilePath = path.join(symlinkFilePath, fileName);
+    }
+
+    try {
+      await symlinkFileToNewPath(filePath, symlinkFilePath);
+      // TODO not json file
+      // await symlinkFileToNewPath(`${filePath}.json`, `${symlinkFilePath}.json`);
+    } catch (error) {
+      console.error('copy file error: ', error);
+    }
+  }
 };
 
 // multer only use for /sdk/uploads, not filter allow type
@@ -88,10 +128,10 @@ router.get('/uploads', user, auth, async (req, res) => {
 });
 
 // remove upload
-router.delete('/uploads/:id', user, ensureAdmin, ensureComponentDid, async (req, res) => {
+router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res) => {
   const mediaKitDid = env.currentComponentInfo.did;
 
-  if (req.componentDid !== mediaKitDid) {
+  if (isValidDid(req.componentDid) && req.componentDid !== mediaKitDid) {
     res.jsonp({ error: `Can not remove file by ${req.componentDid}` });
     return;
   }
@@ -103,7 +143,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureComponentDid, async (req,
     return;
   }
 
-  if (doc.folderId !== mediaKitDid) {
+  if (isValidDid(doc.folderId) && doc.folderId !== mediaKitDid) {
     res.jsonp({ error: 'Can not remove file which upload from other blocklet' });
     return;
   }
@@ -140,6 +180,16 @@ router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
     { returnUpdatedDocs: true }
   );
 
+  const { filename, folderId } = updatedDoc;
+
+  // rewrite componentDID
+  await symlinkWrapper({
+    req,
+    fileName: filename,
+    filePath: path.join(env.uploadDir, updatedDoc.filename),
+    componentDid: folderId,
+  });
+
   res.jsonp(updatedDoc);
 });
 
@@ -147,21 +197,7 @@ router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
 const localStorageServer = initLocalStorageServer({
   path: env.uploadDir,
   express,
-  symlinkPath: (req) => {
-    // not current component
-    if (req.componentDid !== env.currentComponentInfo.did) {
-      const component = config.components.find((x) => x.did === req.componentDid);
-      // if exist component, use component name as symlink path
-      if (component) {
-        const symlinkPath = path.join(env.uploadDir.replace(env.currentComponentInfo.name, component.name));
-        // if symlink path dir exist, use it
-        if (fs.existsSync(symlinkPath)) {
-          return symlinkPath;
-        }
-      }
-    }
-    return null;
-  },
+  symlinkPath: getSymlinkPath,
   onUploadFinish: async (req, res, uploadMetadata) => {
     const {
       id: filename,
@@ -196,7 +232,7 @@ const localStorageServer = initLocalStorageServer({
   },
 });
 
-router.use('/uploads', user, auth, ensureComponentDid, localStorageServer.handle);
+router.use('/uploads', user, auth, ensureFolderId, localStorageServer.handle);
 
 // companion
 const companion = initCompanion({
@@ -206,14 +242,14 @@ const companion = initCompanion({
   uploadUrls: [env.appUrl],
 });
 
-router.use('/companion', user, auth, ensureComponentDid, companion.handle);
+router.use('/companion', user, auth, ensureFolderId, companion.handle);
 
 router.post(
   '/sdk/uploads',
   user,
   middleware.component.verifySig,
   upload.single('data'),
-  ensureComponentDid,
+  ensureFolderId,
   async (req, res) => {
     // data maybe a file buffer format by multer
     const { type, filename: originalFilename, data = req?.file?.buffer } = req.body;
@@ -241,16 +277,22 @@ router.post(
     const hash = crypto.createHash('md5');
     hash.update(buffer);
 
-    const filename = `${hash.digest('hex')}${path.extname(originalFilename).replace(/\.+$/, '')}`;
-    const filePath = path.join(env.uploadDir, filename);
+    const fileName = `${hash.digest('hex')}${path.extname(originalFilename).replace(/\.+$/, '')}`;
+    const filePath = path.join(env.uploadDir, fileName);
 
     fs.writeFileSync(filePath, buffer);
 
+    await symlinkWrapper({
+      req,
+      fileName,
+      filePath,
+    });
+
     const file = {
       size: fs.lstatSync(filePath).size,
-      filename,
+      filename: fileName,
       originalFilename,
-      mimetype: mime.lookup(filename) || '',
+      mimetype: mime.lookup(fileName) || '',
     };
 
     const obj = new URL(env.appUrl);

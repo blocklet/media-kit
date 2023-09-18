@@ -16,6 +16,8 @@ import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useInfiniteScroll, useResponsive } from 'ahooks';
+import { isValid as isValidDid } from '@arcblock/did';
+import FolderIcon from '@mui/icons-material/Folder';
 
 import { useUploadContext } from '../contexts/upload';
 import { createImageUrl } from '../libs/api';
@@ -27,7 +29,19 @@ const transformY = '4px';
 function BlockletLogo(props) {
   const { did, ...restProps } = props;
   const src = `/.well-known/service/blocklet/logo-bundle/${did}`;
-  return <img width={24} height={24} src={src} alt={did} {...restProps} />;
+
+  return isValidDid(did) ? (
+    <img width={24} height={24} src={src} alt={did} {...restProps} />
+  ) : (
+    <FolderIcon
+      sx={{
+        width: 24,
+        height: 24,
+        right: '1px !important', // adjust absolute
+      }}
+      {...restProps}
+    />
+  );
 }
 
 function Gallery({ uploads }) {
@@ -113,6 +127,7 @@ function Gallery({ uploads }) {
                 opacity: 0.85,
                 // borderRadius,
               }}
+              color="primary"
               width={24}
               height={24}
             />

@@ -1,3 +1,7 @@
+## 0.0.15 (September 18, 2023)
+
+- feat: adjust folder logic in Image Bin
+
 ## 0.0.14 (September 16, 2023)
 
 - chore: bump deps to latest
