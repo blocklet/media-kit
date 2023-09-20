@@ -1,5 +1,6 @@
 import axios from 'axios';
 import joinUrl from 'url-join';
+import mime from 'mime-types';
 
 export const getObjectURL = (fileBlob: Blob) => {
   let url = null;
@@ -19,8 +20,9 @@ export const getObjectURL = (fileBlob: Blob) => {
 };
 
 export const getExt = (uppyFile: any) => {
-  const { extension, type } = uppyFile;
-  return (extension || type?.split('/')?.[1]).toLowerCase();
+  const { type } = uppyFile;
+
+  return mime.extension(type);
 };
 
 export function isBlob(file: any) {
@@ -195,6 +197,8 @@ export function initUppy(currentUppy: any) {
       currentUppy.once('error', (error: any) => {
         // @ts-ignore always remove old listener
         currentUppy.offUploadSuccess(uppyFile);
+        // remove it
+        currentUppy.removeFiles([uppyFileId]);
         reject(error);
       });
 
