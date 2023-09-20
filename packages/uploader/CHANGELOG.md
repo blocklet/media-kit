@@ -1,3 +1,7 @@
+## 0.0.17 (September 19, 2023)
+
+- chore: update deps
+
 ## 0.0.16 (September 18, 2023)
 
 - chore: polish the suggestions about bug bash
