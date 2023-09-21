@@ -18,7 +18,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useInfiniteScroll, useResponsive } from 'ahooks';
 import { isValid as isValidDid } from '@arcblock/did';
 import FolderIcon from '@mui/icons-material/Folder';
-
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useUploadContext } from '../contexts/upload';
 import { createImageUrl } from '../libs/api';
 import Actions from './actions';
@@ -45,7 +45,7 @@ function BlockletLogo(props) {
   );
 }
 
-function Gallery({ uploads }) {
+function Gallery({ uploads, uploaderRef }) {
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
@@ -54,6 +54,7 @@ function Gallery({ uploads }) {
   const cols = responsive.xl ? 4 : responsive.md ? 3 : 1;
 
   const gap = 16;
+
   return (
     <ImageList
       // variant="masonry"
@@ -72,6 +73,11 @@ function Gallery({ uploads }) {
               border: '1px solid rgba(0,0,0,0.1)',
               position: 'relative',
               borderRadius,
+              'object, video': {
+                borderRadius,
+                borderBottomRightRadius: '0 !important',
+                borderBottomLeftRadius: '0 !important',
+              },
               '&, & *': {
                 transition: 'all 0.25s ease-in-out',
               },
@@ -98,67 +104,95 @@ function Gallery({ uploads }) {
                 },
               },
             }}>
-            <a
-              href={createImageUrl(x.filename, 0, 0)}
-              target="_blank"
-              title={x.originalname}
-              style={{
-                width: '100%',
-                position: 'relative',
-                height: isMobile
-                  ? 'calc(100vw - 24px - 24px)'
-                  : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
-              }}>
-              <MediaItem {...x} />
-              <BlockletLogo
-                did={x.folderId}
+            {!x.isNew ? (
+              <a
+                href={createImageUrl(x.filename, 0, 0)}
+                target="_blank"
+                title={x.originalname}
                 style={{
-                  position: 'absolute',
-                  right: 0,
-                  bottom: 0,
-                  opacity: 0.85,
-                  // borderRadius,
+                  width: '100%',
+                  position: 'relative',
+                  height: isMobile
+                    ? 'calc(100vw - 24px - 24px)'
+                    : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
+                }}>
+                <MediaItem {...x} />
+                <BlockletLogo
+                  did={x.folderId}
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    bottom: 0,
+                    opacity: 0.85,
+                    // borderRadius,
+                  }}
+                  color="primary"
+                  width={24}
+                  height={24}
+                />
+              </a>
+            ) : (
+              <Box
+                onClick={() => {
+                  uploaderRef.current.open();
                 }}
-                color="primary"
-                width={24}
-                height={24}
-              />
-            </a>
-            <ImageListItemBar
-              position="below"
-              title={
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontSize: 14,
-                  }}>
-                  {prettyBytes(x.size)}
-                </Box>
-              }
-              subtitle={format(x.createdAt)}
-              actionIcon={
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}>
-                  <Actions data={x} />
-                </Box>
-              }
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                px: 1.5,
-                borderTop: '1px solid rgba(0,0,0,0.1)',
-                '& .MuiImageListItemBar-titleWrap': {
-                  py: 1,
-                  '& > div': {
-                    lineHeight: '1.25',
+                sx={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'rgba(0,0,0,0.1)',
+                  '&:hover': {
+                    background: (theme) => theme?.palette?.primary?.main,
                   },
-                },
-              }}
-            />
+                }}>
+                <AddCircleIcon
+                  sx={{
+                    fontSize: 80,
+                    margin: '40px',
+                    color: 'white',
+                  }}
+                />
+              </Box>
+            )}
+            {!x.isNew && (
+              <ImageListItemBar
+                position="below"
+                title={
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      fontSize: 14,
+                    }}>
+                    {prettyBytes(x.size)}
+                  </Box>
+                }
+                subtitle={format(x.createdAt)}
+                actionIcon={
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}>
+                    <Actions data={x} />
+                  </Box>
+                }
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  px: 1.5,
+                  borderTop: '1px solid rgba(0,0,0,0.1)',
+                  '& .MuiImageListItemBar-titleWrap': {
+                    py: 1,
+                    '& > div': {
+                      lineHeight: '1.25',
+                    },
+                  },
+                }}
+              />
+            )}
           </ImageListItem>
         );
       })}
@@ -172,7 +206,7 @@ export default function Uploads() {
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
-  const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder } = uploadState;
+  const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder, uploaderRef } = uploadState;
   const wrapperRef = useRef(null);
 
   useInfiniteScroll(loadMoreUploads, {
@@ -225,7 +259,16 @@ export default function Uploads() {
         <Empty>No Uploads Found</Empty>
       ) : (
         <Box>
-          <Gallery uploads={uploads} />
+          <Gallery
+            uploaderRef={uploaderRef}
+            uploads={[
+              {
+                isNew: true,
+                _id: 'new-item',
+              },
+              ...uploads,
+            ]}
+          />
           {loading && (
             <div className="load-more">
               <Spinner />

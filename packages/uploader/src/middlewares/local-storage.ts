@@ -1,30 +1,76 @@
-const { Server } = require('@tus/server');
+const { Server, EVENTS } = require('@tus/server');
 const { FileStore } = require('@tus/file-store');
+const cron = require('@abtnode/cron');
 const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
 const mime = require('mime-types');
-const joinUrl = require('url-join');
+const joinUrlLib = require('url-join');
+const { default: queue } = require('p-queue');
 
 export function initLocalStorageServer({
   path: _path,
   onUploadFinish: _onUploadFinish,
   symlinkPath: _symlinkPath,
   express,
+  expiredUploadTime = 1000 * 60 * 60 * 24 * 3, // default 3 days expire
   ...restProps
 }: {
   path: string;
   onUploadFinish?: Function;
   express: Function;
   symlinkPath?: Function | String | null;
+  expiredUploadTime?: Number;
 }) {
   const app = express();
-  const datastore = new FileStore({ directory: _path });
+  const configstore = new rewriteFileConfigstore(_path); // my configstore
+  const datastore = new FileStore({
+    directory: _path,
+    expirationPeriodInMilliseconds: expiredUploadTime,
+    configstore,
+  });
+
+  const getRuntimeMetadata = (uploadMetadata: any) => {
+    const cloneUploadMetadata = {
+      ...uploadMetadata,
+    };
+    if (!cloneUploadMetadata.runtime) {
+      const { id, metadata, size } = cloneUploadMetadata;
+      cloneUploadMetadata.runtime = {
+        relativePath: metadata.relativePath,
+        absolutePath: path.resolve(_path, id),
+        size,
+        hashFileName: id,
+        originFileName: metadata.filename,
+        type: metadata.type,
+        fileType: metadata.filetype,
+      };
+    }
+    return cloneUploadMetadata;
+  };
+
+  const rewriteMetaDataFile = async (uploadMetadata: any) => {
+    uploadMetadata = getRuntimeMetadata(uploadMetadata);
+    const { id } = uploadMetadata;
+    if (!id) {
+      return;
+    }
+    const oldMetadata = getRuntimeMetadata(await configstore.get(id));
+    // should rewrite meta data file
+    if (JSON.stringify(oldMetadata) !== JSON.stringify(uploadMetadata)) {
+      await configstore.set(id, uploadMetadata);
+    }
+  };
   const onUploadFinish = async (req: any, res: any, uploadMetadata: any) => {
+    uploadMetadata = getRuntimeMetadata(uploadMetadata);
+
+    // check offset
+    await rewriteMetaDataFile(uploadMetadata);
+
     // handler dynamic path
     if (_symlinkPath) {
       const { id: fileName } = uploadMetadata || {};
-      const currentFilePath = path.join(newServer.datastore.directory, fileName);
+      const currentFilePath = path.join(_path, fileName);
       let symlinkFilePath;
 
       if (typeof _symlinkPath === 'string') {
@@ -62,6 +108,8 @@ export function initLocalStorageServer({
     namingFunction,
     datastore,
     onUploadFinish: async (req: any, res: any, uploadMetadata: any) => {
+      uploadMetadata = getRuntimeMetadata(uploadMetadata);
+
       const result = await onUploadFinish(req, res, uploadMetadata);
       // result can be res or value
       if (result && !result.send) {
@@ -81,6 +129,31 @@ export function initLocalStorageServer({
       onUploadFinish,
     };
     next();
+  });
+
+  // add cron init
+  cron.init({
+    context: {},
+    jobs: [
+      {
+        name: 'auto-cleanup-expired-uploads',
+        time: '0 0 * * * *', // each hour
+        fn: () => {
+          console.log('clean up expired uploads by cron');
+          newServer.cleanUpExpiredUploads();
+        },
+        options: { runOnInit: true },
+      },
+    ],
+    onError: (err: Error) => {
+      console.error('run job failed', err);
+    },
+  });
+
+  // Each Patch req finish will trigger
+  newServer.on(EVENTS.POST_RECEIVE, async (req: any, res: any, uploadMetadata: any) => {
+    uploadMetadata = getRuntimeMetadata(uploadMetadata);
+    await rewriteMetaDataFile(uploadMetadata);
   });
 
   app.all('*', setHeaders, fileExistBeforeUpload, newServer.handle.bind(newServer));
@@ -191,7 +264,7 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
 
         if (prepareUpload) {
           res.status(200); // set 200 will be recognized by fontend component
-          res.setHeader('Location', joinUrlPlus(req.headers['x-uploader-base-url'], fileName));
+          res.setHeader('Location', joinUrl(req.headers['x-uploader-base-url'], fileName));
         }
 
         const uploadResult = await uploaderProps.onUploadFinish(req, res, metaData);
@@ -264,12 +337,84 @@ export async function symlinkFileToNewPath(oldPath: string, newPath: string) {
   }
 }
 
-export function joinUrlPlus(...args: string[]) {
+export function joinUrl(...args: string[]) {
   const realArgs = args.filter(Boolean).map((item) => {
     if (item === '/') {
       return '';
     }
     return item;
   });
-  return joinUrl(...realArgs);
+  return joinUrlLib(...realArgs);
+}
+
+/**
+ * FileConfigstore writes the `Upload` JSON metadata to disk next the uploaded file itself.
+ * It uses a queue which only processes one operation at a time to prevent unsafe concurrent access.
+ */
+class rewriteFileConfigstore {
+  directory: string;
+  queue: any;
+
+  constructor(path: string) {
+    this.directory = path;
+    this.queue = new queue({ concurrency: 1 });
+  }
+
+  async get(key: string) {
+    try {
+      const buffer = await this.queue.add(() => fs.readFile(this.resolve(key), 'utf8'));
+      const metadata = JSON.parse(buffer as string);
+      // get real offset by file
+      if (metadata.offset !== metadata.size) {
+        // get file info
+        const info = await fs.stat(this.resolve(key, false)).catch(() => false);
+        if (info?.size !== metadata?.offset) {
+          metadata.offset = info.size;
+          // rewrite metadata
+          this.set(key, metadata);
+        }
+      }
+      return metadata;
+    } catch {
+      return undefined;
+    }
+  }
+
+  async set(key: string, value: any) {
+    // no recording run time
+    if (value?.runtime) {
+      delete value.runtime;
+    }
+    if (value?.metadata?.runtime) {
+      delete value.metadata.runtime;
+    }
+    await this.queue.add(() => fs.writeFile(this.resolve(key), JSON.stringify(value)));
+  }
+
+  async delete(key: string): Promise<void> {
+    await this.queue.add(() => fs.rm(this.resolve(key)));
+  }
+
+  async list(): Promise<Array<string>> {
+    return this.queue.add(async () => {
+      const files = await fs.readdir(this.directory, { withFileTypes: true });
+      const promises = files
+        .filter((file: any) => file.isFile() && file.name.endsWith('.json'))
+        .map((file: any) => {
+          // return filename not meta json
+          return file.name.replace('.json', '');
+        });
+
+      return Promise.all(promises);
+    }) as Promise<string[]>;
+  }
+
+  private resolve(key: string, isMetadata = true): string {
+    let fileKey = key;
+    // must use meta json file
+    if (isMetadata && key?.indexOf('.json') === -1) {
+      fileKey = `${key}.json`;
+    }
+    return path.resolve(this.directory, fileKey);
+  }
 }

@@ -11,9 +11,14 @@ import Webcam from '@uppy/webcam';
 import ImportFromUrl from '@uppy/url';
 import Unsplash from '@uppy/unsplash';
 import uniq from 'lodash/uniq';
+import { useKeyPress } from 'ahooks';
 import { Dashboard, DragDrop as UppyDragDrop } from '@uppy/react';
 import ImageEditor from '@uppy/image-editor';
 import Tus from '@uppy/tus';
+// @ts-ignore
+import zh_CN from '@uppy/locales/lib/zh_CN';
+// @ts-ignore
+import en_US from '@uppy/locales/lib/en_US';
 // import GoldenRetriever from '@uppy/golden-retriever';
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
@@ -47,6 +52,11 @@ import AIImage from './plugins/ai-image';
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 const target = 'uploader-container';
+
+const localeMap = {
+  zh: zh_CN,
+  en: en_US,
+};
 
 const getPluginList = (props: UploaderProps) => {
   const { apiPathProps } = props;
@@ -159,10 +169,12 @@ function useUploader(props: UploaderProps) {
   const {
     id,
     plugins,
+    locale,
     onAfterResponse: _onAfterResponse,
     onUploadFinish: _onUploadFinish,
     coreProps,
     apiPathProps,
+    tusProps,
   } = props;
 
   const pluginList = getPluginList(props);
@@ -180,9 +192,12 @@ function useUploader(props: UploaderProps) {
       uploaderId: id,
     },
     debug: localStorage.getItem('uppy_debug') === 'true',
+    // @ts-ignore
+    locale: localeMap[locale || 'en'],
     ...coreProps,
   }).use(Tus, {
-    chunkSize: 1024 * 1024 * 10, // 10MB
+    chunkSize: 1024 * 1024 * 10, // default chunk size 10MB
+    removeFingerprintOnSuccess: true,
     // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
     withCredentials: true,
     endpoint,
@@ -266,19 +281,6 @@ function useUploader(props: UploaderProps) {
           // @ts-ignore custom event
           currentUppy.emitUploadSuccess(file, result);
         }
-
-        if (result.method === 'PATCH') {
-          // remove uppy record
-          Object.keys(localStorage).forEach((item) => {
-            if (item.indexOf(result.headers['x-uploader-file-id']) !== -1) {
-              try {
-                localStorage.removeItem(item);
-              } catch (error) {
-                // do noting
-              }
-            }
-          });
-        }
       }
 
       // each time a response is received
@@ -286,6 +288,7 @@ function useUploader(props: UploaderProps) {
         await _onAfterResponse?.(xhr);
       }
     },
+    ...tusProps,
   });
 
   // .use(GoldenRetriever);
@@ -321,6 +324,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     uploadedProps,
     onOpen,
     onClose,
+    locale,
   } = props;
 
   // get pluginMap tp get plugin some props
@@ -336,6 +340,21 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     uppy: null as any,
   });
 
+  useKeyPress(
+    'space',
+    (e) => {
+      // close when space key down
+      if (state.open && document.activeElement === document.body) {
+        e.stopPropagation();
+        e.preventDefault();
+        close();
+      }
+    },
+    {
+      useCapture: true,
+    }
+  );
+
   useEffect(() => {
     // @ts-ignore
     state.uppy = useUploader({
@@ -346,7 +365,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     });
     state.uppy.open = open;
     state.uppy.close = close;
-  }, [id, JSON.stringify(plugins)]);
+  }, [id, JSON.stringify(plugins), locale]);
 
   function open(pluginName?: string | undefined) {
     state.open = true;
@@ -367,6 +386,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     }
     state.uppy.emitOpen();
     onOpen?.();
+    // @ts-ignore set blur and focus body
+    document.activeElement?.blur?.();
   }
 
   function close() {
@@ -456,7 +477,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         onClick={(e: any) => e.stopPropagation()}
         sx={{
           width: isMobile ? '90vw' : 720,
-
           '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
             justifyContent: 'flex-end',
           },
