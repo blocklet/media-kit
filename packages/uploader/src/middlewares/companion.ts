@@ -31,11 +31,11 @@ export function initCompanion({
 
   app.use('/proxy', proxyImageDownload);
 
+  let dynamicProviderOptions = providerOptions;
+
   const companionOptions = {
     secret,
-    providerOptions: {
-      ...providerOptions,
-    },
+    providerOptions, // unused
     server: {
       protocol: 'https',
       host: 'UNUSED_HOST', // unused
@@ -43,6 +43,7 @@ export function initCompanion({
     },
     filePath: path,
     streamingUpload: true,
+    metrics: false,
     ...restProps,
   };
 
@@ -50,9 +51,34 @@ export function initCompanion({
 
   const { app: companionApp } = newCompanion;
 
-  app.all('*', companionApp);
+  app.all(
+    '*',
+    (req: any, res: any, next: Function) => {
+      // hacker the req companion
+      let hackerCompanion = {} as any;
+
+      Object.defineProperty(req, 'companion', {
+        get() {
+          return hackerCompanion;
+        },
+        set(value) {
+          hackerCompanion = value;
+          // set middleware providerOptions to dynamicProviderOptions
+          hackerCompanion.options.providerOptions = dynamicProviderOptions;
+        },
+      });
+
+      next();
+    },
+    companionApp
+  );
 
   newCompanion.handle = app;
+
+  // only set provider options
+  newCompanion.setProviderOptions = (options: Object) => {
+    dynamicProviderOptions = options;
+  };
 
   return newCompanion;
 }

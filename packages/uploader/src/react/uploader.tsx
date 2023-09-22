@@ -4,8 +4,10 @@ import { useReactive } from 'ahooks';
 import { createRoot } from 'react-dom/client';
 import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle, lazy } from 'react';
 import Backdrop from '@mui/material/Backdrop';
+import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { CancelOutlined as CloseIcon } from '@mui/icons-material';
 import Uppy from '@uppy/core';
 import Webcam from '@uppy/webcam';
 import ImportFromUrl from '@uppy/url';
@@ -341,10 +343,10 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   });
 
   useKeyPress(
-    'space',
+    'esc',
     (e) => {
-      // close when space key down
-      if (state.open && document.activeElement === document.body) {
+      // close when esc key down
+      if (state.open) {
         e.stopPropagation();
         e.preventDefault();
         close();
@@ -468,6 +470,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         ...props.wrapperProps,
       } as any);
 
+  const closeIconSize = isMobile ? '42px' : '40px';
+
   return (
     <Wrapper key="uploader-wrapper" {...wrapperProps}>
       {/* ignore backdrop trigger */}
@@ -476,6 +480,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         id={target}
         onClick={(e: any) => e.stopPropagation()}
         sx={{
+          position: 'relative',
           width: isMobile ? '90vw' : 720,
           '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
             justifyContent: 'flex-end',
@@ -522,6 +527,27 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             },
           },
         }}>
+        <IconButton
+          onClick={close}
+          sx={{
+            color: '#fafafa',
+            position: 'absolute',
+            ...(isMobile
+              ? {
+                  bottom: `calc(0px - ${closeIconSize} - 16px)`,
+                  left: `calc(50vw - ${closeIconSize} - 8px)`,
+                }
+              : {
+                  right: `calc(0px - ${closeIconSize} - 16px)`,
+                  top: -12,
+                }),
+          }}>
+          <CloseIcon
+            sx={{
+              fontSize: closeIconSize,
+            }}
+          />
+        </IconButton>
         {/* @ts-ignore */}
         {state.uppy && (
           <Dashboard
