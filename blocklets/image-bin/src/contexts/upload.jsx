@@ -1,5 +1,5 @@
 /* eslint-disable import/no-cycle */
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
 import debounce from 'lodash/debounce';
@@ -14,6 +14,7 @@ const { Provider, Consumer } = UploadContext;
 const events = new EventEmitter();
 
 function UploadProvider({ children, pageSize = 12, type = '' }) {
+  const uploaderRef = useRef(null);
   const pageState = useReactive({
     folderId: '',
     uploads: [],
@@ -77,12 +78,17 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
 
   const currentFolderInfo = pageState.folders?.find(
     (item) => item._id === (pageState.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9')
-  );
+  ) || {
+    // default is image bin
+    name: 'Image Bin',
+    did: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
+  };
 
   return (
     <Provider
       value={{
         ...pageState,
+        uploaderRef,
         currentFolderInfo,
         events,
         prependUpload,

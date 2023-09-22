@@ -235,12 +235,29 @@ const localStorageServer = initLocalStorageServer({
 
 router.use('/uploads', user, auth, ensureFolderId, localStorageServer.handle);
 
-// companion
-const companion = initCompanion({
+const defaultCompanionOptions = {
   path: env.uploadDir,
   express,
-  providerOptions: env.providerOptions,
   uploadUrls: [env.appUrl],
+};
+
+// companion
+let companion = initCompanion({
+  ...defaultCompanionOptions,
+  providerOptions: env.getProviderOptions(),
+});
+
+// auto update
+config.events.on(config.Events.envUpdate, () => {
+  logger.info('env update, try to re-init companion now');
+  env.updateEnv();
+  // wait for env update
+  setTimeout(() => {
+    companion = initCompanion({
+      ...defaultCompanionOptions,
+      providerOptions: env.getProviderOptions(),
+    });
+  }, 1000);
 });
 
 router.use('/companion', user, auth, ensureFolderId, companion.handle);

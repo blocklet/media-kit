@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { useCallback, useRef, lazy } from 'react';
+import { useCallback, lazy } from 'react';
 import Button from '@arcblock/ux/lib/Button';
 import joinUrl from 'url-join';
 import xbytes from 'xbytes';
+import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import { useUploadContext } from '../contexts/upload';
 
 // eslint-disable-next-line import/no-unresolved
@@ -21,13 +22,13 @@ const allowedFileTypes = Array.isArray(window.blocklet.preferences.types)
 const maxFileSize = xbytes.parseSize(window.blocklet.MAX_UPLOAD_SIZE, { iec: false });
 
 export default function Uploader() {
-  const { prependUpload, currentFolderInfo } = useUploadContext();
+  const { prependUpload, currentFolderInfo, uploaderRef } = useUploadContext();
 
-  const uploaderRef = useRef(null);
+  const { locale } = useLocaleContext();
 
   const handleOpen = useCallback(() => {
     uploaderRef.current.open();
-  }, []);
+  }, [uploaderRef]);
 
   return [
     <Button
@@ -43,6 +44,7 @@ export default function Uploader() {
     <UploaderComponent
       key="uploader"
       ref={uploaderRef}
+      locale={locale}
       popup
       onUploadFinish={(result) => {
         prependUpload(result.data);

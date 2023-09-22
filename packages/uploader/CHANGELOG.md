@@ -1,3 +1,7 @@
+## 0.0.18 (September 21, 2023)
+
+- chore: improve the user experience
+
 ## 0.0.17 (September 19, 2023)
 
 - chore: update deps

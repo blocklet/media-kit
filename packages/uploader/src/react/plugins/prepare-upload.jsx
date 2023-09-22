@@ -47,10 +47,23 @@ class DownloadRemoteFiles extends UIPlugin {
     }
   };
 
+  setMetaData = async (uppyFile) => {
+    const { id } = uppyFile;
+
+    const file = this.uppy.getFile(id); // get real time file
+
+    if (file) {
+      const { relativePath, name } = file.data;
+      // relativePath must had file name
+      this.uppy.setFileMeta(id, { relativePath: relativePath || name });
+    }
+  };
+
   prepareUploadWrapper = async (uppyFile) => {
     await this.tryDownloadRemoteFile(uppyFile);
     await this.getPreviewFromData(uppyFile);
     await this.setHashFileName(uppyFile);
+    await this.setMetaData(uppyFile);
   };
 
   tryDownloadRemoteFile = async (uppyFile) => {
@@ -86,7 +99,6 @@ class DownloadRemoteFiles extends UIPlugin {
       }
       this.uppy.setFileState(id, {
         isLoading: true,
-        isRemote: false,
         isDownloading: true,
         size: null,
         meta: {
@@ -118,6 +130,7 @@ class DownloadRemoteFiles extends UIPlugin {
             source, // optional, determines the source of the file, for example, Instagram.
             size: blobFile.size,
             isDownloading: false,
+            isRemote: false,
             meta: {
               ...meta,
               name: fileName,

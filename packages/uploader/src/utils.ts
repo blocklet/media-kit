@@ -1,5 +1,6 @@
 import axios from 'axios';
 import joinUrl from 'url-join';
+import mime from 'mime-types';
 
 export const getObjectURL = (fileBlob: Blob) => {
   let url = null;
@@ -19,8 +20,29 @@ export const getObjectURL = (fileBlob: Blob) => {
 };
 
 export const getExt = (uppyFile: any) => {
-  const { extension, type } = uppyFile;
-  return (extension || type?.split('/')?.[1]).toLowerCase();
+  const { source, extension, type, name } = uppyFile;
+
+  // such as .DS_Store and .gitignore
+  if (name.startsWith('.') && !mime.lookup(name)) {
+    return false;
+  }
+
+  const nameContentType = mime.lookup(name);
+
+  // if name can get current mimetype
+  if (nameContentType === type) {
+    return extension?.toLowerCase();
+  }
+
+  // if name has ext and match ext match extension
+  if (!['Unsplash', 'Url'].includes(source)) {
+    if (name.split('.').length === 2) {
+      return extension?.toLowerCase();
+    }
+  }
+
+  // use mimetype to get ext
+  return mime.extension(type);
 };
 
 export function isBlob(file: any) {
@@ -195,6 +217,8 @@ export function initUppy(currentUppy: any) {
       currentUppy.once('error', (error: any) => {
         // @ts-ignore always remove old listener
         currentUppy.offUploadSuccess(uppyFile);
+        // remove it
+        currentUppy.removeFiles([uppyFileId]);
         reject(error);
       });
 

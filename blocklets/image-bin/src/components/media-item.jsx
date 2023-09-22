@@ -12,11 +12,21 @@ function MediaItem(props) {
     WebkitUserDrag: 'none',
     objectFit: isVideo ? 'contain' : 'cover',
   };
+
   return isVideo ? (
     <video key={_id} width="100%" height="100%" loading="lazy" autoPlay muted loop src={src} style={style} />
   ) : (
     // eslint-disable-next-line jsx-a11y/alt-text
-    <object key={_id} width="100%" height="100%" data={src} alt={originalname} loading="lazy" style={style} />
+    <object
+      type={mimetype} // set mime type that file not auto download
+      key={_id}
+      width="100%"
+      height="100%"
+      data={src}
+      alt={originalname}
+      loading="lazy"
+      style={style}
+    />
   );
 }
 
