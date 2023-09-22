@@ -21,7 +21,7 @@
     "zx": "^7.2.3"
   },
   "resolutions": {
-    "@blocklet/logger": "1.16.16-beta-d6c5ed65",
-    "@blocklet/sdk": "1.16.16-beta-d6c5ed65"
+    "@blocklet/logger": "1.16.16-beta-ca17cc31",
+    "@blocklet/sdk": "1.16.16-beta-ca17cc31"
   }
 }

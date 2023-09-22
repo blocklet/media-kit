@@ -11,6 +11,7 @@ const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
 const { isValid: isValidDid } = require('@arcblock/did');
 const { initLocalStorageServer, initCompanion, symlinkFileToNewPath } = require('@blocklet/uploader/middlewares');
+const logger = require('../libs/logger');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
@@ -242,9 +243,9 @@ const defaultCompanionOptions = {
 };
 
 // companion
-let companion = initCompanion({
+const companion = initCompanion({
   ...defaultCompanionOptions,
-  providerOptions: env.getProviderOptions(),
+  providerOptions: {},
 });
 
 // auto update
@@ -253,11 +254,8 @@ config.events.on(config.Events.envUpdate, () => {
   env.updateEnv();
   // wait for env update
   setTimeout(() => {
-    companion = initCompanion({
-      ...defaultCompanionOptions,
-      providerOptions: env.getProviderOptions(),
-    });
-  }, 1000);
+    companion.setProviderOptions(env.getProviderOptions());
+  }, 200);
 });
 
 router.use('/companion', user, auth, ensureFolderId, companion.handle);

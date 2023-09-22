@@ -8,7 +8,7 @@ const currentComponentInfo = config.components.find((x) => x.did === 'z8ia1mAXo8
 let envMap = {};
 
 const updateEnv = () => {
-  logger.info('update env by image bin');
+  logger.info('updating image bin env');
   envMap = {
     ...config.env,
     uploadDir: path.join(config.env.dataDir, 'uploads'),
@@ -16,12 +16,17 @@ const updateEnv = () => {
     uploaderRoles: process.env.UPLOADER_ROLES?.split(',')
       .map((x) => x.trim())
       .filter(Boolean),
-    getProviderOptions: () => ({
-      unsplash: {
-        key: config.env.UNSPLASH_KEY,
-        secret: config.env.UNSPLASH_SECRET,
-      },
-    }),
+    getProviderOptions: () => {
+      const providerOptions = {};
+      // unsplash
+      if (config.env.UNSPLASH_KEY && config.env.UNSPLASH_SECRET) {
+        providerOptions.unsplash = {
+          key: config.env.UNSPLASH_KEY,
+          secret: config.env.UNSPLASH_SECRET,
+        };
+      }
+      return providerOptions;
+    },
     currentComponentInfo,
   };
 };

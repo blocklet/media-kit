@@ -1,3 +1,7 @@
+## 0.0.19 (September 22, 2023)
+
+- feat: support dynamic providerOptions for uploader
+
 ## 0.0.18 (September 21, 2023)
 
 - chore: improve the user experience
