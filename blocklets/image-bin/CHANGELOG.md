@@ -1,6 +1,10 @@
+## 0.10.20 (September 26, 2023)
+
+- fix: polish the logic of exist file
+
 ## 0.10.19 (September 26, 2023)
 
-fix: polish the logic of  AI Kit status
+- fix: polish the logic of AI Kit status
 
 ## 0.10.18 (September 26, 2023)
 

@@ -1,3 +1,7 @@
+## 0.0.21 (September 26, 2023)
+
+- fix: polish the logic of exist file
+
 ## 0.0.20 (September 26, 2023)
 
 - chore: support Drop Target in uploader
