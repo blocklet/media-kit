@@ -386,8 +386,8 @@ router.get('/uploader/status', user, auth, async (req, res) => {
     .then(({ data }) => {
       availablePluginMap.AIImage = data.available;
     })
-    .catch((err) => {
-      throw err;
+    .catch(() => {
+      // do nothing
     });
 
   // can use Unsplash
