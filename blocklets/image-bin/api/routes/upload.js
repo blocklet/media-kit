@@ -376,19 +376,23 @@ router.get('/uploader/status', user, auth, async (req, res) => {
     Unsplash: false,
   };
 
-  // can use AIImage
-  await Component.call({
-    name: 'ai-kit',
-    path: '/api/v1/sdk/status',
-    method: 'GET',
-    data: {},
-  })
-    .then(({ data }) => {
-      availablePluginMap.AIImage = data.available;
+  const AIKit = config.components?.find((item) => item.did === 'z8ia3xzq2tMq8CRHfaXj1BTYJyYnEcHbqP8cJ');
+
+  if (AIKit) {
+    // can use AIImage
+    await Component.call({
+      name: 'ai-kit',
+      path: '/api/v1/sdk/status',
+      method: 'GET',
+      data: {},
     })
-    .catch(() => {
-      // do nothing
-    });
+      .then(({ data }) => {
+        availablePluginMap.AIImage = data.available;
+      })
+      .catch(() => {
+        // do nothing
+      });
+  }
 
   // can use Unsplash
   if (config.env.UNSPLASH_KEY && config.env.UNSPLASH_SECRET) {
