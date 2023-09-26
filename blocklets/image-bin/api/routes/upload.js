@@ -155,13 +155,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res
   if (result) {
     const count = await Upload.count({ filename: doc.filename });
     if (count === 0) {
-      try {
-        fs.unlinkSync(path.join(env.uploadDir, doc.filename));
-        // remove meta file
-        fs.unlinkSync(path.join(env.uploadDir, `${doc.filename}.json`));
-      } catch (error) {
-        // ignore
-      }
+      await localStorageServer.delete(doc.filename);
     }
   }
 
@@ -245,7 +239,7 @@ const defaultCompanionOptions = {
 // companion
 const companion = initCompanion({
   ...defaultCompanionOptions,
-  providerOptions: {},
+  providerOptions: env.getProviderOptions(),
 });
 
 // auto update
@@ -357,7 +351,7 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
   res.json(doc);
 });
 
-router.post('/image/generations', async (req, res) => {
+router.post('/image/generations', user, auth, async (req, res) => {
   const { prompt, number, sizeWidth, responseFormat } = req.body;
 
   const response = await Component.call({
@@ -374,6 +368,34 @@ router.post('/image/generations', async (req, res) => {
   });
   res.set('Content-Type', response.headers['content-type']);
   response.data.pipe(res);
+});
+
+router.get('/uploader/status', user, auth, async (req, res) => {
+  const availablePluginMap = {
+    AIImage: false,
+    Unsplash: false,
+  };
+
+  // can use AIImage
+  await Component.call({
+    name: 'ai-kit',
+    path: '/api/v1/sdk/status',
+    method: 'GET',
+    data: {},
+  })
+    .then(({ data }) => {
+      availablePluginMap.AIImage = data.available;
+    })
+    .catch((err) => {
+      throw err;
+    });
+
+  // can use Unsplash
+  if (config.env.UNSPLASH_KEY && config.env.UNSPLASH_SECRET) {
+    availablePluginMap.Unsplash = true;
+  }
+
+  res.json({ availablePluginMap });
 });
 
 module.exports = router;

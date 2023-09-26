@@ -1,3 +1,7 @@
+## 0.10.18 (September 26, 2023)
+
+- chore: support Drop Target in uploader
+
 ## 0.10.17 (September 22, 2023)
 
 - feat: support dynamic providerOptions for uploader

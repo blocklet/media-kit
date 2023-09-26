@@ -1,6 +1,7 @@
 import { UppyOptions } from '@uppy/core';
 import { DashboardOptions } from '@uppy/dashboard';
 import { TusOptions } from '@uppy/tus';
+import type DropTarget from '@uppy/drop-target';
 
 export type UploaderProps = {
   id?: string;
@@ -23,4 +24,5 @@ export type UploaderProps = {
     companion?: string;
     disableMediaKitPrefix?: boolean;
   };
+  dropTargetProps?: DropTarget;
 };

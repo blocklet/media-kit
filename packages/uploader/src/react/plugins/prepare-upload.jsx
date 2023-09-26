@@ -54,8 +54,9 @@ class DownloadRemoteFiles extends UIPlugin {
 
     if (file) {
       const { relativePath, name } = file.data;
+      const relativePathWithFileName = relativePath || name;
       // relativePath must had file name
-      this.uppy.setFileMeta(id, { relativePath: relativePath || name });
+      this.uppy.setFileMeta(id, { relativePath: relativePathWithFileName, name: relativePathWithFileName });
     }
   };
 
