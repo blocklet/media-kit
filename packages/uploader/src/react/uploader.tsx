@@ -4,6 +4,7 @@ import { useReactive } from 'ahooks';
 import { createRoot } from 'react-dom/client';
 import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle, lazy } from 'react';
 import Backdrop from '@mui/material/Backdrop';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -14,7 +15,8 @@ import ImportFromUrl from '@uppy/url';
 import Unsplash from '@uppy/unsplash';
 import uniq from 'lodash/uniq';
 import { useKeyPress } from 'ahooks';
-import { Dashboard, DragDrop as UppyDragDrop } from '@uppy/react';
+import { Dashboard } from '@uppy/react';
+import DropTarget from '@uppy/drop-target';
 import ImageEditor from '@uppy/image-editor';
 import Tus from '@uppy/tus';
 // @ts-ignore
@@ -29,6 +31,7 @@ import '@uppy/dashboard/dist/style.min.css';
 import '@uppy/webcam/dist/style.min.css';
 import '@uppy/image-editor/dist/style.min.css';
 import '@uppy/drag-drop/dist/style.min.css';
+import '@uppy/drop-target/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
 import {
@@ -167,7 +170,7 @@ const getPluginList = (props: UploaderProps) => {
   ].filter(Boolean);
 };
 
-function useUploader(props: UploaderProps) {
+function initUploader(props: UploaderProps) {
   const {
     id,
     plugins,
@@ -177,6 +180,7 @@ function useUploader(props: UploaderProps) {
     coreProps,
     apiPathProps,
     tusProps,
+    dropTargetProps,
   } = props;
 
   const pluginList = getPluginList(props);
@@ -193,7 +197,7 @@ function useUploader(props: UploaderProps) {
     meta: {
       uploaderId: id,
     },
-    debug: localStorage.getItem('uppy_debug') === 'true',
+    debug: ['true', true].includes(localStorage.getItem('uppy_debug') || ''),
     // @ts-ignore
     locale: localeMap[locale || 'en'],
     ...coreProps,
@@ -214,6 +218,7 @@ function useUploader(props: UploaderProps) {
       req.setHeader('x-uploader-file-id', `${id}`);
       req.setHeader('x-uploader-file-ext', `${ext}`);
       req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
+      req.setHeader('x-uploader-endpoint-url', endpoint);
 
       // @ts-ignore get folderId when upload using
       const componentDid = window?.uploaderComponentId || window?.blocklet?.componentId;
@@ -295,6 +300,18 @@ function useUploader(props: UploaderProps) {
 
   // .use(GoldenRetriever);
 
+  // add drop target
+  if (dropTargetProps) {
+    currentUppy.use(DropTarget, {
+      target: document.body,
+      onDrop: (event: any) => {
+        // @ts-ignore
+        currentUppy?.open?.();
+      },
+      ...dropTargetProps,
+    });
+  }
+
   plugins?.forEach((item) => {
     if (item) {
       const { plugin, options } = pluginMap[item] || {};
@@ -359,7 +376,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   useEffect(() => {
     // @ts-ignore
-    state.uppy = useUploader({
+    state.uppy = initUploader({
       ...props,
       id,
       plugins,
@@ -367,7 +384,14 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     });
     state.uppy.open = open;
     state.uppy.close = close;
-  }, [id, JSON.stringify(plugins), locale]);
+  }, [
+    JSON.stringify({
+      id,
+      plugins,
+      apiPathProps,
+      locale,
+    }),
+  ]);
 
   function open(pluginName?: string | undefined) {
     state.open = true;
@@ -397,6 +421,9 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     state.open = false;
     state.uppy.emitClose();
     onClose?.();
+    if (state.uppy.getState().totalProgress === 100) {
+      state.uppy.cancelAll();
+    }
   }
 
   useImperativeHandle(
@@ -474,6 +501,20 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   return (
     <Wrapper key="uploader-wrapper" {...wrapperProps}>
+      <GlobalStyles
+        styles={() => {
+          return {
+            '.uppy-is-drag-over': {
+              '&::after': {
+                transition: 'all 0.3s ease-in-out',
+                border: '2px dashed #bbb !important',
+                borderRadius: 4,
+                background: `rgba(234, 234, 234, 0.5)`,
+              },
+            },
+          };
+        }}
+      />
       {/* ignore backdrop trigger */}
       <Box
         key="uploader-container"
@@ -563,10 +604,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             waitForThumbnailsBeforeUpload
             // theme="light"
             note=""
-            doneButtonHandler={() => {
-              state.uppy.cancelAll();
-              close();
-            }}
+            doneButtonHandler={close}
             {...props.dashboardProps}
           />
         )}
@@ -575,10 +613,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   );
 });
 
-const DragDrop = ({ uploader }: { uploader: any }) => {
-  return <UppyDragDrop uppy={uploader}></UppyDragDrop>;
-};
-
 export default Uploader;
 
-export { DragDrop, useUploader, Uploader };
+export { initUploader, Uploader };

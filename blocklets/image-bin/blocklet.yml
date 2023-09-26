@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.10.17
+version: 0.10.18
 title: Image Bin
 description: Paste and share your images
 keywords:
@@ -9,8 +9,9 @@ group: dapp
 did: z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9
 main: api/index.js
 author:
-  name: wangshijun
-  email: wangshijun2010@gmail.com
+  name: arcblock
+  email: blocklet@arcblock.io
+  url: https://github.com/blocklet
 repository:
   type: git
   url: git+https://github.com/blocklet/image-bin.git
@@ -24,7 +25,7 @@ interfaces:
   - type: web
     name: publicUrl
     path: /
-    prefix: '*'
+    prefix: "*"
     port: BLOCKLET_PORT
     protocol: http
     cacheable:
@@ -46,19 +47,19 @@ interfaces:
             - avatar
           allowSwitchProfile: true
           blockUnauthorized: false
-community: ''
-documentation: ''
-homepage: ''
-license: ''
+community: https://community.arcblock.io
+documentation: https://developer.blocklet.io
+homepage: https://store.blocklet.dev
+license: ""
 payment:
   price: []
   share: []
 timeout:
   start: 60
 requirements:
-  server: '>=1.6.29'
-  os: '*'
-  cpu: '*'
+  server: ">=1.6.29"
+  os: "*"
+  cpu: "*"
 scripts:
   preStart: node api/hooks/pre-start.js
   dev: npm run start
@@ -66,7 +67,7 @@ environments:
   - name: CDN_HOST
     description: Use CDN Host for image load speed
     required: false
-    default: ''
+    default: ""
     secure: false
     shared: true
   - name: UPLOADER_ROLES
@@ -84,13 +85,13 @@ environments:
   - name: UNSPLASH_KEY
     description: The Unsplash API key, you can get on https://unsplash.com/developers
     required: false
-    default: ''
+    default: ""
     secure: false
     shared: true
   - name: UNSPLASH_SECRET
     description: The Unsplash API secret, you can get on https://unsplash.com/developers
     required: false
-    default: ''
+    default: ""
     secure: true
     shared: false
 capabilities:

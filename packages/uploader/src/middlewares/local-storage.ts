@@ -30,10 +30,19 @@ export function initLocalStorageServer({
     configstore,
   });
 
-  const getRuntimeMetadata = (uploadMetadata: any) => {
+  const formatMetadata = (uploadMetadata: any) => {
     const cloneUploadMetadata = {
       ...uploadMetadata,
     };
+
+    // remove the dir path to get real file name
+    if (
+      cloneUploadMetadata.metadata?.name?.indexOf('/') > -1 &&
+      cloneUploadMetadata.metadata?.relativePath?.indexOf('/') > -1
+    ) {
+      cloneUploadMetadata.metadata.name = cloneUploadMetadata.metadata.name.split('/').pop();
+      cloneUploadMetadata.metadata.filename = cloneUploadMetadata.metadata.name;
+    }
     if (!cloneUploadMetadata.runtime) {
       const { id, metadata, size } = cloneUploadMetadata;
       cloneUploadMetadata.runtime = {
@@ -50,19 +59,19 @@ export function initLocalStorageServer({
   };
 
   const rewriteMetaDataFile = async (uploadMetadata: any) => {
-    uploadMetadata = getRuntimeMetadata(uploadMetadata);
+    uploadMetadata = formatMetadata(uploadMetadata);
     const { id } = uploadMetadata;
     if (!id) {
       return;
     }
-    const oldMetadata = getRuntimeMetadata(await configstore.get(id));
+    const oldMetadata = formatMetadata(await configstore.get(id));
     // should rewrite meta data file
     if (JSON.stringify(oldMetadata) !== JSON.stringify(uploadMetadata)) {
       await configstore.set(id, uploadMetadata);
     }
   };
   const onUploadFinish = async (req: any, res: any, uploadMetadata: any) => {
-    uploadMetadata = getRuntimeMetadata(uploadMetadata);
+    uploadMetadata = formatMetadata(uploadMetadata);
 
     // check offset
     await rewriteMetaDataFile(uploadMetadata);
@@ -108,7 +117,7 @@ export function initLocalStorageServer({
     namingFunction,
     datastore,
     onUploadFinish: async (req: any, res: any, uploadMetadata: any) => {
-      uploadMetadata = getRuntimeMetadata(uploadMetadata);
+      uploadMetadata = formatMetadata(uploadMetadata);
 
       const result = await onUploadFinish(req, res, uploadMetadata);
       // result can be res or value
@@ -150,9 +159,16 @@ export function initLocalStorageServer({
     },
   });
 
+  newServer.delete = async (key: string) => {
+    // remove meta data
+    await configstore.delete(key);
+    // remove file
+    await configstore.delete(key, false);
+  };
+
   // Each Patch req finish will trigger
   newServer.on(EVENTS.POST_RECEIVE, async (req: any, res: any, uploadMetadata: any) => {
-    uploadMetadata = getRuntimeMetadata(uploadMetadata);
+    uploadMetadata = formatMetadata(uploadMetadata);
     await rewriteMetaDataFile(uploadMetadata);
   });
 
@@ -225,6 +241,15 @@ export function setHeaders(req: any, res: any, next?: Function) {
   const fileName = getFileNameParam(req, res, {
     isRequired: false,
   });
+
+  if (req.headers['x-uploader-endpoint-url']) {
+    // get query from x-uploader-endpoint-url
+    const query = new URL(req.headers['x-uploader-endpoint-url']).searchParams;
+    req.query = {
+      ...Object.fromEntries(query), // query params convert to object
+      ...req.query,
+    };
+  }
 
   // resolve the bug of after nginx proxy missing prefix bug, cause Location baseUrl Error
   if (method === 'POST' && req.headers['x-uploader-base-url']) {
@@ -391,8 +416,17 @@ class rewriteFileConfigstore {
     await this.queue.add(() => fs.writeFile(this.resolve(key), JSON.stringify(value)));
   }
 
-  async delete(key: string): Promise<void> {
-    await this.queue.add(() => fs.rm(this.resolve(key)));
+  async safeDeleteFile(filePath: string): Promise<void> {
+    const isExist = await fs.stat(filePath).catch(() => false);
+    if (isExist) {
+      await fs.rm(filePath);
+    } else {
+      console.log('Can not remove file, the file not exist: ', filePath);
+    }
+  }
+
+  async delete(key: string, isMetadata = true): Promise<void> {
+    await this.queue.add(() => this.safeDeleteFile(this.resolve(key, isMetadata)));
   }
 
   async list(): Promise<Array<string>> {

@@ -155,13 +155,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res
   if (result) {
     const count = await Upload.count({ filename: doc.filename });
     if (count === 0) {
-      try {
-        fs.unlinkSync(path.join(env.uploadDir, doc.filename));
-        // remove meta file
-        fs.unlinkSync(path.join(env.uploadDir, `${doc.filename}.json`));
-      } catch (error) {
-        // ignore
-      }
+      await localStorageServer.delete(doc.filename);
     }
   }
 

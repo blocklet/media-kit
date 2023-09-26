@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.10.17",
+  "version": "0.10.18",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -36,10 +36,10 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did": "^1.18.90",
+    "@arcblock/did": "^1.18.91",
     "@blocklet/embed": "^0.1.5",
-    "@blocklet/logger": "^1.16.15",
-    "@blocklet/sdk": "^1.16.15",
+    "@blocklet/logger": "^1.16.16",
+    "@blocklet/sdk": "^1.16.16",
     "@blocklet/uploader": "workspace:^",
     "@mui/icons-material": "^5.14.9",
     "compression": "^1.7.4",
@@ -57,18 +57,18 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.7.21",
+    "@arcblock/did-connect": "^2.7.24",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.7.21",
-    "@blocklet/ui-react": "^2.7.21",
+    "@arcblock/ux": "^2.7.24",
+    "@blocklet/ui-react": "^2.7.24",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.14.10",
-    "@vitejs/plugin-react": "^4.0.4",
+    "@vitejs/plugin-react": "^4.1.0",
     "ahooks": "^3.7.8",
     "axios": "^1.5.0",
     "copy-to-clipboard": "^3.3.3",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
     "lint-staged": "^13.3.0",
     "lodash": "^4.17.21",
     "nodemon": "^2.0.22",
