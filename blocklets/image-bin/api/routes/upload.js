@@ -239,7 +239,7 @@ const defaultCompanionOptions = {
 // companion
 const companion = initCompanion({
   ...defaultCompanionOptions,
-  providerOptions: {},
+  providerOptions: env.getProviderOptions(),
 });
 
 // auto update
