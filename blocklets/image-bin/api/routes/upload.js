@@ -351,7 +351,7 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
   res.json(doc);
 });
 
-router.post('/image/generations', async (req, res) => {
+router.post('/image/generations', user, auth, async (req, res) => {
   const { prompt, number, sizeWidth, responseFormat } = req.body;
 
   const response = await Component.call({
@@ -368,6 +368,34 @@ router.post('/image/generations', async (req, res) => {
   });
   res.set('Content-Type', response.headers['content-type']);
   response.data.pipe(res);
+});
+
+router.get('/uploader/status', user, auth, async (req, res) => {
+  const availablePluginMap = {
+    AIImage: false,
+    Unsplash: false,
+  };
+
+  // can use AIImage
+  await Component.call({
+    name: 'ai-kit',
+    path: '/api/v1/sdk/status',
+    method: 'GET',
+    data: {},
+  })
+    .then(({ data }) => {
+      availablePluginMap.AIImage = data.available;
+    })
+    .catch((err) => {
+      throw err;
+    });
+
+  // can use Unsplash
+  if (config.env.UNSPLASH_KEY && config.env.UNSPLASH_SECRET) {
+    availablePluginMap.Unsplash = true;
+  }
+
+  res.json({ availablePluginMap });
 });
 
 module.exports = router;

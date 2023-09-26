@@ -2,7 +2,15 @@ import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
 import { useReactive } from 'ahooks';
 import { createRoot } from 'react-dom/client';
-import { Fragment, IframeHTMLAttributes, forwardRef, useEffect, useImperativeHandle, lazy } from 'react';
+import {
+  Fragment,
+  IframeHTMLAttributes,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  lazy,
+  useLayoutEffect,
+} from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import IconButton from '@mui/material/IconButton';
@@ -63,8 +71,8 @@ const localeMap = {
   en: en_US,
 };
 
-const getPluginList = (props: UploaderProps) => {
-  const { apiPathProps } = props;
+const getPluginList = (props: any) => {
+  const { apiPathProps, availablePluginMap = {} } = props;
 
   const companionUrl = getUploaderEndpoint(apiPathProps?.companion as string);
 
@@ -91,51 +99,53 @@ const getPluginList = (props: UploaderProps) => {
         options: {},
       },
     // with AI Kit
-    getAIKitComponent() && {
-      id: 'AIImage',
-      plugin: AIImage,
-      options: {
-        companionUrl,
+    getMediaKitComponent() &&
+      getAIKitComponent() &&
+      availablePluginMap.AIImage && {
+        id: 'AIImage',
+        plugin: AIImage,
+        options: {
+          companionUrl,
+        },
+        onShowPanel: (ref: any) => {
+          function renderAIImageShowPanel() {
+            // wait for render
+            setTimeout(() => {
+              const root = document.getElementById('ai-image');
+              // render AIImageShowPanel
+              if (root) {
+                createRoot(root).render(
+                  <AIImageShowPanel
+                    api={getAIImageAPI}
+                    restrictions={restrictions}
+                    onSelect={(data: any) => {
+                      const uploader = ref.current.getUploader();
+                      uploader?.emit('ai-image:selected', data);
+
+                      data.forEach((base64: any, index: number) => {
+                        const fileName = `AI Image [${index + 1}].png`; // must be png
+
+                        const formatFile = {
+                          name: fileName,
+                          type: 'image/png', // must be png
+                          data: base64ToFile(base64, fileName),
+                          source: 'AIImage',
+                          isRemote: false,
+                        };
+
+                        uploader?.addFile(formatFile);
+                      });
+                    }}
+                  />
+                );
+              } else {
+                renderAIImageShowPanel();
+              }
+            }, 100);
+          }
+          renderAIImageShowPanel();
+        },
       },
-      onShowPanel: (ref: any) => {
-        function renderAIImageShowPanel() {
-          // wait for render
-          setTimeout(() => {
-            const root = document.getElementById('ai-image');
-            // render AIImageShowPanel
-            if (root) {
-              createRoot(root).render(
-                <AIImageShowPanel
-                  api={getAIImageAPI}
-                  restrictions={restrictions}
-                  onSelect={(data: any) => {
-                    const uploader = ref.current.getUploader();
-                    uploader?.emit('ai-image:selected', data);
-
-                    data.forEach((base64: any, index: number) => {
-                      const fileName = `AI Image [${index + 1}].png`; // must be png
-
-                      const formatFile = {
-                        name: fileName,
-                        type: 'image/png', // must be png
-                        data: base64ToFile(base64, fileName),
-                        source: 'AIImage',
-                        isRemote: false,
-                      };
-
-                      uploader?.addFile(formatFile);
-                    });
-                  }}
-                />
-              );
-            } else {
-              renderAIImageShowPanel();
-            }
-          }, 100);
-        }
-        renderAIImageShowPanel();
-      },
-    },
     {
       id: 'Url',
       plugin: ImportFromUrl,
@@ -150,15 +160,16 @@ const getPluginList = (props: UploaderProps) => {
     },
     // with Unsplash key
     // @ts-ignore
-    !!window.blocklet.UNSPLASH_KEY && {
-      id: 'Unsplash',
-      plugin: Unsplash,
-      options: {
-        companionUrl,
-        companionHeaders: {},
-        companionCookiesRule: 'same-origin',
+    !!window.blocklet.UNSPLASH_KEY &&
+      availablePluginMap.Unsplash && {
+        id: 'Unsplash',
+        plugin: Unsplash,
+        options: {
+          companionUrl,
+          companionHeaders: {},
+          companionCookiesRule: 'same-origin',
+        },
       },
-    },
     {
       id: 'PrepareUpload',
       plugin: PrepareUpload,
@@ -170,7 +181,7 @@ const getPluginList = (props: UploaderProps) => {
   ].filter(Boolean);
 };
 
-function initUploader(props: UploaderProps) {
+function initUploader(props: any) {
   const {
     id,
     plugins,
@@ -181,9 +192,8 @@ function initUploader(props: UploaderProps) {
     apiPathProps,
     tusProps,
     dropTargetProps,
+    pluginList,
   } = props;
-
-  const pluginList = getPluginList(props);
 
   const pluginMap = keyBy(pluginList, 'id');
 
@@ -312,7 +322,7 @@ function initUploader(props: UploaderProps) {
     });
   }
 
-  plugins?.forEach((item) => {
+  plugins?.forEach((item: string) => {
     if (item) {
       const { plugin, options } = pluginMap[item] || {};
       // @ts-ignore
@@ -334,7 +344,13 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     ...props?.apiPathProps,
   };
 
-  const pluginList = getPluginList({ ...props, apiPathProps });
+  const state = useReactive({
+    open: false,
+    uppy: null as any,
+    availablePluginMap: {} as any,
+  });
+
+  const pluginList = getPluginList({ ...props, apiPathProps, availablePluginMap: state.availablePluginMap });
 
   const {
     plugins: _plugins = pluginList.map((item) => item.id),
@@ -349,15 +365,19 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   // get pluginMap tp get plugin some props
   const pluginMap = keyBy(pluginList, 'id');
 
-  const plugins = uniq([..._plugins, ...pluginList.filter((item) => item.alwayUse).map((item) => item.id)]);
-
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
-  const state = useReactive({
-    open: false,
-    uppy: null as any,
-  });
+  const plugins = uniq([..._plugins, ...pluginList.filter((item) => item.alwayUse).map((item) => item.id)]);
+
+  useLayoutEffect(() => {
+    // check if the media-kit is installed
+    if (getMediaKitComponent() || apiPathProps.disableMediaKitPrefix) {
+      api.get('/api/uploader/status').then(({ data }) => {
+        state.availablePluginMap = data.availablePluginMap;
+      });
+    }
+  }, []);
 
   useKeyPress(
     'esc',
@@ -381,6 +401,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       id,
       plugins,
       apiPathProps,
+      pluginList,
     });
     state.uppy.open = open;
     state.uppy.close = close;
