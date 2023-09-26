@@ -292,6 +292,15 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
           res.setHeader('Location', joinUrl(req.headers['x-uploader-base-url'], fileName));
         }
 
+        // must: get real metadata from header, avoid the bug of exist file metadata
+        if (req.headers['x-uploader-metadata']) {
+          const realMetaData = JSON.parse(req.headers['x-uploader-metadata']);
+          metaData.metadata = {
+            ...metaData.metadata,
+            ...realMetaData,
+          };
+        }
+
         const uploadResult = await uploaderProps.onUploadFinish(req, res, metaData);
         res.json(uploadResult);
 

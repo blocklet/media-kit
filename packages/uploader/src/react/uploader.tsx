@@ -219,7 +219,7 @@ function initUploader(props: any) {
     endpoint,
     async onBeforeRequest(req, file) {
       // @ts-ignore
-      const { hashFileName, id } = file;
+      const { hashFileName, id, meta } = file;
 
       const ext = getExt(file);
 
@@ -229,6 +229,7 @@ function initUploader(props: any) {
       req.setHeader('x-uploader-file-ext', `${ext}`);
       req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
       req.setHeader('x-uploader-endpoint-url', endpoint);
+      req.setHeader('x-uploader-metadata', JSON.stringify(meta));
 
       // @ts-ignore get folderId when upload using
       const componentDid = window?.uploaderComponentId || window?.blocklet?.componentId;
