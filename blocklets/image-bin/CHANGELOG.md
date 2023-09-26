@@ -1,3 +1,7 @@
+## 0.10.19 (September 26, 2023)
+
+fix: polish the logic of  AI Kit status
+
 ## 0.10.18 (September 26, 2023)
 
 - chore: support Drop Target in uploader
