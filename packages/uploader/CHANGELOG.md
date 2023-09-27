@@ -1,3 +1,7 @@
+## 0.0.23 (September 27, 2023)
+
+- fix: polish uploaded plugin x-component-did error bug
+
 ## 0.0.22 (September 27, 2023)
 
 - chore: update lib package.json author
