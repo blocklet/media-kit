@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -44,7 +44,7 @@
     "blocklet",
     "uploader"
   ],
-  "author": "Yongzhuo Liang <yongchao@arcblock.io> https://github.com/FireTable",
+  "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
   "license": "ISC",
   "dependencies": {
     "@abtnode/cron": "^1.16.16",

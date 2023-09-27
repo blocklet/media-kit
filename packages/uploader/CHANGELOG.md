@@ -1,3 +1,7 @@
+## 0.0.22 (September 27, 2023)
+
+- chore: update lib package.json author
+
 ## 0.0.21 (September 26, 2023)
 
 - fix: polish the logic of exist file
