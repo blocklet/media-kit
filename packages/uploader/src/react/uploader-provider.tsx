@@ -37,7 +37,11 @@ export function UploaderTrigger({ onChange, children, ...restProps }: { onChange
     }
   };
 
-  return <Box onClick={handleOpen}>{children}</Box>;
+  return (
+    <Box onClick={handleOpen} {...restProps}>
+      {children}
+    </Box>
+  );
 }
 
 export function UploaderProvider({ children, ...restProps }: UploaderProviderProps) {
