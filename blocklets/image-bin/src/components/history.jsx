@@ -7,7 +7,7 @@ import { format } from 'timeago.js';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import { useRef } from 'react';
+import { useRef, lazy } from 'react';
 import Spinner from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
 import Empty from '@arcblock/ux/lib/Empty';
@@ -23,6 +23,11 @@ import { useUploadContext } from '../contexts/upload';
 import { createImageUrl } from '../libs/api';
 import Actions from './actions';
 import MediaItem from './media-item';
+
+const UploaderTrigger = lazy(() =>
+  // eslint-disable-next-line import/no-unresolved
+  import('@blocklet/uploader/react').then((res) => ({ default: res.UploaderTrigger }))
+);
 
 const borderRadius = '4px !important';
 const transformY = '4px';
@@ -45,7 +50,7 @@ function BlockletLogo(props) {
   );
 }
 
-function Gallery({ uploads, uploaderRef }) {
+function Gallery({ uploads }) {
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
@@ -132,10 +137,7 @@ function Gallery({ uploads, uploaderRef }) {
                 />
               </a>
             ) : (
-              <Box
-                onClick={() => {
-                  uploaderRef.current.open();
-                }}
+              <UploaderTrigger
                 sx={{
                   width: '100%',
                   height: '100%',
@@ -144,6 +146,7 @@ function Gallery({ uploads, uploaderRef }) {
                   justifyContent: 'center',
                   background: 'rgba(0,0,0,0.1)',
                   '&:hover': {
+                    cursor: 'pointer',
                     background: (theme) => theme?.palette?.primary?.main,
                   },
                 }}>
@@ -154,7 +157,7 @@ function Gallery({ uploads, uploaderRef }) {
                     color: 'white',
                   }}
                 />
-              </Box>
+              </UploaderTrigger>
             )}
             {!x.isNew && (
               <ImageListItemBar
@@ -206,7 +209,7 @@ export default function Uploads() {
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
-  const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder, uploaderRef } = uploadState;
+  const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder } = uploadState;
   const wrapperRef = useRef(null);
 
   useInfiniteScroll(loadMoreUploads, {
@@ -260,7 +263,6 @@ export default function Uploads() {
       ) : (
         <Box>
           <Gallery
-            uploaderRef={uploaderRef}
             uploads={[
               {
                 isNew: true,

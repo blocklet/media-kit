@@ -1,3 +1,7 @@
+## 0.10.21 (September 28, 2023)
+
+- fix: resolve the bug of uploaderProvider
+
 ## 0.10.20 (September 26, 2023)
 
 - fix: polish the logic of exist file

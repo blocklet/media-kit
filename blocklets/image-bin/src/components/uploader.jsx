@@ -47,13 +47,12 @@ export default function Uploader() {
 
 // eslint-disable-next-line react/prop-types
 function UploaderProviderWrapper({ children }) {
-  const { prependUpload, uploaderRef } = useUploadContext();
+  const { prependUpload } = useUploadContext();
   const { locale } = useLocaleContext();
 
   return (
     <UploaderProvider
       key="uploader"
-      ref={uploaderRef}
       locale={locale}
       popup
       onUploadFinish={(result) => {
