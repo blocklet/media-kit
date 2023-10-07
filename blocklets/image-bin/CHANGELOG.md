@@ -1,3 +1,7 @@
+## 0.10.22 (October 07, 2023)
+
+- fix: resolve the bug of uploader metadata stringify
+
 ## 0.10.21 (September 28, 2023)
 
 - fix: resolve the bug of uploaderProvider

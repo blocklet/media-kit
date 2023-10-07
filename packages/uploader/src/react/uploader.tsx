@@ -229,7 +229,15 @@ function initUploader(props: any) {
       req.setHeader('x-uploader-file-ext', `${ext}`);
       req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
       req.setHeader('x-uploader-endpoint-url', endpoint);
-      req.setHeader('x-uploader-metadata', JSON.stringify(meta));
+      req.setHeader(
+        'x-uploader-metadata',
+        JSON.stringify(meta, (key, value) => {
+          if (typeof value === 'string') {
+            return encodeURIComponent(value);
+          }
+          return value;
+        })
+      );
 
       // @ts-ignore get folderId when upload using
       const componentDid = window?.uploaderComponentId || window?.blocklet?.componentId;
@@ -238,7 +246,6 @@ function initUploader(props: any) {
         req.setHeader('x-component-did', (componentDid || '').split('/').pop());
       }
     },
-
     onAfterResponse: async (req, res) => {
       const result = {} as any;
       const xhr = req.getUnderlyingObject();
@@ -373,7 +380,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   useLayoutEffect(() => {
     // check if the media-kit is installed
-    if (getMediaKitComponent() || apiPathProps.disableMediaKitPrefix) {
+    if (getMediaKitComponent() && !apiPathProps.disableMediaKitPrefix) {
       api.get('/api/uploader/status').then(({ data }) => {
         state.availablePluginMap = data.availablePluginMap;
       });
