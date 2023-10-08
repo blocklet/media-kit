@@ -30,7 +30,7 @@ export default function Output({
   onClose?: Function | boolean;
   isMobile?: boolean;
 }) {
-  const { loading, onLoading, restrictions } = useAIImageContext();
+  const { loading, onLoading, restrictions, i18n } = useAIImageContext();
   const [response, setResponse] = useState<{ src: string; width: number }[]>([]);
   const [error, setError] = useState<Error>();
 
@@ -224,7 +224,7 @@ export default function Output({
               onClick={() => {
                 onSelect(selectedUrls);
               }}>
-              {Boolean(selectedUrls.length) ? 'Use selected images' : 'Please select images'}
+              {Boolean(selectedUrls.length) ? i18n('aiImageSelectedUse') : i18n('aiImageSelectedTip')}
             </Button>
           </Box>
         </>

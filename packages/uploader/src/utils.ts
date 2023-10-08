@@ -315,5 +315,64 @@ export function initUppy(currentUppy: any) {
     currentUppy.once(CLOSE, callback);
   };
 
+  currentUppy.calculateTotalProgress = () => {
+    // calculate total progress, using the number of files currently uploading,
+    // multiplied by 100 and the summ of individual progress of each file
+    const files = currentUppy.getFiles();
+
+    const inProgress = files.filter((file: any) => {
+      return file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess;
+    });
+
+    if (inProgress.length === 0) {
+      currentUppy.emit('progress', 0);
+      currentUppy.setState({ totalProgress: 0 });
+      return;
+    }
+
+    const sizedFiles = inProgress.filter((file: any) => file.progress.bytesTotal != null);
+    const unsizedFiles = inProgress.filter((file: any) => file.progress.bytesTotal == null);
+
+    if (sizedFiles.length === 0) {
+      const progressMax = inProgress.length * 100;
+      const currentProgress = unsizedFiles.reduce((acc: number, file: any) => {
+        return acc + file.progress.percentage;
+      }, 0);
+      const totalProgress = Math.round((currentProgress / progressMax) * 100);
+      currentUppy.setState({ totalProgress });
+      return;
+    }
+
+    let totalSize = sizedFiles.reduce((acc: number, file: any) => {
+      return acc + file.progress.bytesTotal;
+    }, 0);
+    const averageSize = totalSize / sizedFiles.length;
+    totalSize += averageSize * unsizedFiles.length;
+
+    let uploadedSize = 0;
+    sizedFiles.forEach((file: any) => {
+      uploadedSize += file.progress.bytesUploaded;
+    });
+    unsizedFiles.forEach((file: any) => {
+      uploadedSize += (averageSize * (file.progress.percentage || 0)) / 100;
+    });
+
+    const uploadCompleteFiles = files.filter((file: any) => file.progress.uploadComplete);
+    const isUploadComplete = uploadCompleteFiles.length === files.length;
+
+    // hot fix, because:
+    // upload size: 0 file should be 100%
+    let totalProgress = totalSize === 0 ? (isUploadComplete ? 100 : 0) : Math.round((uploadedSize / totalSize) * 100);
+
+    // hot fix, because:
+    // uploadedSize ended up larger than totalSize, resulting in 1325% total
+    if (totalProgress > 100) {
+      totalProgress = 100;
+    }
+
+    currentUppy.setState({ totalProgress });
+    currentUppy.emit('progress', totalProgress);
+  };
+
   return currentUppy;
 }

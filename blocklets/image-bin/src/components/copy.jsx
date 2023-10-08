@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from 'react';
 import Copy from 'copy-to-clipboard';
-
+import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import styled from '@emotion/styled';
 
 export default function ClickToCopy({ content }) {
   const [copied, setCopied] = useState(false);
-
+  const { t } = useLocaleContext();
   const onCopy = () => {
     Copy(content);
     setCopied(true);
@@ -29,7 +29,7 @@ export default function ClickToCopy({ content }) {
 
   return (
     <Container component="span" onClick={onCopy}>
-      {copied ? 'Copied' : 'Copy URL'}
+      {copied ? t('common.copied') : t('common.copyUrl')}
     </Container>
   );
 }

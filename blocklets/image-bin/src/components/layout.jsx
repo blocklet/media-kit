@@ -12,11 +12,7 @@ export default function Layout({ title }) {
         dense
         title={title}
         headerAddons={(exists) => {
-          return [
-            <Uploader key="uploader-addon" />,
-            // ...exists,
-            exists?.[1], // FIXME: hidden locale before i18n ready
-          ];
+          return [<Uploader key="uploader-addon" />, ...exists];
         }}>
         <Outlet />
       </Main>

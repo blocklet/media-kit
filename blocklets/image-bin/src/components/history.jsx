@@ -14,6 +14,7 @@ import Empty from '@arcblock/ux/lib/Empty';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
+import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useInfiniteScroll, useResponsive } from 'ahooks';
 import { isValid as isValidDid } from '@arcblock/did';
@@ -51,6 +52,11 @@ function BlockletLogo(props) {
 }
 
 function Gallery({ uploads }) {
+  const { locale } = useLocaleContext();
+  const localeMap = {
+    zh: 'zh_CN',
+    en: 'en_US',
+  };
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
@@ -169,10 +175,12 @@ function Gallery({ uploads }) {
                       alignItems: 'center',
                       fontSize: 14,
                     }}>
-                    {prettyBytes(x.size)}
+                    {prettyBytes(x.size, {
+                      locale,
+                    })}
                   </Box>
                 }
-                subtitle={format(x.createdAt)}
+                subtitle={format(x.createdAt, localeMap[locale] || locale)}
                 actionIcon={
                   <Box
                     sx={{
@@ -205,6 +213,7 @@ function Gallery({ uploads }) {
 
 export default function Uploads() {
   const uploadState = useUploadContext();
+  const { t } = useLocaleContext();
 
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
@@ -243,7 +252,7 @@ export default function Uploads() {
             },
           }}>
           <Button onClick={() => filterByFolder('')} variant={folderId === '' ? 'contained' : 'outlined'}>
-            All
+            {t('common.all')}
           </Button>
           {[...folders].map((x) => (
             <Button
@@ -259,7 +268,7 @@ export default function Uploads() {
       </Box>
 
       {uploads.length === 0 ? (
-        <Empty>No Uploads Found</Empty>
+        <Empty>{t('common.empty')}</Empty>
       ) : (
         <Box>
           <Gallery
@@ -276,7 +285,9 @@ export default function Uploads() {
               <Spinner />
             </div>
           )}
-          {!uploadState.hasMore && <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)' }}>No More</Divider>}
+          {!uploadState.hasMore && (
+            <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)', fontSize: 14 }}> {t('common.noMore')}</Divider>
+          )}
         </Box>
       )}
     </Div>

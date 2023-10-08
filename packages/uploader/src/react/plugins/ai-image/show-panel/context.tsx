@@ -5,11 +5,13 @@ interface AIImageContextType {
   loading: boolean;
   onLoading: (loading: boolean) => void;
   restrictions?: any;
+  i18n: Function;
 }
 
 interface AIImageProviderProps {
   children: ReactNode;
   restrictions?: any;
+  i18n: Function;
 }
 
 interface AIImageContextState {
@@ -26,14 +28,14 @@ export const AIImageContext = createContext<AIImageContextType>({} as AIImageCon
 
 export const useAIImageContext = () => useContext(AIImageContext);
 
-export function AIImageProvider({ children, restrictions }: AIImageProviderProps) {
+export function AIImageProvider({ children, restrictions, i18n }: AIImageProviderProps) {
   const [state, setState] = useGetState<AIImageContextState>({
     loading: false,
   });
 
   const onLoading = (loading: boolean) => setState((prev) => ({ ...prev, loading }));
 
-  const value = useMemo<AIImageContextType>(() => ({ ...state, onLoading, restrictions }), [state]);
+  const value = useMemo<AIImageContextType>(() => ({ ...state, onLoading, restrictions, i18n }), [state]);
 
   return <AIImageContext.Provider value={value}>{children}</AIImageContext.Provider>;
 }

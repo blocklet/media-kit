@@ -11,9 +11,10 @@ interface Props {
   onSelect: (data: any) => void;
   restrictions?: any;
   api: any;
+  i18n: Function;
 }
 
-function AIImage({ onSelect, api, restrictions }: Props) {
+function AIImage({ onSelect, api, restrictions, i18n }: Props) {
   const [parameters, setParameters] = useState<AIImagePromptProps>();
   const [open, setOpen] = useState<boolean>(false);
   const onFinish = () => setParameters(undefined);
@@ -24,7 +25,7 @@ function AIImage({ onSelect, api, restrictions }: Props) {
   if (!getAIKitComponent()) {
     return (
       <Box width={1} height={1} display="flex" justifyContent="center" alignItems="center">
-        Install the AI Kit component first
+        {i18n('aiKitRequired')}
       </Box>
     );
   }
@@ -36,7 +37,7 @@ function AIImage({ onSelect, api, restrictions }: Props) {
   const onCloseOutput = isMobile ? onClose : false;
 
   return (
-    <AIImageProvider restrictions={restrictions}>
+    <AIImageProvider restrictions={restrictions} i18n={i18n}>
       <Box
         sx={{
           display: 'flex',

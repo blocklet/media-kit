@@ -29,6 +29,7 @@ const maxFileSize = xbytes.parseSize(window.blocklet.MAX_UPLOAD_SIZE, { iec: fal
 
 export default function Uploader() {
   const { currentFolderInfo } = useUploadContext();
+  const { t } = useLocaleContext();
 
   return (
     <UploaderTrigger>
@@ -39,7 +40,9 @@ export default function Uploader() {
         type="button"
         className="submit"
         style={{ marginRight: 16 }}>
-        Upload to {currentFolderInfo?.name}
+        {t('common.upload', {
+          name: currentFolderInfo?.name,
+        })}
       </Button>
     </UploaderTrigger>
   );
