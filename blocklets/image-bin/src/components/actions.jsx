@@ -5,7 +5,7 @@
 import { useState, useEffect } from 'react';
 import Copy from 'copy-to-clipboard';
 import styled from '@emotion/styled';
-
+import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
@@ -28,6 +28,7 @@ export default function ImageActions({ data }) {
   const [copied, setCopied] = useState(false);
   const [value, setValue] = useState(null);
   const { folders, deleteUpload, ensureFolder, folderId } = useUploadContext();
+  const { t } = useLocaleContext();
 
   const onCopy = () => {
     Copy(createImageUrl(data.filename, 0, 0));
@@ -64,12 +65,12 @@ export default function ImageActions({ data }) {
         setLoading(false);
         deleteUpload(data._id);
         setDeleteOpen(false);
-        Toast.success('Image deleted successfully');
+        Toast.success(t('common.deleteSuccess'));
       })
       .catch((err) => {
         setLoading(false);
         console.warn(err);
-        Toast.error(`Image delete failed: ${err.message}`);
+        Toast.error(t('common.deleteFailed', { reason: err.message }));
       });
   };
 
@@ -85,7 +86,7 @@ export default function ImageActions({ data }) {
     setLoading(true);
     let folder = value;
     if (value.createNew) {
-      Toast.success('Folder created successfully');
+      Toast.success(t('common.moveFolderAddNewSuccess'));
       folder = await ensureFolder(value.name);
     }
 
@@ -95,11 +96,15 @@ export default function ImageActions({ data }) {
         setLoading(false);
         setMoveOpen(false);
         deleteUpload(data._id);
-        Toast.success('Image updated successfully');
+        Toast.success(t('common.updateSuccess'));
       })
       .catch((err) => {
         setLoading(false);
-        Toast.error(`Image updated failed: ${err.message}`);
+        Toast.error(
+          t('common.updateFailed', {
+            reason: err.message,
+          })
+        );
       });
   };
 
@@ -114,12 +119,17 @@ export default function ImageActions({ data }) {
 
   const actions = [
     // can't delete other blocklet files
-    { children: 'Delete', disabled: !isMediaKitFile, onClick: onDelete },
-    { children: 'Move to Folder', disabled: !isMediaKitFile, onClick: onMove },
-  ];
+    { children: t('common.delete'), disabled: !isMediaKitFile, onClick: onDelete },
+    { children: t('common.moveFolder'), disabled: !isMediaKitFile, onClick: onMove },
+  ].map((item) => {
+    return {
+      ...item,
+      children: <Typography variant="body2">{item.children}</Typography>,
+    };
+  });
 
   const deleteConfirmButton = {
-    text: 'Delete',
+    text: t('common.delete'),
     props: {
       variant: 'contained',
       color: 'secondary',
@@ -128,7 +138,7 @@ export default function ImageActions({ data }) {
   };
 
   const moveConfirmButton = {
-    text: 'Move',
+    text: t('common.move'),
     props: {
       variant: 'contained',
       color: 'secondary',
@@ -136,19 +146,30 @@ export default function ImageActions({ data }) {
     },
   };
 
+  const cancelConfirmButton = {
+    text: t('common.cancel'),
+  };
+
   return (
     <>
       <SplitButton size="small" onClick={onCopy} variant="outlined" menu={actions}>
-        {copied ? 'Copied' : 'Copy URL'}
+        {copied ? t('common.copied') : t('common.copyUrl')}
       </SplitButton>
       <Confirm
         open={isDeleteOpen}
-        title="Confirm Delete Image"
+        title={t('common.deleteConfirmTitle')}
         onConfirm={onConfirmDelete}
         onCancel={onCancelDelete}
-        confirmButton={deleteConfirmButton}>
+        confirmButton={deleteConfirmButton}
+        cancelButton={cancelConfirmButton}>
         <Typography textAlign="left">
-          Are you sure you want to delete image <strong>{data.originalname}</strong>, this operation is not recoverable.
+          <div
+            dangerouslySetInnerHTML={{
+              __html: t('common.deleteConfirmMessage', {
+                name: data.originalname,
+              }),
+            }}
+          />
         </Typography>
         <ImagePreview>
           <MediaItem {...data} />
@@ -156,10 +177,11 @@ export default function ImageActions({ data }) {
       </Confirm>
       <Confirm
         open={isMoveOpen}
-        title="Move Image to Folder"
+        title={t('common.moveFolderConfirmTitle')}
         onConfirm={onConfirmMove}
         onCancel={onCancelMove}
-        confirmButton={moveConfirmButton}>
+        confirmButton={moveConfirmButton}
+        cancelButton={cancelConfirmButton}>
         <Autocomplete
           value={value}
           onChange={(e, newValue) => {
@@ -181,7 +203,9 @@ export default function ImageActions({ data }) {
             if (inputValue !== '' && !isExisting) {
               filtered.push({
                 inputValue,
-                name: `Add "${inputValue}"`,
+                name: t('common.moveFolderConfirmAddNew', {
+                  name: inputValue,
+                }),
               });
             }
 
@@ -190,7 +214,7 @@ export default function ImageActions({ data }) {
           selectOnFocus
           clearOnBlur
           handleHomeEndKeys
-          options={folders.filter((item) => item._id !== folderId)}
+          options={folders.filter((item) => item._id !== (folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9'))}
           getOptionLabel={(option) => {
             // Value selected with enter, right from the input
             if (typeof option === 'string') {
@@ -206,7 +230,7 @@ export default function ImageActions({ data }) {
           renderOption={(props, option) => <li {...props}>{option.name}</li>}
           sx={{ width: 300 }}
           freeSolo
-          renderInput={(params) => <TextField {...params} label="Filter or Create Folder" />}
+          renderInput={(params) => <TextField {...params} label={t('common.moveFolderConfirmSelect')} />}
         />
       </Confirm>
     </>

@@ -30,7 +30,7 @@ function valueLabelFormat(value: number) {
 }
 
 export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptProps) => void }) {
-  const { loading } = useAIImageContext();
+  const { loading, i18n } = useAIImageContext();
 
   const values = useReactive<AIImagePromptProps>({
     prompt: '',
@@ -62,7 +62,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
         <Grid container gap={2.5}>
           <Grid item xs={12}>
             <Typography gutterBottom className="title label">
-              Prompt
+              {i18n('aiImagePrompt')}
             </Typography>
 
             <TextField
@@ -71,7 +71,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
               type="text"
               required
               // label="Prompt"
-              placeholder="Please enter Prompt"
+              placeholder={i18n('aiImagePromptTip')}
               multiline
               minRows={7}
               value={values.prompt ?? ''}
@@ -85,7 +85,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
           <Grid item xs={12}>
             <Typography gutterBottom className="title label">
-              {`Size: ${values.sizeWidth}px × ${values.sizeWidth}px`}
+              {`${i18n('aiImageSize')}: ${values.sizeWidth}px × ${values.sizeWidth}px`}
             </Typography>
 
             <Grid
@@ -135,7 +135,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
           <Grid item xs={12}>
             <Typography gutterBottom className="title label">
-              {`Number of images: ${values.number}`}
+              {`${i18n('aiImageNumber')}: ${values.number}`}
             </Typography>
 
             <Box {...sliderWrapperProps}>
@@ -164,7 +164,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
         onClick={run}
         disabled={loading}
         style={{ transition: 'all 0.3s' }}>
-        {loading ? 'Generating...' : 'Generate'}
+        {loading ? i18n('aiImageGenerating') : i18n('aiImageGenerate')}
       </Button>
     </Root>
   );

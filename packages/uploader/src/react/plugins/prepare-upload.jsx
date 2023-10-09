@@ -11,12 +11,6 @@ class DownloadRemoteFiles extends UIPlugin {
     this.id = this.opts.id || 'DownloadRemoteFiles';
     this.type = 'modifier';
 
-    this.defaultLocale = {
-      strings: {
-        downloadingFiles: 'Downloading remote files...',
-      },
-    };
-
     this.i18nInit();
   }
 
@@ -104,7 +98,7 @@ class DownloadRemoteFiles extends UIPlugin {
         size: null,
         meta: {
           ...meta,
-          name: 'Loading...',
+          name: this.i18n('loading'),
         },
       });
 
@@ -199,7 +193,7 @@ class DownloadRemoteFiles extends UIPlugin {
       if (file.isDownloading) {
         this.uppy.emit('preprocess-progress', file, {
           mode: 'indeterminate',
-          message: this.i18n('downloadingFiles'),
+          message: this.i18n('loading'),
         });
       }
       await this.prepareUploadWrapper(file);

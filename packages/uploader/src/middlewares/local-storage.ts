@@ -71,6 +71,9 @@ export function initLocalStorageServer({
     }
   };
   const onUploadFinish = async (req: any, res: any, uploadMetadata: any) => {
+    // set file exist header, for frontend to check
+    res.setHeader('x-uploader-file-exist', true);
+
     uploadMetadata = formatMetadata(uploadMetadata);
 
     // check offset
@@ -282,9 +285,7 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
       const metaData = await getMetaDataByFilePath(filePath);
 
       // is upload exist and size enough
-      if (isExist?.size > 0 && isExist?.size === metaData?.size) {
-        res.setHeader('x-uploader-file-exist', true);
-
+      if (isExist?.size >= 0 && isExist?.size === metaData?.size) {
         const prepareUpload = method === 'POST';
 
         if (prepareUpload) {

@@ -27,10 +27,7 @@ import { Dashboard } from '@uppy/react';
 import DropTarget from '@uppy/drop-target';
 import ImageEditor from '@uppy/image-editor';
 import Tus from '@uppy/tus';
-// @ts-ignore
-import zh_CN from '@uppy/locales/lib/zh_CN';
-// @ts-ignore
-import en_US from '@uppy/locales/lib/en_US';
+import localeMap from './i18n';
 // import GoldenRetriever from '@uppy/golden-retriever';
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
@@ -65,11 +62,6 @@ import AIImage from './plugins/ai-image';
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 const target = 'uploader-container';
-
-const localeMap = {
-  zh: zh_CN,
-  en: en_US,
-};
 
 const getPluginList = (props: any) => {
   const { apiPathProps, availablePluginMap = {} } = props;
@@ -118,6 +110,7 @@ const getPluginList = (props: any) => {
                   <AIImageShowPanel
                     api={getAIImageAPI}
                     restrictions={restrictions}
+                    i18n={ref.current?.getUploader()?.i18n}
                     onSelect={(data: any) => {
                       const uploader = ref.current.getUploader();
                       uploader?.emit('ai-image:selected', data);
@@ -298,6 +291,15 @@ function initUploader(props: any) {
           currentUppy.emit('upload-success', file, {
             uploadURL,
           });
+
+          const files = currentUppy.getFiles();
+
+          const inProgress = files.filter((file: any) => {
+            return file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess;
+          });
+
+          // @ts-ignore
+          currentUppy.calculateTotalProgress();
         }
 
         if (result.status === 200) {
@@ -411,8 +413,37 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       apiPathProps,
       pluginList,
     });
+
     state.uppy.open = open;
     state.uppy.close = close;
+
+    state.uppy.on('dashboard:show-panel', (source: string) => {
+      const { onShowPanel } = pluginMap[source];
+      onShowPanel?.(ref);
+    });
+
+    // handle uploaded:selected
+    if (plugins.includes('Uploaded')) {
+      state.uppy.off('uploaded:selected');
+      // @ts-ignore
+      state.uppy.on('uploaded:selected', (files: Object[]) => {
+        files.forEach((data: any) => {
+          // emit to upload success, mock http response
+          state.uppy.emitUploadSuccess(
+            {
+              id: data._id, // mock id
+            },
+            {
+              data,
+              isMock: true,
+            }
+          );
+        });
+        uploadedProps?.onSelectedFiles?.(files);
+        // auto close
+        close();
+      });
+    }
   }, [
     JSON.stringify({
       id,
@@ -472,37 +503,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   useEffect(() => {
     setPrefixPath(apiPathProps.disableMediaKitPrefix);
   }, [apiPathProps.disableMediaKitPrefix]);
-
-  // custom plugin
-  useEffect(() => {
-    // handle uploaded:selected
-    if (plugins.includes('Uploaded')) {
-      state.uppy.off('uploaded:selected');
-      // @ts-ignore
-      state.uppy.on('uploaded:selected', (files: Object[]) => {
-        files.forEach((data: any) => {
-          // emit to upload success, mock http response
-          state.uppy.emitUploadSuccess(
-            {
-              id: data._id, // mock id
-            },
-            {
-              data,
-              isMock: true,
-            }
-          );
-        });
-        uploadedProps?.onSelectedFiles?.(files);
-        // auto close
-        close();
-      });
-    }
-
-    state.uppy.on('dashboard:show-panel', (source: string) => {
-      const { onShowPanel } = pluginMap[source];
-      onShowPanel?.(ref);
-    });
-  }, plugins);
 
   const Wrapper = popup ? Backdrop : Fragment;
   const wrapperProps = popup

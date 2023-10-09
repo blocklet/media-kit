@@ -12,7 +12,7 @@ class AIImage extends UIPlugin {
     this.title = this.opts.title || 'AI Image';
     this.type = 'acquirer';
     this.uppy = uppy;
-
+    this.i18nInit();
     this.icon = () => (
       <svg width="20" height="20" viewBox="0 0 24 24">
         <g fill="none" stroke="#a482fe" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
@@ -34,7 +34,7 @@ class AIImage extends UIPlugin {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          Loading...
+          {this.i18n('loading')}
         </div>
       </div>
     );

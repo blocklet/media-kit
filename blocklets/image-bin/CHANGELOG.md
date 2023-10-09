@@ -1,3 +1,7 @@
+## 0.10.23 (October 08, 2023)
+
+- chore: add i18n to Image Bin and Uploader
+
 ## 0.10.22 (October 07, 2023)
 
 - fix: resolve the bug of uploader metadata stringify
