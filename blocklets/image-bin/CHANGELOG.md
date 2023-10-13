@@ -1,3 +1,7 @@
+## 0.10.26 (October 13, 2023)
+
+- chore: polish sdk upload api logic
+
 ## 0.10.25 (October 13, 2023)
 
 - fix: resolve the bug of uploader ts

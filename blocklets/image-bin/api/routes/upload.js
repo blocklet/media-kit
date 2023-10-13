@@ -360,6 +360,14 @@ router.all('/sdk/uploads/find', user, middleware.component.verifySig, async (req
     ...req.body,
   };
 
+  if (queryParams.tags) {
+    const tags = queryParams.tags
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean);
+    queryParams.tags = { $in: tags };
+  }
+
   const existItem = await Upload.findOne(queryParams);
 
   if (existItem) {
@@ -371,9 +379,11 @@ router.all('/sdk/uploads/find', user, middleware.component.verifySig, async (req
     extraResult = {
       url: obj.href,
     };
-  }
 
-  res.json({ ...extraResult, ...existItem });
+    res.json({ ...extraResult, ...existItem });
+  } else {
+    res.json(null);
+  }
 });
 
 // create folder
