@@ -1,3 +1,7 @@
+## 0.0.29 (October 13, 2023)
+
+- chore: polish auto clear logic
+
 ## 0.0.28 (October 13, 2023)
 
 - fix: resolve the bug of uploader ts
