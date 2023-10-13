@@ -479,9 +479,12 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     state.open = false;
     state.uppy.emitClose();
     onClose?.();
-    if (state.uppy.getState().totalProgress === 100) {
-      state.uppy.cancelAll();
-    }
+    setTimeout(() => {
+      if (state.uppy.getState().totalProgress === 100) {
+        // reset uploader state
+        state.uppy.setState({ files: {}, currentUploads: {} });
+      }
+    }, 500);
   }
 
   useImperativeHandle(
