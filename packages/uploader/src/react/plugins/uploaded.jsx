@@ -41,6 +41,8 @@ class Uploaded extends UIPlugin {
 
     this.uploadedAPIData = { ...initUploadedAPIData };
 
+    this.addUploadItemFlag = true;
+
     this.icon = () => (
       <svg aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 1024 1024">
         <path
@@ -130,6 +132,38 @@ class Uploaded extends UIPlugin {
     }
   };
 
+  addUploadItem = debounce(
+    () => {
+      if (this.addUploadItemFlag) {
+        const listWrapper = document.querySelector('#uploaded .uppy-ProviderBrowser-list');
+        if (listWrapper) {
+          // insert upload item to first
+          const uploadItem = document.createElement('li');
+          uploadItem.className = 'uppy-ProviderBrowserItem';
+
+          uploadItem.innerHTML = `
+          <div class="uppy-ProviderBrowserItem-inner" style="background: rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center">
+            <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 0 24 24" width="48px" fill="#ffffff"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+          </div>
+        `;
+
+          uploadItem.addEventListener('click', async () => {
+            // await this.uppy.getPlugin('upload-dashboard').hideAllPanels();
+            await this.uppy.openPlugin('My Device');
+          });
+
+          // insert upload item to first
+          listWrapper.insertBefore(uploadItem, listWrapper.firstChild);
+
+          this.addUploadItemFlag = false;
+        }
+      }
+    },
+    {
+      wait: 200,
+    }
+  );
+
   convertImgToObject = debounce(
     () => {
       if (this.canConvertImgToObject) {
@@ -161,6 +195,7 @@ class Uploaded extends UIPlugin {
 
   update() {
     this.convertImgToObject();
+    this.addUploadItem();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -171,6 +206,7 @@ class Uploaded extends UIPlugin {
   resetState = () => {
     this.uploadedAPIData = { ...initUploadedAPIData };
     this.uploaded.setPluginState({ ...initPluginState });
+    this.addUploadItemFlag = true;
   };
 
   install() {

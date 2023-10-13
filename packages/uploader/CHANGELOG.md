@@ -1,3 +1,7 @@
+## 0.0.30 (October 13, 2023)
+
+- feat: support open plugin in uploaded
+
 ## 0.0.29 (October 13, 2023)
 
 - chore: polish auto clear logic
