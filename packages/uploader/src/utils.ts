@@ -196,6 +196,7 @@ export function initUppy(currentUppy: any) {
   // upload file
   currentUppy.uploadFile = async (blobFile: Blob) => {
     return new Promise((resolve, reject) => {
+      // @ts-ignore
       const { name, type } = blobFile;
 
       const uppyFileId = currentUppy.addFile({
