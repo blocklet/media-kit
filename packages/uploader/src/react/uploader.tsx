@@ -284,8 +284,11 @@ function initUploader(props: any) {
 
         // exist but not upload
         if (isExist && file) {
-          // pause first
-          currentUppy.pauseResume(file.id);
+          // if POST method check exist
+          if (result.method === 'POST') {
+            // pause first,  that not trigger PATCH request
+            currentUppy.pauseResume(file.id);
+          }
 
           // only trigger uppy event when exist
           currentUppy.emit('upload-success', file, {
@@ -293,10 +296,6 @@ function initUploader(props: any) {
           });
 
           const files = currentUppy.getFiles();
-
-          const inProgress = files.filter((file: any) => {
-            return file.progress.uploadStarted || file.progress.preprocess || file.progress.postprocess;
-          });
 
           // @ts-ignore
           currentUppy.calculateTotalProgress();

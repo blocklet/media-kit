@@ -47,8 +47,11 @@ class DownloadRemoteFiles extends UIPlugin {
     const file = this.uppy.getFile(id); // get real time file
 
     if (file) {
-      const { relativePath, name } = file.data;
-      const relativePathWithFileName = relativePath || name;
+      const {
+        data: { relativePath, name },
+        hashFileName,
+      } = file;
+      const relativePathWithFileName = relativePath || name || hashFileName;
       // relativePath must had file name
       this.uppy.setFileMeta(id, { relativePath: relativePathWithFileName, name: relativePathWithFileName });
     }

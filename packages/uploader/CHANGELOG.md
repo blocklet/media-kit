@@ -1,3 +1,7 @@
+## 0.0.27 (October 13, 2023)
+
+chore: update uploader and sdk to support AI Studio
+
 ## 0.0.26 (October 08, 2023)
 
 - chore: add i18n to Image Bin and Uploader

@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.10.23",
+  "version": "0.10.24",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -36,12 +36,12 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did": "^1.18.91",
+    "@arcblock/did": "^1.18.92",
     "@blocklet/embed": "^0.1.5",
     "@blocklet/logger": "^1.16.16",
     "@blocklet/sdk": "^1.16.16",
     "@blocklet/uploader": "workspace:^",
-    "@mui/icons-material": "^5.14.12",
+    "@mui/icons-material": "^5.14.13",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -57,13 +57,13 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.7.26",
+    "@arcblock/did-connect": "^2.7.27",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.7.26",
-    "@blocklet/ui-react": "^2.7.26",
+    "@arcblock/ux": "^2.7.27",
+    "@blocklet/ui-react": "^2.7.27",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.12",
+    "@mui/material": "^5.14.13",
     "@vitejs/plugin-react": "^4.1.0",
     "ahooks": "^3.7.8",
     "axios": "^1.5.1",
