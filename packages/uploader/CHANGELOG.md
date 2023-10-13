@@ -1,6 +1,10 @@
+## 0.0.28 (October 13, 2023)
+
+- fix: resolve the bug of uploader ts
+
 ## 0.0.27 (October 13, 2023)
 
-chore: update uploader and sdk to support AI Studio
+- chore: update uploader and sdk to support AI Studio
 
 ## 0.0.26 (October 08, 2023)
 

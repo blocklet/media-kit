@@ -63,6 +63,8 @@ const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 const target = 'uploader-container';
 
+const isDebug = localStorage.getItem('uppy_debug');
+
 const getPluginList = (props: any) => {
   const { apiPathProps, availablePluginMap = {} } = props;
 
@@ -84,12 +86,11 @@ const getPluginList = (props: any) => {
       },
     },
     // other blocklet may can use this plugin
-    getMediaKitComponent() &&
-      !isMediaKit() && {
-        id: 'Uploaded',
-        plugin: Uploaded, //
-        options: {},
-      },
+    (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
+      id: 'Uploaded',
+      plugin: Uploaded, //
+      options: {},
+    },
     // with AI Kit
     getMediaKitComponent() &&
       getAIKitComponent() &&
@@ -200,7 +201,7 @@ function initUploader(props: any) {
     meta: {
       uploaderId: id,
     },
-    debug: ['true', true].includes(localStorage.getItem('uppy_debug') || ''),
+    debug: ['true', true].includes(isDebug || ''),
     // @ts-ignore
     locale: localeMap[locale || 'en'],
     ...coreProps,
@@ -294,8 +295,6 @@ function initUploader(props: any) {
           currentUppy.emit('upload-success', file, {
             uploadURL,
           });
-
-          const files = currentUppy.getFiles();
 
           // @ts-ignore
           currentUppy.calculateTotalProgress();
