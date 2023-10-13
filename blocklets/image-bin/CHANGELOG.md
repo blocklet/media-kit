@@ -1,3 +1,7 @@
+## 0.10.27 (October 13, 2023)
+
+- feat: support open plugin in uploaded
+
 ## 0.10.26 (October 13, 2023)
 
 - chore: polish sdk upload api logic

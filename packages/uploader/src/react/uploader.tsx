@@ -414,6 +414,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
     state.uppy.open = open;
     state.uppy.close = close;
+    state.uppy.openPlugin = openPlugin;
 
     state.uppy.on('dashboard:show-panel', (source: string) => {
       const { onShowPanel } = pluginMap[source];
@@ -451,21 +452,25 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     }),
   ]);
 
+  function openPlugin(pluginName: string) {
+    pluginName = pluginName.replace(/\s/g, '');
+    // @ts-ignore if plugin exist, click the plugin Button
+    if (['MyDevice', ...plugins].map((item) => item.toLowerCase()).includes(pluginName.toLowerCase())) {
+      let selectorKey = `div[data-uppy-acquirer-id="${pluginName}"] > button`;
+      document
+        ?.getElementById('upload-dashboard')
+        ?.querySelector(selectorKey)
+        // @ts-ignore
+        ?.click?.();
+    }
+  }
+
   function open(pluginName?: string | undefined) {
     state.open = true;
 
     if (pluginName) {
-      pluginName = pluginName.replace(/\s/g, '');
       setTimeout(() => {
-        // @ts-ignore if plugin exist, click the plugin Button
-        if (['MyDevice', ...plugins].includes(pluginName)) {
-          let selectorKey = `div[data-uppy-acquirer-id="${pluginName}"] > button`;
-          document
-            ?.getElementById('upload-dashboard')
-            ?.querySelector(selectorKey)
-            // @ts-ignore
-            ?.click?.();
-        }
+        openPlugin(pluginName);
       }, 200); // delay 200ms to open plugin
     }
     state.uppy.emitOpen();
@@ -483,6 +488,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       if (state.uppy.getState().totalProgress === 100) {
         // reset uploader state
         state.uppy.setState({ files: {}, currentUploads: {} });
+        // @ts-ignore
+        state.uppy.calculateTotalProgress();
       }
     }, 500);
   }
@@ -553,6 +560,16 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         sx={{
           position: 'relative',
           width: isMobile ? '90vw' : 720,
+          '.uploaded-add-item': {
+            background: 'rgba(0,0,0,0.1)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              background: 'rgba(0,0,0,0.13)',
+            },
+          },
           '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
             justifyContent: 'flex-end',
           },
