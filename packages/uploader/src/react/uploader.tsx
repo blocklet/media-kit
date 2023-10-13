@@ -453,25 +453,25 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   ]);
 
   function openPlugin(pluginName: string) {
-    setTimeout(() => {
-      pluginName = pluginName.replace(/\s/g, '');
-      // @ts-ignore if plugin exist, click the plugin Button
-      if (['MyDevice', ...plugins].map((item) => item.toLowerCase()).includes(pluginName.toLowerCase())) {
-        let selectorKey = `div[data-uppy-acquirer-id="${pluginName}"] > button`;
-        document
-          ?.getElementById('upload-dashboard')
-          ?.querySelector(selectorKey)
-          // @ts-ignore
-          ?.click?.();
-      }
-    }, 200); // delay 200ms to open plugin
+    pluginName = pluginName.replace(/\s/g, '');
+    // @ts-ignore if plugin exist, click the plugin Button
+    if (['MyDevice', ...plugins].map((item) => item.toLowerCase()).includes(pluginName.toLowerCase())) {
+      let selectorKey = `div[data-uppy-acquirer-id="${pluginName}"] > button`;
+      document
+        ?.getElementById('upload-dashboard')
+        ?.querySelector(selectorKey)
+        // @ts-ignore
+        ?.click?.();
+    }
   }
 
   function open(pluginName?: string | undefined) {
     state.open = true;
 
     if (pluginName) {
-      openPlugin(pluginName);
+      setTimeout(() => {
+        openPlugin(pluginName);
+      }, 200); // delay 200ms to open plugin
     }
     state.uppy.emitOpen();
     onOpen?.();
@@ -560,6 +560,16 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         sx={{
           position: 'relative',
           width: isMobile ? '90vw' : 720,
+          '.uploaded-add-item': {
+            background: 'rgba(0,0,0,0.1)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            transition: 'all 0.3s ease-in-out',
+            '&:hover': {
+              background: 'rgba(0,0,0,0.13)',
+            },
+          },
           '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
             justifyContent: 'flex-end',
           },
