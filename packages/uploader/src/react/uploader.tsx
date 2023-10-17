@@ -154,7 +154,7 @@ const getPluginList = (props: any) => {
     },
     // with Unsplash key
     // @ts-ignore
-    !!window.blocklet.UNSPLASH_KEY &&
+    !!window?.blocklet?.UNSPLASH_KEY &&
       availablePluginMap.Unsplash && {
         id: 'Unsplash',
         plugin: Unsplash,
