@@ -36,6 +36,7 @@ class Uploaded extends UIPlugin {
     super(uppy, opts);
     this.id = this.opts.id || 'Uploaded';
     this.title = this.opts.title || 'Uploaded';
+    this.params = this.opts.params || {};
     this.type = 'acquirer';
     this.uppy = uppy;
 
@@ -87,6 +88,7 @@ class Uploaded extends UIPlugin {
           page,
           pageSize,
           folderId,
+          ...this.params,
         },
         headers: {
           'x-component-did': folderId,

@@ -13,7 +13,8 @@ export type UploaderProps = {
   onClose?: Function;
   plugins?: string[];
   uploadedProps?: {
-    onSelectedFiles: Function;
+    params?: any;
+    onSelectedFiles?: Function;
   };
   tusProps?: TusOptions;
   wrapperProps?: any;
