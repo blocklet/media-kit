@@ -84,7 +84,7 @@ export const getMediaKitComponent = () =>
 
 export const isMediaKit = () =>
   // @ts-ignore
-  window.blocklet?.componentId.indexOf('z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') > -1;
+  window?.blocklet?.componentId.indexOf('z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') > -1;
 
 // @ts-ignore
 export const mediaKitMountPoint = getMediaKitComponent()?.mountPoint;

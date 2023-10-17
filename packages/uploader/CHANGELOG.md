@@ -1,3 +1,7 @@
+## 0.0.31 (October 17, 2023)
+
+- fix: resolve the bug of missing window.blocklet 
+
 ## 0.0.30 (October 13, 2023)
 
 - feat: support open plugin in uploaded
