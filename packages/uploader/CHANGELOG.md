@@ -1,3 +1,7 @@
+## 0.0.32 (October 17, 2023)
+
+- feat: support uploadedProps.params to filter images
+
 ## 0.0.31 (October 17, 2023)
 
 - fix: resolve the bug of missing window.blocklet 

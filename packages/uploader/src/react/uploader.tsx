@@ -66,7 +66,7 @@ const target = 'uploader-container';
 const isDebug = localStorage.getItem('uppy_debug');
 
 const getPluginList = (props: any) => {
-  const { apiPathProps, availablePluginMap = {} } = props;
+  const { apiPathProps, availablePluginMap = {}, uploadedProps } = props;
 
   const companionUrl = getUploaderEndpoint(apiPathProps?.companion as string);
 
@@ -89,7 +89,9 @@ const getPluginList = (props: any) => {
     (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
       id: 'Uploaded',
       plugin: Uploaded, //
-      options: {},
+      options: {
+        params: uploadedProps?.params,
+      },
     },
     // with AI Kit
     getMediaKitComponent() &&
