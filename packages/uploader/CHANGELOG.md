@@ -1,3 +1,7 @@
+## 0.0.33 (October 29, 2023)
+
+- chore: update deps
+
 ## 0.0.32 (October 17, 2023)
 
 - feat: support uploadedProps.params to filter images

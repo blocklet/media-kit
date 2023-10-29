@@ -1,3 +1,7 @@
+## 0.10.28 (October 29, 2023)
+
+- chore: update deps
+
 ## 0.10.27 (October 13, 2023)
 
 - feat: support open plugin in uploaded
