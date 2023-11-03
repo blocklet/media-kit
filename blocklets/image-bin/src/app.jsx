@@ -61,7 +61,8 @@ export default function App() {
                               <Routes>
                                 <Route path="/admin" element={<Layout />}>
                                   <Route path="images" element={<ImageList />} />
-                                  <Route path="*" element={<Navigate to="/images" />} />
+                                  <Route path="*" element={<Navigate to="/admin/images" />} />
+                                  <Route index element={<Navigate to="/admin/images" />} />
                                 </Route>
                               </Routes>
                             </UploadProvider>
