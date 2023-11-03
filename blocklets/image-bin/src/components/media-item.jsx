@@ -18,7 +18,7 @@ function MediaItem(props) {
   ) : (
     // eslint-disable-next-line jsx-a11y/alt-text
     <object
-      type={mimetype} // set mime type that file not auto download
+      type={mimetype || 'image/png'} // set mime type that file not auto download, try to fallback to image/png
       key={_id}
       width="100%"
       height="100%"

@@ -23,7 +23,7 @@ export default defineBuildConfig({
   },
   // alias,
   failOnWarn: false,
-  externals: ['react', 'ahooks', 'preact'],
+  externals: ['react', 'ahooks', 'preact', '@mui/material', '@mui/icons-material', '@mui/system'],
   hooks: {
     'build:done'({ buildEntries }) {
       buildEntries.forEach((entry) => {

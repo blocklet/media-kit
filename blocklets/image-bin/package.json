@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.10.28",
+  "version": "0.10.29",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
@@ -42,6 +42,7 @@
     "@blocklet/sdk": "^1.16.17",
     "@blocklet/uploader": "workspace:^",
     "@mui/icons-material": "^5.14.15",
+    "@mui/material": "^5.14.15",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -63,7 +64,6 @@
     "@blocklet/ui-react": "^2.8.6",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/material": "^5.14.15",
     "@vitejs/plugin-react": "^4.1.0",
     "ahooks": "^3.7.8",
     "axios": "^1.6.0",
