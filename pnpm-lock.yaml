@@ -48,7 +48,7 @@ importers:
         specifier: 1.16.17
         version: 1.16.17
       '@blocklet/uploader':
-        specifier: 'workspace:'
+        specifier: workspace:^
         version: link:../../packages/uploader
       '@mui/icons-material':
         specifier: 5.14.15
