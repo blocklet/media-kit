@@ -1,3 +1,7 @@
+## 0.0.35 (November 06, 2023)
+
+- chore: update deps
+
 ## 0.0.34 (November 03, 2023)
 
 - chore: polish some error logic
