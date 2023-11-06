@@ -1,6 +1,6 @@
 ## 0.10.30 (November 06, 2023)
 
-- chore: update deps
+- chore: update deps, for better login & logout experience
 
 ## 0.10.29 (November 03, 2023)
 

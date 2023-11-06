@@ -40,8 +40,8 @@ importers:
   blocklets/image-bin:
     dependencies:
       '@arcblock/did':
-        specifier: ^1.18.95
-        version: 1.18.95
+        specifier: ^1.18.93
+        version: 1.18.93
       '@blocklet/embed':
         specifier: ^0.1.5
         version: 0.1.5(react@18.2.0)
@@ -492,7 +492,6 @@ packages:
       lodash: 4.17.21
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /@arcblock/did@1.18.95:
     resolution: {integrity: sha512-b90vYGPzb3cpGPAoWOC3BcJdLMjTjLFHMFSuhgHqjF33t6k48BrYKiPSB1pGJv8J3wvvK5tj7MJ98wmuYFB0oQ==}
@@ -628,6 +627,7 @@ packages:
       axon: 2.0.3
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@arcblock/icons@2.8.8(react@18.2.0):
     resolution: {integrity: sha512-b5jP3J0VXaQ6DQiy/Hycc6sZ2js77rOifwYiqmEUvLyjn2uomV2iBEHhsxmoMNSUkzSeHcVrNYi9ycmBnS67OA==}
@@ -661,6 +661,7 @@ packages:
       semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@arcblock/react-hooks@2.8.8:
     resolution: {integrity: sha512-lbO667IzUrLQwtCVmpwIr5jyR51df6RKubsjq2EErhfAOXWC7lA7WFJ1ti7LfCQgnKT/3KOwVr6EQVIdK/V4tQ==}
@@ -813,6 +814,7 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: true
 
   /@auth0/auth0-react@2.2.3(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-3B0KA/ky1yA6iQK8045N8U0ZBkmDB3ElCSwJuxNbAoKmZBc4+DjzZhWRxYsgb9PrfHC14Lr2h4950A3PEFDULA==}
@@ -1856,7 +1858,7 @@ packages:
   /@did-connect/authenticator@2.2.0:
     resolution: {integrity: sha512-HYmh29ONnVVqWhxLuF/oVsmH6s4MLTAJ4dDz6A9nq9/LfraWOu0eoxWEm/KVE4h3nsB6fPAKcARZFIIKOt45wQ==}
     dependencies:
-      '@arcblock/did': 1.18.95
+      '@arcblock/did': 1.18.93
       '@arcblock/jwt': 1.18.93
       '@did-connect/types': 2.2.0
       '@ocap/util': 1.18.95
@@ -1870,9 +1872,9 @@ packages:
   /@did-connect/handler@2.2.0:
     resolution: {integrity: sha512-TVYyQrKtVpS9YY8YqSt/nY4yfNpkzyvH29VdcgmLhlC1D3UEQZfQookTYreUCBushd+Nrfa30PxvToE8cOJnow==}
     dependencies:
-      '@arcblock/did': 1.18.95
+      '@arcblock/did': 1.18.93
       '@arcblock/jwt': 1.18.93
-      '@arcblock/ws': 1.18.95
+      '@arcblock/ws': 1.18.93
       '@did-connect/authenticator': 2.2.0
       '@did-connect/storage': 2.2.0
       '@did-connect/types': 2.2.0
@@ -1902,7 +1904,7 @@ packages:
     resolution: {integrity: sha512-2aFMIo/8cNoSaECFq5BPLYtzz2S6+OVL/3BcTBSfPf+FduZsPWiNrnVm8Avw1UQ8nSi/6d6s+DxpVuMupG6ACw==}
     dependencies:
       '@arcblock/validator': 1.18.95
-      '@ocap/mcrypto': 1.18.95
+      '@ocap/mcrypto': 1.18.93
       joi: 17.7.0
     transitivePeerDependencies:
       - supports-color
@@ -2944,7 +2946,6 @@ packages:
       js-sha3: 0.8.0
       randombytes: 2.1.0
       tweetnacl: 1.0.3
-    dev: false
 
   /@ocap/mcrypto@1.18.95:
     resolution: {integrity: sha512-1J1Oxyru3/2UHZJFga0yrtpf4pKbCR1XExoxb/Y6F9SOxDYsoShFG7/Tpx25/Wi7L9cdWzp6UKsRETvFQWyJTw==}
@@ -2995,7 +2996,6 @@ packages:
       bs58: 5.0.0
       lodash: 4.17.21
       utf8: 3.0.0
-    dev: false
 
   /@ocap/util@1.18.95:
     resolution: {integrity: sha512-d7Sg1a1Nx65NWaCPSMvPqmnVdH13cAAR52It2M/v11s0gDMHjGy2U1X2VtDYnyNJp3kBFIWfzLJWHQZLhWk4zQ==}
@@ -3024,6 +3024,7 @@ packages:
       '@ocap/util': 1.18.95
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@popperjs/core@2.11.8:
     resolution: {integrity: sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==}
@@ -11935,7 +11936,7 @@ packages:
     peerDependencies:
       vite: '>=2'
     dependencies:
-      '@arcblock/did': 1.18.95
+      '@arcblock/did': 1.18.93
       '@ocap/mcrypto': 1.18.95
       '@ocap/util': 1.18.95
       get-port: 5.1.1

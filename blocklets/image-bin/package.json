@@ -36,7 +36,7 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did": "^1.18.95",
+    "@arcblock/did": "^1.18.93",
     "@blocklet/embed": "^0.1.5",
     "@blocklet/logger": "^1.16.17",
     "@blocklet/sdk": "^1.16.17",
