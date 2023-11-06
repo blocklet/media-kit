@@ -164,6 +164,7 @@ export default function ImageActions({ data }) {
         cancelButton={cancelConfirmButton}>
         <Typography textAlign="left">
           <div
+            // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
               __html: t('common.deleteConfirmMessage', {
                 name: data.originalname,
