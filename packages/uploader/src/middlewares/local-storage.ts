@@ -298,7 +298,13 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
         // must: get real metadata from header, avoid the bug of exist file metadata
         if (req.headers['x-uploader-metadata']) {
           try {
-            const realMetaData = JSON.parse(req.headers['x-uploader-metadata']);
+            const realMetaData = JSON.parse(req.headers['x-uploader-metadata'], (key, value) => {
+              if (typeof value === 'string') {
+                return decodeURIComponent(value);
+              }
+              return value;
+            });
+
             metaData.metadata = {
               ...metaData.metadata,
               ...realMetaData,
