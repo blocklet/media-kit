@@ -43,16 +43,18 @@ export function initLocalStorageServer({
       cloneUploadMetadata.metadata.name = cloneUploadMetadata.metadata.name.split('/').pop();
       cloneUploadMetadata.metadata.filename = cloneUploadMetadata.metadata.name;
     }
-    if (!cloneUploadMetadata.runtime) {
+
+    // exist id but not runtime
+    if (cloneUploadMetadata.id && !cloneUploadMetadata.runtime) {
       const { id, metadata, size } = cloneUploadMetadata;
       cloneUploadMetadata.runtime = {
-        relativePath: metadata.relativePath,
+        relativePath: metadata?.relativePath,
         absolutePath: path.resolve(_path, id),
         size,
         hashFileName: id,
-        originFileName: metadata.filename,
-        type: metadata.type,
-        fileType: metadata.filetype,
+        originFileName: metadata?.filename,
+        type: metadata?.type,
+        fileType: metadata?.filetype,
       };
     }
     return cloneUploadMetadata;
@@ -460,7 +462,7 @@ class rewriteFileConfigstore {
   private resolve(key: string, isMetadata = true): string {
     let fileKey = key;
     // must use meta json file
-    if (isMetadata && key?.indexOf('.json') === -1) {
+    if (isMetadata) {
       fileKey = `${key}.json`;
     }
     return path.resolve(this.directory, fileKey);
