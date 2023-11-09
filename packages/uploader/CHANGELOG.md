@@ -1,3 +1,7 @@
+## 0.0.38 (November 10, 2023)
+
+- chore: update deps
+
 ## 0.0.37 (November 09, 2023)
 
 - fix: resolve the bug of chinese decoding error
