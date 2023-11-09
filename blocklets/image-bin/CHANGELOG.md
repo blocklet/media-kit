@@ -1,3 +1,7 @@
+## 0.10.31 (November 09, 2023)
+
+- fix: resolve the bug of json file upload fail
+
 ## 0.10.30 (November 06, 2023)
 
 - chore: update deps, for better login & logout experience

@@ -314,6 +314,12 @@ function initUploader(props: any) {
       if (_onAfterResponse) {
         await _onAfterResponse?.(xhr);
       }
+
+      const uploadProgressDone = currentUppy.getState().totalProgress === 100;
+      const shouldAutoCloseAfterDropUpload = currentUppy.getFiles().every((item: any) => item.source === 'DropTarget');
+
+      // close uploader when upload progress done and all files are from DropTarget
+      if (uploadProgressDone && shouldAutoCloseAfterDropUpload) currentUppy.close();
     },
     ...tusProps,
   });
