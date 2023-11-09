@@ -1,3 +1,7 @@
+## 0.0.37 (November 09, 2023)
+
+- fix: resolve the bug of chinese decoding error
+
 ## 0.0.36 (November 09, 2023)
 
 - fix: resolve the bug of json file upload fail
