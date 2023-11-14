@@ -1,3 +1,7 @@
+## 0.0.39 (November 14, 2023)
+
+- chore: lock q-queue lib
+
 ## 0.0.38 (November 10, 2023)
 
 - chore: update deps
