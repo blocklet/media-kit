@@ -483,8 +483,13 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     }
     state.uppy.emitOpen();
     onOpen?.();
+
     // @ts-ignore set blur and focus body
     document.activeElement?.blur?.();
+    // auto focus upload-dashboard to key paste event
+    const targetElement = document.getElementById('upload-dashboard'); // 通过 ID 获取元素
+    // @ts-ignore
+    targetElement?.querySelector('div > div')?.click?.();
   }
 
   function close() {

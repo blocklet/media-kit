@@ -430,7 +430,7 @@ router.post('/image/generations', user, auth, async (req, res) => {
   response.data.pipe(res);
 });
 
-router.get('/uploader/status', user, auth, async (req, res) => {
+router.get('/uploader/status', async (req, res) => {
   const availablePluginMap = {
     AIImage: false,
     Unsplash: false,
