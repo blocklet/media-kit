@@ -1,3 +1,7 @@
+## 0.10.34 (November 14, 2023)
+
+- chore: polish uploader logic
+
 ## 0.10.33 (November 10, 2023)
 
 - chore: update deps

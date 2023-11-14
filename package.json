@@ -25,6 +25,7 @@
     "@blocklet/sdk": "1.16.17",
     "@mui/icons-material": "5.14.15",
     "@mui/material": "5.14.15",
-    "@mui/system": "5.14.15"
+    "@mui/system": "5.14.15",
+    "p-queue": "6.6.2"
   }
 }

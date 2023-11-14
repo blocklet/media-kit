@@ -1,15 +1,12 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 overrides:
   '@blocklet/logger': 1.16.17
   '@blocklet/sdk': 1.16.17
   '@mui/icons-material': 5.14.15
   '@mui/material': 5.14.15
   '@mui/system': 5.14.15
+  p-queue: 6.6.2
 
 importers:
 
@@ -56,7 +53,7 @@ importers:
         version: link:../../packages/uploader
       '@mui/icons-material':
         specifier: 5.14.15
-        version: 5.14.15(@mui/material@5.14.15)(react@18.2.0)
+        version: 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
       '@mui/material':
         specifier: 5.14.15
         version: 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
@@ -268,6 +265,9 @@ importers:
       mime-types:
         specifier: ^2.1.35
         version: 2.1.35
+      p-queue:
+        specifier: 6.6.2
+        version: 6.6.2
       preact:
         specifier: ^10.18.2
         version: 10.18.2
@@ -417,7 +417,7 @@ packages:
       '@fontsource/lato': 4.5.10
       '@iconify-icons/ion': 1.2.10
       '@iconify/react': 4.1.1(react@18.2.0)
-      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(react@18.2.0)
+      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       ahooks: 3.7.8(react@18.2.0)
       axios: 0.27.2(debug@4.3.4)
@@ -701,7 +701,7 @@ packages:
       '@iconify-icons/logos': 1.2.36
       '@iconify-icons/mdi': 1.2.48
       '@iconify/react': 4.1.1(react@18.2.0)
-      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(react@18.2.0)
+      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       '@solana/qr-code-styling': 1.6.0
       '@testing-library/react': 14.0.0(react-dom@18.2.0)(react@18.2.0)
@@ -2609,7 +2609,7 @@ packages:
     resolution: {integrity: sha512-Dqu21vN/mVNzebJ+ofnKG+CeJYIhHuDs5+0fMEpdpzRt6UojelzdrEkNv+XkO0e1JMclzeXIRx404FirK/CFRw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      '@mui/material': 5.14.15
+      '@mui/material': ^5.0.0
       '@types/react': ^17.0.0 || ^18.0.0
       react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -2619,22 +2619,6 @@ packages:
       '@babel/runtime': 7.23.2
       '@mui/material': 5.14.15(@types/react@18.2.37)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.37
-      react: 18.2.0
-    dev: false
-
-  /@mui/icons-material@5.14.15(@mui/material@5.14.15)(react@18.2.0):
-    resolution: {integrity: sha512-Dqu21vN/mVNzebJ+ofnKG+CeJYIhHuDs5+0fMEpdpzRt6UojelzdrEkNv+XkO0e1JMclzeXIRx404FirK/CFRw==}
-    engines: {node: '>=12.0.0'}
-    peerDependencies:
-      '@mui/material': 5.14.15
-      '@types/react': ^17.0.0 || ^18.0.0
-      react: ^17.0.0 || ^18.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-    dependencies:
-      '@babel/runtime': 7.23.2
-      '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
 
   /@mui/material@5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0):
@@ -2703,7 +2687,6 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       react-is: 18.2.0
       react-transition-group: 4.4.5(react-dom@18.2.0)(react@18.2.0)
-    dev: false
 
   /@mui/private-theming@5.14.16(@types/react@18.2.37)(react@18.2.0):
     resolution: {integrity: sha512-FNlL0pTSEBh8nXsVWreCHDSHk+jG8cBx1sxRbT8JVtL+PYbYPi802zfV4B00Kkf0LNRVRvAVQwojMWSR/MYGng==}
@@ -2796,7 +2779,6 @@ packages:
       csstype: 3.1.2
       prop-types: 15.8.1
       react: 18.2.0
-    dev: false
 
   /@mui/types@7.2.8(@types/react@18.2.37):
     resolution: {integrity: sha512-9u0ji+xspl96WPqvrYJF/iO+1tQ1L5GTaDOeG3vCR893yy7VcWwRNiVMmPdPNpMDqx0WV1wtEW9OMwK9acWJzQ==}
@@ -4345,7 +4327,7 @@ packages:
       '@uppy/utils': 5.5.2
       classnames: 2.3.2
       nanoid: 4.0.2
-      p-queue: 7.4.1
+      p-queue: 6.6.2
       preact: 10.18.2
     dev: false
 
@@ -4358,7 +4340,7 @@ packages:
       '@uppy/utils': 5.6.0
       classnames: 2.3.2
       nanoid: 4.0.2
-      p-queue: 7.4.1
+      p-queue: 6.6.2
       preact: 10.18.2
     dev: false
 
@@ -6990,6 +6972,7 @@ packages:
 
   /eventemitter3@5.0.1:
     resolution: {integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==}
+    dev: true
 
   /events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
@@ -8867,7 +8850,7 @@ packages:
   /mdi-material-ui@7.7.0(@mui/material@5.14.15)(react@18.2.0):
     resolution: {integrity: sha512-ABcksXoeJhOzy2rQCIEs0+j2K++wLOYAZcLX7mLyWaYycaDKFMcgqg8Up6xHcXxNNMSmggLcw/05fNFZE1LcIg==}
     peerDependencies:
-      '@mui/material': 5.14.15
+      '@mui/material': ^5.0.0 || ^5.0.0-rc.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
@@ -9089,15 +9072,15 @@ packages:
     resolution: {integrity: sha512-LFliQwNnnxW03IO+V3q/ORxZsOHkzl53iGogLbjUJzme47hNEN106dM0ie8oMSc0heYJY0J07oZmKm7Xn3X7IQ==}
     peerDependencies:
       '@emotion/react': ^11.10.5
-      '@mui/icons-material': 5.14.15
-      '@mui/material': 5.14.15
+      '@mui/icons-material': ^5.11.0
+      '@mui/material': ^5.11.0
       react: ^16.8.0 || ^17.0.2 || ^18.2.0
       react-dom: ^16.8.0 || ^17.0.2 || ^18.2.0
     dependencies:
       '@babel/runtime-corejs3': 7.23.2
       '@emotion/cache': 11.11.0
       '@emotion/react': 11.11.1(react@18.2.0)
-      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(react@18.2.0)
+      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       clsx: 1.2.1
       lodash.assignwith: 4.2.0
@@ -9330,7 +9313,7 @@ packages:
     peerDependencies:
       '@emotion/react': ^11.4.1
       '@emotion/styled': ^11.3.0
-      '@mui/material': 5.14.15
+      '@mui/material': ^5.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -9598,14 +9581,6 @@ packages:
       p-timeout: 3.2.0
     dev: false
 
-  /p-queue@7.4.1:
-    resolution: {integrity: sha512-vRpMXmIkYF2/1hLBKisKeVYJZ8S2tZ0zEAmIJgdVKP2nq0nh4qCdf8bgw+ZgKrkh71AOCaqzwbJJk1WtdcF3VA==}
-    engines: {node: '>=12'}
-    dependencies:
-      eventemitter3: 5.0.1
-      p-timeout: 5.1.0
-    dev: false
-
   /p-retry@6.1.0:
     resolution: {integrity: sha512-fJLEQ2KqYBJRuaA/8cKMnqhulqNM+bpcjYtXNex2t3mOXKRYPitAJt9NacSf8XAFzcYahSAbKpobiWDSqHSh2g==}
     engines: {node: '>=16.17'}
@@ -9620,11 +9595,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       p-finally: 1.0.0
-    dev: false
-
-  /p-timeout@5.1.0:
-    resolution: {integrity: sha512-auFDyzzzGZZZdHz3BtET9VEz0SE/uMEAx7uWfGPucfzEwwe/xH0iVeZibQmANYE/hp9T2+UUZT5m+BKyrDp3Ew==}
-    engines: {node: '>=12'}
     dev: false
 
   /p-timeout@6.1.2:
@@ -12488,3 +12458,7 @@ packages:
       which: 3.0.1
       yaml: 2.3.4
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
