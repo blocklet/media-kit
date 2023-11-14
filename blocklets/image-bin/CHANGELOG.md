@@ -1,3 +1,7 @@
+## 0.10.35 (November 14, 2023)
+
+- fix: polish gif image not using image service
+
 ## 0.10.34 (November 14, 2023)
 
 - chore: polish uploader logic

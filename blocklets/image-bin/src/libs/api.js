@@ -22,7 +22,7 @@ export function createImageUrl(filename, width = 0, height = 0) {
   obj.pathname = joinUrl(prefix, '/uploads/', filename);
 
   const extension = filename.split('.').pop();
-  if (['png', 'jpg', 'jpeg', 'webp', 'gif'].includes(extension)) {
+  if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
     if (width) {
       obj.searchParams.set('imageFilter', 'resize');
       obj.searchParams.set('w', width.toString());
