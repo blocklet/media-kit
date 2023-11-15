@@ -1,3 +1,7 @@
+## 0.0.40 (十一月 15, 2023)
+
+- chore: support dalle3
+
 ## 0.0.39 (November 14, 2023)
 
 - chore: lock q-queue lib
