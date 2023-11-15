@@ -13,14 +13,6 @@ import { useAIImageContext, AIImagePromptProps } from './context';
 
 const marks = [
   {
-    label: 256,
-    value: 256,
-  },
-  {
-    label: 512,
-    value: 512,
-  },
-  {
     label: 1024,
     value: 1024,
   },
@@ -34,7 +26,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
   const values = useReactive<AIImagePromptProps>({
     prompt: '',
-    sizeWidth: 256,
+    sizeWidth: 1024,
     number: 1,
   });
 
