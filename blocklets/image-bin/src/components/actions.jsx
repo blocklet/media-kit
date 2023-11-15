@@ -12,6 +12,7 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import Toast from '@arcblock/ux/lib/Toast';
 
 import SplitButton from '@arcblock/ux/lib/SplitButton';
+import Button from '@arcblock/ux/lib/Button';
 import { Confirm } from '@arcblock/ux/lib/Dialog';
 import { isValid as isValidDid } from '@arcblock/did';
 
@@ -21,7 +22,7 @@ import MediaItem from './media-item';
 
 const filter = createFilterOptions();
 
-export default function ImageActions({ data }) {
+export default function ImageActions({ data, componentDid }) {
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isMoveOpen, setMoveOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ export default function ImageActions({ data }) {
   const { t } = useLocaleContext();
 
   const onCopy = () => {
-    Copy(createImageUrl(data.filename, 0, 0));
+    Copy(createImageUrl(data.filename, 0, 0, componentDid));
     setCopied(true);
   };
 
@@ -150,11 +151,19 @@ export default function ImageActions({ data }) {
     text: t('common.cancel'),
   };
 
+  const button = componentDid ? (
+    <Button size="small" onClick={onCopy} variant="outlined">
+      {copied ? t('common.copied') : t('common.copyUrl')}
+    </Button>
+  ) : (
+    <SplitButton size="small" onClick={onCopy} variant="outlined" menu={actions}>
+      {copied ? t('common.copied') : t('common.copyUrl')}
+    </SplitButton>
+  );
+
   return (
     <>
-      <SplitButton size="small" onClick={onCopy} variant="outlined" menu={actions}>
-        {copied ? t('common.copied') : t('common.copyUrl')}
-      </SplitButton>
+      {button}
       <Confirm
         open={isDeleteOpen}
         title={t('common.deleteConfirmTitle')}

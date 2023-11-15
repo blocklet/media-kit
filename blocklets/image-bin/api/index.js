@@ -8,10 +8,12 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
+const config = require('@blocklet/sdk/lib/config');
 
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
+const { mediaTypes } = require('./libs/constants');
 
 if (fs.existsSync(env.uploadDir) === false) {
   fs.mkdirSync(env.uploadDir, { recursive: true });
@@ -23,6 +25,38 @@ app.set('trust proxy', true);
 app.use(cookieParser());
 app.use(express.json({ limit: env.maxUploadSize }));
 app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
+
+const getBucketPath = (componentDid) => {
+  for (const component of config.components || []) {
+    if (component.did === componentDid) {
+      const resource = component.resources?.find((x) => mediaTypes.some((type) => x.endsWith(type)));
+      if (resource) {
+        return resource;
+      }
+    }
+  }
+  return null;
+};
+
+app.use('/uploads/resources/:componentDid/:filename', (req, res) => {
+  const { componentDid, filename } = req.params;
+  if (!filename) {
+    res.status(404).send('filename is required');
+    return;
+  }
+
+  const bucketPath = getBucketPath(componentDid);
+  if (!bucketPath) {
+    res.status(404).send('Bucket Not Found');
+    return;
+  }
+  const file = path.join(bucketPath, filename);
+  if (!fs.existsSync(file)) {
+    res.status(404).send('File Not Found');
+    return;
+  }
+  res.sendFile(file);
+});
 
 app.use('/uploads', express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }));
 

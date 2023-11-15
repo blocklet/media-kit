@@ -16,11 +16,28 @@ const logger = require('../libs/logger');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
+const { mediaTypes } = require('../libs/constants');
 
 const router = express.Router();
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
+
+const getBuckets = () => {
+  const buckets = [];
+  config.components.forEach((component) => {
+    const resource = component.resources?.find((x) => mediaTypes.some((type) => x.endsWith(type)));
+    if (resource) {
+      buckets.push({
+        name: component.title || component.name,
+        componentDid: component.did,
+        path: resource,
+      });
+    }
+  });
+
+  return buckets;
+};
 
 const ensureFolderId = async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
@@ -131,7 +148,29 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
   };
 };
 
+const getResourceListMiddleware = () => {
+  return (req, res) => {
+    const { componentDid: inputComponentDid } = req.query;
+
+    const buckets = getBuckets();
+
+    const componentDid = inputComponentDid || buckets[0]?.componentDid;
+    const bucketPath = buckets.find((x) => x.componentDid === componentDid)?.path;
+
+    if (!fs.existsSync(bucketPath)) {
+      res.jsonp({ buckets, componentDid, resources: [] });
+      return;
+    }
+
+    const resources = fs.readdirSync(bucketPath).map((filename) => ({ filename }));
+
+    res.jsonp({ buckets, componentDid, resources });
+  };
+};
+
 router.get('/uploads', user, auth, getUploadListMiddleware());
+
+router.get('/uploads/resources', user, auth, getResourceListMiddleware());
 
 // remove upload
 router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res) => {

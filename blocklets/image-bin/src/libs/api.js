@@ -16,10 +16,17 @@ api.interceptors.request.use(
 
 export default api;
 
-export function createImageUrl(filename, width = 0, height = 0) {
+/**
+ * @param {string} filename
+ * @param {number} width
+ * @param {number} height
+ * @param {string} componentDid
+ * @returns
+ */
+export function createImageUrl(filename, width = 0, height = 0, componentDid = '') {
   const { prefix = '/', CDN_HOST = '' } = window.blocklet;
   const obj = new URL(CDN_HOST || window.location.origin);
-  obj.pathname = joinUrl(prefix, '/uploads/', filename);
+  obj.pathname = joinUrl(prefix, componentDid ? `/uploads/resources/${componentDid}` : '/uploads/', filename);
 
   const extension = filename.split('.').pop();
   if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
