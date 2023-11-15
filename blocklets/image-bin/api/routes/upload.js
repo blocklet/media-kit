@@ -419,6 +419,7 @@ router.post('/image/generations', user, auth, async (req, res) => {
     path: '/api/v1/sdk/image/generations',
     method: 'POST',
     data: {
+      model: 'dall-e-3',
       prompt,
       n: parseInt(number, 10),
       size: `${sizeWidth}x${sizeWidth}`,

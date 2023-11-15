@@ -1,3 +1,7 @@
+## 0.10.36 (十一月 15, 2023)
+
+- chore: support dall-e-3
+
 ## 0.10.35 (November 14, 2023)
 
 - fix: polish gif image not using image service
