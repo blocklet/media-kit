@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
 const config = require('@blocklet/sdk/lib/config');
-
+const { initStaticResourceMiddleware } = require('@blocklet/uploader/middlewares');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
@@ -58,7 +58,20 @@ app.use('/uploads/resources/:componentDid/:filename', (req, res) => {
   res.sendFile(file);
 });
 
-app.use('/uploads', express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }));
+app.use(
+  '/uploads',
+  express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
+  initStaticResourceMiddleware({
+    express,
+    resourceKeys: [
+      'export.imgpack',
+      // {
+      //   key: 'export.page',
+      //   folder: 'pages',
+      // },
+    ],
+  })
+);
 
 const router = express.Router();
 router.use('/api/embed', require('./routes/embed'));
