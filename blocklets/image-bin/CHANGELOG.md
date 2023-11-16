@@ -1,3 +1,7 @@
+## 0.10.37 (November 16, 2023)
+
+- chore: update deps
+
 ## 0.10.36 (十一月 15, 2023)
 
 - chore: support dall-e-3

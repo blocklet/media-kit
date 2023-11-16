@@ -1,3 +1,7 @@
+## 0.0.41 (November 16, 2023)
+
+- chore: update deps
+
 ## 0.0.40 (十一月 15, 2023)
 
 - chore: support dalle3
