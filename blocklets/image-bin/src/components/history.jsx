@@ -21,6 +21,7 @@ import { useInfiniteScroll, useResponsive } from 'ahooks';
 import { isValid as isValidDid } from '@arcblock/did';
 import FolderIcon from '@mui/icons-material/Folder';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import { useUploadContext } from '../contexts/upload';
@@ -56,7 +57,7 @@ function BlockletLogo(props) {
   );
 }
 
-function Gallery({ uploads, type, componentDid }) {
+function Gallery({ uploads, type }) {
   const { locale } = useLocaleContext();
   const localeMap = {
     zh: 'zh_CN',
@@ -71,151 +72,7 @@ function Gallery({ uploads, type, componentDid }) {
 
   const gap = 16;
 
-  if (type === 'resource') {
-    return (
-      <ImageList
-        // variant="masonry"
-        cols={cols}
-        gap={gap}
-        sx={{
-          pt: transformY,
-          mt: `calc(16px - ${transformY})`,
-          overflow: 'hidden',
-        }}>
-        {uploads.map((x) => {
-          return (
-            <ImageListItem
-              key={x.name}
-              sx={{
-                border: '1px solid rgba(0,0,0,0.1)',
-                position: 'relative',
-                borderRadius,
-                'object, video': {
-                  borderRadius,
-                  borderBottomRightRadius: '0 !important',
-                  borderBottomLeftRadius: '0 !important',
-                },
-                '&, & *': {
-                  transition: 'all 0.25s ease-in-out',
-                },
-                '&:hover': {
-                  transform: `translateY(-${transformY})`,
-                  border: (theme) => `1px solid ${theme?.palette?.primary?.main}`,
-                  // boxShadow: (theme) => `4px 4px 0 0px ${theme?.palette?.primary?.main}`,
-                  object: {
-                    animation: 'scroll 2s linear 1', // 'scroll 4s linear infinite',
-                    '@keyframes scroll': {
-                      '0%': {
-                        objectPosition: 'center',
-                      },
-                      '25%': {
-                        objectPosition: 'top',
-                      },
-                      '75%': {
-                        objectPosition: 'bottom',
-                      },
-                      '100%': {
-                        objectPosition: 'center',
-                      },
-                    },
-                  },
-                },
-              }}>
-              {!x.isNew ? (
-                <a
-                  href={createImageUrl(x.filename, 0, 0, componentDid)}
-                  target="_blank"
-                  title={x.name}
-                  style={{
-                    width: '100%',
-                    position: 'relative',
-                    height: isMobile
-                      ? 'calc(100vw - 24px - 24px)'
-                      : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
-                  }}>
-                  <MediaItem {...x} componentDid={componentDid} />
-                  <BlockletLogo
-                    did={x.folderId}
-                    style={{
-                      position: 'absolute',
-                      right: 0,
-                      bottom: 0,
-                      opacity: 0.85,
-                      // borderRadius,
-                    }}
-                    color="primary"
-                    width={24}
-                    height={24}
-                  />
-                </a>
-              ) : (
-                <UploaderTrigger
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    background: 'rgba(0,0,0,0.1)',
-                    '&:hover': {
-                      cursor: 'pointer',
-                      background: (theme) => theme?.palette?.primary?.main,
-                    },
-                  }}>
-                  <AddCircleIcon
-                    sx={{
-                      fontSize: 80,
-                      margin: '40px',
-                      color: 'white',
-                    }}
-                  />
-                </UploaderTrigger>
-              )}
-              {!x.isNew && (
-                <ImageListItemBar
-                  position="below"
-                  // title={
-                  //   <Box
-                  //     sx={{
-                  //       display: 'flex',
-                  //       alignItems: 'center',
-                  //       fontSize: 14,
-                  //     }}>
-                  //     {prettyBytes(x.size, {
-                  //       locale,
-                  //     })}
-                  //   </Box>
-                  // }
-                  // subtitle={format(x.createdAt, localeMap[locale] || locale)}
-                  actionIcon={
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                      }}>
-                      <Actions data={x} componentDid={componentDid} />
-                    </Box>
-                  }
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    px: 1.5,
-                    borderTop: '1px solid rgba(0,0,0,0.1)',
-                    '& .MuiImageListItemBar-titleWrap': {
-                      py: 1,
-                      '& > div': {
-                        lineHeight: '1.25',
-                      },
-                    },
-                  }}
-                />
-              )}
-            </ImageListItem>
-          );
-        })}
-      </ImageList>
-    );
-  }
+  const isResource = type === 'resource';
 
   return (
     <ImageList
@@ -279,19 +136,20 @@ function Gallery({ uploads, type, componentDid }) {
                     : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
                 }}>
                 <MediaItem {...x} type={type} />
-                <BlockletLogo
-                  did={x.folderId}
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    bottom: 0,
-                    opacity: 0.85,
-                    // borderRadius,
-                  }}
-                  color="primary"
-                  width={24}
-                  height={24}
-                />
+                {isResource && (
+                  <BlockletLogo
+                    did={x.folderId}
+                    style={{
+                      position: 'absolute',
+                      right: 0,
+                      bottom: 0,
+                      opacity: 0.85,
+                    }}
+                    color="primary"
+                    width={24}
+                    height={24}
+                  />
+                )}
               </a>
             ) : (
               <UploaderTrigger
@@ -320,31 +178,34 @@ function Gallery({ uploads, type, componentDid }) {
               <ImageListItemBar
                 position="below"
                 title={
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      fontSize: 14,
-                    }}>
-                    {prettyBytes(x.size, {
-                      locale,
-                    })}
-                  </Box>
+                  !isResource && (
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontSize: 14,
+                      }}>
+                      {prettyBytes(x.size, {
+                        locale,
+                      })}
+                    </Box>
+                  )
                 }
-                subtitle={format(x.createdAt, localeMap[locale] || locale)}
+                subtitle={isResource ? '' : format(x.createdAt, localeMap[locale] || locale)}
                 actionIcon={
                   <Box
                     sx={{
                       display: 'flex',
                       alignItems: 'center',
                     }}>
-                    <Actions data={x} />
+                    <Actions data={x} isResource={isResource} />
                   </Box>
                 }
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
                   px: 1.5,
+                  py: isResource ? 1 : 0,
                   borderTop: '1px solid rgba(0,0,0,0.1)',
                   '& .MuiImageListItemBar-titleWrap': {
                     py: 1,
@@ -370,17 +231,18 @@ export default function Uploads() {
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
 
-  const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder } = uploadState;
-  const { resources, buckets, loading: loadingResources, loadResources, componentDid, filterByBucket } = resourceState;
+  const { uploads, folders, loading, loadMoreUploads, folderId, filterByFolder, tabs, tab, setTab } = uploadState;
+  const {
+    resources,
+    components,
+    loading: loadingResources,
+    loadResources,
+    componentDid,
+    filterByComponent,
+  } = resourceState;
   const wrapperRef = useRef(null);
   const [showDialog, setShowDialog] = useState(false);
-  const [source, setSource] = useState('component');
   const iframeRef = useRef(null);
-
-  const tabs = [
-    { key: 'component', value: 'Components' },
-    { key: 'bucket', value: 'Buckets' },
-  ];
 
   useInfiniteScroll(loadMoreUploads, {
     target: wrapperRef,
@@ -390,11 +252,11 @@ export default function Uploads() {
   });
 
   useEffect(() => {
-    if (!loadingResources) {
+    if (tab === 'resource' && !loadingResources) {
       loadResources();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [tab]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -422,16 +284,16 @@ export default function Uploads() {
       {!!tabs.length && (
         <Tabs
           sx={{ mt: -2, mb: 2 }}
-          value={source}
+          value={tab}
           onChange={(e, value) => {
-            setSource(value);
+            setTab(value);
           }}>
           {tabs.map((item) => (
             <Tab key={item.key} sx={{ position: 'relative' }} value={item.key} label={item.value} />
           ))}
         </Tabs>
       )}
-      {source === 'component' && [
+      {tab === 'bucket' && [
         <Box>
           <ButtonGroup
             size={isMobile ? 'small' : 'medium'}
@@ -486,7 +348,7 @@ export default function Uploads() {
           </Box>
         ),
       ]}
-      {source === 'bucket' && [
+      {tab === 'resource' && [
         <Box>
           <ButtonGroup
             size={isMobile ? 'small' : 'medium'}
@@ -502,13 +364,13 @@ export default function Uploads() {
                 borderRadius,
               },
             }}>
-            {[...buckets].map((x) => (
+            {components.map((x) => (
               <Button
                 key={x._id}
                 title={x._id}
-                onClick={() => filterByBucket(x.componentDid)}
-                // startIcon={<BlockletLogo did={x._id} />}
-                variant={componentDid === x.componentDid ? 'contained' : 'outlined'}>
+                onClick={() => filterByComponent(x.did)}
+                startIcon={<BlockletLogo did={x.did} />}
+                variant={componentDid === x.did ? 'contained' : 'outlined'}>
                 {x.name}
               </Button>
             ))}
@@ -516,7 +378,7 @@ export default function Uploads() {
               key="import"
               title="Import"
               onClick={() => setShowDialog(true)}
-              // startIcon={<BlockletLogo did={x._id} />}
+              startIcon={<AddCircleOutlineIcon />}
               variant="outlined">
               Import
             </Button>
@@ -543,17 +405,17 @@ export default function Uploads() {
             </DialogWrapper>
           )}
         </Box>,
-        resources.length === 0 ? (
-          <Empty>{t('common.empty')}</Empty>
+        components.length === 0 ? (
+          <Empty>{t('common.emptyResource')}</Empty>
         ) : (
           <Box>
-            <Gallery uploads={resources} type="resource" componentDid={componentDid} />
+            <Gallery uploads={resources} type="resource" />
             {loadingResources && (
               <div className="load-more">
                 <Spinner />
               </div>
             )}
-            <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)', fontSize: 14 }}> {t('common.noMore')}</Divider>
+            {!loadingResources && resources.length === 0 && <Empty>{t('common.emptyResource')}</Empty>}
           </Box>
         ),
       ]}

@@ -20,7 +20,12 @@ export default flatten({
     copyUrl: '复制链接',
     noMore: '已经到底了',
     empty: '暂无上传文件',
+    emptyResource: '暂无资源',
     all: '全部',
     upload: '上传到 {name}',
+    export: '导出',
+    createResource: '创建资源',
+    buckets: '存储桶',
+    resources: '资源',
   },
 });

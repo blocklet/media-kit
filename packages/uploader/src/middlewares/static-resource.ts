@@ -1,15 +1,16 @@
 const { existsSync } = require('fs-extra');
-const { join } = require('path');
+const { join, extname } = require('path');
 const joinURL = require('url-join');
 const { flattenDeep, keyBy } = require('lodash');
 const config = require('@blocklet/sdk/lib/config');
+const { BlockletStatus } = require('@blocklet/constant');
 
-const IMAGE_BIN_RESOURCE_KEY = 'export.imgpack';
+const ImgResourceType = 'imgpack';
 
-// can change by initStaticResourceMiddleware resourceKeys
-let resourceKeys = [
+// can change by initStaticResourceMiddleware resourceTypes
+let resourceTypes = [
   {
-    key: IMAGE_BIN_RESOURCE_KEY,
+    type: ImgResourceType,
     folder: '', // default is root, can be set to 'public' or 'assets' or any other folder
   },
 ];
@@ -26,23 +27,25 @@ const logger = console;
 //   };
 // };
 
+const RunningStatus = BlockletStatus.running;
+
 let canUseResources = [] as any;
 
-const mappingResource = async () => {
+const mappingResource = async (skipRunningCheck: boolean) => {
   try {
     const { components } = config;
-    const runningComponents = components.filter((item: any) => item.status === 6);
-    const resourcesMap = keyBy(runningComponents, 'resources');
+    const filteredComponents = components.filter((item: any) => skipRunningCheck || item.status === RunningStatus);
+    const resourcesMap = keyBy(filteredComponents, 'resources');
 
-    const resourceKeysMap = keyBy(resourceKeys, 'key');
+    const resourceTypesMap = keyBy(resourceTypes, 'type');
 
-    canUseResources = flattenDeep(runningComponents.map((item: any) => item.resources))
+    canUseResources = flattenDeep(filteredComponents.map((item: any) => item.resources))
       .map((originDir: any) => {
         // check dir is exists and not in resourceKeys
-        if (!existsSync(originDir) || !resourceKeys.some(({ key }) => originDir.endsWith(key))) {
+        if (!existsSync(originDir) || !resourceTypes.some(({ type }) => extname(originDir).endsWith(type))) {
           return false;
         }
-        const { folder = '' } = resourceKeysMap[originDir.split('/').pop()];
+        const { folder = '' } = resourceTypesMap[originDir.split('/').pop()];
         return { originDir, dir: join(originDir, folder || '') };
       })
       .filter(Boolean);
@@ -72,29 +75,37 @@ events.on(Events.componentUpdated, mappingResource);
 
 type initStaticResourceMiddlewareOptions = {
   options?: any;
-  resourceKeys?: string[] | Object[];
+  resourceTypes?: string[] | Object[];
   express: any;
+  skipRunningCheck: boolean;
 };
 
 export const initStaticResourceMiddleware = (
-  { options, resourceKeys: _resourceKeys = resourceKeys, express } = {} as initStaticResourceMiddlewareOptions
+  {
+    options,
+    resourceTypes: _resourceTypes = resourceTypes,
+    express,
+    skipRunningCheck,
+  } = {} as initStaticResourceMiddlewareOptions
 ) => {
-  if (_resourceKeys.length > 0) {
-    resourceKeys = _resourceKeys.map((item: any) => {
+  if (_resourceTypes.length > 0) {
+    resourceTypes = _resourceTypes.map((item: any) => {
       if (typeof item === 'string') {
         return {
-          key: item,
+          type: item,
           folder: '', // not set folder, default is root
         };
       }
       return item;
     });
   }
+
   // init mapping resource
-  mappingResource();
+  mappingResource(skipRunningCheck);
 
   return (req: any, res: any, next: Function) => {
-    const matchCanUseResourceItem = canUseResources.find((item: any) => existsSync(join(item.dir, req.url)));
+    const urlPath = new URL(`http://localhost${req.url}`).pathname;
+    const matchCanUseResourceItem = canUseResources.find((item: any) => existsSync(join(item.dir, urlPath)));
     // dynamic get can use resources assets
     if (matchCanUseResourceItem) {
       express.static(matchCanUseResourceItem.dir, {

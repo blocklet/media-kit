@@ -23,10 +23,10 @@ export default api;
  * @param {string} componentDid
  * @returns
  */
-export function createImageUrl(filename, width = 0, height = 0, componentDid = '') {
+export function createImageUrl(filename, width = 0, height = 0) {
   const { prefix = '/', CDN_HOST = '' } = window.blocklet;
   const obj = new URL(CDN_HOST || window.location.origin);
-  obj.pathname = joinUrl(prefix, componentDid ? `/uploads/resources/${componentDid}` : '/uploads/', filename);
+  obj.pathname = joinUrl(prefix, '/uploads/', filename);
 
   const extension = filename.split('.').pop();
   if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {

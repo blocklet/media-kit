@@ -4,15 +4,25 @@ import Dashboard from '@blocklet/ui-react/lib/Dashboard';
 import styled from '@emotion/styled';
 
 import Uploader, { UploaderProviderWrapper } from './uploader';
+import Exporter from './exporter';
+import { useUploadContext } from '../contexts/upload';
 
 export default function Layout({ title }) {
+  const { tab } = useUploadContext();
+
+  const addons = [];
+  if (tab === 'bucket') {
+    addons.push(<Exporter key="exporter-addon" />);
+    addons.push(<Uploader key="uploader-addon" />);
+  }
+
   return (
     <UploaderProviderWrapper>
       <Main
         dense
         title={title}
         headerAddons={(exists) => {
-          return [<Uploader key="uploader-addon" />, ...exists];
+          return [addons, ...exists];
         }}>
         <Outlet />
       </Main>

@@ -22,7 +22,7 @@ import MediaItem from './media-item';
 
 const filter = createFilterOptions();
 
-export default function ImageActions({ data, componentDid }) {
+export default function ImageActions({ data, isResource }) {
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isMoveOpen, setMoveOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export default function ImageActions({ data, componentDid }) {
   const { t } = useLocaleContext();
 
   const onCopy = () => {
-    Copy(createImageUrl(data.filename, 0, 0, componentDid));
+    Copy(createImageUrl(data.filename, 0, 0));
     setCopied(true);
   };
 
@@ -151,7 +151,7 @@ export default function ImageActions({ data, componentDid }) {
     text: t('common.cancel'),
   };
 
-  const button = componentDid ? (
+  const button = isResource ? (
     <Button size="small" onClick={onCopy} variant="outlined">
       {copied ? t('common.copied') : t('common.copyUrl')}
     </Button>

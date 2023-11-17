@@ -11,8 +11,8 @@ const { Provider, Consumer } = ResourceContext;
 function ResourceProvider({ children }) {
   const pageState = useReactive({
     componentDid: '',
+    components: [],
     resources: [],
-    buckets: [],
     loading: false,
   });
 
@@ -25,12 +25,13 @@ function ResourceProvider({ children }) {
         },
       })
       .then(({ data }) => {
-        pageState.buckets = data.buckets;
-        pageState.componentDid = data.componentDid;
         (data.resource || []).forEach((item) => {
           item._id = item.name;
+          item.originalName = item.name;
         });
-        pageState.resources = data.resources || [];
+        pageState.resources = data.resources;
+        pageState.componentDid = data.componentDid;
+        pageState.components = data.components || [];
         pageState.loading = false;
       })
       .catch(console.error);
@@ -43,7 +44,7 @@ function ResourceProvider({ children }) {
       value={{
         ...pageState,
         loadResources: debounce(loadResources, 50),
-        filterByBucket: (componentDid) => {
+        filterByComponent: (componentDid) => {
           pageState.resources = [];
           pageState.componentDid = componentDid;
           loadResources();

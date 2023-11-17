@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 overrides:
   '@blocklet/logger': 1.16.17
   '@blocklet/sdk': 1.16.17
@@ -39,6 +43,9 @@ importers:
       '@arcblock/did':
         specifier: ^1.18.95
         version: 1.18.95
+      '@blocklet/constant':
+        specifier: ^1.16.17
+        version: 1.16.17
       '@blocklet/embed':
         specifier: ^0.1.5
         version: 0.1.5(react@18.2.0)
@@ -53,7 +60,7 @@ importers:
         version: link:../../packages/uploader
       '@mui/icons-material':
         specifier: 5.14.15
-        version: 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
+        version: 5.14.15(@mui/material@5.14.15)(react@18.2.0)
       '@mui/material':
         specifier: 5.14.15
         version: 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
@@ -75,6 +82,9 @@ importers:
       express-async-errors:
         specifier: ^3.1.1
         version: 3.1.1(express@4.18.2)
+      fs-extra:
+        specifier: ^11.1.1
+        version: 11.1.1
       mime-types:
         specifier: ^2.1.35
         version: 2.1.35
@@ -182,6 +192,9 @@ importers:
   packages/uploader:
     dependencies:
       '@abtnode/cron':
+        specifier: ^1.16.17
+        version: 1.16.17
+      '@blocklet/constant':
         specifier: ^1.16.17
         version: 1.16.17
       '@blocklet/sdk':
@@ -417,7 +430,7 @@ packages:
       '@fontsource/lato': 4.5.10
       '@iconify-icons/ion': 1.2.10
       '@iconify/react': 4.1.1(react@18.2.0)
-      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
+      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(react@18.2.0)
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       ahooks: 3.7.8(react@18.2.0)
       axios: 0.27.2(debug@4.3.4)
@@ -701,7 +714,7 @@ packages:
       '@iconify-icons/logos': 1.2.36
       '@iconify-icons/mdi': 1.2.48
       '@iconify/react': 4.1.1(react@18.2.0)
-      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
+      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(react@18.2.0)
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       '@solana/qr-code-styling': 1.6.0
       '@testing-library/react': 14.0.0(react-dom@18.2.0)(react@18.2.0)
@@ -2609,7 +2622,7 @@ packages:
     resolution: {integrity: sha512-Dqu21vN/mVNzebJ+ofnKG+CeJYIhHuDs5+0fMEpdpzRt6UojelzdrEkNv+XkO0e1JMclzeXIRx404FirK/CFRw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
-      '@mui/material': ^5.0.0
+      '@mui/material': 5.14.15
       '@types/react': ^17.0.0 || ^18.0.0
       react: ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -2619,6 +2632,22 @@ packages:
       '@babel/runtime': 7.23.2
       '@mui/material': 5.14.15(@types/react@18.2.37)(react-dom@18.2.0)(react@18.2.0)
       '@types/react': 18.2.37
+      react: 18.2.0
+    dev: false
+
+  /@mui/icons-material@5.14.15(@mui/material@5.14.15)(react@18.2.0):
+    resolution: {integrity: sha512-Dqu21vN/mVNzebJ+ofnKG+CeJYIhHuDs5+0fMEpdpzRt6UojelzdrEkNv+XkO0e1JMclzeXIRx404FirK/CFRw==}
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      '@mui/material': 5.14.15
+      '@types/react': ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+    dependencies:
+      '@babel/runtime': 7.23.2
+      '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
 
   /@mui/material@5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0):
@@ -2687,6 +2716,7 @@ packages:
       react-dom: 18.2.0(react@18.2.0)
       react-is: 18.2.0
       react-transition-group: 4.4.5(react-dom@18.2.0)(react@18.2.0)
+    dev: false
 
   /@mui/private-theming@5.14.16(@types/react@18.2.37)(react@18.2.0):
     resolution: {integrity: sha512-FNlL0pTSEBh8nXsVWreCHDSHk+jG8cBx1sxRbT8JVtL+PYbYPi802zfV4B00Kkf0LNRVRvAVQwojMWSR/MYGng==}
@@ -2779,6 +2809,7 @@ packages:
       csstype: 3.1.2
       prop-types: 15.8.1
       react: 18.2.0
+    dev: false
 
   /@mui/types@7.2.8(@types/react@18.2.37):
     resolution: {integrity: sha512-9u0ji+xspl96WPqvrYJF/iO+1tQ1L5GTaDOeG3vCR893yy7VcWwRNiVMmPdPNpMDqx0WV1wtEW9OMwK9acWJzQ==}
@@ -7413,7 +7444,6 @@ packages:
       graceful-fs: 4.2.11
       jsonfile: 6.1.0
       universalify: 2.0.1
-    dev: true
 
   /fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
@@ -8850,7 +8880,7 @@ packages:
   /mdi-material-ui@7.7.0(@mui/material@5.14.15)(react@18.2.0):
     resolution: {integrity: sha512-ABcksXoeJhOzy2rQCIEs0+j2K++wLOYAZcLX7mLyWaYycaDKFMcgqg8Up6xHcXxNNMSmggLcw/05fNFZE1LcIg==}
     peerDependencies:
-      '@mui/material': ^5.0.0 || ^5.0.0-rc.0
+      '@mui/material': 5.14.15
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
@@ -9072,15 +9102,15 @@ packages:
     resolution: {integrity: sha512-LFliQwNnnxW03IO+V3q/ORxZsOHkzl53iGogLbjUJzme47hNEN106dM0ie8oMSc0heYJY0J07oZmKm7Xn3X7IQ==}
     peerDependencies:
       '@emotion/react': ^11.10.5
-      '@mui/icons-material': ^5.11.0
-      '@mui/material': ^5.11.0
+      '@mui/icons-material': 5.14.15
+      '@mui/material': 5.14.15
       react: ^16.8.0 || ^17.0.2 || ^18.2.0
       react-dom: ^16.8.0 || ^17.0.2 || ^18.2.0
     dependencies:
       '@babel/runtime-corejs3': 7.23.2
       '@emotion/cache': 11.11.0
       '@emotion/react': 11.11.1(react@18.2.0)
-      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(@types/react@18.2.37)(react@18.2.0)
+      '@mui/icons-material': 5.14.15(@mui/material@5.14.15)(react@18.2.0)
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
       clsx: 1.2.1
       lodash.assignwith: 4.2.0
@@ -9313,7 +9343,7 @@ packages:
     peerDependencies:
       '@emotion/react': ^11.4.1
       '@emotion/styled': ^11.3.0
-      '@mui/material': ^5.0.0
+      '@mui/material': 5.14.15
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
     peerDependenciesMeta:
@@ -12458,7 +12488,3 @@ packages:
       which: 3.0.1
       yaml: 2.3.4
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false

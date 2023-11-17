@@ -1,12 +1,15 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
+const toUpper = require('lodash/toUpper');
+const flatten = require('lodash/flatten');
 const multer = require('multer');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
+const { getResourceExportDir } = require('@blocklet/sdk/lib/component');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
 const { isValid: isValidDid } = require('@arcblock/did');
@@ -16,27 +19,29 @@ const logger = require('../libs/logger');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
-const { mediaTypes } = require('../libs/constants');
+const { MediaTypes, runningStatus, ExportDir } = require('../libs/constants');
 
 const router = express.Router();
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
-const getBuckets = () => {
-  const buckets = [];
-  config.components.forEach((component) => {
-    const resource = component.resources?.find((x) => mediaTypes.some((type) => x.endsWith(type)));
-    if (resource) {
-      buckets.push({
-        name: component.title || component.name,
-        componentDid: component.did,
-        path: resource,
-      });
-    }
-  });
+const getComponents = () => {
+  const components = [];
+  config.components
+    .filter((x) => x.status === runningStatus)
+    .forEach((component) => {
+      const resource = component.resources?.find((x) => MediaTypes.some((type) => x.endsWith(type)));
+      if (resource) {
+        components.push({
+          name: component.title || component.name,
+          did: component.did,
+          path: resource,
+        });
+      }
+    });
 
-  return buckets;
+  return components;
 };
 
 const ensureFolderId = async (req, res, next) => {
@@ -152,19 +157,19 @@ const getResourceListMiddleware = () => {
   return (req, res) => {
     const { componentDid: inputComponentDid } = req.query;
 
-    const buckets = getBuckets();
+    const components = getComponents();
 
-    const componentDid = inputComponentDid || buckets[0]?.componentDid;
-    const bucketPath = buckets.find((x) => x.componentDid === componentDid)?.path;
+    const componentDid = inputComponentDid || components[0]?.did;
+    const resourcePath = components.find((x) => x.did === componentDid)?.path;
 
-    if (!fs.existsSync(bucketPath)) {
-      res.jsonp({ buckets, componentDid, resources: [] });
+    if (!fs.existsSync(resourcePath)) {
+      res.jsonp({ components, componentDid, resources: [] });
       return;
     }
 
-    const resources = fs.readdirSync(bucketPath).map((filename) => ({ filename }));
+    const resources = fs.readdirSync(resourcePath).map((filename) => ({ filename }));
 
-    res.jsonp({ buckets, componentDid, resources });
+    res.jsonp({ components, componentDid, resources });
   };
 };
 
@@ -499,6 +504,56 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   res.json({ availablePluginMap });
+});
+
+router.get('/resources', ensureAdmin, async (_req, res) => {
+  const folders = await Folder.cursor({}).sort({ createdAt: -1 }).exec();
+  const resources = (folders || []).map((x) => ({
+    id: x._id,
+    name: toUpper(x.name),
+  }));
+
+  res.json({ resources });
+});
+
+const getExportDir = (projectId, releaseId) => {
+  const resourceDir = getResourceExportDir({ projectId, releaseId });
+  const dir = path.join(resourceDir, ExportDir);
+  return dir;
+};
+
+router.post('/resources', ensureAdmin, async (req, res) => {
+  const { resources, projectId, releaseId } = req.body;
+
+  const dir = getExportDir(projectId, releaseId);
+
+  const uploads = flatten(await Promise.all(resources.map((folderId) => Upload.find({ folderId }))));
+
+  if (!uploads.length) {
+    fs.rmSync(dir, { recursive: true, force: true });
+    res.json({});
+    return;
+  }
+
+  if (fs.existsSync(dir)) {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+  fs.mkdirSync(dir, { recursive: true });
+
+  await Promise.all(
+    uploads.map(async ({ filename }) => {
+      const filePath = path.join(env.uploadDir, filename);
+      const newFilePath = path.join(dir, filename);
+
+      if (!fs.existsSync(filePath)) {
+        return;
+      }
+
+      await fs.copy(filePath, newFilePath);
+    })
+  );
+
+  res.json({});
 });
 
 module.exports = router;
