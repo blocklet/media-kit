@@ -16,13 +16,6 @@ api.interceptors.request.use(
 
 export default api;
 
-/**
- * @param {string} filename
- * @param {number} width
- * @param {number} height
- * @param {string} componentDid
- * @returns
- */
 export function createImageUrl(filename, width = 0, height = 0) {
   const { prefix = '/', CDN_HOST = '' } = window.blocklet;
   const obj = new URL(CDN_HOST || window.location.origin);
