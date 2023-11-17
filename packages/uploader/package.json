@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -48,6 +48,7 @@
   "license": "ISC",
   "dependencies": {
     "@abtnode/cron": "^1.16.18",
+    "@blocklet/constant": "^1.16.18",
     "@blocklet/sdk": "^1.16.18",
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",

@@ -2,11 +2,11 @@
 import { createImageUrl } from '../libs/api';
 
 function MediaItem(props) {
-  const { mimetype, filename, originalname, _id } = props;
+  const { mimetype, filename, originalname, _id, componentDid } = props;
 
   const isVideo = ['mp4', 'webm'].includes(mimetype?.split('/')?.[1]);
 
-  const src = createImageUrl(filename, isVideo ? 0 : 500);
+  const src = createImageUrl(filename, isVideo ? 0 : 500, 0, componentDid);
 
   const style = {
     WebkitUserDrag: 'none',

@@ -55,6 +55,8 @@ import {
 // @ts-ignore
 import Uploaded from './plugins/uploaded';
 // @ts-ignore
+import Resources from './plugins/resources';
+// @ts-ignore
 import PrepareUpload from './plugins/prepare-upload';
 // @ts-ignore
 import AIImage from './plugins/ai-image';
@@ -89,6 +91,13 @@ const getPluginList = (props: any) => {
     (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
       id: 'Uploaded',
       plugin: Uploaded, //
+      options: {
+        params: uploadedProps?.params,
+      },
+    },
+    (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
+      id: 'Resources',
+      plugin: Resources, // use image from resource blocklets
       options: {
         params: uploadedProps?.params,
       },
@@ -430,7 +439,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     });
 
     // handle uploaded:selected
-    if (plugins.includes('Uploaded')) {
+    if (plugins.includes('Uploaded') || plugins.includes('Resources')) {
       state.uppy.off('uploaded:selected');
       // @ts-ignore
       state.uppy.on('uploaded:selected', (files: Object[]) => {

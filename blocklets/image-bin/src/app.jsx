@@ -11,6 +11,7 @@ import Center from '@arcblock/ux/lib/Center';
 import theme from './libs/theme';
 import { SessionProvider } from './contexts/session';
 import { UploadProvider } from './contexts/upload';
+import { ResourceProvider } from './contexts/resource';
 import Layout from './components/layout';
 import { translations } from './locales/index';
 
@@ -58,13 +59,15 @@ export default function App() {
                             serviceHost={prefix}
                             protectedRoutes={['/admin'].map((item) => joinUrl(prefix, item))}>
                             <UploadProvider>
-                              <Routes>
-                                <Route path="/admin" element={<Layout />}>
-                                  <Route path="images" element={<ImageList />} />
-                                  <Route path="*" element={<Navigate to="/admin/images" />} />
-                                  <Route index element={<Navigate to="/admin/images" />} />
-                                </Route>
-                              </Routes>
+                              <ResourceProvider>
+                                <Routes>
+                                  <Route path="/admin" element={<Layout />}>
+                                    <Route path="images" element={<ImageList />} />
+                                    <Route path="*" element={<Navigate to="/admin/images" />} />
+                                    <Route index element={<Navigate to="/admin/images" />} />
+                                  </Route>
+                                </Routes>
+                              </ResourceProvider>
                             </UploadProvider>
                           </SessionProvider>
                         }

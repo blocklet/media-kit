@@ -1,3 +1,7 @@
+## 0.10.38 (November 17, 2023)
+
+- feat: support serve media from resource blocklet
+
 ## 0.10.37 (November 16, 2023)
 
 - chore: update deps

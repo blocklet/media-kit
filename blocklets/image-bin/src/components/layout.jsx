@@ -4,15 +4,31 @@ import Dashboard from '@blocklet/ui-react/lib/Dashboard';
 import styled from '@emotion/styled';
 
 import Uploader, { UploaderProviderWrapper } from './uploader';
+import Exporter from './exporter';
+import { useUploadContext } from '../contexts/upload';
+import { useSessionContext } from '../contexts/session';
+
+const hasAdminPermission = (user) => ['admin', 'owner'].includes(user?.role);
 
 export default function Layout({ title }) {
+  const { tab } = useUploadContext();
+  const { session } = useSessionContext();
+
+  const addons = [];
+  if (tab === 'bucket') {
+    if (hasAdminPermission(session?.user)) {
+      addons.push(<Exporter key="exporter-addon" />);
+    }
+    addons.push(<Uploader key="uploader-addon" />);
+  }
+
   return (
     <UploaderProviderWrapper>
       <Main
         dense
         title={title}
         headerAddons={(exists) => {
-          return [<Uploader key="uploader-addon" />, ...exists];
+          return [addons, ...exists];
         }}>
         <Outlet />
       </Main>

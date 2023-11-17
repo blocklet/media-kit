@@ -20,7 +20,12 @@ export default flatten({
     copyUrl: 'Copy URL',
     noMore: 'No More',
     empty: 'No Uploads Found',
+    emptyResource: 'No Resources Found',
     all: 'ALL',
     upload: 'Upload to {name}',
+    export: 'Export',
+    resourceBlocklet: 'Resource Blocklet',
+    buckets: 'Buckets',
+    resources: 'Resources',
   },
 });

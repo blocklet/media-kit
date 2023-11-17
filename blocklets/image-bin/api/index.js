@@ -8,10 +8,11 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
-
+const { initStaticResourceMiddleware } = require('@blocklet/uploader/middlewares');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
+const { ResourceType } = require('./libs/constants');
 
 if (fs.existsSync(env.uploadDir) === false) {
   fs.mkdirSync(env.uploadDir, { recursive: true });
@@ -24,10 +25,18 @@ app.use(cookieParser());
 app.use(express.json({ limit: env.maxUploadSize }));
 app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 
-app.use('/uploads', express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }));
+app.use(
+  '/uploads',
+  express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
+  initStaticResourceMiddleware({
+    express,
+    resourceTypes: [ResourceType],
+  })
+);
 
 const router = express.Router();
 router.use('/api/embed', require('./routes/embed'));
+router.use('/api', require('./routes/resources'));
 router.use('/api', require('./routes/upload'));
 
 const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';

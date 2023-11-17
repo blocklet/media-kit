@@ -1,10 +1,11 @@
 /* eslint-disable import/no-cycle */
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import uniqBy from 'lodash/uniqBy';
 import debounce from 'lodash/debounce';
 import EventEmitter from 'wolfy87-eventemitter';
 import { useReactive } from 'ahooks';
+import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 
 import api from '../libs/api';
 
@@ -14,6 +15,7 @@ const { Provider, Consumer } = UploadContext;
 const events = new EventEmitter();
 
 function UploadProvider({ children, pageSize = 12, type = '' }) {
+  const { t } = useLocaleContext();
   const pageState = useReactive({
     folderId: '',
     uploads: [],
@@ -22,6 +24,12 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
     loading: false,
     hasMore: true,
   });
+
+  const tabs = [
+    { key: 'bucket', value: t('common.buckets') },
+    { key: 'resource', value: t('common.resources') },
+  ];
+  const [tab, setTab] = useState('bucket');
 
   const loadMoreUploads = async () => {
     if (pageState.hasMore) {
@@ -101,6 +109,9 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
           pageState.hasMore = true;
           loadMoreUploads();
         },
+        tabs,
+        tab,
+        setTab,
       }}>
       {children}
     </Provider>
