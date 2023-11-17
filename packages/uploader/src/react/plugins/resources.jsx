@@ -133,7 +133,7 @@ class Resources extends UIPlugin {
       this.apiData.loading = true;
 
       // use image-bin uploads api, so can hard code /api/uploads
-      const { data } = await api.get(`/api/uploads/resources`, {
+      const { data } = await api.get(`/api/resources`, {
         params: {
           componentDid: this.apiData.componentDid,
         },
@@ -169,7 +169,7 @@ class Resources extends UIPlugin {
         'id'
       );
 
-      this.uploaded.setPluginState({
+      this.resources.setPluginState({
         files: this.apiData.files,
         loading: false,
       });
@@ -185,7 +185,7 @@ class Resources extends UIPlugin {
 
   resetState = () => {
     this.apiData = { ...initAPIData };
-    this.uploaded.setPluginState({ ...initPluginState });
+    this.resources.setPluginState({ ...initPluginState });
   };
 
   install() {
@@ -196,17 +196,17 @@ class Resources extends UIPlugin {
       showFilter: false,
     });
 
-    // uploaded
-    this.uploaded = this.view.plugin;
+    // resources
+    this.resources = this.view.plugin;
 
-    this.uploaded.setPluginState({ ...initPluginState });
+    this.resources.setPluginState({ ...initPluginState });
 
-    this.uploaded.uppy.on('dashboard:show-panel', this.resetState);
+    this.resources.uppy.on('dashboard:show-panel', this.resetState);
 
     // hacker toggleCheckbox
     this.view.toggleCheckbox = (event, file) => {
-      const { currentSelection } = this.uploaded.getPluginState();
-      const maxNumberOfFiles = this.uploaded.uppy.opts.restrictions.maxNumberOfFiles;
+      const { currentSelection } = this.resources.getPluginState();
+      const maxNumberOfFiles = this.resources.uppy.opts.restrictions.maxNumberOfFiles;
       const canAdd = maxNumberOfFiles ? currentSelection.length < maxNumberOfFiles : true;
 
       // not include
@@ -215,27 +215,27 @@ class Resources extends UIPlugin {
           currentSelection.pop();
         }
 
-        this.uploaded.setPluginState({
+        this.resources.setPluginState({
           currentSelection: [...currentSelection, file],
         });
       } else {
         // remove
-        this.uploaded.setPluginState({
+        this.resources.setPluginState({
           currentSelection: [...currentSelection.filter((item) => item.id !== file.id)],
         });
       }
     };
 
     // hacker uppy.validateRestrictions
-    this.uploaded.uppy.validateRestrictions = () => {
+    this.resources.uppy.validateRestrictions = () => {
       return false;
     };
 
     // hacker donePicking
     this.view.donePicking = () => {
-      const { currentSelection } = this.uploaded.getPluginState();
+      const { currentSelection } = this.resources.getPluginState();
       this.uppy.emit('uploaded:selected', currentSelection);
-      this.uploaded.parent.hideAllPanels();
+      this.resources.parent.hideAllPanels();
     };
 
     const { target } = this.opts;
@@ -247,7 +247,7 @@ class Resources extends UIPlugin {
 
   uninstall() {
     this.unmount();
-    this.uploaded.uppy.off('dashboard:show-panel', this.resetState);
+    this.resources.uppy.off('dashboard:show-panel', this.resetState);
   }
 }
 

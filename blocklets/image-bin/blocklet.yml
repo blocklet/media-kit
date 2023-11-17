@@ -99,7 +99,7 @@ capabilities:
   clusterMode: false
   component: true
   navigation: true
-  resourceExportApi: /api/resources
+  resourceExportApi: /api/resources/export
 screenshots:
   - upload.png
 components: []

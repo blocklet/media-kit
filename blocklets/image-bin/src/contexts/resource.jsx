@@ -19,7 +19,7 @@ function ResourceProvider({ children }) {
   const loadResources = async () => {
     pageState.loading = true;
     await api
-      .get('/api/uploads/resources', {
+      .get('/api/resources', {
         params: {
           componentDid: pageState.componentDid,
         },

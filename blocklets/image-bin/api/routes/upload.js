@@ -4,12 +4,9 @@ const crypto = require('crypto');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
-const toUpper = require('lodash/toUpper');
-const flatten = require('lodash/flatten');
 const multer = require('multer');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
-const { getResourceExportDir } = require('@blocklet/sdk/lib/component');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
 const { isValid: isValidDid } = require('@arcblock/did');
@@ -19,30 +16,11 @@ const logger = require('../libs/logger');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
-const { MediaTypes, runningStatus, ExportDir } = require('../libs/constants');
 
 const router = express.Router();
 const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
-
-const getComponents = () => {
-  const components = [];
-  config.components
-    .filter((x) => x.status === runningStatus)
-    .forEach((component) => {
-      const resource = component.resources?.find((x) => MediaTypes.some((type) => x.endsWith(type)));
-      if (resource) {
-        components.push({
-          name: component.title || component.name,
-          did: component.did,
-          path: resource,
-        });
-      }
-    });
-
-  return components;
-};
 
 const ensureFolderId = async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
@@ -153,29 +131,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
   };
 };
 
-const getResourceListMiddleware = () => {
-  return (req, res) => {
-    const { componentDid: inputComponentDid } = req.query;
-
-    const components = getComponents();
-
-    const componentDid = inputComponentDid || components[0]?.did;
-    const resourcePath = components.find((x) => x.did === componentDid)?.path;
-
-    if (!fs.existsSync(resourcePath)) {
-      res.jsonp({ components, componentDid, resources: [] });
-      return;
-    }
-
-    const resources = fs.readdirSync(resourcePath).map((filename) => ({ filename }));
-
-    res.jsonp({ components, componentDid, resources });
-  };
-};
-
 router.get('/uploads', user, auth, getUploadListMiddleware());
-
-router.get('/uploads/resources', user, auth, getResourceListMiddleware());
 
 // remove upload
 router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res) => {
@@ -505,56 +461,6 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   res.json({ availablePluginMap });
-});
-
-router.get('/resources', ensureAdmin, async (_req, res) => {
-  const folders = await Folder.cursor({}).sort({ createdAt: -1 }).exec();
-  const resources = (folders || []).map((x) => ({
-    id: x._id,
-    name: toUpper(x.name),
-  }));
-
-  res.json({ resources });
-});
-
-const getExportDir = (projectId, releaseId) => {
-  const resourceDir = getResourceExportDir({ projectId, releaseId });
-  const dir = path.join(resourceDir, ExportDir);
-  return dir;
-};
-
-router.post('/resources', ensureAdmin, async (req, res) => {
-  const { resources, projectId, releaseId } = req.body;
-
-  const dir = getExportDir(projectId, releaseId);
-
-  const uploads = flatten(await Promise.all(resources.map((folderId) => Upload.find({ folderId }))));
-
-  if (!uploads.length) {
-    fs.rmSync(dir, { recursive: true, force: true });
-    res.json({});
-    return;
-  }
-
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true, force: true });
-  }
-  fs.mkdirSync(dir, { recursive: true });
-
-  await Promise.all(
-    uploads.map(async ({ filename }) => {
-      const filePath = path.join(env.uploadDir, filename);
-      const newFilePath = path.join(dir, filename);
-
-      if (!fs.existsSync(filePath)) {
-        return;
-      }
-
-      await fs.copy(filePath, newFilePath);
-    })
-  );
-
-  res.json({});
 });
 
 module.exports = router;

@@ -30,18 +30,13 @@ app.use(
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
   initStaticResourceMiddleware({
     express,
-    resourceTypes: [
-      ResourceType,
-      // {
-      //   type: 'page',
-      //   folder: 'pages',
-      // },
-    ],
+    resourceTypes: [ResourceType],
   })
 );
 
 const router = express.Router();
 router.use('/api/embed', require('./routes/embed'));
+router.use('/api', require('./routes/resources'));
 router.use('/api', require('./routes/upload'));
 
 const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';
