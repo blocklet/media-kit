@@ -444,7 +444,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       // @ts-ignore
       state.uppy.on('uploaded:selected', (files: Object[]) => {
         files.forEach((data: any) => {
-          console.log(123, data);
           // emit to upload success, mock http response
           state.uppy.emitUploadSuccess(
             {
