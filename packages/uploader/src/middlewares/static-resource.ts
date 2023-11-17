@@ -42,10 +42,11 @@ const mappingResource = async (skipRunningCheck: boolean) => {
     canUseResources = flattenDeep(filteredComponents.map((item: any) => item.resources))
       .map((originDir: any) => {
         // check dir is exists and not in resourceKeys
-        if (!existsSync(originDir) || !resourceTypes.some(({ type }) => extname(originDir).endsWith(type))) {
+        const resourceType = resourceTypes.find(({ type }) => extname(originDir).endsWith(type));
+        if (!existsSync(originDir) || !resourceType) {
           return false;
         }
-        const { folder = '' } = resourceTypesMap[originDir.split('/').pop()];
+        const { folder = '' } = resourceType;
         return { originDir, dir: join(originDir, folder || '') };
       })
       .filter(Boolean);
@@ -59,7 +60,7 @@ const mappingResource = async (skipRunningCheck: boolean) => {
 
     return canUseResources;
   } catch (error) {
-    // do nothing
+    console.error(error);
   }
 
   return false;
