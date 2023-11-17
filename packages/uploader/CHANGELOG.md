@@ -1,3 +1,7 @@
+## 0.0.42 (November 17, 2023)
+
+- feat: support dynamic resource dir assets
+
 ## 0.0.41 (November 16, 2023)
 
 - chore: update deps
