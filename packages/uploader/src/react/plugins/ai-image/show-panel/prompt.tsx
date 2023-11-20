@@ -16,8 +16,8 @@ const dalle3Sizes = ['1024x1024', '1024x1792', '1792x1024'];
 const dalle2Sizes = ['256x256', '512x512', '1024x1024'];
 
 const models = [
-  { label: 'DALLE3', value: 'dall-e-3' },
-  { label: 'DALLE2', value: 'dall-e-2' },
+  { label: 'DALL·E 3', value: 'dall-e-3' },
+  { label: 'DALL·E 2', value: 'dall-e-2' },
 ];
 
 export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptProps) => void }) {
