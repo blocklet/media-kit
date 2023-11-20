@@ -204,7 +204,11 @@ const Root = styled(Box)`
   .MuiOutlinedInput-root {
     background: #fbfbfb;
     border-radius: 4px;
-    padding-right: 0;
+    padding: 0;
+
+    textarea {
+      padding: 8.5px 14px;
+    }
 
     fieldset {
       border: 1px solid #f6f6f6;
