@@ -42,17 +42,12 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
   const { run } = useDebounceFn(submit, { wait: 500 });
 
-  const sliderWrapperProps = {
-    width: '100%',
-    pl: '12px',
-    pr: '16px',
-  };
-
+  const sliderWrapperProps = { width: '100%', pl: '12px', pr: '16px' };
   const marks = values.model === 'dall-e-2' ? dalle2Sizes : dalle3Sizes;
 
   return (
     <Root onSubmit={(e: any) => e.preventDefault()}>
-      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', m: 1 }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', m: 2, mb: 0 }}>
         <Grid container gap={2.5}>
           <Grid item xs={12}>
             <Typography gutterBottom className="title label">
@@ -84,14 +79,21 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
             <RadioGroup
               row
-              sx={{ '.MuiFormControlLabel-label': { fontSize: '13px' } }}
+              sx={{ '.MuiFormControlLabel-label': { fontSize: '12px' } }}
               value={values.model}
               onChange={(e) => {
                 values.size = '1024x1024';
                 values.model = e.target.value as any;
               }}>
               {models.map((item) => {
-                return <FormControlLabel value={item.value} control={<Radio size="small" />} label={item.label} />;
+                return (
+                  <FormControlLabel
+                    value={item.value}
+                    control={<Radio size="small" />}
+                    key={item.label}
+                    label={item.label}
+                  />
+                );
               })}
             </RadioGroup>
           </Grid>
@@ -101,12 +103,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
               {`${i18n('aiImageSize')}: ${values.size}`}
             </Typography>
 
-            <Grid
-              container
-              sx={{
-                gap: 2.5,
-                pt: 1,
-              }}>
+            <Grid container sx={{ gap: 2.5, pt: 1 }}>
               <Box flex={1}>
                 <Box {...sliderWrapperProps}>
                   <Slider
@@ -150,13 +147,12 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
       </Box>
 
       <Button
-        sx={{ m: 1 }}
+        sx={{ m: 2, my: 1, transition: 'all 0.3s' }}
         className={'submit-ai'}
         type="submit"
         variant="contained"
         onClick={run}
-        disabled={loading}
-        style={{ transition: 'all 0.3s' }}>
+        disabled={loading}>
         {loading ? i18n('aiImageGenerating') : i18n('aiImageGenerate')}
       </Button>
     </Root>
@@ -208,7 +204,11 @@ const Root = styled(Box)`
   .MuiOutlinedInput-root {
     background: #fbfbfb;
     border-radius: 4px;
-    padding-right: 0;
+    padding: 0;
+
+    textarea {
+      padding: 8.5px 14px;
+    }
 
     fieldset {
       border: 1px solid #f6f6f6;
