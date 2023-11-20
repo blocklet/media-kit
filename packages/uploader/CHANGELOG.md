@@ -1,4 +1,4 @@
-## 0.0.43 (十一月 20, 2023)
+## 0.0.44 (十一月 20, 2023)
 
 - chore: support select model
 
@@ -48,7 +48,7 @@
 
 ## 0.0.31 (October 17, 2023)
 
-- fix: resolve the bug of missing window.blocklet 
+- fix: resolve the bug of missing window.blocklet
 
 ## 0.0.30 (October 13, 2023)
 
