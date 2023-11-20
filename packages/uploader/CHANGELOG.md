@@ -1,3 +1,7 @@
+## 0.0.45 (十一月 20, 2023)
+
+- chore: set generate image number in dall-e 3
+
 ## 0.0.44 (十一月 20, 2023)
 
 - chore: support select model

@@ -82,6 +82,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
               sx={{ '.MuiFormControlLabel-label': { fontSize: '12px' } }}
               value={values.model}
               onChange={(e) => {
+                values.number = 1;
                 values.size = '1024x1024';
                 values.model = e.target.value as any;
               }}>
@@ -121,28 +122,30 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
             </Grid>
           </Grid>
 
-          <Grid item xs={12}>
-            <Typography gutterBottom className="title label">
-              {`${i18n('aiImageNumber')}: ${values.number}`}
-            </Typography>
+          {values.model === 'dall-e-2' && (
+            <Grid item xs={12}>
+              <Typography gutterBottom className="title label">
+                {`${i18n('aiImageNumber')}: ${values.number}`}
+              </Typography>
 
-            <Box {...sliderWrapperProps}>
-              <Slider
-                size="small"
-                defaultValue={1}
-                valueLabelDisplay="auto"
-                step={1}
-                min={1}
-                max={10}
-                value={values.number as number}
-                //@ts-ignore
-                onChange={(e: any, newValue: string) => {
-                  e.stopPropagation();
-                  values.number = Number(newValue);
-                }}
-              />
-            </Box>
-          </Grid>
+              <Box {...sliderWrapperProps}>
+                <Slider
+                  size="small"
+                  defaultValue={1}
+                  valueLabelDisplay="auto"
+                  step={1}
+                  min={1}
+                  max={10}
+                  value={values.number as number}
+                  //@ts-ignore
+                  onChange={(e: any, newValue: string) => {
+                    e.stopPropagation();
+                    values.number = Number(newValue);
+                  }}
+                />
+              </Box>
+            </Grid>
+          )}
         </Grid>
       </Box>
 
