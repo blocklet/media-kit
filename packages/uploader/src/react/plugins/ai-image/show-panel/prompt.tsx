@@ -84,6 +84,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
             <RadioGroup
               row
+              sx={{ '.MuiFormControlLabel-label': { fontSize: '13px' } }}
               value={values.model}
               onChange={(e) => {
                 values.size = '1024x1024';
