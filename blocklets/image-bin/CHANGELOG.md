@@ -1,3 +1,7 @@
+## 0.10.39 (十一月 20, 2023)
+
+- chore: support select model
+
 ## 0.10.38 (November 17, 2023)
 
 - feat: support serve media from resource blocklet

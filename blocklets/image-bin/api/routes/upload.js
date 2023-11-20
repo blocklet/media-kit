@@ -412,17 +412,17 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
 });
 
 router.post('/image/generations', user, auth, async (req, res) => {
-  const { prompt, number, sizeWidth, responseFormat } = req.body;
+  const { prompt, number, size = '1024x1024', responseFormat, model = 'dall-e-2' } = req.body;
 
   const response = await Component.call({
     name: 'ai-kit',
     path: '/api/v1/sdk/image/generations',
     method: 'POST',
     data: {
-      model: 'dall-e-3',
+      model,
       prompt,
+      size,
       n: parseInt(number, 10),
-      size: `${sizeWidth}x${sizeWidth}`,
       response_format: responseFormat,
     },
     responseType: 'stream',

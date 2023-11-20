@@ -1,3 +1,7 @@
+## 0.0.43 (十一月 20, 2023)
+
+- chore: support select model
+
 ## 0.0.42 (November 17, 2023)
 
 - feat: support dynamic resource dir assets
