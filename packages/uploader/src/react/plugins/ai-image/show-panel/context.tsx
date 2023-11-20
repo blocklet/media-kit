@@ -20,8 +20,9 @@ interface AIImageContextState {
 
 export interface AIImagePromptProps {
   prompt: string;
-  sizeWidth: number;
+  size: string;
   number: number;
+  model: 'dall-e-3' | 'dall-e-2';
 }
 
 export const AIImageContext = createContext<AIImageContextType>({} as AIImageContextType);

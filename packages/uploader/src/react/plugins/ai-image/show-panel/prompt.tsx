@@ -10,23 +10,23 @@ import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 
 import { useAIImageContext, AIImagePromptProps } from './context';
+import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
 
-const marks = [
-  {
-    label: 1024,
-    value: 1024,
-  },
+const dalle3Sizes = ['1024x1024', '1024x1792', '1792x1024'];
+const dalle2Sizes = ['256x256', '512x512', '1024x1024'];
+
+const models = [
+  { label: 'DALLE3', value: 'dall-e-3' },
+  { label: 'DALLE2', value: 'dall-e-2' },
 ];
-function valueLabelFormat(value: number) {
-  return marks.findIndex((mark) => mark.value === value) + 1;
-}
 
 export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptProps) => void }) {
   const { loading, i18n } = useAIImageContext();
 
   const values = useReactive<AIImagePromptProps>({
+    model: 'dall-e-3',
     prompt: '',
-    sizeWidth: 1024,
+    size: '1024x1024',
     number: 1,
   });
 
@@ -48,9 +48,11 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
     pr: '16px',
   };
 
+  const marks = values.model === 'dall-e-2' ? dalle2Sizes : dalle3Sizes;
+
   return (
     <Root onSubmit={(e: any) => e.preventDefault()}>
-      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', m: 1 }}>
         <Grid container gap={2.5}>
           <Grid item xs={12}>
             <Typography gutterBottom className="title label">
@@ -62,10 +64,10 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
               size="small"
               type="text"
               required
-              // label="Prompt"
               placeholder={i18n('aiImagePromptTip')}
               multiline
-              minRows={7}
+              minRows={6}
+              maxRows={6}
               value={values.prompt ?? ''}
               onChange={(e: any) => {
                 e.stopPropagation();
@@ -77,7 +79,25 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
           <Grid item xs={12}>
             <Typography gutterBottom className="title label">
-              {`${i18n('aiImageSize')}: ${values.sizeWidth}px × ${values.sizeWidth}px`}
+              {`${i18n('aiImageModel')}`}
+            </Typography>
+
+            <RadioGroup
+              row
+              value={values.model}
+              onChange={(e) => {
+                values.size = '1024x1024';
+                values.model = e.target.value as any;
+              }}>
+              {models.map((item) => {
+                return <FormControlLabel value={item.value} control={<Radio size="small" />} label={item.label} />;
+              })}
+            </RadioGroup>
+          </Grid>
+
+          <Grid item xs={12}>
+            <Typography gutterBottom className="title label">
+              {`${i18n('aiImageSize')}: ${values.size}`}
             </Typography>
 
             <Grid
@@ -87,41 +107,19 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
                 pt: 1,
               }}>
               <Box flex={1}>
-                {/* <Typography fontSize={12}>width</Typography> */}
                 <Box {...sliderWrapperProps}>
                   <Slider
                     size="small"
-                    valueLabelDisplay="off"
-                    marks={marks}
-                    min={256}
-                    max={1024}
-                    defaultValue={512}
-                    value={values.sizeWidth as number}
-                    onChange={(e: any, newValue: string) => {
-                      values.sizeWidth = Number(newValue);
+                    min={0}
+                    max={marks.length - 1}
+                    step={1}
+                    value={marks.findIndex((x) => x == values.size)}
+                    onChange={(e: any, newValue) => {
+                      values.size = marks[newValue as number];
                     }}
-                    valueLabelFormat={valueLabelFormat}
-                    step={null}
                   />
                 </Box>
               </Box>
-
-              {/* <Box flex={1}>
-              <Typography fontSize={12}>height</Typography>
-
-              <Slider
-                size="small"
-                valueLabelDisplay="auto"
-                marks={marks}
-                min={256}
-                max={1024}
-                defaultValue={512}
-                value={values.sizeWidth as number}
-                onChange={(e, newValue) => (values.sizeWidth = Number(newValue))}
-                valueLabelFormat={valueLabelFormat}
-                step={null}
-              />
-            </Box> */}
             </Grid>
           </Grid>
 
@@ -139,6 +137,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
                 min={1}
                 max={10}
                 value={values.number as number}
+                //@ts-ignore
                 onChange={(e: any, newValue: string) => {
                   e.stopPropagation();
                   values.number = Number(newValue);
@@ -150,6 +149,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
       </Box>
 
       <Button
+        sx={{ m: 1 }}
         className={'submit-ai'}
         type="submit"
         variant="contained"
@@ -166,9 +166,10 @@ const Root = styled(Box)`
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
 
   .title {
-    padding: 0 0 8px 1px;
+    padding: 0 0 4px 1px;
   }
 
   .label {
@@ -182,7 +183,6 @@ const Root = styled(Box)`
 
   .submit-ai {
     height: 40px;
-    width: 100%;
     background: linear-gradient(90deg, #45e4fa 0%, #8a45fa 52.08%, #fa45bc 100%);
     border-radius: 30px;
     box-shadow: none;
@@ -207,6 +207,7 @@ const Root = styled(Box)`
   .MuiOutlinedInput-root {
     background: #fbfbfb;
     border-radius: 4px;
+    padding-right: 0;
 
     fieldset {
       border: 1px solid #f6f6f6;

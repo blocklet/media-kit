@@ -51,7 +51,7 @@ function AIImage({ onSelect, api, restrictions, i18n }: Props) {
             xs={12}
             sm={4}
             sx={{ borderRight: { sm: '1px solid #eee' }, display: openPrompt ? 'unset' : 'none' }}>
-            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Prompt
                 onSubmit={(...props) => {
                   setOpen(true);

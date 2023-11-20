@@ -57,7 +57,7 @@ export default function Output({
         const list = res.data || [];
         const arr = list.map((item: { b64_json: string }) => ({
           src: `data:image/png;base64,${item.b64_json}`,
-          width: options.sizeWidth,
+          width: options.size ? Number((options.size || '').split('x')[0]) : 1024,
         }));
 
         if (response) {
@@ -75,7 +75,7 @@ export default function Output({
       onLoading(false);
       onFinish();
     }
-  }, [options?.number, options?.prompt, options?.sizeWidth]);
+  }, [options?.number, options?.prompt, options?.size]);
 
   const onSelectImage = (src: string) => {
     const selectedUrls: string[] = Object.keys(selected).filter((key) => selected[key]);
