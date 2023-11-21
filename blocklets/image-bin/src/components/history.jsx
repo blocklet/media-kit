@@ -276,6 +276,7 @@ export default function Uploads() {
 
   return (
     <Div
+      ref={wrapperRef}
       style={{
         height: 'calc(100vh - 64px - 80px)',
         overflowY: 'auto',
