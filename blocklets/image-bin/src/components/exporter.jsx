@@ -17,7 +17,7 @@ export default function Exporter() {
       }
     };
     setTimeout(() => {
-      if (iframeRef.current) {
+      if (showCreateResource && iframeRef.current) {
         window.addEventListener('message', listener);
       }
     }, 600);
@@ -25,7 +25,7 @@ export default function Exporter() {
       window.removeEventListener('message', listener);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [showCreateResource]);
 
   return (
     <>
@@ -44,7 +44,7 @@ export default function Exporter() {
           className="iframe"
           ref={iframeRef}
           src={PROJECT_PAGE_PATH}
-          title="Add Resource"
+          title="Create Resource"
           style={{
             position: 'fixed',
             top: 0,
