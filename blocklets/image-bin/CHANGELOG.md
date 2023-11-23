@@ -1,3 +1,9 @@
+## 0.10.43 (November 23, 2023)
+
+- feat(ux): support adding folder directly
+- chore(resource): polish ux of import resource and export resource
+- chore: update blocklet sdk
+
 ## 0.10.42 (November 21, 2023)
 
 - fix: resolve the bug of missing wrapperRef

@@ -11,6 +11,11 @@ export default flatten({
     moveFolderConfirmSelect: 'Filter or Create Folder',
     moveFolderConfirmAddNew: 'Create New Folder: {name}',
     moveFolderAddNewSuccess: 'Created Folder successfully',
+    add: 'Create',
+    addFolder: 'Create Folder',
+    folderName: 'Folder Name',
+    addFolderConfirmTitle: 'Create Folder',
+    addFolderSuccess: 'Created Folder successfully',
     delete: 'Delete',
     deleteConfirmTitle: 'Confirm Delete?',
     deleteConfirmMessage: 'Are you sure you want to delete {name}, this operation is not recoverable.',
@@ -27,5 +32,6 @@ export default flatten({
     resourceBlocklet: 'Resource Blocklet',
     buckets: 'Buckets',
     resources: 'Resources',
+    import: 'Import',
   },
 });

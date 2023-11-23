@@ -1,75 +1,31 @@
-import { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
+import { useState, useRef, useEffect } from 'react';
 import Button from '@arcblock/ux/lib/Button';
-import Dialog from '@arcblock/ux/lib/Dialog';
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
-import styled from '@emotion/styled';
-import DialogContentText from '@mui/material/DialogContentText';
 
 import { PROJECT_PAGE_PATH } from '../libs/constants';
 
-function CreateResource({ open, onClose }) {
-  const { t } = useLocaleContext();
-  const iframeRef = useRef(null);
-
-  if (!open) {
-    return null;
-  }
-
-  return (
-    <DialogWrapper
-      title={t('common.resourceBlocklet')}
-      maxWidth={false}
-      fullWidth={false}
-      PaperProps={{
-        style: {
-          maxWidth: 1350,
-          width: '80%',
-        },
-      }}
-      onClose={onClose}
-      showCloseButton
-      disableEscapeKeyDown
-      open>
-      <DialogContentWrapper>
-        <iframe
-          style={{ width: '100%', height: '100%' }}
-          className="iframe"
-          ref={iframeRef}
-          src={PROJECT_PAGE_PATH}
-          title="Add Resource"
-        />
-      </DialogContentWrapper>
-    </DialogWrapper>
-  );
-}
-
-CreateResource.propTypes = {
-  open: PropTypes.bool,
-  onClose: PropTypes.func,
-};
-
-CreateResource.defaultProps = {
-  open: false,
-  onClose: () => {},
-};
-
-const DialogWrapper = styled(Dialog)`
-  .iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-`;
-
-const DialogContentWrapper = styled(DialogContentText)`
-  height: 72vh;
-  position: relative;
-`;
-
-export default function Uploader() {
+export default function Exporter() {
   const { t } = useLocaleContext();
   const [showCreateResource, setShowCreateResource] = useState(false);
+
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    const listener = (event) => {
+      if (event?.data?.event === 'resourceDialog.close') {
+        setShowCreateResource(false);
+      }
+    };
+    setTimeout(() => {
+      if (showCreateResource && iframeRef.current) {
+        window.addEventListener('message', listener);
+      }
+    }, 600);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCreateResource]);
 
   return (
     <>
@@ -83,7 +39,23 @@ export default function Uploader() {
         style={{ marginRight: 16 }}>
         {t('common.export')}
       </Button>
-      {showCreateResource && <CreateResource open onClose={() => setShowCreateResource(false)} />}
+      {showCreateResource && (
+        <iframe
+          className="iframe"
+          ref={iframeRef}
+          src={PROJECT_PAGE_PATH}
+          title="Create Resource"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 9999,
+            backgroundColor: 'transparent',
+          }}
+        />
+      )}
     </>
   );
 }
