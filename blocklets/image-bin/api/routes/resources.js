@@ -4,13 +4,12 @@ const express = require('express');
 const toUpper = require('lodash/toUpper');
 const flatten = require('lodash/flatten');
 const middleware = require('@blocklet/sdk/lib/middlewares');
-const config = require('@blocklet/sdk/lib/config');
-const { getResourceExportDir } = require('@blocklet/sdk/lib/component');
+const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/component');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
-const { MediaTypes, runningStatus, ExportDir } = require('../libs/constants');
+const { MediaTypes, ExportDir } = require('../libs/constants');
 
 const router = express.Router();
 const auth = middleware.auth({ roles: env.uploaderRoles });
@@ -18,21 +17,8 @@ const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
 const getResourceComponents = () => {
-  const components = [];
-  config.components
-    .filter((x) => x.status === runningStatus)
-    .forEach((component) => {
-      const resource = component.resources?.find((x) => MediaTypes.some((type) => x.endsWith(type)));
-      if (resource) {
-        components.push({
-          name: component.title || component.name,
-          did: component.did,
-          path: resource,
-        });
-      }
-    });
-
-  return components;
+  const resources = getResources({ types: MediaTypes });
+  return resources.map((x) => ({ ...x, name: x.title }));
 };
 
 const getResourceListMiddleware = () => {
