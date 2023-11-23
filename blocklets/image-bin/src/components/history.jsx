@@ -7,7 +7,6 @@ import { format } from 'timeago.js';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import Dialog from '@arcblock/ux/lib/Dialog';
 import { useRef, lazy, useState, useEffect } from 'react';
 import Spinner from '@mui/material/CircularProgress';
 import Divider from '@mui/material/Divider';
@@ -29,7 +28,8 @@ import { useResourceContext } from '../contexts/resource';
 import { createImageUrl } from '../libs/api';
 import Actions from './actions';
 import MediaItem from './media-item';
-import { ADD_RESOURCE_PAGE_PATH, COMPONENT_DID } from '../libs/constants';
+import { ADD_RESOURCE_PAGE_PATH } from '../libs/constants';
+import CreateFolder from './create-folder';
 
 const UploaderTrigger = lazy(() =>
   // eslint-disable-next-line import/no-unresolved
@@ -241,7 +241,7 @@ export default function Uploads() {
     filterByComponent,
   } = resourceState;
   const wrapperRef = useRef(null);
-  const [showDialog, setShowDialog] = useState(false);
+  const [showImporter, setShowImporter] = useState(false);
   const iframeRef = useRef(null);
 
   useInfiniteScroll(loadMoreUploads, {
@@ -259,20 +259,27 @@ export default function Uploads() {
   }, [tab]);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (showDialog && iframeRef.current) {
-        window.addEventListener('message', (event) => {
-          if (event?.data?.event === 'component.installed' && event.data.componentDid === COMPONENT_DID) {
-            setShowDialog(false);
-            setTimeout(() => {
-              loadMoreUploads();
-            }, 600);
-          }
-        });
+    const listener = (event) => {
+      if (event?.data?.event === 'component.installed') {
+        setShowImporter(false);
+        setTimeout(() => {
+          loadResources();
+        }, 500);
       }
-    }, 1000);
+      if (event?.data?.event === 'resourceDialog.close') {
+        setShowImporter(false);
+      }
+    };
+    setTimeout(() => {
+      if (showImporter && iframeRef.current) {
+        window.addEventListener('message', listener);
+      }
+    }, 600);
+    return () => {
+      window.removeEventListener('message', listener);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showDialog]);
+  }, [showImporter]);
 
   return (
     <Div
@@ -323,6 +330,13 @@ export default function Uploads() {
                 {x.name}
               </Button>
             ))}
+            <CreateFolder>
+              {(open) => (
+                <Button onClick={open} startIcon={<AddCircleOutlineIcon />}>
+                  {t('common.addFolder')}
+                </Button>
+              )}
+            </CreateFolder>
           </ButtonGroup>
         </Box>,
         uploads.length === 0 ? (
@@ -378,32 +392,27 @@ export default function Uploads() {
             <Button
               key="import"
               title="Import"
-              onClick={() => setShowDialog(true)}
+              onClick={() => setShowImporter(true)}
               startIcon={<AddCircleOutlineIcon />}
               variant="outlined">
-              Import
+              {t('common.import')}
             </Button>
           </ButtonGroup>
-          {showDialog && (
-            <DialogWrapper
-              title="Add Resource"
-              maxWidth={false}
-              fullWidth={false}
-              PaperProps={{
-                style: {
-                  maxWidth: 1350,
-                  minWidth: 930,
-                  width: '80%',
-                },
+          {showImporter && (
+            <iframe
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100vw',
+                height: '100vh',
+                zIndex: 9999,
+                backgroundColor: 'transparent',
               }}
-              onClose={() => setShowDialog(false)}
-              showCloseButton
-              disableEscapeKeyDown
-              open>
-              <Box className="body">
-                <iframe className="iframe" ref={iframeRef} src={ADD_RESOURCE_PAGE_PATH} title="Add Resource" />
-              </Box>
-            </DialogWrapper>
+              ref={iframeRef}
+              src={ADD_RESOURCE_PAGE_PATH}
+              title="Resource"
+            />
           )}
         </Box>,
         components.length === 0 ? (
@@ -428,17 +437,5 @@ const Div = styled.div`
   .load-more {
     padding: 24px 0;
     text-align: center;
-  }
-`;
-
-const DialogWrapper = styled(Dialog)`
-  .body {
-    height: 72vh;
-    position: relative;
-    .iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
-    }
   }
 `;
