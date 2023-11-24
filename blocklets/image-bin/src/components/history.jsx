@@ -416,7 +416,7 @@ export default function Uploads() {
           )}
         </Box>,
         components.length === 0 ? (
-          <Empty>{t('common.emptyResource')}</Empty>
+          <Empty sx={{ height: '50vh' }}>{t('common.emptyResource')}</Empty>
         ) : (
           <Box>
             <Gallery uploads={resources} type="resource" />

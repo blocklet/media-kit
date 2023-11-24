@@ -38,7 +38,8 @@
     "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' ",
     "dev": "pnpm run build:watch",
     "prepublish": "pnpm run build",
-    "prebuild:dep": "pnpm run build"
+    "prebuild:dep": "pnpm run build",
+    "postinstall": "pnpm run build"
   },
   "keywords": [
     "blocklet",

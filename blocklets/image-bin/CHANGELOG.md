@@ -1,3 +1,7 @@
+## 0.10.44 (November 24, 2023)
+
+- fix: polish empty content height
+
 ## 0.10.43 (November 23, 2023)
 
 - feat(ux): support adding folder directly
