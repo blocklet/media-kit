@@ -281,6 +281,10 @@ export default function Uploads() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showImporter]);
 
+  const emptyProps = {
+    sx: { height: 'calc(100% - 48px - 100px)' },
+  };
+
   return (
     <Div
       ref={wrapperRef}
@@ -340,7 +344,7 @@ export default function Uploads() {
           </ButtonGroup>
         </Box>,
         uploads.length === 0 ? (
-          <Empty>{t('common.empty')}</Empty>
+          <Empty {...emptyProps}>{t('common.empty')}</Empty>
         ) : (
           <Box>
             <Gallery
@@ -416,7 +420,7 @@ export default function Uploads() {
           )}
         </Box>,
         components.length === 0 ? (
-          <Empty sx={{ height: '50vh' }}>{t('common.emptyResource')}</Empty>
+          <Empty {...emptyProps}>{t('common.emptyResource')}</Empty>
         ) : (
           <Box>
             <Gallery uploads={resources} type="resource" />
@@ -425,7 +429,7 @@ export default function Uploads() {
                 <Spinner />
               </div>
             )}
-            {!loadingResources && resources.length === 0 && <Empty>{t('common.emptyResource')}</Empty>}
+            {!loadingResources && resources.length === 0 && <Empty {...emptyProps}>{t('common.emptyResource')}</Empty>}
           </Box>
         ),
       ]}
