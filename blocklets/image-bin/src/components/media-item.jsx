@@ -11,6 +11,7 @@ function MediaItem(props) {
   const style = {
     WebkitUserDrag: 'none',
     objectFit: isVideo ? 'contain' : 'cover',
+    background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px',
   };
 
   return isVideo ? (

@@ -26,6 +26,7 @@ import { useKeyPress } from 'ahooks';
 import { Dashboard } from '@uppy/react';
 import DropTarget from '@uppy/drop-target';
 import ImageEditor from '@uppy/image-editor';
+import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
 import localeMap from './i18n';
 // import GoldenRetriever from '@uppy/golden-retriever';
@@ -64,6 +65,7 @@ import AIImage from './plugins/ai-image';
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 const target = 'uploader-container';
+const uploaderDashboardId = 'uploader-dashboard';
 
 const isDebug = localStorage.getItem('uppy_debug');
 
@@ -86,6 +88,7 @@ const getPluginList = (props: any) => {
       options: {
         quality: 1,
       },
+      alwayUse: true,
     },
     // other blocklet may can use this plugin
     (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
@@ -180,6 +183,15 @@ const getPluginList = (props: any) => {
       plugin: PrepareUpload,
       options: {
         companionUrl,
+      },
+      alwayUse: true,
+    },
+    {
+      id: 'ThumbnailGenerator',
+      plugin: ThumbnailGenerator,
+      options: {
+        thumbnailType: 'image/png',
+        thumbnailWidth: 800,
       },
       alwayUse: true,
     },
@@ -475,7 +487,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     if (['MyDevice', ...plugins].map((item) => item.toLowerCase()).includes(pluginName.toLowerCase())) {
       let selectorKey = `div[data-uppy-acquirer-id="${pluginName}"] > button`;
       document
-        ?.getElementById('upload-dashboard')
+        ?.getElementById(uploaderDashboardId)
         ?.querySelector(selectorKey)
         // @ts-ignore
         ?.click?.();
@@ -496,13 +508,13 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     // @ts-ignore set blur and focus body
     document.activeElement?.blur?.();
     // auto focus upload-dashboard to key paste event
-    const targetElement = document.getElementById('upload-dashboard'); // 通过 ID 获取元素
+    const targetElement = document.getElementById(uploaderDashboardId); // 通过 ID 获取元素
     // @ts-ignore
     targetElement?.querySelector('div > div')?.click?.();
   }
 
   function close() {
-    state.uppy.getPlugin('upload-dashboard')?.hideAllPanels();
+    state.uppy.getPlugin(uploaderDashboardId)?.hideAllPanels();
     state.open = false;
     state.uppy.emitClose();
     onClose?.();
@@ -538,11 +550,13 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   const wrapperProps = popup
     ? {
         sx: {
-          zIndex: 999999,
+          zIndex: 99999999999,
+          background: 'rgba(0,0,0,0.5)',
           '& > *': {
             display: !state.open ? 'none' : 'block', // hide uppy when close
           },
         },
+        invisible: true,
         open: state.open,
         onClick: (e: any) => {
           if (document.activeElement === document.body) {
@@ -582,6 +596,9 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         sx={{
           position: 'relative',
           width: isMobile ? '90vw' : 720,
+          '.uppy-Dashboard-Item-previewInnerWrap': {
+            background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
+          },
           '.uploaded-add-item': {
             background: 'rgba(0,0,0,0.1)',
             display: 'flex',
@@ -638,6 +655,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
           },
         }}>
         <IconButton
+          aria-label="close"
           onClick={close}
           sx={{
             color: '#fafafa',
@@ -664,13 +682,13 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             inline
             // @ts-ignore
             target={`#${target}`}
-            id="upload-dashboard"
+            id={uploaderDashboardId}
             uppy={state.uppy}
             plugins={plugins}
             fileManagerSelectionType="both"
             proudlyDisplayPoweredByUppy={false}
             showProgressDetails
-            waitForThumbnailsBeforeUpload
+            disableThumbnailGenerator
             // theme="light"
             note=""
             doneButtonHandler={close}

@@ -1,3 +1,7 @@
+## 0.10.45 (November 27, 2023)
+
+- fix: add grid background to adjust png 
+
 ## 0.10.44 (November 24, 2023)
 
 - fix: polish empty content height
