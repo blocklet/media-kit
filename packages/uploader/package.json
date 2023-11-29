@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -38,8 +38,7 @@
     "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' ",
     "dev": "pnpm run build:watch",
     "prepublish": "pnpm run build",
-    "prebuild:dep": "pnpm run build",
-    "postinstall": "pnpm run build"
+    "prebuild:dep": "pnpm run build"
   },
   "keywords": [
     "blocklet",
