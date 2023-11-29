@@ -1,3 +1,7 @@
+## 0.10.45 (November 29, 2023)
+
+- chore: update deps
+
 ## 0.10.44 (November 24, 2023)
 
 - fix: polish empty content height
