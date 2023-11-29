@@ -1,6 +1,10 @@
-## 0.0.46 (November 27, 2023)
+## 0.0.47 (November 29, 2023)
 
-- fix: add grid background to adjust png 
+- fix: add grid background to adjust png
+
+## 0.0.46 (November 29, 2023)
+
+- chore: update deps
 
 ## 0.0.45 (十一月 20, 2023)
 
