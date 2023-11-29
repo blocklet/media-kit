@@ -6,7 +6,8 @@
     "bump-version": "zx scripts/bump-version.mjs --quiet",
     "update:deps": "taze -w -r && pnpm install",
     "preinstall": "npx only-allow pnpm",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "pnpm -r --filter @blocklet/uploader run build"
   },
   "keywords": [],
   "author": "arcblock",
