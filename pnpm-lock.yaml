@@ -11,6 +11,23 @@ overrides:
   '@mui/material': 5.14.15
   '@mui/system': 5.14.15
   p-queue: 6.6.2
+  '@arcblock/did': 1.18.101
+  '@arcblock/did-auth': 1.18.101
+  '@arcblock/did-ext': 1.18.101
+  '@arcblock/did-util': 1.18.101
+  '@arcblock/jwt': 1.18.101
+  '@arcblock/validator': 1.18.101
+  '@arcblock/vc': 1.18.101
+  '@arcblock/ws': 1.18.101
+  '@ocap/asset': 1.18.101
+  '@ocap/client': 1.18.101
+  '@ocap/contract': 1.18.101
+  '@ocap/message': 1.18.101
+  '@ocap/mcrypto': 1.18.101
+  '@ocap/proto': 1.18.101
+  '@ocap/types': 1.18.101
+  '@ocap/util': 1.18.101
+  '@ocap/wallet': 1.18.101
 
 importers:
 
@@ -41,7 +58,7 @@ importers:
   blocklets/image-bin:
     dependencies:
       '@arcblock/did':
-        specifier: ^1.18.101
+        specifier: 1.18.101
         version: 1.18.101
       '@blocklet/constant':
         specifier: ^1.16.19-beta-beb58af7
@@ -109,16 +126,16 @@ importers:
     devDependencies:
       '@arcblock/did-connect':
         specifier: ^2.8.17
-        version: 2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+        version: 2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@arcblock/eslint-config':
         specifier: ^0.2.4
         version: 0.2.4(@typescript-eslint/eslint-plugin@5.62.0)(@typescript-eslint/parser@5.62.0)(eslint@8.54.0)(prettier@2.8.8)(react@18.2.0)(typescript@5.3.2)
       '@arcblock/ux':
         specifier: ^2.8.17
-        version: 2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+        version: 2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@blocklet/ui-react':
         specifier: ^2.8.17
-        version: 2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+        version: 2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@emotion/react':
         specifier: ^11.11.1
         version: 11.11.1(react@18.2.0)
@@ -342,8 +359,8 @@ packages:
     resolution: {integrity: sha512-Jmv5cRnAxEL7Zy6yj1hKFSgjpiZy2ApFHQenP7Mv4DQFlC94pWIc29oq44/j7sdadI268rwdRHL9HzkREtn4Vg==}
     dependencies:
       '@arcblock/sdk-util': 0.34.3
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       axios: 0.27.2(debug@4.3.4)
       blueimp-md5: 2.19.0
       core-js: 3.33.2
@@ -393,16 +410,16 @@ packages:
       '@jridgewell/trace-mapping': 0.3.20
     dev: true
 
-  /@arcblock/did-auth@1.18.95:
-    resolution: {integrity: sha512-VVk/9C1+rf/NYhd1qoFm7khnvjGlQxLzbhiXU63sk4eRbJaXSrtZaAiMB5RdckSgRDtGrj9fo1eP18AfuyLeZQ==}
+  /@arcblock/did-auth@1.18.101:
+    resolution: {integrity: sha512-FSGJe7IzOXXTYiC+5Cu7kXSRLsjJumj6Qd3G538KBI0NJKt0NH90Lxg+PzyZusUhrauCokZs36iTlhMYH42JMQ==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@arcblock/jwt': 1.18.95
-      '@arcblock/validator': 1.18.95
-      '@ocap/client': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@arcblock/jwt': 1.18.101
+      '@arcblock/validator': 1.18.101
+      '@ocap/client': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       debug: 4.3.4
       json-stable-stringify: 1.0.2
       lodash: 4.17.21
@@ -415,15 +432,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@arcblock/did-connect@2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
+  /@arcblock/did-connect@2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-aFd/v9WO3ik4l5YUycMvrk2PPMHUKqWIzOR2vwzmmcvyxXnrnKSG2GUSrjiTUR1aS9weMyaG+kHhLOrguOmbiw==}
     peerDependencies:
       react: '>=18.1.0'
     dependencies:
       '@arcblock/icons': 2.8.17(react@18.2.0)
       '@arcblock/react-hooks': 2.8.17
-      '@arcblock/ux': 2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
-      '@arcblock/ws': 1.18.95
+      '@arcblock/ux': 2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+      '@arcblock/ws': 1.18.101
       '@auth0/auth0-react': 2.2.3(react-dom@18.2.0)(react@18.2.0)
       '@emotion/react': 11.11.1(react@18.2.0)
       '@emotion/styled': 11.11.0(@emotion/react@11.11.1)(react@18.2.0)
@@ -461,13 +478,13 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@arcblock/did-ext@1.18.95:
-    resolution: {integrity: sha512-KFtWniIdBenAWYdeE7zOExW7QalJh7/7KSIwultP1z4M26rWXES42Z9W1CsnGQ3SOplm3WDZz0e9eAeBF/hSuw==}
+  /@arcblock/did-ext@1.18.101:
+    resolution: {integrity: sha512-ZDDtQfPWZ1ryCbs33QG0+MFmrt/UGpNHcXcOF5kbCc869fosqtlOfOOZ1MNsFMiTfyC8r2p41rPCQhhJdXH7kA==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       '@wangshijun/hdkey': 2.0.5
       bn.js: 5.2.1
       debug: 4.3.4
@@ -482,16 +499,16 @@ packages:
       bs58: 5.0.0
     dev: true
 
-  /@arcblock/did-util@1.18.95:
-    resolution: {integrity: sha512-Ns66bS9S803oLsL9mA07y7robkzOSgcLI/Rf7bNqbMOsMsDfH8uLUhlkpRMzlo3KC5dJeBBGeDdFRn1bZZwV2Q==}
+  /@arcblock/did-util@1.18.101:
+    resolution: {integrity: sha512-ntuFoH37DCde2YtrFSg1pZHLz15sHoXIyqvCo9+8zSmVcK0+PG9rYVALnhFeAmQoas7FA+axpUOfWHIQRaYQ/g==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/message': 1.18.95
-      '@ocap/proto': 1.18.95
-      '@ocap/types': 1.18.95
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/message': 1.18.101
+      '@ocap/proto': 1.18.101
+      '@ocap/types': 1.18.101
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -501,17 +518,6 @@ packages:
     dependencies:
       '@ocap/mcrypto': 1.18.101
       '@ocap/util': 1.18.101
-      bn.js: 5.2.1
-      debug: 4.3.4
-      lodash: 4.17.21
-    transitivePeerDependencies:
-      - supports-color
-
-  /@arcblock/did@1.18.95:
-    resolution: {integrity: sha512-b90vYGPzb3cpGPAoWOC3BcJdLMjTjLFHMFSuhgHqjF33t6k48BrYKiPSB1pGJv8J3wvvK5tj7MJ98wmuYFB0oQ==}
-    dependencies:
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
       bn.js: 5.2.1
       debug: 4.3.4
       lodash: 4.17.21
@@ -619,12 +625,12 @@ packages:
       - typescript
     dev: true
 
-  /@arcblock/event-hub@1.18.95:
-    resolution: {integrity: sha512-hc2AdIqAmAODKAkL48M/aS2EtYBpw7axpiSpTkYSBjv9y4odZzmEQuTbOCIKorDjRbFcfrLsVG8WK/RmA1GrMA==}
+  /@arcblock/event-hub@1.18.101:
+    resolution: {integrity: sha512-xuY5A0pj4JMEqNFbyP5JBHbKh4tVCCGuNDEv7cBVYWbvTsyQVYFoGgHxr1B4Q4Kkgnl+tjbfvJRL/QA9cOODgw==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@arcblock/jwt': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@arcblock/jwt': 1.18.101
+      '@ocap/wallet': 1.18.101
       amp-message: 0.1.2
       axon: 2.0.3
     transitivePeerDependencies:
@@ -638,12 +644,12 @@ packages:
       react: 18.2.0
     dev: true
 
-  /@arcblock/jwt@1.18.95:
-    resolution: {integrity: sha512-lX2yW/Rs3rQL8Wc85p1WDlucosHdy5dMtwamak4L9V/3YjRA5xfQs0qYrouP6NF/MQ9p5NOzgytVTurEJXj/0Q==}
+  /@arcblock/jwt@1.18.101:
+    resolution: {integrity: sha512-NHcg7GQN6sd6IYixhJXf0mBhZDVBaPfqi7CcPwMHVo0EO389ZtWSyUYZBQ+w130CyQDCQNDY+x+yvEOFw5W/uQ==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
       debug: 4.3.4
       json-stable-stringify: 1.0.2
       semver: 7.5.4
@@ -672,7 +678,7 @@ packages:
       - supports-color
     dev: false
 
-  /@arcblock/ux@2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
+  /@arcblock/ux@2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-FQsTa9N0pprGaJ817zW3QcJbTc/N2P/JIyNY9txErBa8TDyUa7PYMVVxWkc0FDpfBOs6nIUGzMJ6vvvOGMHcFA==}
     peerDependencies:
       react: '>=18.1.0'
@@ -680,7 +686,7 @@ packages:
       '@arcblock/did-motif': 1.1.13
       '@arcblock/icons': 2.8.17(react@18.2.0)
       '@arcblock/react-hooks': 2.8.17
-      '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.23.2)
+      '@babel/plugin-syntax-dynamic-import': 7.8.3(@babel/core@7.23.3)
       '@emotion/react': 11.11.1(react@18.2.0)
       '@emotion/styled': 11.11.0(@emotion/react@11.11.1)(react@18.2.0)
       '@fontsource/lato': 4.5.10
@@ -732,12 +738,12 @@ packages:
       - react-dom
     dev: true
 
-  /@arcblock/validator@1.18.95:
-    resolution: {integrity: sha512-8bylAEDs/K7UCb2nOsIeqhi++Rh6UyjFrH4a91T/GPgeSr4lHt7wBl4CpKEmhEqDNHnJNNLsqx1SKLofHgDlUg==}
+  /@arcblock/validator@1.18.101:
+    resolution: {integrity: sha512-U7Ht8p0SrYnHfSdw7Qgqa10KzhJB7Q75Qvdcsv+V3zu6hiyEi5v14uELtybuQU1lXOojAxp+wIiMzrhMt79XZQ==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
       bn.js: 5.2.1
       joi: 17.11.0
       lodash: 4.17.21
@@ -745,13 +751,13 @@ packages:
       - supports-color
     dev: false
 
-  /@arcblock/vc@1.18.95:
-    resolution: {integrity: sha512-h0IDRnf2DMB4P0Wq8OSfpbZVzrBiUsqeMSVr8nM8dKg2lDvEIGls8GY6Vdlel6HZUL+AyfgxCoGOjzotkk9j3Q==}
+  /@arcblock/vc@1.18.101:
+    resolution: {integrity: sha512-ev8hniEgIFSeoAEXenXJHMpcqHwcL4t4NNqH6JkI+EwPOtRq+tslsJ3Xy9Vrq/IDbcZO75x8uvB/qrgh/yIDSg==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       debug: 4.3.4
       is-absolute-url: 3.0.3
       json-stable-stringify: 1.0.2
@@ -760,10 +766,10 @@ packages:
       - supports-color
     dev: false
 
-  /@arcblock/ws@1.18.95:
-    resolution: {integrity: sha512-U29eCRmdNg35AsuiBdSLcD+6r32YxKvqCw90PmEhgIBqzD9QQbjzzzpzhQzSthsJffvJNNAxA1yuxJy6BbYaJg==}
+  /@arcblock/ws@1.18.101:
+    resolution: {integrity: sha512-z4+VPL4ytKSk0/w8AT8OeHWYvqZOUqTFlKPDdRbo7onQkZ4SD79corj9lKaltNNHosYZrggIYRO5szl2lr2z8Q==}
     dependencies:
-      '@arcblock/event-hub': 1.18.95
+      '@arcblock/event-hub': 1.18.101
       debug: 4.3.4
       eventemitter3: 4.0.7
       lodash: 4.17.21
@@ -1659,12 +1665,12 @@ packages:
       '@babel/types': 7.23.4
     dev: true
 
-  /@babel/plugin-syntax-dynamic-import@7.8.3(@babel/core@7.23.2):
+  /@babel/plugin-syntax-dynamic-import@7.8.3(@babel/core@7.23.3):
     resolution: {integrity: sha512-5gdGbFon+PszYzqs83S3E5mpi7/y/8M9eC90MRTZfduQOYW76ig6SOSPNe41IG5LoP3FGBn2N0RjVDSQiS94kQ==}
     peerDependencies:
       '@babel/core': ^7.0.0-0
     dependencies:
-      '@babel/core': 7.23.2
+      '@babel/core': 7.23.3
       '@babel/helper-plugin-utils': 7.22.5
     dev: true
 
@@ -1815,16 +1821,16 @@ packages:
     resolution: {integrity: sha512-2pPVuKWJ+Z0sle88ri9wV+FbyTzbrMOBCqs8/IDbq1RLdNiiakktzsR3l+pM6hVZvup0lbGduTf0YpJkgNcVpQ==}
     dependencies:
       '@abtnode/constant': 1.16.19-beta-ba354e01
-      '@arcblock/did': 1.18.95
-      '@arcblock/did-ext': 1.18.95
-      '@arcblock/did-util': 1.18.95
-      '@arcblock/jwt': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@arcblock/did-ext': 1.18.101
+      '@arcblock/did-util': 1.18.101
+      '@arcblock/jwt': 1.18.101
       '@blocklet/constant': 1.16.19-beta-ba354e01
-      '@ocap/asset': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/types': 1.18.95
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@ocap/asset': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/types': 1.18.101
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       ajv: 8.12.0
       axios: 0.27.2(debug@4.3.4)
       cjk-length: 1.0.0
@@ -1855,18 +1861,18 @@ packages:
     dependencies:
       '@abtnode/client': 1.16.19-beta-ba354e01
       '@abtnode/constant': 1.16.19-beta-ba354e01
-      '@arcblock/did': 1.18.95
-      '@arcblock/did-auth': 1.18.95
-      '@arcblock/jwt': 1.18.95
-      '@arcblock/ws': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@arcblock/did-auth': 1.18.101
+      '@arcblock/jwt': 1.18.101
+      '@arcblock/ws': 1.18.101
       '@blocklet/constant': 1.16.19-beta-ba354e01
       '@blocklet/env': 1.16.19-beta-ba354e01
       '@blocklet/meta': 1.16.19-beta-ba354e01
       '@did-connect/authenticator': 2.2.1
       '@did-connect/handler': 2.2.1
       '@nedb/core': 2.1.5
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/wallet': 1.18.101
       axios: 0.27.2(debug@4.3.4)
       cheerio: 1.0.0-rc.12
       fs-extra: 10.1.0
@@ -1886,13 +1892,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@blocklet/ui-react@2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
+  /@blocklet/ui-react@2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-B5K2H65Lwd2oorY5GAPjzcHTJm5E3NvrOoHNoagdWY25U/PZ1TurC+05YWiPjI7GD3s40HqijXPhmQKcF9WCzQ==}
     peerDependencies:
       react: '>=18.1.0'
     dependencies:
-      '@arcblock/did-connect': 2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
-      '@arcblock/ux': 2.8.17(@babel/core@7.23.2)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+      '@arcblock/did-connect': 2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
+      '@arcblock/ux': 2.8.17(@babel/core@7.23.3)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@emotion/react': 11.11.1(react@18.2.0)
       '@emotion/styled': 11.11.0(@emotion/react@11.11.1)(react@18.2.0)
       '@mui/material': 5.14.15(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(react-dom@18.2.0)(react@18.2.0)
@@ -1929,10 +1935,10 @@ packages:
     resolution: {integrity: sha512-b6OhVMIea+n9bOfaUgFU5bqbOJnMrD4zA210xGtQp99rqZDR5yEZ+5ByHRpvzuuLyjG+8u9/aJJ9e+HFTulMpg==}
     dependencies:
       '@arcblock/did': 1.18.101
-      '@arcblock/jwt': 1.18.95
+      '@arcblock/jwt': 1.18.101
       '@did-connect/types': 2.2.1
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       debug: 4.3.4
       lodash: 4.17.21
     transitivePeerDependencies:
@@ -1943,13 +1949,13 @@ packages:
     resolution: {integrity: sha512-ipYT8eRQ88NVi0kXklJ04uNPDBOVrbxScDuXw/q1tJV36UCeiBhWLgJY8hAprhWSluckY4uy3LCDILm0nb7rFA==}
     dependencies:
       '@arcblock/did': 1.18.101
-      '@arcblock/jwt': 1.18.95
-      '@arcblock/ws': 1.18.95
+      '@arcblock/jwt': 1.18.101
+      '@arcblock/ws': 1.18.101
       '@did-connect/authenticator': 2.2.1
       '@did-connect/storage': 2.2.1
       '@did-connect/types': 2.2.1
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
       axios: 0.27.2(debug@4.3.4)
       lodash: 4.17.21
       object-hash: 3.0.0
@@ -1973,8 +1979,8 @@ packages:
   /@did-connect/types@2.2.1:
     resolution: {integrity: sha512-FGPCgqwAYT8og6oTmQy4Kl9il/dQCrYFIH3N2iSazzeJW5ac4JaG3Jk8WtWpOLU1i+nBP/z6YMWF+Bko7G7xrw==}
     dependencies:
-      '@arcblock/validator': 1.18.95
-      '@ocap/mcrypto': 1.18.95
+      '@arcblock/validator': 1.18.101
+      '@ocap/mcrypto': 1.18.101
       joi: 17.11.0
     transitivePeerDependencies:
       - supports-color
@@ -2938,18 +2944,18 @@ packages:
       fastq: 1.15.0
     dev: true
 
-  /@ocap/asset@1.18.95:
-    resolution: {integrity: sha512-BiglSU+gioZravZ1cDPebOv90Vka41Gpg8zyqI/mwyaaPNJluJ+n9jfryNfCCz/tVbOOb1mP9Hsc5Zn7BfvF7w==}
+  /@ocap/asset@1.18.101:
+    resolution: {integrity: sha512-t/k73UGuBgvI8nEeXKZpiKIVxYAWfWNtDWTGkaeasx/lxvAJR1w+K8dTRMbiHkOzqF4JK8fklV91LgM9hp9xWg==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@arcblock/did-util': 1.18.95
-      '@arcblock/validator': 1.18.95
-      '@arcblock/vc': 1.18.95
-      '@ocap/contract': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/types': 1.18.95
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@arcblock/did-util': 1.18.101
+      '@arcblock/validator': 1.18.101
+      '@arcblock/vc': 1.18.101
+      '@ocap/contract': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/types': 1.18.101
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       debug: 4.3.4
       flat: 5.0.2
       is-absolute-url: 3.0.3
@@ -2960,20 +2966,20 @@ packages:
       - supports-color
     dev: false
 
-  /@ocap/client@1.18.95:
-    resolution: {integrity: sha512-hoAYqX0IYQ5orO6JgaZuAs1SrjXBvifjPpay1liMweNR9Bz6ZCX7/zPEwPeuVWBfm+72qHMExeq49A7oain1Zg==}
+  /@ocap/client@1.18.101:
+    resolution: {integrity: sha512-TpRJgJ/d9RgiLhN97CHTDWBpflHq5uUYg9O9TMRz4VY2kEvpkhqH4NVIg8Cxnq8GEMN4926rFyw/nwo3rIkr0g==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@arcblock/did-util': 1.18.95
-      '@arcblock/jwt': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@arcblock/did-util': 1.18.101
+      '@arcblock/jwt': 1.18.101
       '@arcblock/sdk-util': 0.34.3
-      '@arcblock/ws': 1.18.95
-      '@ocap/asset': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/message': 1.18.95
-      '@ocap/proto': 1.18.95
-      '@ocap/util': 1.18.95
-      '@ocap/wallet': 1.18.95
+      '@arcblock/ws': 1.18.101
+      '@ocap/asset': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/message': 1.18.101
+      '@ocap/proto': 1.18.101
+      '@ocap/util': 1.18.101
+      '@ocap/wallet': 1.18.101
       blueimp-md5: 2.19.0
       buffer: 6.0.3
       debug: 4.3.4
@@ -2990,12 +2996,12 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@ocap/contract@1.18.95:
-    resolution: {integrity: sha512-Hr58SvLVFlEn+zI2dxP1DnsrKtN2iNJaQIKp5EOpr/Y4I0t943mBwmfpPITlhNJz35Ju95MZr+ZgxWCTSuKKkQ==}
+  /@ocap/contract@1.18.101:
+    resolution: {integrity: sha512-cCJu+jMA93tn8hMG86Xmo73KawupNuPf8Ew6rfJipz80jyKuIzG4jHRIkPP6hd/FjfWczJatnzXENbTIWfbPSg==}
     dependencies:
-      '@arcblock/did': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
       debug: 4.3.4
       esprima: 4.0.1
       lodash: 4.17.21
@@ -3017,25 +3023,11 @@ packages:
       randombytes: 2.1.0
       tweetnacl: 1.0.3
 
-  /@ocap/mcrypto@1.18.95:
-    resolution: {integrity: sha512-1J1Oxyru3/2UHZJFga0yrtpf4pKbCR1XExoxb/Y6F9SOxDYsoShFG7/Tpx25/Wi7L9cdWzp6UKsRETvFQWyJTw==}
+  /@ocap/message@1.18.101:
+    resolution: {integrity: sha512-6Szw11DY6uxMCmBLKGYtRmYY5JGGy4P61Ob29MLbyAlYdJlhTzHuR2ZoIVWLoPD/RJAQ+EzJYPRA/ApSlrtV8Q==}
     dependencies:
-      '@ocap/util': 1.18.95
-      bn.js: 5.2.1
-      crypto-js: 4.2.0
-      elliptic: 6.5.4
-      eth-lib: 0.2.8
-      hash.js: 1.1.7
-      interface: 1.2.1
-      js-sha3: 0.8.0
-      randombytes: 2.1.0
-      tweetnacl: 1.0.3
-
-  /@ocap/message@1.18.95:
-    resolution: {integrity: sha512-ZZ6tu+GdDJDfPQl9aoYEGwQ8bdrATXCTCvBXe3JqJYrCwxHwQoTZOwWyq4LU3E0e7oCNUoIDHJzNQ+6ekFqBMg==}
-    dependencies:
-      '@ocap/proto': 1.18.95
-      '@ocap/util': 1.18.95
+      '@ocap/proto': 1.18.101
+      '@ocap/util': 1.18.101
       debug: 4.3.4
       google-protobuf: 3.21.0
       lodash: 4.17.21
@@ -3043,8 +3035,8 @@ packages:
       - supports-color
     dev: false
 
-  /@ocap/proto@1.18.95:
-    resolution: {integrity: sha512-MCDnAPneKfscaZwylwHZLxsis7NXh3DoBCVDAatbJweBbZ5bT5iHWm4C4XSohikcuj0J8zAm9V03m8bMijoBXA==}
+  /@ocap/proto@1.18.101:
+    resolution: {integrity: sha512-9Ca+dRb2cNWBkKwuye5fmmLphFxYLWgEPs0qYOXBHHaBuuaaZiwuzqP0CmVEmsyC2P7aQ34j9lUO2BjS59cCQg==}
     dependencies:
       debug: 4.3.4
       lodash: 4.17.21
@@ -3052,8 +3044,8 @@ packages:
       - supports-color
     dev: false
 
-  /@ocap/types@1.18.95:
-    resolution: {integrity: sha512-FShIMhpTfhdtblVvyjg8mJt/7D+AHG7AnR/nFfQgXYEqDMbKJeNcytdJHoQGRSAvY/ujHo97Eh5oyT1osPR82Q==}
+  /@ocap/types@1.18.101:
+    resolution: {integrity: sha512-PNklZt7+NUwjgvMk4NeTgtVJgZZrz9+UnCwM+6XifgCMdYKRQUNwA41WCT70BWT7DgH4JCJJ3L+5k+GUcYr5zQ==}
     dependencies:
       google-protobuf: 3.21.0
     dev: false
@@ -3067,21 +3059,12 @@ packages:
       lodash: 4.17.21
       utf8: 3.0.0
 
-  /@ocap/util@1.18.95:
-    resolution: {integrity: sha512-d7Sg1a1Nx65NWaCPSMvPqmnVdH13cAAR52It2M/v11s0gDMHjGy2U1X2VtDYnyNJp3kBFIWfzLJWHQZLhWk4zQ==}
+  /@ocap/wallet@1.18.101:
+    resolution: {integrity: sha512-CaGG0ETsW7Cs/GE0AYsTO9o0OIRxp85vbLia/fKOwMLs+lbugyMJ+ZsJpCcFBZ3ZRyGN7byhZB0rnQLA6WVy9g==}
     dependencies:
-      base64-url: 2.3.3
-      bn.js: 5.2.1
-      bs58: 5.0.0
-      lodash: 4.17.21
-      utf8: 3.0.0
-
-  /@ocap/wallet@1.18.95:
-    resolution: {integrity: sha512-AcFnW1XWprzzsy9Q1viJGkdJxQXPkRKQndwLxZLuYQFGoINLEtRVZXXJElXq9B/owPada7WTl7eyJM8AViLCMA==}
-    dependencies:
-      '@arcblock/did': 1.18.95
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
+      '@arcblock/did': 1.18.101
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
     transitivePeerDependencies:
       - supports-color
 
@@ -10790,7 +10773,7 @@ packages:
       rollup: 3.29.4
       typescript: 5.3.2
     optionalDependencies:
-      '@babel/code-frame': 7.22.13
+      '@babel/code-frame': 7.23.4
     dev: true
 
   /rollup@3.29.4:
@@ -12065,8 +12048,8 @@ packages:
       vite: '>=2'
     dependencies:
       '@arcblock/did': 1.18.101
-      '@ocap/mcrypto': 1.18.95
-      '@ocap/util': 1.18.95
+      '@ocap/mcrypto': 1.18.101
+      '@ocap/util': 1.18.101
       get-port: 5.1.1
       mri: 1.2.0
       semver: 7.5.4
