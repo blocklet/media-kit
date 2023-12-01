@@ -116,6 +116,8 @@ export const initStaticResourceMiddleware = (
         // fallthrough: false,
         ...options,
       })(req, res, next);
+    } else {
+      res.status(404).end();
     }
   };
 };
