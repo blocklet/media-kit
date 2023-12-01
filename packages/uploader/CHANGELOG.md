@@ -1,3 +1,7 @@
+## 0.0.50 (December 01, 2023)
+
+- chore: update deps
+
 ## 0.0.49 (December 01, 2023)
 
 - fix: end 404 res
