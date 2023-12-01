@@ -1,3 +1,7 @@
+## 0.10.48 (December 01, 2023)
+
+- fix: end 404 res
+
 ## 0.10.47 (December 01, 2023)
 
 - fix: resolve the bug of folder not init
