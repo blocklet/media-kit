@@ -28,8 +28,8 @@ const ensureFolderId = async (req, res, next) => {
   const component = config.components.find((x) => x.did === req.componentDid);
   const folder = await Folder.findOne({ _id: req.componentDid });
 
-  if (!component && !folder) {
-    res.status(400).send({ error: `component or folderId ${req.componentDid} is not registered` });
+  if (!component) {
+    res.status(400).send({ error: `component ${req.componentDid} is not registered` });
     return;
   }
 

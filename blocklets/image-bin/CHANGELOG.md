@@ -1,3 +1,7 @@
+## 0.10.47 (December 01, 2023)
+
+- fix: resolve the bug of folder not init
+
 ## 0.10.46 (November 29, 2023)
 
 - fix: add grid background to adjust png
