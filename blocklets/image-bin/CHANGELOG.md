@@ -1,3 +1,7 @@
+## 0.10.48 (December 01, 2023)
+
+- fix: polish uploaded plugin png background to grid
+
 ## 0.10.47 (December 01, 2023)
 
 - fix: resolve the bug of folder not init

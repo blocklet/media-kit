@@ -1,3 +1,7 @@
+## 0.0.48 (December 01, 2023)
+
+- fix: polish uploaded plugin png background to grid
+
 ## 0.0.47 (November 29, 2023)
 
 - fix: add grid background to adjust png
