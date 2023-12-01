@@ -1,6 +1,6 @@
 ## 0.0.48 (December 01, 2023)
 
-- fix: end 404 res
+- fix: polish uploaded plugin png background to grid
 
 ## 0.0.47 (November 29, 2023)
 

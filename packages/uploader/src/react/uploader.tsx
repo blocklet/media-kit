@@ -507,10 +507,11 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
     // @ts-ignore set blur and focus body
     document.activeElement?.blur?.();
-    // auto focus upload-dashboard to key paste event
-    const targetElement = document.getElementById(uploaderDashboardId); // 通过 ID 获取元素
-    // @ts-ignore
-    targetElement?.querySelector('div > div')?.click?.();
+    const uppyRoot = state.uppy.getPlugin(uploaderDashboardId).el;
+
+    uppyRoot?.setAttribute?.('tabIndex', '0');
+    uppyRoot?.focus?.();
+    uppyRoot?.click?.();
   }
 
   function close() {
@@ -596,7 +597,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         sx={{
           position: 'relative',
           width: isMobile ? '90vw' : 720,
-          '.uppy-Dashboard-Item-previewInnerWrap': {
+          '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner img': {
             background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
           },
           '.uploaded-add-item': {
