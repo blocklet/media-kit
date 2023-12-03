@@ -38,3 +38,5 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+node-jiti
