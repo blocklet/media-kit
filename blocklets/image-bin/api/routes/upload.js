@@ -9,7 +9,7 @@ const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
-const { isValid: isValidDid } = require('@arcblock/did');
+const { isValid: isValidDID } = require('@arcblock/did');
 const { initLocalStorageServer, initCompanion, symlinkFileToNewPath } = require('@blocklet/uploader/middlewares');
 const logger = require('../libs/logger');
 
@@ -25,23 +25,27 @@ const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 const ensureFolderId = async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
 
-  const component = config.components.find((x) => x.did === req.componentDid);
-  const folder = await Folder.findOne({ _id: req.componentDid });
+  const isDID = isValidDID(req.componentDid);
 
-  if (!component) {
-    res.status(400).send({ error: `component ${req.componentDid} is not registered` });
-    return;
-  }
+  if (isDID) {
+    const folder = await Folder.findOne({ _id: req.componentDid });
+    const component = config.components.find((x) => x.did === req.componentDid);
 
-  if (!folder) {
-    await Folder.insert({
-      _id: req.componentDid,
-      name: component.title || component.name,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: req.user?.did,
-      updatedBy: req.user?.did,
-    });
+    if (!component) {
+      res.status(400).send({ error: `component ${req.componentDid} is not registered` });
+      return;
+    }
+
+    if (!folder) {
+      await Folder.insert({
+        _id: req.componentDid,
+        name: component.title || component.name,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: req.user?.did,
+        updatedBy: req.user?.did,
+      });
+    }
   }
 
   next();
@@ -49,7 +53,7 @@ const ensureFolderId = async (req, res, next) => {
 
 const getSymlinkPath = (req) => {
   // not current component
-  if (isValidDid(req.componentDid) && req.componentDid !== env.currentComponentInfo.did) {
+  if (isValidDID(req.componentDid) && req.componentDid !== env.currentComponentInfo.did) {
     const component = config.components.find((x) => x.did === req.componentDid);
     // if exist component, use component name as symlink path
     if (component) {
@@ -137,7 +141,7 @@ router.get('/uploads', user, auth, getUploadListMiddleware());
 router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res) => {
   const mediaKitDid = env.currentComponentInfo.did;
 
-  if (isValidDid(req.componentDid) && req.componentDid !== mediaKitDid) {
+  if (isValidDID(req.componentDid) && req.componentDid !== mediaKitDid) {
     res.jsonp({ error: `Can not remove file by ${req.componentDid}` });
     return;
   }
@@ -149,7 +153,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res
     return;
   }
 
-  if (isValidDid(doc.folderId) && doc.folderId !== mediaKitDid) {
+  if (isValidDID(doc.folderId) && doc.folderId !== mediaKitDid) {
     res.jsonp({ error: 'Can not remove file which upload from other blocklet' });
     return;
   }
