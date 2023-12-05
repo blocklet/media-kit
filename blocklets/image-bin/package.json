@@ -36,7 +36,7 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did": "^1.18.102",
+    "@arcblock/did": "^1.18.103",
     "@blocklet/constant": "^1.16.19",
     "@blocklet/embed": "^0.1.5",
     "@blocklet/logger": "^1.16.19",
@@ -60,13 +60,13 @@
     "xbytes": "^1.8.0"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.8.19",
+    "@arcblock/did-connect": "^2.8.20",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.8.19",
-    "@blocklet/ui-react": "^2.8.19",
+    "@arcblock/ux": "^2.8.20",
+    "@blocklet/ui-react": "^2.8.20",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@vitejs/plugin-react": "^4.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "ahooks": "^3.7.8",
     "axios": "^1.6.2",
     "copy-to-clipboard": "^3.3.3",
@@ -84,7 +84,7 @@
     "react-use": "^17.4.2",
     "swiper": "^9.4.1",
     "timeago.js": "^4.0.2",
-    "vite": "^4.5.0",
+    "vite": "^4.5.1",
     "vite-plugin-blocklet": "^0.6.16",
     "wolfy87-eventemitter": "^5.2.9"
   },
