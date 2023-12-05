@@ -1,3 +1,7 @@
+## 0.10.53 (December 05, 2023)
+
+- chore: update deps
+
 ## 0.10.52 (December 04, 2023)
 
 - fix: polish auto create folder from blocklet logic

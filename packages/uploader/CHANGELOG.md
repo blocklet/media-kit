@@ -1,3 +1,7 @@
+## 0.0.52 (December 05, 2023)
+
+- chore: update deps
+
 ## 0.0.51 (December 03, 2023)
 
 - chore: update deps
