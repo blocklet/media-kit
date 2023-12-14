@@ -55,8 +55,8 @@ export default function Output({
       const res = await handleApi({ ...options, responseFormat: 'b64_json' });
       if (res.data) {
         const list = res.data || [];
-        const arr = list.map((item: { b64_json: string }) => ({
-          src: `data:image/png;base64,${item.b64_json}`,
+        const arr = list.map((item: { b64_json: string; b64Json: string }) => ({
+          src: `data:image/png;base64,${item.b64Json || item.b64_json}`, // TODO b64Json 为ai-kit新兼容字段， b64_json为老字段，一个月可移除
           width: options.size ? Number((options.size || '').split('x')[0]) : 1024,
         }));
 
