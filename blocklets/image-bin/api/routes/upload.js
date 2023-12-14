@@ -356,6 +356,32 @@ router.get(
   })
 );
 
+// remove upload for sdk
+router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (req, res) => {
+  const doc = await Upload.findOne({ _id: req.params.id });
+
+  if (!doc) {
+    res.jsonp({ error: 'No such upload' });
+    return;
+  }
+
+  if (isValidDID(req.user.did) && req.user.did !== doc.createdBy) {
+    res.jsonp({ error: `Can not remove file by ${req.user.did}` });
+    return;
+  }
+
+  const result = await Upload.remove({ _id: req.params.id });
+
+  if (result) {
+    const count = await Upload.count({ filename: doc.filename });
+    if (count === 0) {
+      await localStorageServer.delete(doc.filename);
+    }
+  }
+
+  res.jsonp(doc);
+});
+
 router.all('/sdk/uploads/find', user, middleware.component.verifySig, async (req, res) => {
   let extraResult = {};
 
@@ -422,13 +448,7 @@ router.post('/image/generations', user, auth, async (req, res) => {
     name: 'ai-kit',
     path: '/api/v1/sdk/image/generations',
     method: 'POST',
-    data: {
-      model,
-      prompt,
-      size,
-      n: parseInt(number, 10),
-      response_format: responseFormat,
-    },
+    data: { model, prompt, size, n: parseInt(number, 10), responseFormat },
     responseType: 'stream',
   });
   res.set('Content-Type', response.headers['content-type']);
@@ -445,12 +465,7 @@ router.get('/uploader/status', async (req, res) => {
 
   if (AIKit) {
     // can use AIImage
-    await Component.call({
-      name: 'ai-kit',
-      path: '/api/v1/sdk/status',
-      method: 'GET',
-      data: {},
-    })
+    await Component.call({ name: 'ai-kit', path: '/api/v1/sdk/status', method: 'GET', data: {} })
       .then(({ data }) => {
         availablePluginMap.AIImage = data.available;
       })
