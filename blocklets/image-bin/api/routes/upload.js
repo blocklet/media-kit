@@ -357,16 +357,17 @@ router.get(
 );
 
 // remove upload for sdk
-router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (req, res) => {
+router.delete('/sdk/uploads/:id', middleware.component.verifySig, async (req, res) => {
   const doc = await Upload.findOne({ _id: req.params.id });
+  const { userId } = req.query;
 
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
     return;
   }
 
-  if (isValidDID(req.user.did) && req.user.did !== doc.createdBy) {
-    res.jsonp({ error: `Can not remove file by ${req.user.did}` });
+  if (isValidDID(userId) && userId !== doc.createdBy) {
+    res.jsonp({ error: `Can not remove file by ${userId}` });
     return;
   }
 

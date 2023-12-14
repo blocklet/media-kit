@@ -1,6 +1,6 @@
 ## 0.10.54 (十二月 14, 2023)
 
-- feat: add remove image sdk
+- feat: add api for deleting uploaded files
 
 ## 0.10.53 (December 05, 2023)
 
