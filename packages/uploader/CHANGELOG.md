@@ -1,3 +1,7 @@
+## 0.0.54 (十二月 14, 2023)
+
+- fix: ai kit new params
+
 ## 0.0.53 (十二月 14, 2023)
 
 - feat: add remove sdk

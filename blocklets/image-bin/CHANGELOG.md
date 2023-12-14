@@ -1,4 +1,4 @@
-## 0.10.54 (十二月 14, 2023)
+## 0.10.55 (十二月 14, 2023)
 
 - feat: add api for deleting uploaded files
 
