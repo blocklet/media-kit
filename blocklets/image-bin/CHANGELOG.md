@@ -1,3 +1,7 @@
+## 0.10.55 (December 18, 2023)
+
+- chore: polish protectedRoutes match rules
+
 ## 0.10.54 (十二月 14, 2023)
 
 - feat: add remove image sdk
