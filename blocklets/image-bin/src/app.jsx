@@ -57,7 +57,7 @@ export default function App() {
                         element={
                           <SessionProvider
                             serviceHost={prefix}
-                            protectedRoutes={['/admin'].map((item) => joinUrl(prefix, item))}>
+                            protectedRoutes={['/admin', '/admin/*'].map((item) => joinUrl(prefix, item))}>
                             <UploadProvider>
                               <ResourceProvider>
                                 <Routes>
