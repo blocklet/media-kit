@@ -1,3 +1,7 @@
+## 0.10.57 (December 21, 2023)
+
+- chore: bump version
+
 ## 0.10.56 (December 21, 2023)
 
 - chore: add other blocklet uploader roles
