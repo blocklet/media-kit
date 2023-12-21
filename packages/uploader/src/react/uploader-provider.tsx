@@ -1,5 +1,6 @@
 import { Box } from '@mui/material';
 import { ReactNode, createContext, lazy, useContext, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 // @ts-ignore
 const Uploader = lazy(() => import('./uploader').then((res) => ({ default: res.Uploader })));
@@ -50,12 +51,15 @@ export function UploaderProvider({ children, ...restProps }: UploaderProviderPro
   return (
     <UploaderContext.Provider value={uploaderRef as any}>
       {children}
-      <Uploader
-        key="uploader"
-        ref={uploaderRef} // ref
-        popup
-        {...restProps}
-      />
+      {createPortal(
+        <Uploader
+          key="uploader"
+          ref={uploaderRef} // ref
+          popup
+          {...restProps}
+        />,
+        document.body
+      )}
     </UploaderContext.Provider>
   );
 }
