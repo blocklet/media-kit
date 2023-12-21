@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import ReactPlayer from 'react-player';
 import { createImageUrl } from '../libs/api';
 
 function MediaItem(props) {
@@ -15,7 +16,7 @@ function MediaItem(props) {
   };
 
   return isVideo ? (
-    <video key={_id} width="100%" height="100%" loading="lazy" autoPlay muted loop src={src} style={style} />
+    <ReactPlayer url={src} controls style={style} width="100%" height="100%" />
   ) : (
     // eslint-disable-next-line jsx-a11y/alt-text
     <object

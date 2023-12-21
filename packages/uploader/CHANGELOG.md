@@ -1,3 +1,8 @@
+## 0.0.54 (December 21, 2023)
+
+- chore: update deps
+- chore: adjust uploader provider to use createPortal
+
 ## 0.0.53 (十二月 14, 2023)
 
 - feat: add remove sdk
