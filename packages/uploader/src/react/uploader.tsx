@@ -509,7 +509,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     document.activeElement?.blur?.();
     const uppyRoot = state.uppy.getPlugin(uploaderDashboardId).el;
 
-    uppyRoot?.setAttribute?.('tabIndex', '0');
+    // uppyRoot?.setAttribute?.('tabIndex', '0');
     uppyRoot?.focus?.();
     uppyRoot?.click?.();
   }

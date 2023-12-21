@@ -1,3 +1,7 @@
+## 0.0.55 (December 21, 2023)
+
+- fix: resolve the bug of paste image
+
 ## 0.0.54 (December 21, 2023)
 
 - chore: update deps
