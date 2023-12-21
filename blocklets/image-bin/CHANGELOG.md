@@ -1,3 +1,9 @@
+## 0.10.56 (December 21, 2023)
+
+- chore: add other blocklet uploader roles
+- chore: update deps
+- chore: use react-player replace video
+
 ## 0.10.55 (December 18, 2023)
 
 - chore: polish protectedRoutes match rules
