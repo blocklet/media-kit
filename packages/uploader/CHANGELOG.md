@@ -1,3 +1,7 @@
+## 0.0.56 (December 27, 2023)
+
+- fix: use MAX_UPLOAD_SIZE of image-bin
+
 ## 0.0.55 (December 21, 2023)
 
 - fix: resolve the bug of paste image

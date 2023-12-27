@@ -28,6 +28,7 @@ import DropTarget from '@uppy/drop-target';
 import ImageEditor from '@uppy/image-editor';
 import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
+import xbytes from 'xbytes';
 import localeMap from './i18n';
 // import GoldenRetriever from '@uppy/golden-retriever';
 
@@ -68,6 +69,8 @@ const target = 'uploader-container';
 const uploaderDashboardId = 'uploader-dashboard';
 
 const isDebug = localStorage.getItem('uppy_debug');
+
+const maxFileSize = xbytes.parseSize((window as any).blocklet?.MAX_UPLOAD_SIZE, { iec: false }) || undefined;
 
 const getPluginList = (props: any) => {
   const { apiPathProps, availablePluginMap = {}, uploadedProps } = props;
@@ -373,6 +376,8 @@ function initUploader(props: any) {
 }
 
 const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFrameElement>, ref: any) => {
+  if (props.coreProps?.restrictions) props.coreProps.restrictions.maxFileSize ??= maxFileSize;
+
   // apiPathProps default is use image-bin
   const apiPathProps = {
     uploader: '/api/uploads',
