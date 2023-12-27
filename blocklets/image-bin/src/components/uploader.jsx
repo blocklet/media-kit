@@ -2,7 +2,6 @@
 import { lazy } from 'react';
 import Button from '@arcblock/ux/lib/Button';
 import joinUrl from 'url-join';
-import xbytes from 'xbytes';
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import { useUploadContext } from '../contexts/upload';
 
@@ -23,9 +22,6 @@ const defaultTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', '
 const allowedFileTypes = Array.isArray(window.blocklet.preferences.types)
   ? window.blocklet.preferences.types
   : defaultTypes;
-
-// not use iec
-const maxFileSize = xbytes.parseSize(window.blocklet.MAX_UPLOAD_SIZE, { iec: false });
 
 export default function Uploader() {
   const { currentFolderInfo } = useUploadContext();
@@ -64,7 +60,6 @@ function UploaderProviderWrapper({ children }) {
       coreProps={{
         restrictions: {
           allowedFileTypes,
-          maxFileSize,
           // maxNumberOfFiles: 2, // use to debug
         },
       }}
