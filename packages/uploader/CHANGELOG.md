@@ -1,3 +1,7 @@
+## 0.0.57 (December 29, 2023)
+
+- chore: add body-parser and pnpm dedupe
+
 ## 0.0.56 (December 27, 2023)
 
 - fix: use MAX_UPLOAD_SIZE of image-bin

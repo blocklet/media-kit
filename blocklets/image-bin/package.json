@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.10.58",
+  "version": "0.10.59",
   "scripts": {
     "dev": "blocklet dev",
     "build": "vite build",
