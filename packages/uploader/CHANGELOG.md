@@ -1,3 +1,7 @@
+## 0.0.58 (December 29, 2023)
+
+- chore: polish uploader default maxFileSize to infinity
+
 ## 0.0.57 (December 29, 2023)
 
 - chore: add body-parser and pnpm dedupe
