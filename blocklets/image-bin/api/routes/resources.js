@@ -9,7 +9,7 @@ const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/compon
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
-const { MediaTypes, ExportDir } = require('../libs/constants');
+const { ResourceDid, MediaTypes, ExportDir } = require('../libs/constants');
 
 const router = express.Router();
 const auth = middleware.auth({ roles: env.uploaderRoles });
@@ -17,7 +17,7 @@ const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
 const getResourceComponents = () => {
-  const resources = getResources({ types: MediaTypes });
+  const resources = getResources({ did: ResourceDid, types: MediaTypes });
   return resources.map((x) => ({ ...x, name: x.title }));
 };
 

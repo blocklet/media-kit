@@ -99,7 +99,6 @@ capabilities:
   clusterMode: false
   component: true
   navigation: true
-  resourceExportApi: /api/resources/export
 screenshots:
   - upload.png
 components: []
@@ -116,3 +115,8 @@ navigation:
     role:
       - admin
       - owner
+resource:
+  exportApi: /api/resources/export
+  types:
+    - type: imgpack
+      description: A collection of image assets that can be served by the Image Bin
