@@ -1,3 +1,7 @@
+## 0.0.59 (January 03, 2024)
+
+- chore(resource): update resource export folder and Blocklet SDK
+
 ## 0.0.58 (December 29, 2023)
 
 - chore: polish uploader default maxFileSize to infinity

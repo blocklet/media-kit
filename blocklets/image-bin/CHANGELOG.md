@@ -1,3 +1,8 @@
+## 0.10.61 (January 03, 2024)
+
+- chore(image-bin): update resource export folder and Blocklet SDK
+- chore(uploader): update static resource middleware
+
 ## 0.10.60 (December 29, 2023)
 
 - chore: polish uploader default maxFileSize to infinity
