@@ -1,11 +1,10 @@
 const { existsSync } = require('fs-extra');
-const { join, extname } = require('path');
-const joinURL = require('url-join');
-const { flattenDeep, keyBy } = require('lodash');
+const { join } = require('path');
 const config = require('@blocklet/sdk/lib/config');
-const { BlockletStatus } = require('@blocklet/constant');
+const { getResources } = require('@blocklet/sdk/lib/component');
 
 const ImgResourceType = 'imgpack';
+const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
 
 // can change by initStaticResourceMiddleware resourceTypes
 let resourceTypes = [
@@ -17,46 +16,30 @@ let resourceTypes = [
 
 const logger = console;
 
-// const getComponentInfo = () => {
-//   const { env, components } = config;
-//   const component = components.find((item: any) => item.did === env.componentDid);
-//   return {
-//     ...component,
-//     ...env,
-//     currentBlockletUrl: joinURL(env.appUrl, component.mountPoint),
-//   };
-// };
-
-const RunningStatus = BlockletStatus.running;
-
 let canUseResources = [] as any;
 
 const mappingResource = async (skipRunningCheck: boolean) => {
   try {
-    const { components } = config;
-    const filteredComponents = components.filter((item: any) => skipRunningCheck || item.status === RunningStatus);
-    const resourcesMap = keyBy(filteredComponents, 'resources');
-
-    const resourceTypesMap = keyBy(resourceTypes, 'type');
-
-    canUseResources = flattenDeep(filteredComponents.map((item: any) => item.resources))
-      .map((originDir: any) => {
+    const resources = getResources({
+      did: ImageBinDid,
+      types: resourceTypes.map((x) => x.type),
+      skipRunningCheck,
+    });
+    canUseResources = resources
+      .map((resource: { path: string }) => {
         // check dir is exists and not in resourceKeys
-        const resourceType = resourceTypes.find(({ type }) => extname(originDir).endsWith(type));
+        const originDir = resource.path;
+        const resourceType = resourceTypes.find(({ type }) => originDir.endsWith(type));
         if (!existsSync(originDir) || !resourceType) {
           return false;
         }
+
         const { folder = '' } = resourceType;
         return { originDir, dir: join(originDir, folder || '') };
       })
       .filter(Boolean);
 
     logger.info('Mapping can use resources count: ', canUseResources.length, canUseResources);
-
-    canUseResources.forEach(async (resourceItem: any) => {
-      const { dir } = resourceItem;
-      const resourceInfo = resourcesMap[dir];
-    });
 
     return canUseResources;
   } catch (error) {
