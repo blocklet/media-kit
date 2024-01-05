@@ -111,7 +111,6 @@ export const initStaticResourceMiddleware = (
       })(req, res, next);
     } else {
       res.status(404).end();
-      next?.();
     }
   };
 };
