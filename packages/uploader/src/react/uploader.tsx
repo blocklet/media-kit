@@ -191,7 +191,7 @@ const getPluginList = (props: any) => {
       alwayUse: true,
     },
     {
-      id: 'ThumbnailGenerator',
+      id: 'ThumbnailGeneratorNext', // fix console error
       plugin: ThumbnailGenerator,
       options: {
         thumbnailType: 'image/png',

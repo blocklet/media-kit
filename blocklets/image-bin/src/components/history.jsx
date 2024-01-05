@@ -306,7 +306,7 @@ export default function Uploads() {
         </Tabs>
       )}
       {tab === 'bucket' && [
-        <Box>
+        <Box key="button-group">
           <ButtonGroup
             size={isMobile ? 'small' : 'medium'}
             variant="outlined"
@@ -344,9 +344,11 @@ export default function Uploads() {
           </ButtonGroup>
         </Box>,
         uploads.length === 0 ? (
-          <Empty {...emptyProps}>{t('common.empty')}</Empty>
+          <Empty key="empty" {...emptyProps}>
+            {t('common.empty')}
+          </Empty>
         ) : (
-          <Box>
+          <Box key="gallery">
             <Gallery
               uploads={[
                 {
@@ -368,7 +370,7 @@ export default function Uploads() {
         ),
       ]}
       {tab === 'resource' && [
-        <Box>
+        <Box key="button-group">
           <ButtonGroup
             size={isMobile ? 'small' : 'medium'}
             variant="outlined"
@@ -420,10 +422,12 @@ export default function Uploads() {
           )}
         </Box>,
         components.length === 0 ? (
-          <Empty {...emptyProps}>{t('common.emptyResource')}</Empty>
+          <Empty key="empty" {...emptyProps}>
+            {t('common.emptyResource')}
+          </Empty>
         ) : (
-          <Box>
-            <Gallery uploads={resources} type="resource" />
+          <Box key="gallery">
+            <Gallery key="resource" uploads={resources} type="resource" />
             {loadingResources && (
               <div className="load-more">
                 <Spinner />

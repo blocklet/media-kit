@@ -30,7 +30,12 @@ app.use(
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
   initStaticResourceMiddleware({
     express,
-    resourceTypes: [ResourceType],
+    resourceTypes: [
+      {
+        type: ResourceType,
+        did: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
+      },
+    ],
   })
 );
 
