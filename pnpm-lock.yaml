@@ -23,6 +23,7 @@ overrides:
   '@ocap/types': 1.18.103
   '@ocap/util': 1.18.103
   '@ocap/wallet': 1.18.103
+  '@uppy/provider-views': 3.6.0
 
 importers:
 
@@ -257,6 +258,9 @@ importers:
       '@uppy/progress-bar':
         specifier: ^3.0.4
         version: 3.0.4(@uppy/core@3.8.0)
+      '@uppy/provider-views':
+        specifier: 3.6.0
+        version: 3.6.0(@uppy/core@3.8.0)
       '@uppy/react':
         specifier: ^3.2.1
         version: 3.2.1(@uppy/core@3.8.0)(@uppy/dashboard@3.7.1)(@uppy/drag-drop@3.0.3)(@uppy/file-input@3.0.4)(@uppy/progress-bar@3.0.4)(@uppy/status-bar@3.2.5)(react@18.2.0)
@@ -4398,7 +4402,7 @@ packages:
       '@transloadit/prettier-bytes': 0.0.7
       '@uppy/core': 3.8.0
       '@uppy/informer': 3.0.4(@uppy/core@3.8.0)
-      '@uppy/provider-views': 3.8.0(@uppy/core@3.8.0)
+      '@uppy/provider-views': 3.6.0(@uppy/core@3.8.0)
       '@uppy/status-bar': 3.2.5(@uppy/core@3.8.0)
       '@uppy/thumbnail-generator': 3.0.6(@uppy/core@3.8.0)
       '@uppy/utils': 5.7.0
@@ -4487,10 +4491,10 @@ packages:
       preact: 10.19.3
     dev: false
 
-  /@uppy/provider-views@3.8.0(@uppy/core@3.8.0):
-    resolution: {integrity: sha512-sTtx5bgsg2WVR+MyF0gnnM3Z7g3CyFx+Stlz//AvB6g27EMqtqO4zwDR3mestMrETkWYov5bhhqUbt2BaeANpA==}
+  /@uppy/provider-views@3.6.0(@uppy/core@3.8.0):
+    resolution: {integrity: sha512-ySuFh6ZEmpQ7MEKj5mRF6RJtDItmYqq7DxVZsNrKnM/vFYCunyMSdhoJfvZEWMYVN37Dg1y8/0AIpnhZoGYfwQ==}
     peerDependencies:
-      '@uppy/core': ^3.8.0
+      '@uppy/core': ^3.6.0
     dependencies:
       '@uppy/core': 3.8.0
       '@uppy/utils': 5.7.0
@@ -4577,7 +4581,7 @@ packages:
     dependencies:
       '@uppy/companion-client': 3.7.0
       '@uppy/core': 3.8.0
-      '@uppy/provider-views': 3.8.0(@uppy/core@3.8.0)
+      '@uppy/provider-views': 3.6.0(@uppy/core@3.8.0)
       '@uppy/utils': 5.7.0
       preact: 10.19.3
     dev: false

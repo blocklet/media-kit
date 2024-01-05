@@ -1,3 +1,7 @@
+## 0.0.62 (January 05, 2024)
+
+- chore: lock @uppy/provider-views version
+
 ## 0.0.61 (January 05, 2024)
 
 - chore: rebuild deps

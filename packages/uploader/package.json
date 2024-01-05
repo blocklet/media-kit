@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -70,6 +70,7 @@
     "@uppy/unsplash": "^3.2.3",
     "@uppy/url": "^3.5.0",
     "@uppy/webcam": "^3.3.4",
+    "@uppy/provider-views": "3.6.0",
     "ahooks": "^3.7.8",
     "axios": "^1.6.4",
     "body-parser": "^1.20.2",

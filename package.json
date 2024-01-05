@@ -44,6 +44,7 @@
     "@ocap/proto": "1.18.103",
     "@ocap/types": "1.18.103",
     "@ocap/util": "1.18.103",
-    "@ocap/wallet": "1.18.103"
+    "@ocap/wallet": "1.18.103",
+    "@uppy/provider-views": "3.6.0"
   }
 }
