@@ -1,3 +1,7 @@
+## 0.10.63 (January 05, 2024)
+
+- chore: rebuild deps
+
 ## 0.10.62 (January 05, 2024)
 
 - chore: polish resources middleware
