@@ -1,6 +1,6 @@
 ## 0.10.62 (January 05, 2024)
 
-- chore: polish resources  middleware
+- chore: polish resources middleware
 
 ## 0.10.61 (January 03, 2024)
 
