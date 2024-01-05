@@ -10,6 +10,7 @@ const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
 let resourceTypes = [
   {
     type: ImgResourceType,
+    did: ImageBinDid,
     folder: '', // default is root, can be set to 'public' or 'assets' or any other folder
   },
 ];
@@ -18,13 +19,21 @@ const logger = console;
 
 let canUseResources = [] as any;
 
-const mappingResource = async (skipRunningCheck: boolean) => {
+export const mappingResource = async (skipRunningCheck?: boolean) => {
   try {
-    const resources = getResources({
-      did: ImageBinDid,
-      types: resourceTypes.map((x) => x.type),
-      skipRunningCheck,
+    const resources = [] as any[];
+
+    // get resources by resourceTypes loop
+    resourceTypes.forEach((item: any) => {
+      const tempResources = getResources({
+        did: item.did,
+        types: [].concat(item.type),
+        skipRunningCheck,
+      });
+
+      if (tempResources?.length > 0) resources.push(...tempResources);
     });
+
     canUseResources = resources
       .map((resource: { path: string }) => {
         // check dir is exists and not in resourceKeys
@@ -35,7 +44,7 @@ const mappingResource = async (skipRunningCheck: boolean) => {
         }
 
         const { folder = '' } = resourceType;
-        return { originDir, dir: join(originDir, folder || '') };
+        return { originDir, dir: join(originDir, folder || ''), blockletInfo: resource };
       })
       .filter(Boolean);
 
@@ -51,11 +60,11 @@ const mappingResource = async (skipRunningCheck: boolean) => {
 
 // events listen
 const { events, Events } = config;
-events.on(Events.componentAdded, mappingResource);
-events.on(Events.componentRemoved, mappingResource);
-events.on(Events.componentStarted, mappingResource);
-events.on(Events.componentStopped, mappingResource);
-events.on(Events.componentUpdated, mappingResource);
+events.on(Events.componentAdded, () => mappingResource());
+events.on(Events.componentRemoved, () => mappingResource());
+events.on(Events.componentStarted, () => mappingResource());
+events.on(Events.componentStopped, () => mappingResource());
+events.on(Events.componentUpdated, () => mappingResource());
 
 type initStaticResourceMiddlewareOptions = {
   options?: any;
@@ -77,6 +86,7 @@ export const initStaticResourceMiddleware = (
       if (typeof item === 'string') {
         return {
           type: item,
+          did: ImageBinDid, // not set did, default is ImageBinDid
           folder: '', // not set folder, default is root
         };
       }
@@ -101,6 +111,9 @@ export const initStaticResourceMiddleware = (
       })(req, res, next);
     } else {
       res.status(404).end();
+      next?.();
     }
   };
 };
+
+export const getCanUseResources = () => canUseResources;

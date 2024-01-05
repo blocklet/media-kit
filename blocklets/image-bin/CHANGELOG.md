@@ -1,3 +1,7 @@
+## 0.10.62 (January 05, 2024)
+
+- chore: polish resources  middleware
+
 ## 0.10.61 (January 03, 2024)
 
 - chore(image-bin): update resource export folder and Blocklet SDK
