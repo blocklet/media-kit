@@ -81,7 +81,7 @@ export const initStaticResourceMiddleware = (
     skipRunningCheck,
   } = {} as initStaticResourceMiddlewareOptions
 ) => {
-  if (_resourceTypes.length > 0) {
+  if (_resourceTypes?.length > 0) {
     resourceTypes = _resourceTypes.map((item: any) => {
       if (typeof item === 'string') {
         return {
