@@ -1,3 +1,7 @@
+## 0.0.63 (January 08, 2024)
+
+- chore: adjust new version getResources
+
 ## 0.0.62 (January 05, 2024)
 
 - chore: lock @uppy/provider-views version
