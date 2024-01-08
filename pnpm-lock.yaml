@@ -218,8 +218,8 @@ importers:
         specifier: 1.16.21-beta-725f6059
         version: 1.16.21-beta-725f6059
       '@blocklet/logger':
-        specifier: 1.16.21-beta-445a8baa
-        version: 1.16.21-beta-445a8baa
+        specifier: 1.16.21-beta-725f6059
+        version: 1.16.21-beta-725f6059
       '@blocklet/sdk':
         specifier: 1.16.21-beta-725f6059
         version: 1.16.21-beta-725f6059
@@ -388,10 +388,6 @@ packages:
       - supports-color
     dev: false
 
-  /@abtnode/constant@1.16.21-beta-445a8baa:
-    resolution: {integrity: sha512-KJXx6VBQbDQHM8WKO8rsIiUOsFs468p2Le/n1FmcyxqNW2QMviSLEilEmXJoxPHG5mZCgLFI3U3h5rFWbDwUmw==}
-    dev: false
-
   /@abtnode/constant@1.16.21-beta-725f6059:
     resolution: {integrity: sha512-CPrZqB7Vv+CHK7JmNSpUYKs7X+Z0GMHTPoT4iR3DHaoSJW3028AWPqMrSXHKTPLdyd0CKA1Hd3ViTe85QWrHXg==}
     dev: false
@@ -401,22 +397,6 @@ packages:
     dependencies:
       cron: 2.4.4
       debug: 4.3.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: false
-
-  /@abtnode/logger@1.16.21-beta-445a8baa:
-    resolution: {integrity: sha512-RZnRNgV7ZXz9zBcvSOTWSrcB2g+m+xRgRWY/91vu+1dpzJKDJoThBFvjl/5W02SbtXFvRuBzSr0vca3GV6N66Q==}
-    dependencies:
-      '@abtnode/constant': 1.16.21-beta-445a8baa
-      debug: 4.3.4
-      fast-safe-stringify: 2.1.1
-      fs-extra: 10.1.0
-      lodash.isempty: 4.4.0
-      rewire: 5.0.0
-      rotating-file-stream: 2.1.6
-      winston: 3.11.0
-      winston-daily-rotate-file: 4.7.1(winston@3.11.0)
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -1740,14 +1720,6 @@ packages:
     resolution: {integrity: sha512-vCGjpXMiMhksT5kyiihp+58/9BKHpEdFh2PiIjfnZjwj/uIobBa+mzNQW1D/oszOqbsavrKcvj9lTzyRChCZng==}
     dependencies:
       '@blocklet/constant': 1.16.21-beta-725f6059
-    dev: false
-
-  /@blocklet/logger@1.16.21-beta-445a8baa:
-    resolution: {integrity: sha512-tQ47/ssPmTLWzXlTo4zUleqZlyHER/TXrAcCzhgb+FI4JXkTKTa2w5V4UigoLKBifKcBFPKZD4b/gUuv4zkHfg==}
-    dependencies:
-      '@abtnode/logger': 1.16.21-beta-445a8baa
-    transitivePeerDependencies:
-      - supports-color
     dev: false
 
   /@blocklet/logger@1.16.21-beta-725f6059:
