@@ -2,6 +2,9 @@ const { existsSync } = require('fs-extra');
 const { join } = require('path');
 const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');
+const createLogger = require('@blocklet/logger');
+
+const logger = createLogger('uploader:static-resource', { level: 'info' });
 
 const ImgResourceType = 'imgpack';
 const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
@@ -15,23 +18,13 @@ let resourceTypes = [
   },
 ];
 
-const logger = console;
-
 let canUseResources = [] as any;
 
 export const mappingResource = async (skipRunningCheck?: boolean) => {
   try {
-    const resources = [] as any[];
-
-    // get resources by resourceTypes loop
-    resourceTypes.forEach((item: any) => {
-      const tempResources = getResources({
-        did: item.did,
-        types: [].concat(item.type),
-        skipRunningCheck,
-      });
-
-      if (tempResources?.length > 0) resources.push(...tempResources);
+    const resources = getResources({
+      types: resourceTypes,
+      skipRunningCheck,
     });
 
     canUseResources = resources

@@ -35,6 +35,11 @@ app.use(
         type: ResourceType,
         did: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
       },
+      // only for test static resource
+      // {
+      //   type: 'postpack',
+      //   did: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu',
+      // },
     ],
   })
 );
