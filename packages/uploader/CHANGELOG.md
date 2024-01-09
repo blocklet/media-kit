@@ -1,3 +1,7 @@
+## 0.0.64 (January 09, 2024)
+
+- chore: update deps
+
 ## 0.0.63 (January 08, 2024)
 
 - chore: adjust new version getResources
