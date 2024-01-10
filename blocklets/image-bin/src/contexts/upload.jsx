@@ -31,6 +31,17 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
   ];
   const [tab, setTab] = useState('bucket');
 
+  const setImageBinToMediaKit = (item) => {
+    if (item._id === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') {
+      return {
+        ...item,
+        name: 'Media Kit',
+      };
+    }
+
+    return item;
+  };
+
   const loadMoreUploads = async () => {
     if (pageState.hasMore) {
       pageState.loading = true;
@@ -47,7 +58,7 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
         .then(({ data }) => {
           pageState.hasMore = pageState.page < data.pageCount;
           pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
-          pageState.folders = data.folders;
+          pageState.folders = data.folders?.map?.(setImageBinToMediaKit);
           pageState.loading = false;
         })
         .catch(console.error);
@@ -78,7 +89,7 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
     }
 
     const { data: folder } = await api.post('/api/folders', { name });
-    pageState.folders = uniqBy([folder, ...pageState.folders], '_id');
+    pageState.folders = uniqBy([folder, ...pageState.folders], '_id')?.map(setImageBinToMediaKit);
 
     return folder;
   };
@@ -87,7 +98,7 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
     (item) => item._id === (pageState.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9')
   ) || {
     // default is image bin
-    name: 'Image Bin',
+    name: 'Media Kit',
     did: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
   };
 

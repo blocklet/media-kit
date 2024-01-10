@@ -173,7 +173,7 @@
 
 ## 0.10.23 (October 08, 2023)
 
-- chore: add i18n to Image Bin and Uploader
+- chore: add i18n to Media Kit and Uploader
 
 ## 0.10.22 (October 07, 2023)
 
@@ -213,7 +213,7 @@
 
 ## 0.10.13 (September 18, 2023)
 
-- feat: adjust folder logic in Image Bin
+- feat: adjust folder logic in Media Kit
 
 ## 0.10.12 (September 16, 2023)
 
