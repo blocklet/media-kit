@@ -1,3 +1,7 @@
+## 0.10.67 (January 11, 2024)
+
+- chore: brand upgrade image bin to media kit
+
 ## 0.10.66 (January 09, 2024)
 
 - chore: update deps
