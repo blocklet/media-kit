@@ -1,6 +1,6 @@
 ## What is Media Kit?
 
-A simple image upload and hosting blocklet, perfect for personally use.
+A simple media assets upload and hosting blocklet.
 
 This blocklet is built-in with [Pages Kit](https://store.blocklet.dev/blocklets/z8iZiDFg3vkkrPwsiba1TLXy3H9XHzFERsP8o).
 
