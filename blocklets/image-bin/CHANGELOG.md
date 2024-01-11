@@ -1,3 +1,7 @@
+## 0.10.68 (January 11, 2024)
+
+- chore: update blocklet.md
+
 ## 0.10.67 (January 11, 2024)
 
 - chore: brand upgrade image bin to media kit
