@@ -1,7 +1,7 @@
 name: image-bin
-version: 0.10.66
-title: Image Bin
-description: Paste and share your images
+version: 0.10.67
+title: Media Kit
+description: Paste and share your assets
 keywords:
   - blocklet
   - react
@@ -119,4 +119,4 @@ resource:
   exportApi: /api/resources/export
   types:
     - type: imgpack
-      description: A collection of image assets that can be served by the Image Bin
+      description: A collection of assets that can be served by the Media Kit
