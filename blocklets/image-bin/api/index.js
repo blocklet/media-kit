@@ -8,11 +8,10 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
-const { initStaticResourceMiddleware } = require('@blocklet/uploader/middlewares');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
-const { ResourceType } = require('./libs/constants');
+const resources = require('./routes/resources');
 
 if (fs.existsSync(env.uploadDir) === false) {
   fs.mkdirSync(env.uploadDir, { recursive: true });
@@ -28,25 +27,13 @@ app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 app.use(
   '/uploads',
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
-  initStaticResourceMiddleware({
-    express,
-    resourceTypes: [
-      {
-        type: ResourceType,
-        did: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
-      },
-      // only for test static resource
-      // {
-      //   type: 'postpack',
-      //   did: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu',
-      // },
-    ],
-  })
+  resources.staticResourceMiddleware
 );
 
 const router = express.Router();
 router.use('/api/embed', require('./routes/embed'));
-router.use('/api', require('./routes/resources'));
+
+router.use('/api', resources.router);
 router.use('/api', require('./routes/upload'));
 
 const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';

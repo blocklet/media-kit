@@ -1,3 +1,11 @@
+## 0.10.70 (January 15, 2024)
+
+- fix: resolve the bug of missing folder icon
+
+## 0.10.69 (January 15, 2024)
+
+- fix: polish getResources logic to fix bug
+
 ## 0.10.68 (January 11, 2024)
 
 - chore: update blocklet.md
