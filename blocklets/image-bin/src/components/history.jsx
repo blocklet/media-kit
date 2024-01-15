@@ -136,7 +136,7 @@ function Gallery({ uploads, type }) {
                     : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
                 }}>
                 <MediaItem {...x} type={type} />
-                {isResource && (
+                {!isResource && (
                   <BlockletLogo
                     did={x.folderId}
                     style={{
