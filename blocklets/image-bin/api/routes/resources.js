@@ -4,12 +4,25 @@ const express = require('express');
 const toUpper = require('lodash/toUpper');
 const flatten = require('lodash/flatten');
 const middleware = require('@blocklet/sdk/lib/middlewares');
+const { initStaticResourceMiddleware } = require('@blocklet/uploader/middlewares');
 const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/component');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
-const { ResourceDid, MediaTypes, ExportDir } = require('../libs/constants');
+const { ResourceDid, ResourceType, ExportDir } = require('../libs/constants');
+
+const resourceTypes = [
+  {
+    type: ResourceType,
+    did: ResourceDid,
+  },
+  // only for test static resource
+  // {
+  //   type: 'postpack',
+  //   did: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu',
+  // },
+];
 
 const router = express.Router();
 const auth = middleware.auth({ roles: env.uploaderRoles });
@@ -17,7 +30,7 @@ const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
 const getResourceComponents = () => {
-  const resources = getResources({ did: ResourceDid, types: MediaTypes });
+  const resources = getResources({ types: resourceTypes });
   return resources.map((x) => ({ ...x, name: x.title }));
 };
 
@@ -93,4 +106,12 @@ router.post('/resources/export', ensureAdmin, async (req, res) => {
   res.json({});
 });
 
-module.exports = router;
+const staticResourceMiddleware = initStaticResourceMiddleware({
+  express,
+  resourceTypes,
+});
+
+module.exports = {
+  router,
+  staticResourceMiddleware,
+};
