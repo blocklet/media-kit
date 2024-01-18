@@ -9,6 +9,8 @@ const logger = createLogger('uploader:static-resource', { level: 'info' });
 const ImgResourceType = 'imgpack';
 const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
 
+let skipRunningCheck = false;
+
 // can change by initStaticResourceMiddleware resourceTypes
 let resourceTypes = [
   {
@@ -20,7 +22,7 @@ let resourceTypes = [
 
 let canUseResources = [] as any;
 
-export const mappingResource = async (skipRunningCheck?: boolean) => {
+export const mappingResource = async () => {
   try {
     const resources = getResources({
       types: resourceTypes,
@@ -63,7 +65,7 @@ type initStaticResourceMiddlewareOptions = {
   options?: any;
   resourceTypes?: string[] | Object[];
   express: any;
-  skipRunningCheck: boolean;
+  skipRunningCheck?: boolean;
 };
 
 export const initStaticResourceMiddleware = (
@@ -71,9 +73,12 @@ export const initStaticResourceMiddleware = (
     options,
     resourceTypes: _resourceTypes = resourceTypes,
     express,
-    skipRunningCheck,
+    skipRunningCheck: _skipRunningCheck,
   } = {} as initStaticResourceMiddlewareOptions
 ) => {
+  // save to global
+  skipRunningCheck = !!_skipRunningCheck;
+
   if (_resourceTypes?.length > 0) {
     resourceTypes = _resourceTypes.map((item: any) => {
       if (typeof item === 'string') {
@@ -88,7 +93,7 @@ export const initStaticResourceMiddleware = (
   }
 
   // init mapping resource
-  mappingResource(skipRunningCheck);
+  mappingResource();
 
   return (req: any, res: any, next: Function) => {
     const urlPath = new URL(`http://localhost${req.url}`).pathname;

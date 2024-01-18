@@ -1,3 +1,7 @@
+## 0.10.71 (January 18, 2024)
+
+- chore: polish skipRunningCheck logic
+
 ## 0.10.70 (January 15, 2024)
 
 - fix: resolve the bug of missing folder icon

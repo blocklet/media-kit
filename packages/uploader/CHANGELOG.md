@@ -1,3 +1,7 @@
+## 0.0.65 (January 18, 2024)
+
+- chore: polish skipRunningCheck logic
+
 ## 0.0.64 (January 09, 2024)
 
 - chore: update deps
