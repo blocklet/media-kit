@@ -2,9 +2,16 @@ const { existsSync } = require('fs-extra');
 const { join } = require('path');
 const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');
-const createLogger = require('@blocklet/logger');
 
-const logger = createLogger('uploader:static-resource', { level: 'info' });
+let logger = console;
+
+try {
+  const createLogger = require('@blocklet/logger');
+  logger = createLogger('uploader:static-resource', { level: 'info' });
+} catch (error) {
+  logger = console;
+  logger.warn('create logger error, fallback to console: ', error);
+}
 
 const ImgResourceType = 'imgpack';
 const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';

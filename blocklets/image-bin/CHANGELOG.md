@@ -1,3 +1,7 @@
+## 0.10.72 (January 24, 2024)
+
+- chore: polish logger logic to fix server bug
+
 ## 0.10.71 (January 18, 2024)
 
 - chore: polish skipRunningCheck logic
