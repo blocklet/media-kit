@@ -1,3 +1,15 @@
+## 0.0.67 (January 25, 2024)
+
+- chore: update deps
+
+## 0.0.66 (January 24, 2024)
+
+- chore: polish logger logic to fix server bug
+
+## 0.0.65 (January 18, 2024)
+
+- chore: polish skipRunningCheck logic
+
 ## 0.0.64 (January 09, 2024)
 
 - chore: update deps

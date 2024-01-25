@@ -1,3 +1,15 @@
+## 0.10.73 (January 25, 2024)
+
+- chore: update deps
+
+## 0.10.72 (January 24, 2024)
+
+- chore: polish logger logic to fix server bug
+
+## 0.10.71 (January 18, 2024)
+
+- chore: polish skipRunningCheck logic
+
 ## 0.10.70 (January 15, 2024)
 
 - fix: resolve the bug of missing folder icon
