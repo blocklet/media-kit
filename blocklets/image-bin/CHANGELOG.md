@@ -1,3 +1,7 @@
+## 0.10.73 (January 25, 2024)
+
+- chore: update deps
+
 ## 0.10.72 (January 24, 2024)
 
 - chore: polish logger logic to fix server bug
