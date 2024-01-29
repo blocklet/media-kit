@@ -3,15 +3,7 @@ const { join } = require('path');
 const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');
 
-let logger = console;
-
-try {
-  const createLogger = require('@blocklet/logger');
-  logger = createLogger('uploader:static-resource', { level: 'info' });
-} catch (error) {
-  logger = console;
-  logger.warn('create logger error, fallback to console: ', error);
-}
+const logger = console;
 
 const ImgResourceType = 'imgpack';
 const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';

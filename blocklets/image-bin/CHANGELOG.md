@@ -1,3 +1,7 @@
+## 0.10.74 (January 29, 2024)
+
+- chore: polish @blocklet/logger to console
+
 ## 0.10.73 (January 25, 2024)
 
 - chore: update deps
