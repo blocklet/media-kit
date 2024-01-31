@@ -1,4 +1,4 @@
-## 0.0.69 (January 30, 2024)
+## 0.0.69 (January 31, 2024)
 
 - feat: uploader add component-installer
 
