@@ -1,3 +1,7 @@
+## 0.0.69 (January 30, 2024)
+
+- feat: uploader add component-installer
+
 ## 0.0.68 (January 29, 2024)
 
 - chore: polish @blocklet/logger to console

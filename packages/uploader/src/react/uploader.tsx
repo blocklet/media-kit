@@ -29,7 +29,7 @@ import ImageEditor from '@uppy/image-editor';
 import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
 import localeMap from './i18n';
-// import GoldenRetriever from '@uppy/golden-retriever';
+import ComponentInstaller from "@blocklet/ui-react/lib/ComponentInstaller"
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
@@ -61,6 +61,7 @@ import Resources from './plugins/resources';
 import PrepareUpload from './plugins/prepare-upload';
 // @ts-ignore
 import AIImage from './plugins/ai-image';
+import { MEDIA_KIT_DID } from './constants';
 // @ts-ignore
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
@@ -401,6 +402,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     onOpen,
     onClose,
     locale,
+    installerProps,
   } = props;
 
   // get pluginMap tp get plugin some props
@@ -579,132 +581,135 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   return (
     <Wrapper key="uploader-wrapper" {...wrapperProps}>
-      <GlobalStyles
-        styles={() => {
-          return {
-            '.uppy-is-drag-over': {
-              '&::after': {
-                transition: 'all 0.3s ease-in-out',
-                border: '2px dashed #bbb !important',
-                borderRadius: 4,
-                background: `rgba(234, 234, 234, 0.5)`,
+      <ComponentInstaller onClose={close} did={MEDIA_KIT_DID} {...installerProps}>
+        <GlobalStyles
+          styles={() => {
+            return {
+              '.uppy-is-drag-over': {
+                '&::after': {
+                  transition: 'all 0.3s ease-in-out',
+                  border: '2px dashed #bbb !important',
+                  borderRadius: 4,
+                  background: `rgba(234, 234, 234, 0.5)`,
+                },
+              },
+            };
+          }}
+        />
+        {/* ignore backdrop trigger */}
+        <Box
+          key="uploader-container"
+          id={target}
+          onClick={(e: any) => e.stopPropagation()}
+          sx={{
+            position: 'relative',
+            width: isMobile ? '90vw' : 720,
+            '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner img': {
+              background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
+            },
+            '.uploaded-add-item': {
+              background: 'rgba(0,0,0,0.1)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                background: 'rgba(0,0,0,0.13)',
               },
             },
-          };
-        }}
-      />
-      {/* ignore backdrop trigger */}
-      <Box
-        key="uploader-container"
-        id={target}
-        onClick={(e: any) => e.stopPropagation()}
-        sx={{
-          position: 'relative',
-          width: isMobile ? '90vw' : 720,
-          '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner img': {
-            background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
-          },
-          '.uploaded-add-item': {
-            background: 'rgba(0,0,0,0.1)',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            transition: 'all 0.3s ease-in-out',
-            '&:hover': {
-              background: 'rgba(0,0,0,0.13)',
+            '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
+              justifyContent: 'flex-end',
             },
-          },
-          '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
-            justifyContent: 'flex-end',
-          },
-          '.uppy-ProviderBrowser-footer': {
-            button: {
-              marginRight: '0 !important',
-              '&:last-child': {
+            '.uppy-ProviderBrowser-footer': {
+              button: {
+                marginRight: '0 !important',
+                '&:last-child': {
+                  display: 'none',
+                },
+              },
+            },
+            '.uppy-Dashboard-AddFiles-title': {
+              whiteSpace: 'normal',
+            },
+            '.uppy-ProviderBrowser-body': {
+              background: '#fff',
+              height: '100%',
+            },
+            '.uppy-ProviderBrowser-list': {
+              height: 'fit-content',
+              maxHeight: '100%',
+            },
+            '.uploaded, .ai-image': {
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              flexDirection: 'column',
+              '& > div': {
+                width: '100%',
+              },
+              '& .uppy-ProviderBrowser-header': {
+                // hide the logout
                 display: 'none',
               },
             },
-          },
-          '.uppy-Dashboard-AddFiles-title': {
-            whiteSpace: 'normal',
-          },
-          '.uppy-ProviderBrowser-body': {
-            background: '#fff',
-            height: '100%',
-          },
-          '.uppy-ProviderBrowser-list': {
-            height: 'fit-content',
-            maxHeight: '100%',
-          },
-          '.uploaded, .ai-image': {
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            flexDirection: 'column',
-            '& > div': {
-              width: '100%',
+            '& .uppy-Url': {
+              width: '100% !important',
+              display: 'flex',
+              justifyContent: 'center',
+              '& input': {
+                width: '70%',
+              },
             },
-            '& .uppy-ProviderBrowser-header': {
-              // hide the logout
-              display: 'none',
-            },
-          },
-          '& .uppy-Url': {
-            width: '100% !important',
-            display: 'flex',
-            justifyContent: 'center',
-            '& input': {
-              width: '70%',
-            },
-          },
-        }}>
-        <IconButton
-          aria-label="close"
-          onClick={close}
-          sx={{
-            color: '#fafafa',
-            position: 'absolute',
-            ...(isMobile
-              ? {
-                  bottom: `calc(0px - ${closeIconSize} - 16px)`,
-                  left: `calc(50vw - ${closeIconSize} - 8px)`,
-                }
-              : {
-                  right: `calc(0px - ${closeIconSize} - 16px)`,
-                  top: -12,
-                }),
           }}>
-          <CloseIcon
+          <IconButton
+            aria-label="close"
+            onClick={close}
             sx={{
-              fontSize: closeIconSize,
-            }}
-          />
-        </IconButton>
-        {/* @ts-ignore */}
-        {state.uppy && (
-          <Dashboard
-            inline
-            // @ts-ignore
-            target={`#${target}`}
-            id={uploaderDashboardId}
-            uppy={state.uppy}
-            plugins={plugins}
-            fileManagerSelectionType="both"
-            proudlyDisplayPoweredByUppy={false}
-            showProgressDetails
-            disableThumbnailGenerator
-            // theme="light"
-            note=""
-            doneButtonHandler={close}
-            {...props.dashboardProps}
-          />
-        )}
-      </Box>
+              color: '#fafafa',
+              position: 'absolute',
+              ...(isMobile
+                ? {
+                    bottom: `calc(0px - ${closeIconSize} - 16px)`,
+                    left: `calc(50vw - ${closeIconSize} - 8px)`,
+                  }
+                : {
+                    right: `calc(0px - ${closeIconSize} - 16px)`,
+                    top: -12,
+                  }),
+            }}>
+            <CloseIcon
+              sx={{
+                fontSize: closeIconSize,
+              }}
+            />
+          </IconButton>
+          {/* @ts-ignore */}
+          {state.uppy && (
+            <Dashboard
+              inline
+              // @ts-ignore
+              target={`#${target}`}
+              id={uploaderDashboardId}
+              uppy={state.uppy}
+              plugins={plugins}
+              fileManagerSelectionType="both"
+              proudlyDisplayPoweredByUppy={false}
+              showProgressDetails
+              disableThumbnailGenerator
+              // theme="light"
+              note=""
+              doneButtonHandler={close}
+              {...props.dashboardProps}
+            />
+          )}
+        </Box>
+      </ComponentInstaller>
     </Wrapper>
   );
 });
 
 export default Uploader;
+
 
 export { initUploader, Uploader };
