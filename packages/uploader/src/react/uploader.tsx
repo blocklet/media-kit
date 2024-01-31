@@ -29,7 +29,7 @@ import ImageEditor from '@uppy/image-editor';
 import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
 import localeMap from './i18n';
-import ComponentInstaller from "@blocklet/ui-react/lib/ComponentInstaller"
+import { ComponentInstaller } from "@blocklet/ui-react"
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
