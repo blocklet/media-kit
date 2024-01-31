@@ -12,6 +12,10 @@ export type UploaderProps = {
   onOpen?: Function;
   onClose?: Function;
   plugins?: string[];
+  installerProps?: {
+    disabled?: boolean;
+    fallback?: any;
+  }
   uploadedProps?: {
     params?: any;
     onSelectedFiles?: Function;
