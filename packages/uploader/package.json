@@ -8,25 +8,22 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "require": "./lib/index.cjs",
-      "import": "./lib/index.mjs",
+      "require": "./lib/index.js",
+      "import": "./es/index.js",
       "types": "./lib/index.d.ts"
     },
     "./middlewares": {
-      "require": "./lib/middlewares.cjs",
-      "import": "./lib/middlewares.mjs",
+      "require": "./lib/middlewares.js",
+      "import": "./es/middlewares.js",
       "types": "./lib/middlewares.d.ts"
     },
     "./react": {
-      "require": "./lib/react.cjs",
-      "import": "./lib/react.mjs",
+      "require": "./lib/react.js",
+      "import": "./es/react.js",
       "types": "./lib/react.d.ts"
     },
     "./lib/": "./lib/"
   },
-  "main": "./lib/index.cjs",
-  "module": "./lib/index.mjs",
-  "types": "./lib/index.d.ts",
   "files": [
     "lib",
     "*.d.ts"
