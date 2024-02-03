@@ -1,3 +1,7 @@
+## 0.0.71 (February 03, 2024)
+
+- fix(uploader): fix release pkg
+
 ## 0.0.70 (February 03, 2024)
 
 - chore(deps): update deps
