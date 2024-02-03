@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.0.70",
+  "version": "0.0.71",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -22,10 +22,12 @@
       "import": "./es/react.js",
       "types": "./lib/react.d.ts"
     },
-    "./lib/": "./lib/"
+    "./lib/": "./lib/",
+    "./es/": "./es/"
   },
   "files": [
     "lib",
+    "es",
     "*.d.ts"
   ],
   "scripts": {
