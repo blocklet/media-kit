@@ -1,3 +1,8 @@
+## 0.0.70 (February 03, 2024)
+
+- chore(deps): update deps
+- feat(uploader): build use unbundle mode
+
 ## 0.0.69 (January 31, 2024)
 
 - feat: uploader add component-installer
