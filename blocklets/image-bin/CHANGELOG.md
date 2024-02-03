@@ -1,3 +1,8 @@
+## 0.10.75 (February 03, 2024)
+
+- chore(deps): update deps
+- feat(uploader): build use unbundle mode
+
 ## 0.10.74 (January 29, 2024)
 
 - chore: polish @blocklet/logger to console
