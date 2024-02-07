@@ -1,3 +1,24 @@
+## 0.0.73 (February 07, 2024)
+
+- chore: add private in Media Kit
+
+## 0.0.72 (February 07, 2024)
+
+- chore: update deps
+
+## 0.0.71 (February 03, 2024)
+
+- fix(uploader): fix release pkg
+
+## 0.0.70 (February 03, 2024)
+
+- chore(deps): update deps
+- feat(uploader): build use unbundle mode
+
+## 0.0.69 (January 31, 2024)
+
+- feat: uploader add component-installer
+
 ## 0.0.68 (January 29, 2024)
 
 - chore: polish @blocklet/logger to console

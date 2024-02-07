@@ -19,6 +19,7 @@ node_modules
 yalc.lock
 **/dist
 lib
+es
 
 # local env files
 .env.local
