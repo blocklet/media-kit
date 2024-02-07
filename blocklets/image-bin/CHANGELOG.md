@@ -1,20 +1,3 @@
-## 0.10.78 (February 07, 2024)
-
-- chore: add private in Media Kit
-
-## 0.10.77 (February 07, 2024)
-
-- chore: update deps
-
-## 0.10.76 (February 03, 2024)
-
-- fix(uploader): fix release pkg
-
-## 0.10.75 (February 03, 2024)
-
-- chore(deps): update deps
-- feat(uploader): build use unbundle mode
-
 ## 0.10.74 (January 29, 2024)
 
 - chore: polish @blocklet/logger to console
