@@ -1,3 +1,7 @@
+## 0.10.77 (February 07, 2024)
+
+- chore: update deps
+
 ## 0.10.76 (February 03, 2024)
 
 - fix(uploader): fix release pkg
