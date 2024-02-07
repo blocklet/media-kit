@@ -1,3 +1,7 @@
+## 0.10.78 (February 07, 2024)
+
+- chore: add private in Media Kit
+
 ## 0.10.77 (February 07, 2024)
 
 - chore: update deps
