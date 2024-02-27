@@ -101,6 +101,41 @@
             "children": [],
             "label": "XLSX",
             "value": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          },
+          {
+            "children": [],
+            "label": "PKG",
+            "value": "application/octet-stream"
+          },
+          {
+            "children": [],
+            "label": "DMG",
+            "value": "application/x-apple-diskimage"
+          },
+          {
+            "children": [],
+            "label": "APK",
+            "value": "application/vnd.android.package-archive"
+          },
+          {
+            "children": [],
+            "label": "ZIP",
+            "value": "application/zip"
+          },
+          {
+            "children": [],
+            "label": "RAR",
+            "value": "application/x-rar-compressed"
+          },
+          {
+            "children": [],
+            "label": "7Z",
+            "value": "application/x-7z-compressed"
+          },
+          {
+            "children": [],
+            "label": "GZ",
+            "value": "application/gzip"
           }
         ],
         "x-validator": [],
@@ -108,11 +143,18 @@
         "required": true,
         "name": "types",
         "description": "Only selected media types are allowed to upload.",
-        "default": ["image/png", "image/jpeg", "image/gif", "image/svg+xml", "image/bmp", "image/webp"],
+        "default": [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/svg+xml",
+          "image/bmp",
+          "image/webp"
+        ],
         "x-designable-id": "o9udxb7gpzp",
         "x-index": 0
       }
     },
-    "x-designable-id": "tkph55lquye"
+    "x-designable-id": "i1a15a555xy"
   }
 }
