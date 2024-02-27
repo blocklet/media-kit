@@ -39,6 +39,10 @@ const UploaderTrigger = lazy(() =>
 const borderRadius = '4px !important';
 const transformY = '4px';
 
+function parseStringToDot(str) {
+  return str.length > 12 ? `${str.substr(0, 7)}...${str.substr(-5)}` : str;
+}
+
 function BlockletLogo(props) {
   const { did, ...restProps } = props;
   const src = `/.well-known/service/blocklet/logo-bundle/${did}`;
@@ -181,17 +185,29 @@ function Gallery({ uploads, type }) {
                   !isResource && (
                     <Box
                       sx={{
-                        display: 'flex',
-                        alignItems: 'center',
                         fontSize: 14,
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+                        lineHeight: 1.4,
                       }}>
-                      {prettyBytes(x.size, {
-                        locale,
-                      })}
+                      {parseStringToDot(x.originalname) || 'unknown'}
                     </Box>
                   )
                 }
-                subtitle={isResource ? '' : format(x.createdAt, localeMap[locale] || locale)}
+                subtitle={
+                  isResource ? (
+                    ''
+                  ) : (
+                    <>
+                      {prettyBytes(x.size, {
+                        locale,
+                      })}
+                      &nbsp;·&nbsp;
+                      {format(x.createdAt, localeMap[locale] || locale)}
+                    </>
+                  )
+                }
                 actionIcon={
                   <Box
                     sx={{

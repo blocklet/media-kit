@@ -1,3 +1,7 @@
+## 0.10.79 (February 27, 2024)
+
+- feat: support for uploading .7z .zip .dmg .pkg .apk .gz ext file
+
 ## 0.10.78 (February 07, 2024)
 
 - chore: add private in Media Kit
