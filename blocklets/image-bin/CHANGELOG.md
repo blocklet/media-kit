@@ -1,3 +1,7 @@
+## 0.10.80 (February 27, 2024)
+
+- feat: bundle to compact size
+
 ## 0.10.79 (February 27, 2024)
 
 - feat: support for uploading .7z .zip .dmg .pkg .apk .gz ext file
