@@ -55,7 +55,6 @@ jobs:
           COMPONENT_STORE_URL: ${{ secrets.STORE_ENDPOINT_TEST }}
         with:
           deps-server-version: beta
-          deps-npm-client: "pnpm"
           skip-deps: false
           skip-upload: false
           skip-deploy: true
