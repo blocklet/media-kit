@@ -88,7 +88,15 @@ class DownloadRemoteFiles extends UIPlugin {
     // name maybe include query string, remove it
     const nameWithoutQuery = name?.split('?')?.[0];
 
-    const fileName = nameWithoutQuery?.endsWith(ext) ? nameWithoutQuery : `${nameWithoutQuery}${ext ? `.${ext}` : ''}`;
+    const notAddExt = () => {
+      const extList = ['jpg', 'jpeg'];
+      if (extList.includes(ext) && extList.some((item) => nameWithoutQuery?.endsWith(item))) {
+        return true;
+      }
+      return nameWithoutQuery?.endsWith(ext);
+    };
+
+    const fileName = notAddExt() ? nameWithoutQuery : `${nameWithoutQuery}${ext ? `.${ext}` : ''}`;
 
     // not downloading
     if (notDownloading) {
