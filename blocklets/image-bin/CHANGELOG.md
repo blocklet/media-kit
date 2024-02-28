@@ -1,3 +1,7 @@
+## 0.10.83 (February 28, 2024)
+
+- feat: add download image logic
+
 ## 0.10.82 (February 28, 2024)
 
 - chore: remove ci deps use pnpm

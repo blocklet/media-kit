@@ -34,6 +34,7 @@ export default function ImageActions({ data, isResource }) {
   const onCopy = () => {
     Copy(createImageUrl(data.filename, 0, 0));
     setCopied(true);
+    Toast.success(t('common.copySuccess'));
   };
 
   useEffect(() => {
@@ -118,7 +119,22 @@ export default function ImageActions({ data, isResource }) {
     (data.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9' ||
     !isValidDid(data.folderId);
 
+  const getDownloadUrl = () => {
+    return `${createImageUrl(data.filename, 0, 0)}?filename=${encodeURIComponent(data.originalname)}`;
+  };
+
+  const onDownload = () => {
+    window.open(getDownloadUrl());
+  };
+
+  const copyDownload = () => {
+    Copy(getDownloadUrl());
+    Toast.success(t('common.copyDownloadSuccess'));
+  };
+
   const actions = [
+    { children: t('common.download'), onClick: onDownload },
+    { children: t('common.copyDownload'), onClick: copyDownload },
     // can't delete other blocklet files
     { children: t('common.delete'), disabled: !isMediaKitFile, onClick: onDelete },
     { children: t('common.moveFolder'), disabled: !isMediaKitFile, onClick: onMove },

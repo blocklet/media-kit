@@ -8,6 +8,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
+const Upload = require('./states/upload');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
@@ -26,6 +27,35 @@ app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
 
 app.use(
   '/uploads',
+  async (req, res, next) => {
+    // fix missing ext
+    const urlPath = req.url;
+    if (!path.extname(urlPath)) {
+      try {
+        const item = await Upload.findOne({
+          // replace / with empty string
+          filename: path.basename(urlPath),
+        });
+
+        if (item?.mimetype) {
+          res.setHeader('Content-Type', item.mimetype);
+        }
+      } catch (error) {
+        // ignore error
+      }
+    }
+
+    // add filename to response header
+    try {
+      const { filename } = req.query;
+      if (filename) {
+        res.attachment(filename);
+      }
+    } catch (error) {
+      // ignore error
+    }
+    next();
+  },
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
   resources.staticResourceMiddleware
 );
