@@ -34,5 +34,9 @@ export default flatten({
     buckets: '存储桶',
     resources: '资源',
     import: '导入',
+    download: '下载',
+    copyDownload: '复制下载链接',
+    copyDownloadSuccess: '复制下载链接成功',
+    copySuccess: '复制链接成功',
   },
 });

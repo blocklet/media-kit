@@ -33,5 +33,9 @@ export default flatten({
     buckets: 'Buckets',
     resources: 'Resources',
     import: 'Import',
+    download: 'Download',
+    copyDownload: 'Copy Download Link',
+    copyDownloadSuccess: 'Copy Download Link Success',
+    copySuccess: 'Copy URL Success',
   },
 });
