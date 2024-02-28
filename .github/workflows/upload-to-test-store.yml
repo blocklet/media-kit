@@ -62,6 +62,7 @@ jobs:
         env:
           COMPONENT_STORE_URL: ${{ secrets.STORE_ENDPOINT_TEST }}
         with:
+          deps-server-version: beta
           skip-deps: true
           skip-upload: false
           skip-deploy: true
