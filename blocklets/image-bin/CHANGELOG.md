@@ -1,3 +1,7 @@
+## 0.10.81 (February 28, 2024)
+
+- feat: add download image logic
+
 ## 0.10.80 (February 27, 2024)
 
 - feat: bundle to compact size
