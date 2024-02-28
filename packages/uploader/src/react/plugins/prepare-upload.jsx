@@ -68,7 +68,6 @@ class DownloadRemoteFiles extends UIPlugin {
     const {
       type,
       name,
-      extension,
       preview,
       source,
       isRemote,
@@ -86,7 +85,10 @@ class DownloadRemoteFiles extends UIPlugin {
 
     const ext = getExt(uppyFile);
 
-    const fileName = extension ? name : `${name}${ext ? `.${ext}` : ''}`;
+    // name maybe include query string, remove it
+    const nameWithoutQuery = name?.split('?')?.[0];
+
+    const fileName = nameWithoutQuery?.endsWith(ext) ? nameWithoutQuery : `${nameWithoutQuery}${ext ? `.${ext}` : ''}`;
 
     // not downloading
     if (notDownloading) {
@@ -122,6 +124,7 @@ class DownloadRemoteFiles extends UIPlugin {
 
           this.uppy.setFileState(id, {
             name: fileName, // file name
+            extension: ext, // file extension
             type, // file type
             data: blobFile, // file blob
             preview: !preview ? getObjectURL(blobFile) : preview, // file blob
@@ -132,8 +135,11 @@ class DownloadRemoteFiles extends UIPlugin {
             meta: {
               ...meta,
               name: fileName,
+              filename: fileName,
             },
           });
+
+          const uppyFile = this.uppy.getFile(id);
 
           // emit downloaded event
           this.uppy.emit(emitKey, id);

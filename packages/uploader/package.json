@@ -34,7 +34,7 @@
     "coverage": "pnpm test -- --coverage",
     "test": "vitest tests",
     "build": "unbuild",
-    "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' ",
+    "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' --ignore 'es/*' ",
     "dev": "pnpm run build:watch",
     "prepublish": "pnpm run build",
     "prebuild:dep": "pnpm run build"
