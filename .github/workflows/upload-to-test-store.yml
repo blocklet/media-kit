@@ -40,10 +40,6 @@ jobs:
       - run: npm add -g @antfu/ni
       - run: nci
 
-      - name: Prepare @blocklet/cli deps
-        run: yarn global add @blocklet/cli@beta
-        shell: bash
-
       - name: Publish to NPM
         if: "contains(matrix.dir , 'packages/')"
         run: |
