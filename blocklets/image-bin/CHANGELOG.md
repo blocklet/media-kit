@@ -1,6 +1,14 @@
-## 0.10.81 (February 28, 2024)
+## 0.10.83 (February 28, 2024)
 
 - feat: add download image logic
+
+## 0.10.82 (February 28, 2024)
+
+- chore: remove ci deps use pnpm
+
+## 0.10.81 (February 27, 2024)
+
+- fix: modify upload test store CI
 
 ## 0.10.80 (February 27, 2024)
 
