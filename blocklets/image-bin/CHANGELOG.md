@@ -1,3 +1,7 @@
+## 0.10.84 (March 01, 2024)
+
+- feat: support for user input extname in prefs
+
 ## 0.10.83 (February 28, 2024)
 
 - feat: add download image logic
