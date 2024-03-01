@@ -4,6 +4,8 @@ import Button from '@arcblock/ux/lib/Button';
 import joinUrl from 'url-join';
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import xbytes from 'xbytes';
+import mime from 'mime-types';
+import uniq from 'lodash/uniq';
 import { useUploadContext } from '../contexts/upload';
 
 const UploaderTrigger = lazy(() =>
@@ -20,9 +22,20 @@ obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
 
 const defaultTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/bmp', 'image/webp'];
 
-const allowedFileTypes = Array.isArray(window.blocklet.preferences.types)
-  ? window.blocklet.preferences.types
-  : defaultTypes;
+const { types, extsInput } = window?.blocklet?.preferences || {};
+
+let allowedFileTypes = [...defaultTypes];
+
+if (extsInput) {
+  allowedFileTypes = uniq(
+    extsInput
+      ?.split(',')
+      ?.map((ext) => mime.lookup(ext?.replaceAll(' ', '') || ''))
+      ?.filter((x) => x)
+  );
+} else if (Array.isArray(types)) {
+  allowedFileTypes = types;
+}
 
 // not use iec
 const maxFileSize = xbytes.parseSize(window.blocklet.MAX_UPLOAD_SIZE, { iec: false });
