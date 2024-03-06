@@ -1,3 +1,7 @@
+## 0.10.85 (March 06, 2024)
+
+- fix: parse string error bug
+
 ## 0.10.84 (March 01, 2024)
 
 - feat: support for user input extname in prefs
