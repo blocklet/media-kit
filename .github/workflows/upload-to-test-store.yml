@@ -40,10 +40,6 @@ jobs:
       - run: npm add -g @antfu/ni
       - run: nci
 
-      - name: Prepare @blocklet/cli deps
-        run: yarn global add @blocklet/cli@beta
-        shell: bash
-
       - name: Publish to NPM
         if: "contains(matrix.dir , 'packages/')"
         run: |
@@ -52,17 +48,14 @@ jobs:
           echo "publish version ${VERSION}"
           pnpm -r publish --access public --no-git-checks
 
-      - name: Prebuild deps
-        if: "contains(matrix.dir , 'blocklets/')"
-        run: pnpm -r prebuild:dep
-
       - name: Upload to test store
         uses: blocklet/action-workflow@v1
         if: "contains(matrix.dir , 'blocklets/')"
         env:
           COMPONENT_STORE_URL: ${{ secrets.STORE_ENDPOINT_TEST }}
         with:
-          skip-deps: true
+          deps-server-version: beta
+          skip-deps: false
           skip-upload: false
           skip-deploy: true
           skip-release: true

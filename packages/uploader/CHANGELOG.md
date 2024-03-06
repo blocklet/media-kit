@@ -1,3 +1,7 @@
+## 0.0.74 (February 28, 2024)
+
+- feat: add download image logic
+
 ## 0.0.73 (February 07, 2024)
 
 - chore: add private in Media Kit

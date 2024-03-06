@@ -1,3 +1,5 @@
+const path = require('path');
+
 // const express = require("express");
 const companion = require('@uppy/companion');
 const bodyParser = require('body-parser');
@@ -102,6 +104,8 @@ export async function proxyImageDownload(req: any, res: any, next?: Function) {
 
       if (data && status >= 200 && status < 302) {
         res.setHeader('Content-Type', headers['content-type']);
+        try {
+        } catch (error) {}
         if (responseType === 'stream') {
           data.pipe(res);
         } else if (responseType === 'arraybuffer') {

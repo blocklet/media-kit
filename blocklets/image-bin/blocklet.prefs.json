@@ -152,9 +152,40 @@
           "image/webp"
         ],
         "x-designable-id": "o9udxb7gpzp",
-        "x-index": 0
+        "x-index": 0,
+        "x-display": "hidden"
+      },
+      "extsInput": {
+        "type": "string",
+        "title": "Supported Media Types Extensions",
+        "x-decorator": "FormItem",
+        "x-component": "Input.TextArea",
+        "x-validator": [],
+        "x-component-props": {
+          "showCount": false
+        },
+        "x-decorator-props": {},
+        "required": false,
+        "x-reactions": {
+          "dependencies": [
+            {
+              "property": "value",
+              "type": "Array<string | number>",
+              "source": "types",
+              "name": "types"
+            }
+          ],
+          "fulfill": {
+            "state": {},
+            "run": "$effect(() => {\n  const enums = [\n    {\n      children: [],\n      label: \".jpeg\",\n      value: \"image/jpeg\",\n    },\n    {\n      children: [],\n      label: \".png\",\n      value: \"image/png\",\n    },\n    {\n      children: [],\n      label: \".gif\",\n      value: \"image/gif\",\n    },\n    {\n      children: [],\n      label: \".svg\",\n      value: \"image/svg+xml\",\n    },\n    {\n      children: [],\n      label: \".webp\",\n      value: \"image/webp\",\n    },\n    {\n      children: [],\n      label: \".avif\",\n      value: \"image/avif\",\n    },\n    {\n      children: [],\n      label: \".bmp\",\n      value: \"image/bmp\",\n    },\n    {\n      children: [],\n      label: \".mp3\",\n      value: \"audio/mpeg\",\n    },\n    {\n      children: [],\n      label: \".mp4\",\n      value: \"video/mp4\",\n    },\n    {\n      children: [],\n      label: \".webm\",\n      value: \"video/webm\",\n    },\n    {\n      children: [],\n      label: \".pdf\",\n      value: \"application/pdf\",\n    },\n    {\n      children: [],\n      label: \".ppt\",\n      value: \"application/vnd.ms-powerpoint\",\n    },\n    {\n      children: [],\n      label: \".pptx\",\n      value:\n        \"application/vnd.openxmlformats-officedocument.presentationml.presentation\",\n    },\n    {\n      children: [],\n      label: \".doc\",\n      value: \"application/msword\",\n    },\n    {\n      children: [],\n      label: \".docx\",\n      value:\n        \"application/vnd.openxmlformats-officedocument.wordprocessingml.document\",\n    },\n    {\n      children: [],\n      label: \".xls\",\n      value: \"application/vnd.ms-excel\",\n    },\n    {\n      children: [],\n      label: \".xlsx\",\n      value:\n        \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\n    },\n    {\n      children: [],\n      label: \".pkg\",\n      value: \"application/octet-stream\",\n    },\n    {\n      children: [],\n      label: \".dmg\",\n      value: \"application/x-apple-diskimage\",\n    },\n    {\n      children: [],\n      label: \".apk\",\n      value: \"application/vnd.android.package-archive\",\n    },\n    {\n      children: [],\n      label: \".zip\",\n      value: \"application/zip\",\n    },\n    {\n      children: [],\n      label: \".rar\",\n      value: \"application/x-rar-compressed\",\n    },\n    {\n      children: [],\n      label: \".7z\",\n      value: \"application/x-7z-compressed\",\n    },\n    {\n      children: [],\n      label: \".gz\",\n      value: \"application/gzip\",\n    },\n  ]\n\n  const enumsMap = enums.reduce((acc, item) => {\n    acc[item.value] = item.label\n    return acc\n  }, {})\n\n  const typesList =\n    typeof $deps.types === \"string\" ? $deps.types.split(\",\") : $deps.types\n\n  if(!$self.value){\n    $self.initialValue = typesList\n      ?.map((item) => {\n        return enumsMap[item.replaceAll(\" \", \"\")]\n      })\n      ?.join(\",\")\n  }\n  \n})\n"
+          }
+        },
+        "name": "extsInput",
+        "x-designable-id": "y0kp36yu7ps",
+        "x-index": 1,
+        "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols.\n"
       }
     },
-    "x-designable-id": "i1a15a555xy"
+    "x-designable-id": "chi9fj6dw2w"
   }
 }

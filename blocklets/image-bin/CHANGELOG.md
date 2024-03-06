@@ -1,3 +1,23 @@
+## 0.10.84 (March 01, 2024)
+
+- feat: support for user input extname in prefs
+
+## 0.10.83 (February 28, 2024)
+
+- feat: add download image logic
+
+## 0.10.82 (February 28, 2024)
+
+- chore: remove ci deps use pnpm
+
+## 0.10.81 (February 27, 2024)
+
+- fix: modify upload test store CI
+
+## 0.10.80 (February 27, 2024)
+
+- feat: bundle to compact size
+
 ## 0.10.79 (February 27, 2024)
 
 - feat: support for uploading .7z .zip .dmg .pkg .apk .gz ext file

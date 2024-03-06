@@ -20,7 +20,7 @@ export const getObjectURL = (fileBlob: Blob) => {
 };
 
 export const getExt = (uppyFile: any) => {
-  const { source, extension, type, name } = uppyFile;
+  const { type, name } = uppyFile;
 
   // such as .DS_Store and .gitignore
   if (name.startsWith('.') && !mime.lookup(name)) {
@@ -29,19 +29,10 @@ export const getExt = (uppyFile: any) => {
 
   const nameContentType = mime.lookup(name);
 
-  // if name can get current mimetype
-  if (nameContentType === type) {
-    return extension?.toLowerCase();
+  if (nameContentType) {
+    return mime.extension(nameContentType) || '';
   }
 
-  // if name has ext and match ext match extension
-  if (!['Unsplash', 'Url'].includes(source)) {
-    if (name.split('.').length === 2) {
-      return extension?.toLowerCase();
-    }
-  }
-
-  // use mimetype to get ext
   return mime.extension(type);
 };
 
