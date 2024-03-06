@@ -40,7 +40,8 @@ const borderRadius = '4px !important';
 const transformY = '4px';
 
 function parseStringToDot(str) {
-  return str.length > 12 ? `${str.substr(0, 7)}...${str.substr(-5)}` : str;
+  if (typeof str !== 'string') return '';
+  return str?.length > 12 ? `${str?.substr(0, 7)}...${str?.substr(-5)}` : str;
 }
 
 function BlockletLogo(props) {
