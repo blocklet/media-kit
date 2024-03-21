@@ -1,3 +1,7 @@
+## 0.10.86 (March 21, 2024)
+
+- chore: update deps
+
 ## 0.10.85 (March 06, 2024)
 
 - fix: parse string error bug

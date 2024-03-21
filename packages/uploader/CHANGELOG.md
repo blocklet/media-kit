@@ -1,3 +1,7 @@
+## 0.0.75 (March 21, 2024)
+
+- chore: update deps
+
 ## 0.0.74 (February 28, 2024)
 
 - feat: add download image logic
