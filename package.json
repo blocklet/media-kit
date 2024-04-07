@@ -34,6 +34,7 @@
     "@arcblock/ws": "^1.18.114",
     "@blocklet/constant": "^1.16.25",
     "@blocklet/logger": "^1.16.25",
+    "@blocklet/js-sdk": "^1.16.25",
     "@blocklet/sdk": "^1.16.25",
     "@mui/icons-material": "5.14.15",
     "@mui/material": "5.14.15",

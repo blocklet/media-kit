@@ -16,6 +16,7 @@ overrides:
   '@arcblock/ws': ^1.18.114
   '@blocklet/constant': ^1.16.25
   '@blocklet/logger': ^1.16.25
+  '@blocklet/js-sdk': ^1.16.25
   '@blocklet/sdk': ^1.16.25
   '@mui/icons-material': 5.14.15
   '@mui/material': 5.14.15
@@ -401,10 +402,6 @@ packages:
 
   /@abtnode/constant@1.16.25:
     resolution: {integrity: sha512-cbjf8Q9QEIHWtjXUJ8gvoMUvP0VtneIWz/CdP3JiRuMDWF5DbzwYphrCrHL02HadehBLFrV7hJfl1vO7pPzYcQ==}
-    dev: false
-
-  /@abtnode/constant@1.16.25-beta-be3a37f4:
-    resolution: {integrity: sha512-6WcZy0yMoMUoZzQDtpLKVBA5o7jskR/7AOnqEJVcLRZISK/NVl44KrZ1ToPEnud4E6iNgmU+w9bWCHDNrCJbsA==}
 
   /@abtnode/cron@1.16.25:
     resolution: {integrity: sha512-VV7aoqR7d8xcLMq8jX0ZtTwodDZohiveljfNev3IDjUnsOVmKCmLp505Alb8zyOieNYRd9sImDMpNpzLFWZANg==}
@@ -1846,10 +1843,10 @@ packages:
       '@blocklet/constant': 1.16.25
     dev: false
 
-  /@blocklet/js-sdk@1.16.25-beta-be3a37f4:
-    resolution: {integrity: sha512-3ceOsjv66Va7awssQczWV5ZFOAS4MEXdTskYmbGNjhjgoOGnvmZds9OzSTmaV0kvGJBNUAQUyuWErlcSvFAA4g==}
+  /@blocklet/js-sdk@1.16.25:
+    resolution: {integrity: sha512-OXG3LLT7QLkPNQxhnip3SNfeLwQEJ4MYITI2A3KHhC84k4Teyo3JflfBrccGB4vSFTs/eLFGC/9V61RqFUjNEg==}
     dependencies:
-      '@abtnode/constant': 1.16.25-beta-be3a37f4
+      '@abtnode/constant': 1.16.25
       axios: 0.27.2(debug@4.3.4)
       js-cookie: 3.0.5
       ufo: 1.5.3
@@ -1951,7 +1948,7 @@ packages:
       '@arcblock/did-connect': 2.9.64(@babel/core@7.23.7)(@mui/icons-material@5.14.15)(@mui/material@5.14.15)(@types/react@18.2.74)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@arcblock/react-hooks': 2.9.64
       '@arcblock/ux': 2.9.64(@babel/core@7.23.7)(@mui/icons-material@5.14.15)(@mui/material@5.14.15)(@types/react@18.2.74)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
-      '@blocklet/js-sdk': 1.16.25-beta-be3a37f4
+      '@blocklet/js-sdk': 1.16.25
       '@emotion/react': 11.11.4(@types/react@18.2.74)(react@18.2.0)
       '@emotion/styled': 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.74)(react@18.2.0)
       '@iconify-icons/material-symbols': 1.2.58
@@ -1998,7 +1995,7 @@ packages:
       '@arcblock/did-connect': 2.9.64(@babel/core@7.23.7)(@mui/icons-material@5.14.15)(@mui/material@5.14.15)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@arcblock/react-hooks': 2.9.64
       '@arcblock/ux': 2.9.64(@babel/core@7.23.7)(@mui/icons-material@5.14.15)(@mui/material@5.14.15)(prop-types@15.8.1)(react-dom@18.2.0)(react@18.2.0)
-      '@blocklet/js-sdk': 1.16.25-beta-be3a37f4
+      '@blocklet/js-sdk': 1.16.25
       '@emotion/react': 11.11.4(@types/react@18.2.74)(react@18.2.0)
       '@emotion/styled': 11.11.5(@emotion/react@11.11.4)(@types/react@18.2.74)(react@18.2.0)
       '@iconify-icons/material-symbols': 1.2.58

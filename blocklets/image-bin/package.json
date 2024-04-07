@@ -38,10 +38,10 @@
   },
   "dependencies": {
     "@arcblock/did": "^1.18.114",
-    "@blocklet/constant": "1.16.21-beta-445a8baa",
+    "@blocklet/constant": "^1.16.25",
     "@blocklet/embed": "^0.1.11",
-    "@blocklet/logger": "1.16.21-beta-445a8baa",
-    "@blocklet/sdk": "1.16.21-beta-445a8baa",
+    "@blocklet/logger": "^1.16.25",
+    "@blocklet/sdk": "^1.16.25",
     "@blocklet/uploader": "workspace:^",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
