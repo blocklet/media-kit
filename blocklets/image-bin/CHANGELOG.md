@@ -1,3 +1,15 @@
+## 0.10.88 (April 10, 2024)
+
+- chore: update deps and lock preact version
+
+## 0.10.87 (April 07, 2024)
+
+- chore: update deps
+
+## 0.10.86 (March 21, 2024)
+
+- chore: update deps
+
 ## 0.10.85 (March 06, 2024)
 
 - fix: parse string error bug

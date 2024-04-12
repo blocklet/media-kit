@@ -1,3 +1,15 @@
+## 0.0.77 (April 10, 2024)
+
+- chore: update deps and lock preact version
+
+## 0.0.76 (April 07, 2024)
+
+- chore: update deps
+
+## 0.0.75 (March 21, 2024)
+
+- chore: update deps
+
 ## 0.0.74 (February 28, 2024)
 
 - feat: add download image logic
