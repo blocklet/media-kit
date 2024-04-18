@@ -12,18 +12,18 @@ jobs:
     if: "! contains(toJSON(github.event.commits.*.message), 'WIP') && ! contains(toJSON(github.event.commits.*.message), 'wip')"
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v3
         with:
           version: latest
-      - name: Use Node.js 16
-        uses: actions/setup-node@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "16"
-          cache: "pnpm"
+          node-version: '18'
+          cache: 'pnpm'
 
       - name: Setup
         run: npm add -g @antfu/ni
