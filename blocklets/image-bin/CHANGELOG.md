@@ -1,3 +1,7 @@
+## 0.10.89 (April 18, 2024)
+
+- chore: update deps
+
 ## 0.10.88 (April 10, 2024)
 
 - chore: update deps and lock preact version
