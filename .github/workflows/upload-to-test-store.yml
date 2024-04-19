@@ -1,7 +1,7 @@
-name: "Upload To Test Store"
+name: 'Upload To Test Store'
 
 env:
-  NODE_OPTIONS: "--max_old_space_size=6144"
+  NODE_OPTIONS: '--max_old_space_size=6144'
 
 on:
   workflow_dispatch:
@@ -24,18 +24,18 @@ jobs:
         dir: ${{ fromJSON(needs.check-version.outputs.folders) }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v2.0.1
+      - uses: pnpm/action-setup@v3
         with:
-          version: latest
+          version: 8
 
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: "pnpm"
+          node-version: '18'
+          cache: 'pnpm'
 
       - run: npm add -g @antfu/ni
       - run: nci
