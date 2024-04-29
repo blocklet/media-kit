@@ -160,11 +160,13 @@ function Gallery({ uploads, type }) {
               <UploaderTrigger
                 sx={{
                   width: '100%',
-                  height: '100%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   background: 'rgba(0,0,0,0.1)',
+                  height: isMobile
+                    ? 'calc(100vw - 24px - 24px + 52px)'
+                    : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols} + 52px)`,
                   '&:hover': {
                     cursor: 'pointer',
                     background: (theme) => theme?.palette?.primary?.main,
@@ -360,31 +362,25 @@ export default function Uploads() {
             </CreateFolder>
           </ButtonGroup>
         </Box>,
-        uploads.length === 0 ? (
-          <Empty key="empty" {...emptyProps}>
-            {t('common.empty')}
-          </Empty>
-        ) : (
-          <Box key="gallery">
-            <Gallery
-              uploads={[
-                {
-                  isNew: true,
-                  _id: 'new-item',
-                },
-                ...uploads,
-              ]}
-            />
-            {loading && (
-              <div className="load-more">
-                <Spinner />
-              </div>
-            )}
-            {!uploadState.hasMore && (
-              <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)', fontSize: 14 }}> {t('common.noMore')}</Divider>
-            )}
-          </Box>
-        ),
+        <Box key="gallery">
+          <Gallery
+            uploads={[
+              {
+                isNew: true,
+                _id: 'new-item',
+              },
+              ...uploads,
+            ]}
+          />
+          {loading && (
+            <div className="load-more">
+              <Spinner />
+            </div>
+          )}
+          {!uploadState.hasMore && (
+            <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)', fontSize: 14 }}> {t('common.noMore')}</Divider>
+          )}
+        </Box>,
       ]}
       {tab === 'resource' && [
         <Box key="button-group">
