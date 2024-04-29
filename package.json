@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "bump-version": "zx scripts/bump-version.mjs --quiet",
-    "update:deps": "taze -w -r && pnpm install",
+    "update:deps": "taze -r -n '/arcblock|ocap|abtnode|blocklet|did-connect|did-comment|nedb/' -w && pnpm install",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
     "postinstall": "pnpm -r --filter @blocklet/uploader run build",
