@@ -22,7 +22,7 @@ const auth = middleware.auth({ roles: env.uploaderRoles });
 const user = middleware.user();
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
-const ensureFolderId = async (req, res, next) => {
+const ensureFolderId = () => async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
 
   const isDID = isValidDID(req.componentDid);
@@ -138,7 +138,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
 router.get('/uploads', user, auth, getUploadListMiddleware());
 
 // remove upload
-router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res) => {
+router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, res) => {
   const mediaKitDid = env.currentComponentInfo.did;
 
   if (isValidDID(req.componentDid) && req.componentDid !== mediaKitDid) {
@@ -236,7 +236,7 @@ const localStorageServer = initLocalStorageServer({
   },
 });
 
-router.use('/uploads', user, auth, ensureFolderId, localStorageServer.handle);
+router.use('/uploads', user, auth, ensureFolderId(), localStorageServer.handle);
 
 const defaultCompanionOptions = {
   path: env.uploadDir,
@@ -260,14 +260,14 @@ config.events.on(config.Events.envUpdate, () => {
   }, 200);
 });
 
-router.use('/companion', user, auth, ensureFolderId, companion.handle);
+router.use('/companion', user, auth, ensureFolderId(), companion.handle);
 
 router.post(
   '/sdk/uploads',
   user,
   middleware.component.verifySig,
   upload.single('data'),
-  ensureFolderId,
+  ensureFolderId(),
   async (req, res) => {
     // data maybe a file buffer format by multer
     const { type, filename: originalFileName, data = req?.file?.buffer, repeatInsert = true } = req.body;

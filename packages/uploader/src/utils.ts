@@ -191,7 +191,8 @@ export function initUppy(currentUppy: any) {
       const { name, type } = blobFile;
 
       const uppyFileId = currentUppy.addFile({
-        name,
+        // ignore duplicate file
+        name: `${new Date().valueOf()}-${name}`,
         type,
         data: blobFile, // file blob
         source: 'function-upload-file',
