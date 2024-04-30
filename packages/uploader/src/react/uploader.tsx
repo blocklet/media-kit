@@ -196,7 +196,7 @@ const getPluginList = (props: any) => {
       plugin: ThumbnailGenerator,
       options: {
         thumbnailType: 'image/png',
-        thumbnailWidth: 800,
+        thumbnailWidth: '100%', // fixed width
       },
       alwayUse: true,
     },
