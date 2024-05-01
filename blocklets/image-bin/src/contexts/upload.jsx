@@ -46,22 +46,28 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
     if (pageState.hasMore) {
       pageState.loading = true;
       pageState.page += 1;
-      await api
-        .get('/api/uploads', {
-          params: {
-            page: pageState.page,
-            pageSize,
-            type,
-            folderId: pageState.folderId,
-          },
-        })
-        .then(({ data }) => {
-          pageState.hasMore = pageState.page < data.pageCount;
-          pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
-          pageState.folders = data.folders?.map?.(setImageBinToMediaKit);
-          pageState.loading = false;
-        })
-        .catch(console.error);
+      try {
+        await api
+          .get('/api/uploads', {
+            params: {
+              page: pageState.page,
+              pageSize,
+              type,
+              folderId: pageState.folderId,
+            },
+          })
+          .then(({ data }) => {
+            pageState.hasMore = pageState.page < data.pageCount;
+            pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
+            pageState.folders = data.folders?.map?.(setImageBinToMediaKit);
+            pageState.loading = false;
+          })
+          .catch(console.error);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        pageState.loading = false;
+      }
     }
 
     return pageState;

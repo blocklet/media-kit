@@ -10,20 +10,21 @@ const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
 const { isValid: isValidDID } = require('@arcblock/did');
+const xbytes = require('xbytes');
+const uniq = require('lodash/uniq');
 const { initLocalStorageServer, initCompanion, symlinkFileToNewPath } = require('@blocklet/uploader/middlewares');
 const logger = require('../libs/logger');
+const { MEDIA_KIT_DID } = require('../libs/constants');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
+const { user, auth, ensureAdmin } = require('../libs/auth');
 
 const router = express.Router();
-const auth = middleware.auth({ roles: env.uploaderRoles });
-const user = middleware.user();
-const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
 const ensureFolderId = () => async (req, res, next) => {
-  req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
+  req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
 
   const isDID = isValidDID(req.componentDid);
 
@@ -456,6 +457,7 @@ router.post('/image/generations', user, auth, async (req, res) => {
 });
 
 router.get('/uploader/status', async (req, res) => {
+  // setting available plugins
   const availablePluginMap = {
     AIImage: false,
     Unsplash: false,
@@ -479,7 +481,58 @@ router.get('/uploader/status', async (req, res) => {
     availablePluginMap.Unsplash = true;
   }
 
-  res.json({ availablePluginMap });
+  // setting restrictions
+  const defaultTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/svg+xml',
+    'image/webp',
+    'image/bmp',
+    'application/octet-stream',
+    'application/x-apple-diskimage',
+    'application/vnd.android.package-archive',
+    'application/zip',
+    'application/x-rar-compressed',
+    'application/x-7z-compressed',
+    'application/gzip',
+  ];
+
+  const defaultExtsInput = '.jpeg,.png,.gif,.svg,.webp,.bmp,.pkg,.dmg,.apk,.zip,.rar,.7z,.gz';
+
+  const { types = defaultTypes, extsInput = defaultExtsInput, maxUploadSize } = config.env.preferences || {};
+
+  let allowedFileTypes = [];
+
+  // extsInput only will be string
+  if (extsInput) {
+    allowedFileTypes = uniq(
+      extsInput
+        ?.split(',')
+        ?.map((ext) => mime.lookup(ext?.replaceAll(' ', '') || ''))
+        ?.filter((x) => x)
+    );
+  } else if (Array.isArray(types)) {
+    allowedFileTypes = types;
+  }
+
+  // not use iec
+  const maxFileSize = xbytes.parseSize(maxUploadSize, { iec: false }) || Infinity;
+
+  const restrictions = {
+    allowedFileTypes,
+    allowedFileExts: extsInput,
+    maxFileSize,
+  };
+
+  res.json({
+    availablePluginMap,
+    preferences: {
+      extsInput,
+      maxUploadSize,
+    },
+    restrictions,
+  });
 });
 
 module.exports = router;

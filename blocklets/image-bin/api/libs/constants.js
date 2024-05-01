@@ -1,7 +1,8 @@
 const path = require('path');
 const { BlockletStatus } = require('@blocklet/constant');
 
-const ResourceDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
+const MEDIA_KIT_DID = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
+const ResourceDid = MEDIA_KIT_DID;
 const ResourceType = 'imgpack';
 const ExportDir = path.join(ResourceDid, ResourceType);
 
@@ -12,4 +13,5 @@ module.exports = {
   ResourceType,
   ResourceDid,
   ExportDir,
+  MEDIA_KIT_DID,
 };

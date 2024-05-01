@@ -1,18 +1,11 @@
 require('@blocklet/sdk/lib/error-handler');
 require('dotenv-flow').config();
 
-const xbytes = require('xbytes');
 const { join } = require('path');
 const { spawnSync } = require('child_process');
 
 const logger = require('../libs/logger');
 const { name } = require('../../package.json');
-
-function verifyMaxUploadSize() {
-  if (!xbytes.isBytes(process.env.MAX_UPLOAD_SIZE)) {
-    throw new Error('MAX_UPLOAD_SIZE is not a valid byte string, examples(1MB, 200kb)');
-  }
-}
 
 function ensureSharpInstalled() {
   logger.info(`${name} ensure sharp installed`);
@@ -34,7 +27,6 @@ function ensureSharpInstalled() {
 
 (() => {
   try {
-    verifyMaxUploadSize();
     ensureSharpInstalled();
     process.exit(0);
   } catch (err) {
