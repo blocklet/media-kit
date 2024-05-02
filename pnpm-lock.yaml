@@ -322,6 +322,9 @@ importers:
       preact:
         specifier: 10.20.1
         version: 10.20.1
+      react-player:
+        specifier: ^2.16.0
+        version: 2.16.0(react@18.2.0)
       ufo:
         specifier: ^1.5.3
         version: 1.5.3

@@ -81,6 +81,7 @@
     "mime-types": "^2.1.35",
     "p-queue": "^6.6.2",
     "preact": "10.20.1",
+    "react-player": "^2.16.0",
     "ufo": "^1.5.3",
     "url-join": "^4.0.1",
     "xbytes": "^1.9.1"

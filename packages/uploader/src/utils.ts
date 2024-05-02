@@ -369,3 +369,8 @@ export function initUppy(currentUppy: any) {
 
   return currentUppy;
 }
+
+export function parseStringToDot(str: any) {
+  if (typeof str !== 'string') return '';
+  return str?.length > 12 ? `${str?.substr(0, 7)}...${str?.substr(-5)}` : str;
+}
