@@ -115,7 +115,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
       condition.folderId = req.query.folderId;
     }
 
-    if (checkUserRole && [('guest', 'member')].includes(req.user.role)) {
+    if (checkUserRole && !['admin', 'owner'].includes(req.user.role)) {
       condition.createdBy = req.user.did;
     }
 
