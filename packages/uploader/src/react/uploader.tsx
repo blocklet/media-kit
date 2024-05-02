@@ -71,7 +71,7 @@ const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 const target = 'uploader-container';
 const uploaderDashboardId = 'uploader-dashboard';
 
-const isDebug = true || localStorage.getItem('uppy_debug');
+const isDebug = localStorage.getItem('uppy_debug');
 
 const getPluginList = (props: any) => {
   const { apiPathProps, availablePluginMap = {}, uploadedProps } = props;
@@ -649,10 +649,10 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               alignItems: 'center',
             },
             '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner': {
-              background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px',
+              background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
             },
             '.uploaded-add-item': {
-              background: 'rgba(0,0,0,0.1)',
+              background: 'rgba(0,0,0,0.1) !important',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
