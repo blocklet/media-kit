@@ -115,7 +115,6 @@ class Uploaded extends UIPlugin {
               ...item,
               // provider view props
               id: _id,
-              name: originalname,
               icon: previewUrl,
               previewUrl,
               fileUrl,
@@ -177,12 +176,13 @@ class Uploaded extends UIPlugin {
           const currentData = this.uploadedAPIData.files?.find((item) => item.previewUrl === src);
 
           const wrapperElement = document.createElement('div');
-          wrapperElement.className = 'uppy-ProviderBrowserItem-inner';
+          wrapperElement.style =
+            'width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;  ';
 
           const nameElement = document.createElement('div');
           nameElement.className = 'uppy-ProviderBrowserItem-name';
           nameElement.style =
-            'pointer-events: none; position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 4px; background: #0000004d; color: #fff; ';
+            'pointer-events: none; position: absolute; bottom: 0; left: 0; right: 0; padding: 5px; background: #0000004d; color: #fff; ';
           nameElement.innerHTML = parseStringToDot(currentData.originalname);
 
           if (['.mp4', '.webm'].find((item) => imgElement.src?.indexOf(item) > -1)) {
@@ -202,12 +202,11 @@ class Uploaded extends UIPlugin {
           } else {
             const objectElement = document.createElement('object');
             objectElement.data = src;
-            objectElement.width = '100%';
-            objectElement.height = '100%';
             objectElement.type = currentData.mimetype || 'image/png';
-            // objectElement.alt = currentData.originalname;
+            objectElement.alt = currentData.originalname;
+
             objectElement.style =
-              'webkit-user-drag: none; object-fit: cover; background: repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px;';
+              'pointer-events: none; max-width: 100%; max-height: 100%; webkit-user-drag: none; object-fit: contain;';
             objectElement.loading = 'lazy';
 
             // add to wrapper
@@ -216,8 +215,9 @@ class Uploaded extends UIPlugin {
 
           // add name
           wrapperElement.appendChild(nameElement);
+
           // replace
-          imgElement.parentNode.parentNode.replaceChild(wrapperElement, imgElement.parentNode);
+          imgElement.parentNode.replaceChild(wrapperElement, imgElement);
         });
 
         this.canConvertImgToObject = false;
