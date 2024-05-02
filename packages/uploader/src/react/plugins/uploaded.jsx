@@ -176,14 +176,14 @@ class Uploaded extends UIPlugin {
           const { src } = imgElement;
           const currentData = this.uploadedAPIData.files?.find((item) => item.previewUrl === src);
 
+          const wrapperElement = document.createElement('div');
+          wrapperElement.className = 'uppy-ProviderBrowserItem-inner';
+
           const nameElement = document.createElement('div');
           nameElement.className = 'uppy-ProviderBrowserItem-name';
           nameElement.style =
             'pointer-events: none; position: absolute; bottom: 0; left: 0; right: 0; padding: 6px 4px; background: #0000004d; color: #fff; ';
           nameElement.innerHTML = parseStringToDot(currentData.originalname);
-
-          const wrapperElement = document.createElement('div');
-          wrapperElement.className = 'uppy-ProviderBrowserItem-inner';
 
           if (['.mp4', '.webm'].find((item) => imgElement.src?.indexOf(item) > -1)) {
             const videoElement = document.createElement('video');
