@@ -179,6 +179,8 @@ class Uploaded extends UIPlugin {
             videoElement.width = imgElement.width;
             videoElement.height = imgElement.height;
             videoElement.autoplay = true;
+            // 禁止播放的时候自动全屏
+            videoElement.setAttribute('playsinline', 'playsinline');
             videoElement.muted = true;
             videoElement.loop = true;
             videoElement.style = 'pointer-events: none;';
