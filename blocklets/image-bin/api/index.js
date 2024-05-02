@@ -23,8 +23,8 @@ const app = express();
 
 app.set('trust proxy', true);
 app.use(cookieParser());
-app.use(() => express.json({ limit: config.env.preferences.maxUploadSize || Infinity }));
-app.use(() => express.urlencoded({ extended: true, limit: config.env.preferences.maxUploadSize || Infinity }));
+app.use((() => express.json({ limit: config.env.preferences.maxUploadSize || Infinity }))());
+app.use((() => express.urlencoded({ extended: true, limit: config.env.preferences.maxUploadSize || Infinity }))());
 
 app.use(
   '/uploads',
