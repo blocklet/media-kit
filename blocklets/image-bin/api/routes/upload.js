@@ -235,6 +235,11 @@ const localStorageServer = initLocalStorageServer({
 
     return resData;
   },
+  // only for debug uploader
+  // onUploadCreate(req, res, uploadMetadata) {
+  //   console.warn(uploadMetadata);
+  //   throw new Error('debug error');
+  // },
 });
 
 router.use('/uploads', user, auth, ensureFolderId(), localStorageServer.handle);
