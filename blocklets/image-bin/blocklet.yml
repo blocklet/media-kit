@@ -34,7 +34,7 @@ interfaces:
       - name: auth
         config:
           whoCanAccess: invited
-          blockUnauthenticated: true
+          blockUnauthenticated: false
           ignoreUrls:
             - /
             - /uploads/**
