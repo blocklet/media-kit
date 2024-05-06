@@ -8,6 +8,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
+const config = require('@blocklet/sdk/lib/config');
 const Upload = require('./states/upload');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
@@ -22,8 +23,16 @@ const app = express();
 
 app.set('trust proxy', true);
 app.use(cookieParser());
-app.use(express.json({ limit: env.maxUploadSize }));
-app.use(express.urlencoded({ extended: true, limit: env.maxUploadSize }));
+app.use((req, res, next) => {
+  return express.json({ limit: config.env.preferences.maxUploadSize || Infinity })(req, res, next);
+});
+app.use((req, res, next) => {
+  return express.urlencoded({ extended: true, limit: config.env.preferences.maxUploadSize || Infinity })(
+    req,
+    res,
+    next
+  );
+});
 
 app.use(
   '/uploads',

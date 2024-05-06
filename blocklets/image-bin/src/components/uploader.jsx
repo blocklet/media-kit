@@ -3,9 +3,6 @@ import { lazy } from 'react';
 import Button from '@arcblock/ux/lib/Button';
 import joinUrl from 'url-join';
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
-import xbytes from 'xbytes';
-import mime from 'mime-types';
-import uniq from 'lodash/uniq';
 import { useUploadContext } from '../contexts/upload';
 
 const UploaderTrigger = lazy(() =>
@@ -19,26 +16,6 @@ const UploaderProvider = lazy(() =>
 
 const obj = new window.URL(window.location.origin);
 obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
-
-const defaultTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/svg+xml', 'image/bmp', 'image/webp'];
-
-const { types, extsInput } = window?.blocklet?.preferences || {};
-
-let allowedFileTypes = [...defaultTypes];
-
-if (extsInput) {
-  allowedFileTypes = uniq(
-    extsInput
-      ?.split(',')
-      ?.map((ext) => mime.lookup(ext?.replaceAll(' ', '') || ''))
-      ?.filter((x) => x)
-  );
-} else if (Array.isArray(types)) {
-  allowedFileTypes = types;
-}
-
-// not use iec
-const maxFileSize = xbytes.parseSize(window.blocklet.MAX_UPLOAD_SIZE, { iec: false });
 
 export default function Uploader() {
   const { currentFolderInfo } = useUploadContext();
@@ -74,13 +51,17 @@ function UploaderProviderWrapper({ children }) {
       onUploadFinish={(result) => {
         prependUpload(result.data);
       }}
-      coreProps={{
-        restrictions: {
-          allowedFileTypes,
-          maxFileSize,
-          // maxNumberOfFiles: 2, // use to debug
-        },
-      }}
+      coreProps={
+        {
+          // following are Media Kit Preferences
+          // restrictions: {
+          //   // allowedFileExts: '.jpg',
+          //   // allowedFileTypes: ['image/jpeg'],
+          //   // maxFileSize: '2MB',
+          //   // maxNumberOfFiles: 2, // use to debug
+          // },
+        }
+      }
       dropTargetProps={
         {
           // target: document.body, // use body as drop target

@@ -1,3 +1,4 @@
+import { type ServerOptions } from '@tus/server';
 const { Server, EVENTS } = require('@tus/server');
 const { FileStore } = require('@tus/file-store');
 const cron = require('@abtnode/cron');
@@ -11,13 +12,15 @@ const { default: queue } = require('p-queue');
 export function initLocalStorageServer({
   path: _path,
   onUploadFinish: _onUploadFinish,
+  onUploadCreate: _onUploadCreate,
   symlinkPath: _symlinkPath,
   express,
   expiredUploadTime = 1000 * 60 * 60 * 24 * 3, // default 3 days expire
   ...restProps
-}: {
+}: ServerOptions & {
   path: string;
   onUploadFinish?: Function;
+  onUploadCreate?: Function;
   express: Function;
   symlinkPath?: Function | String | null;
   expiredUploadTime?: Number;
@@ -72,6 +75,20 @@ export function initLocalStorageServer({
       await configstore.set(id, uploadMetadata);
     }
   };
+  const onUploadCreate = async (req: any, res: any, uploadMetadata: any) => {
+    uploadMetadata = formatMetadata(uploadMetadata);
+
+    // check offset
+    await rewriteMetaDataFile(uploadMetadata);
+
+    if (_onUploadCreate) {
+      const result = await _onUploadCreate(req, res, uploadMetadata);
+      return result;
+    }
+
+    return res;
+  };
+
   const onUploadFinish = async (req: any, res: any, uploadMetadata: any) => {
     // set file exist header, for frontend to check
     res.setHeader('x-uploader-file-exist', true);
@@ -109,8 +126,15 @@ export function initLocalStorageServer({
     }
 
     if (_onUploadFinish) {
-      const result = await _onUploadFinish(req, res, uploadMetadata);
-      return result;
+      try {
+        const result = await _onUploadFinish(req, res, uploadMetadata);
+        return result;
+      } catch (error) {
+        // if onUploadFinish error, should delete the file and set not exist
+        newServer.delete(uploadMetadata.id);
+        res.setHeader('x-uploader-file-exist', false);
+        throw error;
+      }
     }
     return res;
   };
@@ -125,6 +149,7 @@ export function initLocalStorageServer({
       uploadMetadata = formatMetadata(uploadMetadata);
 
       const result = await onUploadFinish(req, res, uploadMetadata);
+
       // result can be res or value
       if (result && !result.send) {
         const body = typeof result === 'string' ? result : JSON.stringify(result);
@@ -133,6 +158,7 @@ export function initLocalStorageServer({
         return result;
       }
     },
+    onUploadCreate,
     ...restProps,
   });
 
@@ -141,6 +167,7 @@ export function initLocalStorageServer({
     req.uploaderProps = {
       server: newServer,
       onUploadFinish,
+      onUploadCreate,
     };
     next();
   });

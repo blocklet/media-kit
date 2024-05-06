@@ -1,3 +1,16 @@
+## 0.11.0 (May 06, 2024)
+
+- chore: re-bump version
+
+## 0.10.91 (May 06, 2024)
+
+- chore: update deps
+- refactor: uploader and uploader service
+
+## 0.10.90 (April 29, 2024)
+
+- chore: update deps
+
 ## 0.10.89 (April 18, 2024)
 
 - chore: update deps

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { Outlet } from 'react-router-dom';
 import Dashboard from '@blocklet/ui-react/lib/Dashboard';
 import styled from '@emotion/styled';
+import ConnectButton from '@arcblock/did-connect/lib/Button';
 
 import Uploader, { UploaderProviderWrapper } from './uploader';
 import Exporter from './exporter';
@@ -13,9 +14,10 @@ const hasAdminPermission = (user) => ['admin', 'owner'].includes(user?.role);
 export default function Layout({ title }) {
   const { tab } = useUploadContext();
   const { session } = useSessionContext();
+  const hadLogin = !!session?.user;
 
   const addons = [];
-  if (tab === 'bucket') {
+  if (hadLogin && tab === 'bucket') {
     if (hasAdminPermission(session?.user)) {
       addons.push(<Exporter key="exporter-addon" />);
     }
@@ -30,7 +32,24 @@ export default function Layout({ title }) {
         headerAddons={(exists) => {
           return [addons, ...exists];
         }}>
-        <Outlet />
+        {hadLogin ? (
+          <Outlet />
+        ) : (
+          <ConnectButton
+            color="primary"
+            onClick={session.login}
+            style={{
+              height: 'fit-content',
+              width: 'fit-content',
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              bottom: 0,
+              right: 0,
+              margin: 'auto',
+            }}
+          />
+        )}
       </Main>
     </UploaderProviderWrapper>
   );

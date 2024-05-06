@@ -41,7 +41,7 @@ const transformY = '4px';
 
 function parseStringToDot(str) {
   if (typeof str !== 'string') return '';
-  return str?.length > 12 ? `${str?.substr(0, 7)}...${str?.substr(-5)}` : str;
+  return str && str.length > 12 ? `${str.substring(0, 7)}...${str.substring(str.length - 5)}` : str;
 }
 
 function BlockletLogo(props) {
@@ -90,6 +90,10 @@ function Gallery({ uploads, type }) {
         overflow: 'hidden',
       }}>
       {uploads.map((x) => {
+        const height = isMobile
+          ? `calc(100vw - 24px - 24px + ${x.isNew ? 52 : 0}px)`
+          : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols} + ${x.isNew ? 52 : 0}px)`;
+
         return (
           <ImageListItem
             key={x._id}
@@ -136,9 +140,11 @@ function Gallery({ uploads, type }) {
                 style={{
                   width: '100%',
                   position: 'relative',
-                  height: isMobile
-                    ? 'calc(100vw - 24px - 24px)'
-                    : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols})`,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px',
+                  height,
                 }}>
                 <MediaItem {...x} type={type} />
                 {!isResource && (
@@ -160,11 +166,11 @@ function Gallery({ uploads, type }) {
               <UploaderTrigger
                 sx={{
                   width: '100%',
-                  height: '100%',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   background: 'rgba(0,0,0,0.1)',
+                  height,
                   '&:hover': {
                     cursor: 'pointer',
                     background: (theme) => theme?.palette?.primary?.main,
@@ -360,31 +366,25 @@ export default function Uploads() {
             </CreateFolder>
           </ButtonGroup>
         </Box>,
-        uploads.length === 0 ? (
-          <Empty key="empty" {...emptyProps}>
-            {t('common.empty')}
-          </Empty>
-        ) : (
-          <Box key="gallery">
-            <Gallery
-              uploads={[
-                {
-                  isNew: true,
-                  _id: 'new-item',
-                },
-                ...uploads,
-              ]}
-            />
-            {loading && (
-              <div className="load-more">
-                <Spinner />
-              </div>
-            )}
-            {!uploadState.hasMore && (
-              <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)', fontSize: 14 }}> {t('common.noMore')}</Divider>
-            )}
-          </Box>
-        ),
+        <Box key="gallery">
+          <Gallery
+            uploads={[
+              {
+                isNew: true,
+                _id: 'new-item',
+              },
+              ...uploads,
+            ]}
+          />
+          {loading && (
+            <div className="load-more">
+              <Spinner />
+            </div>
+          )}
+          {!uploadState.hasMore && (
+            <Divider sx={{ mt: 2.5, color: 'rgba(0, 0, 0, 0.3)', fontSize: 14 }}> {t('common.noMore')}</Divider>
+          )}
+        </Box>,
       ]}
       {tab === 'resource' && [
         <Box key="button-group">
