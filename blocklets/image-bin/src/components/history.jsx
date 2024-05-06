@@ -41,7 +41,7 @@ const transformY = '4px';
 
 function parseStringToDot(str) {
   if (typeof str !== 'string') return '';
-  return str?.length > 12 ? `${str?.substr(0, 7)}...${str?.substr(-5)}` : str;
+  return str && str.length > 12 ? `${str.substring(0, 7)}...${str.substring(str.length - 5)}` : str;
 }
 
 function BlockletLogo(props) {
