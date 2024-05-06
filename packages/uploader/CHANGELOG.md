@@ -1,3 +1,8 @@
+## 0.1.1 (May 06, 2024)
+
+- chore: update deps
+- refactor: uploader and uploader service
+
 ## 0.1.0 (April 29, 2024)
 
 - chore: update deps
