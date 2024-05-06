@@ -486,26 +486,9 @@ router.get('/uploader/status', async (req, res) => {
     availablePluginMap.Unsplash = true;
   }
 
-  // setting restrictions
-  const defaultTypes = [
-    'image/jpeg',
-    'image/png',
-    'image/gif',
-    'image/svg+xml',
-    'image/webp',
-    'image/bmp',
-    'application/octet-stream',
-    'application/x-apple-diskimage',
-    'application/vnd.android.package-archive',
-    'application/zip',
-    'application/x-rar-compressed',
-    'application/x-7z-compressed',
-    'application/gzip',
-  ];
+  const defaultExtsInput = '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico,.mp4,.avi,.mov,.wmv,.mkv,.pdf,.zip,.rar,.7z,.tar.gz';
 
-  const defaultExtsInput = '.jpeg,.png,.gif,.svg,.webp,.bmp,.pkg,.dmg,.apk,.zip,.rar,.7z,.gz';
-
-  const { types = defaultTypes, extsInput = defaultExtsInput, maxUploadSize } = config.env.preferences || {};
+  const { types, extsInput = defaultExtsInput, maxUploadSize } = config.env.preferences || {};
 
   let allowedFileTypes = [];
 
@@ -518,6 +501,7 @@ router.get('/uploader/status', async (req, res) => {
         ?.filter((x) => x)
     );
   } else if (Array.isArray(types)) {
+    // Deprecated history prefs
     allowedFileTypes = types;
   }
 
