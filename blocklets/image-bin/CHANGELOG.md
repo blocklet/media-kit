@@ -1,3 +1,7 @@
+## 0.11.0 (May 06, 2024)
+
+- chore: re-bump version
+
 ## 0.10.91 (May 06, 2024)
 
 - chore: update deps
