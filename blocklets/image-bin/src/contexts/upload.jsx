@@ -61,8 +61,7 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
             pageState.uploads = uniqBy([...pageState.uploads, ...data.uploads], '_id');
             pageState.folders = data.folders?.map?.(setImageBinToMediaKit);
             pageState.loading = false;
-          })
-          .catch(console.error);
+          });
       } catch (e) {
         console.error(e);
       } finally {
