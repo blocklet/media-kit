@@ -1,3 +1,7 @@
+## 0.1.2 (May 07, 2024)
+
+- fix: polish sdk logic & remove prefs required
+
 ## 0.1.1 (May 06, 2024)
 
 - chore: update deps
