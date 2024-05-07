@@ -115,7 +115,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
       condition.folderId = req.query.folderId;
     }
 
-    if (checkUserRole && !['admin', 'owner'].includes(req.user.role)) {
+    if (checkUserRole && req.user?.did && !['admin', 'owner'].includes(req.user?.role)) {
       condition.createdBy = req.user.did;
     }
 
@@ -358,7 +358,7 @@ router.get(
   middleware.component.verifySig,
   getUploadListMiddleware({
     maxPageSize: Infinity,
-    checkUserRole: false,
+    checkUserRole: true,
   })
 );
 
@@ -486,9 +486,15 @@ router.get('/uploader/status', async (req, res) => {
     availablePluginMap.Unsplash = true;
   }
 
-  const defaultExtsInput = '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico,.mp4,.avi,.mov,.wmv,.mkv,.pdf,.zip,.rar,.7z,.tar.gz';
+  const defaultExtsInput = '*';
 
-  const { types, extsInput = defaultExtsInput, maxUploadSize } = config.env.preferences || {};
+  const { types, maxUploadSize } = config.env.preferences || {};
+
+  let { extsInput } = config.env.preferences || {};
+
+  if (!extsInput) {
+    extsInput = defaultExtsInput;
+  }
 
   let allowedFileTypes = [];
 

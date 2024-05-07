@@ -21,7 +21,6 @@
           "showCount": false
         },
         "x-decorator-props": {},
-        "required": true,
         "x-reactions": {
           "dependencies": [
             {
@@ -38,8 +37,8 @@
         },
         "name": "extsInput",
         "x-designable-id": "y0kp36yu7ps",
-        "x-index": 1,
-        "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols.\n",
+        "x-index": 0,
+        "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols. If empty, all types are allowed by default.",
         "default": ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico,.mp4,.avi,.mov,.wmv,.mkv,.pdf,.zip,.rar,.7z,.tar.gz"
       },
       "maxUploadSize": {
@@ -51,13 +50,12 @@
         "x-component-props": {},
         "x-decorator-props": {},
         "name": "maxUploadSize",
-        "description": "Set the max upload size limit when uploading files(should be a valid byte string, examples: 1MB, 200kb)",
+        "description": "Set the max upload size limit when uploading files(should be a valid byte string, examples: 1MB, 200kb). If empty, not limit max upload size.",
         "default": "30MB",
         "x-designable-id": "hr6cdrq3k6g",
-        "x-index": 2,
-        "required": true
+        "x-index": 1
       }
     },
-    "x-designable-id": "sohwqmk03vu"
+    "x-designable-id": "w21egmny68r"
   }
 }

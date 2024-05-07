@@ -1,3 +1,7 @@
+## 0.11.1 (May 07, 2024)
+
+- fix: polish sdk logic & remove prefs required
+
 ## 0.11.0 (May 06, 2024)
 
 - chore: re-bump version
