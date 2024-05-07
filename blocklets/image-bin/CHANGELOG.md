@@ -1,3 +1,7 @@
+## 0.11.2 (May 07, 2024)
+
+- fix: polish restrictions.allowedFileTypes logic
+
 ## 0.11.1 (May 07, 2024)
 
 - fix: polish sdk logic & remove prefs required
