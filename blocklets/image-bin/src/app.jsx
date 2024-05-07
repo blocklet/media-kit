@@ -17,6 +17,7 @@ import { translations } from './locales/index';
 
 const ImageList = lazy(() => import('./pages/images/index'));
 const EmbedRecent = lazy(() => import('./pages/embed/recent'));
+const Home = lazy(() => import('./pages/home'));
 
 const globalStyles = css`
   a {
@@ -51,7 +52,6 @@ export default function App() {
                     }>
                     <Routes>
                       <Route path="/embed/recent" element={<EmbedRecent />} />
-                      <Route path="/" element={<EmbedRecent />} />
                       <Route
                         path="*"
                         element={
@@ -61,10 +61,11 @@ export default function App() {
                             <UploadProvider>
                               <ResourceProvider>
                                 <Routes>
+                                  <Route path="/" element={<Home />} />
                                   <Route path="/admin" element={<Layout />}>
+                                    <Route index element={<ImageList />} />
                                     <Route path="images" element={<ImageList />} />
-                                    <Route path="*" element={<Navigate to="/admin/images" />} />
-                                    <Route index element={<Navigate to="/admin/images" />} />
+                                    <Route path="*" element={<Navigate to="/admin" />} />
                                   </Route>
                                 </Routes>
                               </ResourceProvider>

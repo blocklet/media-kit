@@ -11,8 +11,9 @@ function MediaItem(props) {
 
   const style = {
     WebkitUserDrag: 'none',
-    objectFit: isVideo ? 'contain' : 'cover',
-    background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px',
+    objectFit: 'contain',
+    maxWidth: '100%',
+    maxHeight: '100%',
   };
 
   return isVideo ? (
@@ -22,8 +23,6 @@ function MediaItem(props) {
     <object
       type={mimetype || 'image/png'} // set mime type that file not auto download, try to fallback to image/png
       key={_id}
-      width="100%"
-      height="100%"
       data={src}
       alt={originalname}
       loading="lazy"

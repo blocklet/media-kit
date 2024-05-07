@@ -10,20 +10,21 @@ const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
 const { isValid: isValidDID } = require('@arcblock/did');
+const xbytes = require('xbytes');
+const uniq = require('lodash/uniq');
 const { initLocalStorageServer, initCompanion, symlinkFileToNewPath } = require('@blocklet/uploader/middlewares');
 const logger = require('../libs/logger');
+const { MEDIA_KIT_DID } = require('../libs/constants');
 
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
+const { user, auth, ensureAdmin } = require('../libs/auth');
 
 const router = express.Router();
-const auth = middleware.auth({ roles: env.uploaderRoles });
-const user = middleware.user();
-const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
-const ensureFolderId = async (req, res, next) => {
-  req.componentDid = req.headers['x-component-did'] || process.env.BLOCKLET_COMPONENT_DID;
+const ensureFolderId = () => async (req, res, next) => {
+  req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
 
   const isDID = isValidDID(req.componentDid);
 
@@ -114,7 +115,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
       condition.folderId = req.query.folderId;
     }
 
-    if (checkUserRole && [('guest', 'member')].includes(req.user.role)) {
+    if (checkUserRole && !['admin', 'owner'].includes(req.user.role)) {
       condition.createdBy = req.user.did;
     }
 
@@ -138,7 +139,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
 router.get('/uploads', user, auth, getUploadListMiddleware());
 
 // remove upload
-router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId, async (req, res) => {
+router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, res) => {
   const mediaKitDid = env.currentComponentInfo.did;
 
   if (isValidDID(req.componentDid) && req.componentDid !== mediaKitDid) {
@@ -234,9 +235,14 @@ const localStorageServer = initLocalStorageServer({
 
     return resData;
   },
+  // only for debug uploader
+  // onUploadCreate(req, res, uploadMetadata) {
+  //   console.warn(uploadMetadata);
+  //   throw new Error('debug error');
+  // },
 });
 
-router.use('/uploads', user, auth, ensureFolderId, localStorageServer.handle);
+router.use('/uploads', user, auth, ensureFolderId(), localStorageServer.handle);
 
 const defaultCompanionOptions = {
   path: env.uploadDir,
@@ -260,14 +266,14 @@ config.events.on(config.Events.envUpdate, () => {
   }, 200);
 });
 
-router.use('/companion', user, auth, ensureFolderId, companion.handle);
+router.use('/companion', user, auth, ensureFolderId(), companion.handle);
 
 router.post(
   '/sdk/uploads',
   user,
   middleware.component.verifySig,
   upload.single('data'),
-  ensureFolderId,
+  ensureFolderId(),
   async (req, res) => {
     // data maybe a file buffer format by multer
     const { type, filename: originalFileName, data = req?.file?.buffer, repeatInsert = true } = req.body;
@@ -456,6 +462,7 @@ router.post('/image/generations', user, auth, async (req, res) => {
 });
 
 router.get('/uploader/status', async (req, res) => {
+  // setting available plugins
   const availablePluginMap = {
     AIImage: false,
     Unsplash: false,
@@ -479,7 +486,42 @@ router.get('/uploader/status', async (req, res) => {
     availablePluginMap.Unsplash = true;
   }
 
-  res.json({ availablePluginMap });
+  const defaultExtsInput = '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico,.mp4,.avi,.mov,.wmv,.mkv,.pdf,.zip,.rar,.7z,.tar.gz';
+
+  const { types, extsInput = defaultExtsInput, maxUploadSize } = config.env.preferences || {};
+
+  let allowedFileTypes = [];
+
+  // extsInput only will be string
+  if (extsInput) {
+    allowedFileTypes = uniq(
+      extsInput
+        ?.split(',')
+        ?.map((ext) => mime.lookup(ext?.replaceAll(' ', '') || ''))
+        ?.filter((x) => x)
+    );
+  } else if (Array.isArray(types)) {
+    // Deprecated history prefs
+    allowedFileTypes = types;
+  }
+
+  // not use iec
+  const maxFileSize = xbytes.parseSize(maxUploadSize, { iec: false }) || Infinity;
+
+  const restrictions = {
+    allowedFileTypes,
+    allowedFileExts: extsInput,
+    maxFileSize,
+  };
+
+  res.json({
+    availablePluginMap,
+    preferences: {
+      extsInput,
+      maxUploadSize,
+    },
+    restrictions,
+  });
 });
 
 module.exports = router;

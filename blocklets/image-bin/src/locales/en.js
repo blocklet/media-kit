@@ -13,6 +13,7 @@ export default flatten({
     moveFolderAddNewSuccess: 'Created Folder successfully',
     add: 'Create',
     addFolder: 'Create Folder',
+    addFailed: 'Create Failed',
     folderName: 'Folder Name',
     addFolderConfirmTitle: 'Create Folder',
     addFolderSuccess: 'Created Folder successfully',

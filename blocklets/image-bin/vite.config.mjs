@@ -11,6 +11,7 @@ export default defineConfig(() => {
     server: {
       fs: {
         strict: false, // monorepo and pnpm required
+        allow: ['../../'], // monorepo and pnpm required
       },
     },
     plugins: [react(), createBlockletPlugin()],

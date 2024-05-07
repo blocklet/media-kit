@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.0.77",
+  "version": "0.1.1",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -46,18 +46,18 @@
   "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
   "license": "ISC",
   "dependencies": {
-    "@abtnode/cron": "^1.16.25",
-    "@blocklet/constant": "^1.16.25",
-    "@blocklet/logger": "^1.16.25",
-    "@blocklet/sdk": "^1.16.25",
-    "@blocklet/ui-react": "^2.9.66",
+    "@abtnode/cron": "^1.16.26",
+    "@blocklet/constant": "^1.16.26",
+    "@blocklet/logger": "^1.16.26",
+    "@blocklet/sdk": "^1.16.26",
+    "@blocklet/ui-react": "^2.9.76",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@tus/file-store": "1.0.0-beta.2",
     "@tus/server": "1.0.0-beta.7",
     "@uppy/companion": "^4.13.1",
-    "@uppy/core": "^3.10.0",
-    "@uppy/dashboard": "^3.8.0",
+    "@uppy/core": "^3.10.1",
+    "@uppy/dashboard": "^3.8.1",
     "@uppy/drag-drop": "^3.1.0",
     "@uppy/drop-target": "^2.0.5",
     "@uppy/file-input": "^3.1.1",
@@ -81,6 +81,7 @@
     "mime-types": "^2.1.35",
     "p-queue": "^6.6.2",
     "preact": "10.20.1",
+    "react-player": "^2.16.0",
     "ufo": "^1.5.3",
     "url-join": "^4.0.1",
     "xbytes": "^1.9.1"
@@ -91,14 +92,14 @@
     "@types/lodash": "^4.17.0",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^20.12.7",
-    "@types/react": "^18.2.75",
-    "@types/react-dom": "^18.2.24",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
     "@types/url-join": "^4.0.3",
     "@vitest/coverage-c8": "^0.33.0",
     "jsdom": "^22.1.0",
-    "typescript": "^5.4.4",
+    "typescript": "^5.4.5",
     "unbuild": "^2.0.0",
-    "vitest": "^1.4.0",
+    "vitest": "^1.5.0",
     "vitest-fetch-mock": "^0.2.2"
   }
 }

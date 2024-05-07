@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.10.88
+version: 0.11.0
 title: Media Kit
 description: A simple media assets upload and hosting blocklet
 keywords:
@@ -34,7 +34,7 @@ interfaces:
       - name: auth
         config:
           whoCanAccess: invited
-          blockUnauthenticated: true
+          blockUnauthenticated: false
           ignoreUrls:
             - /
             - /uploads/**
@@ -69,18 +69,6 @@ environments:
     description: Use CDN Host for image load speed
     required: false
     default: ""
-    secure: false
-    shared: true
-  - name: UPLOADER_ROLES
-    description: List of roles that can upload files
-    required: false
-    default: owner,admin
-    secure: false
-    shared: true
-  - name: MAX_UPLOAD_SIZE
-    description: Set the max upload size limit for images
-    required: false
-    default: 30MB
     secure: false
     shared: true
   - name: UNSPLASH_KEY

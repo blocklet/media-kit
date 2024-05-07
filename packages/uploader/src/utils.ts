@@ -191,7 +191,8 @@ export function initUppy(currentUppy: any) {
       const { name, type } = blobFile;
 
       const uppyFileId = currentUppy.addFile({
-        name,
+        // ignore duplicate file
+        name: `${new Date().valueOf()}-${name}`,
         type,
         data: blobFile, // file blob
         source: 'function-upload-file',
@@ -367,4 +368,9 @@ export function initUppy(currentUppy: any) {
   };
 
   return currentUppy;
+}
+
+export function parseStringToDot(str: any) {
+  if (typeof str !== 'string') return '';
+  return str && str.length > 12 ? str.substring(0, 7) + '...' + str.substring(str.length - 5) : str;
 }

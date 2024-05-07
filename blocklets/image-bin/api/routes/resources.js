@@ -3,7 +3,6 @@ const path = require('path');
 const express = require('express');
 const toUpper = require('lodash/toUpper');
 const flatten = require('lodash/flatten');
-const middleware = require('@blocklet/sdk/lib/middlewares');
 const { initStaticResourceMiddleware } = require('@blocklet/uploader/middlewares');
 const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/component');
 
@@ -11,6 +10,7 @@ const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
 const { ResourceDid, ResourceType, ExportDir } = require('../libs/constants');
+const { auth, user, ensureAdmin } = require('../libs/auth');
 
 const resourceTypes = [
   {
@@ -25,9 +25,6 @@ const resourceTypes = [
 ];
 
 const router = express.Router();
-const auth = middleware.auth({ roles: env.uploaderRoles });
-const user = middleware.user();
-const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
 const getResourceComponents = () => {
   const resources = getResources({ types: resourceTypes });

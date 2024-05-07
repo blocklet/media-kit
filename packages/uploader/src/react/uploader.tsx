@@ -21,6 +21,7 @@ import Uppy from '@uppy/core';
 import Webcam from '@uppy/webcam';
 import ImportFromUrl from '@uppy/url';
 import Unsplash from '@uppy/unsplash';
+import isNil from 'lodash/isNil';
 import uniq from 'lodash/uniq';
 import { useKeyPress } from 'ahooks';
 import { Dashboard } from '@uppy/react';
@@ -30,6 +31,8 @@ import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
 import localeMap from './i18n';
 import { ComponentInstaller } from '@blocklet/ui-react';
+import mime from 'mime-types';
+import xbytes from 'xbytes';
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
@@ -80,10 +83,10 @@ const getPluginList = (props: any) => {
     return result.data;
   };
 
-  const restrictions = {
-    // default max file size is infinity
+  const AIrestrictions = {
+    ...props?.restrictions,
+    // default AI max file size is infinity
     maxFileSize: Infinity,
-    ...props?.coreProps?.restrictions,
   };
 
   return [
@@ -129,7 +132,7 @@ const getPluginList = (props: any) => {
                 createRoot(root).render(
                   <AIImageShowPanel
                     api={getAIImageAPI}
-                    restrictions={restrictions}
+                    restrictions={AIrestrictions}
                     i18n={ref.current?.getUploader()?.i18n}
                     onSelect={(data: any) => {
                       const uploader = ref.current.getUploader();
@@ -196,7 +199,7 @@ const getPluginList = (props: any) => {
       plugin: ThumbnailGenerator,
       options: {
         thumbnailType: 'image/png',
-        thumbnailWidth: 800,
+        thumbnailWidth: '100%', // fixed width
       },
       alwayUse: true,
     },
@@ -215,6 +218,7 @@ function initUploader(props: any) {
     tusProps,
     dropTargetProps,
     pluginList,
+    restrictions,
   } = props;
 
   const pluginMap = keyBy(pluginList, 'id');
@@ -233,6 +237,7 @@ function initUploader(props: any) {
     // @ts-ignore
     locale: localeMap[locale || 'en'],
     ...coreProps,
+    restrictions,
   }).use(Tus, {
     chunkSize: 1024 * 1024 * 10, // default chunk size 10MB
     removeFingerprintOnSuccess: true,
@@ -390,9 +395,15 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     open: false,
     uppy: null as any,
     availablePluginMap: {} as any,
+    restrictions: {} as any,
   });
 
-  const pluginList = getPluginList({ ...props, apiPathProps, availablePluginMap: state.availablePluginMap });
+  const pluginList = getPluginList({
+    ...props,
+    apiPathProps,
+    availablePluginMap: state.availablePluginMap,
+    restrictions: state.restrictions,
+  });
 
   const {
     plugins: _plugins = pluginList.map((item) => item.id),
@@ -416,8 +427,32 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   useLayoutEffect(() => {
     // check if the media-kit is installed
     if (getMediaKitComponent() && !apiPathProps.disableMediaKitPrefix) {
-      api.get('/api/uploader/status').then(({ data }) => {
+      api.get('/api/uploader/status').then(({ data }: any) => {
         state.availablePluginMap = data.availablePluginMap;
+
+        const restrictions =
+          (!isNil(props?.coreProps?.restrictions) ? props?.coreProps?.restrictions : data.restrictions) || {};
+
+        // no include allowedFileTypes and has allowedFileExts
+        if (!restrictions?.allowedFileTypes?.length && restrictions?.allowedFileExts) {
+          restrictions.allowedFileTypes = uniq(
+            (
+              (typeof restrictions?.allowedFileExts === 'string'
+                ? restrictions?.allowedFileExts.split(',')
+                : restrictions?.allowedFileExts) || []
+            )
+              ?.map((ext: string) => mime.lookup(ext?.replaceAll(' ', '') || ''))
+              ?.filter((x: any) => x)
+          );
+          delete restrictions.allowedFileExts;
+        }
+
+        // format maxFileSize
+        if (restrictions.maxFileSize && typeof restrictions.maxFileSize === 'string') {
+          restrictions.maxFileSize = xbytes.parseSize(restrictions.maxFileSize, { iec: false }) || undefined;
+        }
+
+        state.restrictions = restrictions;
       });
     }
   }, []);
@@ -445,6 +480,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       plugins,
       apiPathProps,
       pluginList,
+      restrictions: state.restrictions,
     });
 
     state.uppy.open = open;
@@ -484,6 +520,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       plugins,
       apiPathProps,
       locale,
+      restrictions: state.restrictions,
     }),
   ]);
 
@@ -604,11 +641,18 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
           sx={{
             position: 'relative',
             width: isMobile ? '90vw' : 720,
-            '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner img': {
+            '.uppy-ProviderBrowserItem-inner': {
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+            '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner': {
               background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
             },
             '.uploaded-add-item': {
-              background: 'rgba(0,0,0,0.1)',
+              background: 'rgba(0,0,0,0.1) !important',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
