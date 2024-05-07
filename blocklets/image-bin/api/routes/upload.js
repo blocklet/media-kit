@@ -515,8 +515,8 @@ router.get('/uploader/status', async (req, res) => {
   const maxFileSize = xbytes.parseSize(maxUploadSize, { iec: false }) || Infinity;
 
   const restrictions = {
-    allowedFileTypes,
-    allowedFileExts: extsInput,
+    // if empty array, will be allowed all types
+    allowedFileTypes: allowedFileTypes?.length === 0 ? undefined : allowedFileTypes,
     maxFileSize,
   };
 
