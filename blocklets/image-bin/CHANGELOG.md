@@ -1,3 +1,7 @@
+## 0.11.7 (May 09, 2024)
+
+- chore: trigger CI logic
+
 ## 0.11.6 (May 09, 2024)
 
 - chore: re-bump version
