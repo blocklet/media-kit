@@ -1,3 +1,7 @@
+## 0.1.4 (May 09, 2024)
+
+- chore: add resolutions into uploader
+
 ## 0.1.3 (May 09, 2024)
 
 - fix: uploader error logic
