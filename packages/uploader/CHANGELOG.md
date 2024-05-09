@@ -1,3 +1,7 @@
+## 0.1.3 (May 09, 2024)
+
+- fix: uploader error logic
+
 ## 0.1.2 (May 07, 2024)
 
 - fix: polish sdk logic & remove prefs required

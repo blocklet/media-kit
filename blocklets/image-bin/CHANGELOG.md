@@ -1,3 +1,7 @@
+## 0.11.3 (May 09, 2024)
+
+- fix: uploader error logic
+
 ## 0.11.2 (May 07, 2024)
 
 - fix: polish restrictions.allowedFileTypes logic

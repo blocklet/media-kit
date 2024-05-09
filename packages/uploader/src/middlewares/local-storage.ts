@@ -466,16 +466,24 @@ class rewriteFileConfigstore {
   }
 
   async safeDeleteFile(filePath: string): Promise<void> {
-    const isExist = await fs.stat(filePath).catch(() => false);
-    if (isExist) {
-      await fs.rm(filePath);
-    } else {
-      console.log('Can not remove file, the file not exist: ', filePath);
+    try {
+      const isExist = await fs.stat(filePath).catch(() => false);
+      if (isExist) {
+        await fs.rm(filePath);
+      } else {
+        console.log('Can not remove file, the file not exist: ', filePath);
+      }
+    } catch (error) {
+      // ignore error
     }
   }
 
   async delete(key: string, isMetadata = true): Promise<void> {
-    await this.queue.add(() => this.safeDeleteFile(this.resolve(key, isMetadata)));
+    try {
+      await this.queue.add(() => this.safeDeleteFile(this.resolve(key, isMetadata)));
+    } catch (error) {
+      // ignore error
+    }
   }
 
   async list(): Promise<Array<string>> {
