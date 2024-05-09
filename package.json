@@ -48,7 +48,6 @@
     "@ocap/types": "^1.18.115",
     "@ocap/util": "^1.18.115",
     "@ocap/wallet": "^1.18.115",
-    "@uppy/provider-views": "3.6.0",
     "p-queue": "6.6.2",
     "p-retry": "4.6.1",
     "preact": "10.20.1"

@@ -1,3 +1,7 @@
+## 0.11.5 (May 09, 2024)
+
+- chore: lock @uppy/provider-views lib
+
 ## 0.11.4 (May 09, 2024)
 
 - chore: add resolutions into uploader
