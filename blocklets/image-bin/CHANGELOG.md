@@ -1,3 +1,7 @@
+## 0.11.6 (May 09, 2024)
+
+- chore: re-bump version
+
 ## 0.11.5 (May 09, 2024)
 
 - chore: lock @uppy/provider-views lib
