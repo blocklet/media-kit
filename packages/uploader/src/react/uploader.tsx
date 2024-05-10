@@ -643,10 +643,10 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
             width: isMobile ? '90vw' : 720,
             '.uppy-ProviderBrowserItem-inner': {
               flex: 1,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              alignItems: 'center',
+              color: 'transparent',
+              'img, object': {
+                objectFit: 'contain !important',
+              },
             },
             '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner': {
               background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',

@@ -191,6 +191,7 @@ class Resources extends UIPlugin {
   install() {
     // provider views
     this.view = new ProviderViews(this, {
+      provider: {},
       viewType: 'grid',
       showBreadcrumbs: false,
       showFilter: false,

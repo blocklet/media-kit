@@ -172,6 +172,7 @@ class Uploaded extends UIPlugin {
 
         // hacker uppy image element
         imgElementList.forEach((imgElement) => {
+          if (!imgElement?.src) return;
           const { src } = imgElement;
           const currentData = this.uploadedAPIData.files?.find((item) => item.previewUrl === src);
 
@@ -247,6 +248,7 @@ class Uploaded extends UIPlugin {
   install() {
     // provider views
     this.view = new ProviderViews(this, {
+      provider: {},
       viewType: 'grid',
       showBreadcrumbs: false,
       showFilter: false,

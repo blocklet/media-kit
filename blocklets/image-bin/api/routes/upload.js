@@ -100,7 +100,7 @@ const upload = multer({
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
 
-const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = true } = {}) => {
+const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE } = {}) => {
   return async (req, res) => {
     let page = Number(req.query.page || 1);
     let pageSize = Number(req.query.pageSize || DEFAULT_PAGE_SIZE);
@@ -109,14 +109,21 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
     pageSize = Number.isNaN(pageSize) ? DEFAULT_PAGE_SIZE : pageSize;
     pageSize = pageSize > maxPageSize ? maxPageSize : pageSize;
 
-    const condition = {};
+    const isMediaKitRequest = req.componentDid === MEDIA_KIT_DID;
+
+    // default can only see self uploads
+    const condition = {
+      createdBy: req.user?.did,
+    };
+
+    if (isMediaKitRequest && ['admin', 'owner'].includes(req.user.role)) {
+      logger.log('request role is admin / owner');
+      // allow admin to see all uploads
+      delete condition.createdBy;
+    }
 
     if (req.query.folderId) {
       condition.folderId = req.query.folderId;
-    }
-
-    if (checkUserRole && req.user?.did && !['admin', 'owner'].includes(req.user?.role)) {
-      condition.createdBy = req.user.did;
     }
 
     if (req.query.tags) {
@@ -136,7 +143,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE, checkUserRole = 
   };
 };
 
-router.get('/uploads', user, auth, getUploadListMiddleware());
+router.get('/uploads', user, auth, ensureFolderId(), getUploadListMiddleware());
 
 // remove upload
 router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, res) => {
@@ -356,9 +363,9 @@ router.get(
   '/sdk/uploads',
   user,
   middleware.component.verifySig,
+  ensureFolderId(),
   getUploadListMiddleware({
     maxPageSize: Infinity,
-    checkUserRole: true,
   })
 );
 

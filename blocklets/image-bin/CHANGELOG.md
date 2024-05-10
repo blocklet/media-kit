@@ -1,3 +1,23 @@
+## 0.11.7 (May 09, 2024)
+
+- chore: trigger CI logic
+
+## 0.11.6 (May 09, 2024)
+
+- chore: re-bump version
+
+## 0.11.5 (May 09, 2024)
+
+- chore: lock @uppy/provider-views lib
+
+## 0.11.4 (May 09, 2024)
+
+- chore: add resolutions into uploader
+
+## 0.11.3 (May 09, 2024)
+
+- fix: uploader error logic
+
 ## 0.11.2 (May 07, 2024)
 
 - fix: polish restrictions.allowedFileTypes logic

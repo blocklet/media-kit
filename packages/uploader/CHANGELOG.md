@@ -1,3 +1,23 @@
+## 0.1.6 (May 09, 2024)
+
+- chore: trigger CI logic
+
+## 0.1.5 (May 09, 2024)
+
+- chore: re-bump version
+
+## 0.1.5 (May 09, 2024)
+
+- chore: lock @uppy/provider-views lib
+
+## 0.1.4 (May 09, 2024)
+
+- chore: add resolutions into uploader
+
+## 0.1.3 (May 09, 2024)
+
+- fix: uploader error logic
+
 ## 0.1.2 (May 07, 2024)
 
 - fix: polish sdk logic & remove prefs required
