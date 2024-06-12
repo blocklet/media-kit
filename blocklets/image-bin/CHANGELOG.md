@@ -1,3 +1,7 @@
+## 0.11.9 (June 12, 2024)
+
+- chore: polish ci pnpm version to 9
+
 ## 0.11.8 (June 12, 2024)
 
 - chore: update deps
