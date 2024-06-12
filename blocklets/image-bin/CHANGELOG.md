@@ -1,3 +1,7 @@
+## 0.11.8 (June 12, 2024)
+
+- chore: update deps
+
 ## 0.11.7 (May 09, 2024)
 
 - chore: trigger CI logic
