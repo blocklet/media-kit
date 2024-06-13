@@ -172,7 +172,14 @@ const getPluginList = (props: any) => {
     {
       id: 'Webcam',
       plugin: Webcam,
-      options: {},
+      options: {
+        showVideoSourceDropdown: true,
+        showRecordingLength: true,
+        mirror: false,
+        videoConstraints: {
+          facingMode: 'environment',
+        },
+      },
     },
     // with Unsplash key
     // @ts-ignore
@@ -731,6 +738,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
           {/* @ts-ignore */}
           {state.uppy && (
             <Dashboard
+              // showNativePhotoCameraButton={isMobile}
+              // showNativeVideoCameraButton={isMobile}
               inline
               // @ts-ignore
               target={`#${target}`}
