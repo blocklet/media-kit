@@ -1,3 +1,7 @@
+## 0.1.9 (June 13, 2024)
+
+- feat: support webcam using environment facingmode
+
 ## 0.1.8 (June 12, 2024)
 
 - chore: polish ci pnpm version to 9
