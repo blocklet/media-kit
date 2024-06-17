@@ -1,3 +1,7 @@
+## 0.1.10 (June 17, 2024)
+
+- chore: remove useless lib
+
 ## 0.1.9 (June 13, 2024)
 
 - feat: support webcam using environment facingmode
