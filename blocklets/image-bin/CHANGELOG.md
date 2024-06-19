@@ -1,3 +1,7 @@
+## 0.11.12 (六月 19, 2024)
+
+- chore: ensure blocklet works in isolation mode
+
 ## 0.11.11 (June 17, 2024)
 
 - chore: remove useless lib
