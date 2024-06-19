@@ -58,12 +58,13 @@
     "react-player": "^2.16.0",
     "serve-static": "^1.15.0",
     "url-join": "^4.0.1",
-    "xbytes": "^1.9.1"
+    "xbytes": "^1.9.1",
+    "@blocklet/js-sdk": "1.16.28-beta-641c9f13",
+    "@arcblock/ux": "^2.10.1",
+    "@arcblock/did-connect": "^2.10.1"
   },
   "devDependencies": {
-    "@arcblock/did-connect": "^2.10.1",
     "@arcblock/eslint-config": "^0.2.4",
-    "@arcblock/ux": "^2.10.1",
     "@blocklet/ui-react": "^2.10.1",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
