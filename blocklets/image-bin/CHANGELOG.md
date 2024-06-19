@@ -1,3 +1,7 @@
+## 0.11.13 (June 19, 2024)
+
+- fix(core): use native fs instead of fs-extra
+
 ## 0.11.12 (六月 19, 2024)
 
 - chore: ensure blocklet works in isolation mode

@@ -1,3 +1,7 @@
+## 0.1.11 (June 19, 2024)
+
+- fix(core): use native fs instead of fs-extra
+
 ## 0.1.10 (June 17, 2024)
 
 - chore: remove useless lib
