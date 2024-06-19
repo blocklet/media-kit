@@ -1,4 +1,4 @@
-const { existsSync } = require('fs-extra');
+const { existsSync } = require('fs');
 const { join } = require('path');
 const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');

@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const toUpper = require('lodash/toUpper');
@@ -96,7 +96,7 @@ router.post('/resources/export', ensureAdmin, async (req, res) => {
         return;
       }
 
-      await fs.copy(filePath, newFilePath);
+      fs.copyFileSync(filePath, newFilePath);
     })
   );
 
