@@ -1,3 +1,23 @@
+## 0.1.15 (June 26, 2024)
+
+- chore: add initProxyToMediaKitUploadsMiddleware to lib
+
+## 0.1.14 (June 26, 2024)
+
+- chore: remove symlink logic to avoid asset permission bug
+
+## 0.1.13 (June 26, 2024)
+
+- chore: re-bump version
+
+## 0.1.12 (June 26, 2024)
+
+- fix: polish restrictions logic
+
+## 0.1.11 (June 19, 2024)
+
+- fix(core): use native fs instead of fs-extra
+
 ## 0.1.10 (June 17, 2024)
 
 - chore: remove useless lib

@@ -1,3 +1,27 @@
+## 0.11.17 (June 26, 2024)
+
+- chore: add initProxyToMediaKitUploadsMiddleware to lib
+
+## 0.11.16 (June 26, 2024)
+
+- chore: remove symlink logic to avoid asset permission bug
+
+## 0.11.15 (June 26, 2024)
+
+- chore: re-bump version
+
+## 0.11.14 (June 26, 2024)
+
+- fix: polish restrictions logic
+
+## 0.11.13 (June 19, 2024)
+
+- fix(core): use native fs instead of fs-extra
+
+## 0.11.12 (六月 19, 2024)
+
+- chore: ensure blocklet works in isolation mode
+
 ## 0.11.11 (June 17, 2024)
 
 - chore: remove useless lib

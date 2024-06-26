@@ -432,36 +432,41 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   const plugins = uniq([..._plugins, ...pluginList.filter((item) => item.alwayUse).map((item) => item.id)]);
 
   useLayoutEffect(() => {
-    // check if the media-kit is installed
-    if (getMediaKitComponent() && !apiPathProps.disableMediaKitPrefix) {
-      api.get('/api/uploader/status').then(({ data }: any) => {
-        state.availablePluginMap = data.availablePluginMap;
+    const updateRestrictions = async () => {
+      let restrictions = (!isNil(props?.coreProps?.restrictions) ? props?.coreProps?.restrictions : {}) as any;
 
-        const restrictions =
-          (!isNil(props?.coreProps?.restrictions) ? props?.coreProps?.restrictions : data.restrictions) || {};
+      // check if the media-kit is installed
+      if (getMediaKitComponent() && !apiPathProps.disableMediaKitPrefix && isNil(props?.coreProps?.restrictions)) {
+        await api.get('/api/uploader/status').then(({ data }: any) => {
+          state.availablePluginMap = data.availablePluginMap;
 
-        // no include allowedFileTypes and has allowedFileExts
-        if (!restrictions?.allowedFileTypes?.length && restrictions?.allowedFileExts) {
-          restrictions.allowedFileTypes = uniq(
-            (
-              (typeof restrictions?.allowedFileExts === 'string'
-                ? restrictions?.allowedFileExts.split(',')
-                : restrictions?.allowedFileExts) || []
-            )
-              ?.map((ext: string) => mime.lookup(ext?.replaceAll(' ', '') || ''))
-              ?.filter((x: any) => x)
-          );
-          delete restrictions.allowedFileExts;
-        }
+          restrictions = data.restrictions || {};
+        });
+      }
 
-        // format maxFileSize
-        if (restrictions.maxFileSize && typeof restrictions.maxFileSize === 'string') {
-          restrictions.maxFileSize = xbytes.parseSize(restrictions.maxFileSize, { iec: false }) || undefined;
-        }
+      // no include allowedFileTypes and has allowedFileExts
+      if (!restrictions?.allowedFileTypes?.length && restrictions?.allowedFileExts) {
+        restrictions.allowedFileTypes = uniq(
+          (
+            (typeof restrictions?.allowedFileExts === 'string'
+              ? restrictions?.allowedFileExts.split(',')
+              : restrictions?.allowedFileExts) || []
+          )
+            ?.map((ext: string) => mime.lookup(ext?.replaceAll(' ', '') || ''))
+            ?.filter((x: any) => x)
+        );
+        delete restrictions.allowedFileExts;
+      }
 
-        state.restrictions = restrictions;
-      });
-    }
+      // format maxFileSize
+      if (restrictions.maxFileSize && typeof restrictions.maxFileSize === 'string') {
+        restrictions.maxFileSize = xbytes.parseSize(restrictions.maxFileSize, { iec: false }) || undefined;
+      }
+
+      state.restrictions = restrictions;
+    };
+
+    updateRestrictions();
   }, []);
 
   useKeyPress(

@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const toUpper = require('lodash/toUpper');
@@ -88,6 +88,7 @@ router.post('/resources/export', ensureAdmin, async (req, res) => {
   fs.mkdirSync(dir, { recursive: true });
 
   await Promise.all(
+    // eslint-disable-next-line require-await
     uploads.map(async ({ filename }) => {
       const filePath = path.join(env.uploadDir, filename);
       const newFilePath = path.join(dir, filename);
@@ -96,7 +97,7 @@ router.post('/resources/export', ensureAdmin, async (req, res) => {
         return;
       }
 
-      await fs.copy(filePath, newFilePath);
+      fs.copyFileSync(filePath, newFilePath);
     })
   );
 

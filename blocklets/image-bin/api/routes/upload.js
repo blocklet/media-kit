@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const express = require('express');
@@ -12,7 +12,7 @@ const Component = require('@blocklet/sdk/lib/component');
 const { isValid: isValidDID } = require('@arcblock/did');
 const xbytes = require('xbytes');
 const uniq = require('lodash/uniq');
-const { initLocalStorageServer, initCompanion, symlinkFileToNewPath } = require('@blocklet/uploader/middlewares');
+const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader/middlewares');
 const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
 
@@ -50,46 +50,6 @@ const ensureFolderId = () => async (req, res, next) => {
   }
 
   next();
-};
-
-const getSymlinkPath = (req) => {
-  // not current component
-  if (isValidDID(req.componentDid) && req.componentDid !== env.currentComponentInfo.did) {
-    const component = config.components.find((x) => x.did === req.componentDid);
-    // if exist component, use component name as symlink path
-    if (component) {
-      const symlinkPath = path.join(env.uploadDir.replace(env.currentComponentInfo.name, component.name));
-      // if symlink path dir exist, use it
-      if (fs.existsSync(symlinkPath)) {
-        return symlinkPath;
-      }
-    }
-  }
-  return null;
-};
-
-const symlinkWrapper = async ({ req, fileName, filePath, componentDid }) => {
-  // rewrite
-  if (componentDid) {
-    req.componentDid = componentDid;
-  }
-  // try to symlink
-  let symlinkFilePath = await getSymlinkPath(req);
-
-  if (typeof symlinkFilePath === 'string' && symlinkFilePath) {
-    if (symlinkFilePath?.indexOf(fileName) === -1) {
-      // symlinkFilePath may be not with fileName
-      symlinkFilePath = path.join(symlinkFilePath, fileName);
-    }
-
-    try {
-      await symlinkFileToNewPath(filePath, symlinkFilePath);
-      // TODO not json file
-      // await symlinkFileToNewPath(`${filePath}.json`, `${symlinkFilePath}.json`);
-    } catch (error) {
-      console.error('copy file error: ', error);
-    }
-  }
 };
 
 // multer only use for /sdk/uploads, not filter allow type
@@ -192,16 +152,6 @@ router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
     { returnUpdatedDocs: true }
   );
 
-  const { filename, folderId } = updatedDoc;
-
-  // rewrite componentDID
-  await symlinkWrapper({
-    req,
-    fileName: filename,
-    filePath: path.join(env.uploadDir, updatedDoc.filename),
-    componentDid: folderId,
-  });
-
   res.jsonp(updatedDoc);
 });
 
@@ -209,7 +159,6 @@ router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
 const localStorageServer = initLocalStorageServer({
   path: env.uploadDir,
   express,
-  symlinkPath: getSymlinkPath,
   onUploadFinish: async (req, res, uploadMetadata) => {
     const {
       id: filename,
@@ -312,12 +261,6 @@ router.post(
     const filePath = path.join(env.uploadDir, fileName);
 
     fs.writeFileSync(filePath, buffer);
-
-    await symlinkWrapper({
-      req,
-      fileName,
-      filePath,
-    });
 
     const file = {
       size: fs.lstatSync(filePath).size,
