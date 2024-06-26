@@ -13,7 +13,6 @@ export function initLocalStorageServer({
   path: _path,
   onUploadFinish: _onUploadFinish,
   onUploadCreate: _onUploadCreate,
-  symlinkPath: _symlinkPath,
   express,
   expiredUploadTime = 1000 * 60 * 60 * 24 * 3, // default 3 days expire
   ...restProps
@@ -22,7 +21,6 @@ export function initLocalStorageServer({
   onUploadFinish?: Function;
   onUploadCreate?: Function;
   express: Function;
-  symlinkPath?: Function | String | null;
   expiredUploadTime?: Number;
 }) {
   const app = express();
@@ -97,33 +95,6 @@ export function initLocalStorageServer({
 
     // check offset
     await rewriteMetaDataFile(uploadMetadata);
-
-    // handler dynamic path
-    if (_symlinkPath) {
-      const { id: fileName } = uploadMetadata || {};
-      const currentFilePath = path.join(_path, fileName);
-      let symlinkFilePath;
-
-      if (typeof _symlinkPath === 'string') {
-        symlinkFilePath = _symlinkPath;
-      } else if (typeof _symlinkPath === 'function') {
-        symlinkFilePath = await _symlinkPath?.(req, res, uploadMetadata);
-      }
-
-      if (typeof symlinkFilePath === 'string' && symlinkFilePath) {
-        if (symlinkFilePath?.indexOf(fileName) === -1) {
-          // symlinkFilePath may be not with fileName
-          symlinkFilePath = path.join(symlinkFilePath, fileName);
-        }
-
-        try {
-          await symlinkFileToNewPath(currentFilePath, symlinkFilePath);
-          await symlinkFileToNewPath(`${currentFilePath}.json`, `${symlinkFilePath}.json`);
-        } catch (error) {
-          console.error('copy file error: ', error);
-        }
-      }
-    }
 
     if (_onUploadFinish) {
       try {
@@ -365,50 +336,6 @@ export async function getMetaDataByFilePath(filePath: string) {
     }
   }
   return null;
-}
-
-export async function symlinkFileToNewPath(oldPath: string, newPath: string) {
-  // newPath is not the same as oldPath
-  if (newPath !== oldPath) {
-    // create dir if not exists
-    const dir = path.dirname(newPath);
-    const dirExists = await fs.stat(dir).catch(() => false);
-
-    if (!dirExists) {
-      await fs.mkdir(dir, { recursive: true });
-    }
-
-    // check if file exists in dynamic path
-    const newFileExists = await fs.stat(newPath).catch(() => false);
-
-    if (!newFileExists) {
-      let retryCount = 0;
-
-      async function createSymlink() {
-        // create symlink to newPath
-        await fs.symlink(oldPath, newPath);
-
-        // sleep 10ms * retryCount to wait for symlink file created
-        await new Promise((resolve) => {
-          setTimeout(() => {
-            resolve(null);
-          }, 10 * retryCount);
-        });
-
-        // check if symlink file exists
-        const isExist = await fs.readFile(newPath).catch(() => false);
-
-        // if symlink file not exists, try again, max 3 times
-        if (!isExist && retryCount < 3) {
-          retryCount += 1;
-          // if symlink file not exists, try again
-          await createSymlink();
-        }
-      }
-
-      await createSymlink();
-    }
-  }
 }
 
 export function joinUrl(...args: string[]) {

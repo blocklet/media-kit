@@ -1,3 +1,7 @@
+## 0.11.16 (June 26, 2024)
+
+- chore: remove symlink logic to avoid asset permission bug
+
 ## 0.11.15 (June 26, 2024)
 
 - chore: re-bump version
