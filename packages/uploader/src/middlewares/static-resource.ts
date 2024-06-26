@@ -9,6 +9,7 @@ const ImgResourceType = 'imgpack';
 const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
 
 let skipRunningCheck = false;
+let mediaKitInfo = null as any;
 
 // can change by initStaticResourceMiddleware resourceTypes
 let resourceTypes = [
@@ -22,6 +23,12 @@ let resourceTypes = [
 let canUseResources = [] as any;
 
 export const mappingResource = async () => {
+  mediaKitInfo = config.components.find((item: any) => item.did === ImageBinDid);
+
+  if (mediaKitInfo) {
+    mediaKitInfo.uploadsDir = config.env.dataDir.replace(/\/[^/]*$/, '/image-bin/uploads');
+  }
+
   try {
     const resources = getResources({
       types: resourceTypes,
@@ -113,3 +120,19 @@ export const initStaticResourceMiddleware = (
 };
 
 export const getCanUseResources = () => canUseResources;
+
+export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} as any) => {
+  return (req: any, res: any, next: Function) => {
+    if (!mediaKitInfo?.uploadsDir) {
+      return next();
+    }
+
+    return express.static(mediaKitInfo.uploadsDir, {
+      maxAge: '365d',
+      immutable: true,
+      index: false,
+      // fallthrough: false,
+      ...options,
+    })(req, res, next);
+  };
+};

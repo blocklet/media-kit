@@ -1,3 +1,7 @@
+## 0.11.17 (June 26, 2024)
+
+- chore: add initProxyToMediaKitUploadsMiddleware to lib
+
 ## 0.11.16 (June 26, 2024)
 
 - chore: remove symlink logic to avoid asset permission bug
