@@ -88,6 +88,7 @@ router.post('/resources/export', ensureAdmin, async (req, res) => {
   fs.mkdirSync(dir, { recursive: true });
 
   await Promise.all(
+    // eslint-disable-next-line require-await
     uploads.map(async ({ filename }) => {
       const filePath = path.join(env.uploadDir, filename);
       const newFilePath = path.join(dir, filename);

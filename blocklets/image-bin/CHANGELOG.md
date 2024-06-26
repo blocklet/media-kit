@@ -1,3 +1,7 @@
+## 0.11.14 (June 26, 2024)
+
+- fix: polish restrictions logic
+
 ## 0.11.13 (June 19, 2024)
 
 - fix(core): use native fs instead of fs-extra
