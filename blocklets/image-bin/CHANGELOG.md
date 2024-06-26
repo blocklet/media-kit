@@ -1,3 +1,7 @@
+## 0.11.15 (June 26, 2024)
+
+- chore: re-bump version
+
 ## 0.11.14 (June 26, 2024)
 
 - fix: polish restrictions logic
