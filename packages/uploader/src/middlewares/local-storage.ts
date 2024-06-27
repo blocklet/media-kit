@@ -151,10 +151,16 @@ export function initLocalStorageServer({
         name: 'auto-cleanup-expired-uploads',
         time: '0 0 * * * *', // each hour
         fn: () => {
-          console.log('clean up expired uploads by cron');
-          newServer.cleanUpExpiredUploads();
+          newServer
+            .cleanUpExpiredUploads()
+            .then((count: number) => {
+              console.info(`@blocklet/uploader: cleanup expired uploads done: ${count}`);
+            })
+            .catch((err: Error) => {
+              console.error(`@blocklet/uploader: cleanup expired uploads error`, err);
+            });
         },
-        options: { runOnInit: true },
+        options: { runOnInit: false },
       },
     ],
     onError: (err: Error) => {
