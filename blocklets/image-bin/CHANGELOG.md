@@ -1,3 +1,7 @@
+## 0.11.18 (June 28, 2024)
+
+- chore: update @blocklet/uploader lib
+
 ## 0.11.17 (June 26, 2024)
 
 - chore: add initProxyToMediaKitUploadsMiddleware to lib
