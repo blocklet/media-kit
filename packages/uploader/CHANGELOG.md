@@ -1,3 +1,7 @@
+## 0.1.16 (June 28, 2024)
+
+- fix(core): error handling for upload cleanup job
+
 ## 0.1.15 (June 26, 2024)
 
 - chore: add initProxyToMediaKitUploadsMiddleware to lib
