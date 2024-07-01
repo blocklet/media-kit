@@ -24,8 +24,8 @@ export function initLocalStorageServer({
   expiredUploadTime?: Number;
 }) {
   const app = express();
-  const configstore = new rewriteFileConfigstore(_path); // my configstore
-  const datastore = new FileStore({
+  const configstore = new RewriteFileConfigstore(_path); // my configstore
+  const datastore = new RewriteFileStore({
     directory: _path,
     expirationPeriodInMilliseconds: expiredUploadTime,
     configstore,
@@ -100,11 +100,12 @@ export function initLocalStorageServer({
       try {
         const result = await _onUploadFinish(req, res, uploadMetadata);
         return result;
-      } catch (error) {
+      } catch (err) {
+        console.error('@blocklet/uploader: onUploadFinish error: ', err);
         // if onUploadFinish error, should delete the file and set not exist
         newServer.delete(uploadMetadata.id);
         res.setHeader('x-uploader-file-exist', false);
-        throw error;
+        throw err;
       }
     }
     return res;
@@ -151,28 +152,36 @@ export function initLocalStorageServer({
         name: 'auto-cleanup-expired-uploads',
         time: '0 0 * * * *', // each hour
         fn: () => {
-          newServer
-            .cleanUpExpiredUploads()
-            .then((count: number) => {
-              console.info(`@blocklet/uploader: cleanup expired uploads done: ${count}`);
-            })
-            .catch((err: Error) => {
-              console.error(`@blocklet/uploader: cleanup expired uploads error`, err);
-            });
+          try {
+            newServer
+              .cleanUpExpiredUploads()
+              .then((count: number) => {
+                console.info(`@blocklet/uploader: cleanup expired uploads done: ${count}`);
+              })
+              .catch((err: Error) => {
+                console.error(`@blocklet/uploader: cleanup expired uploads error`, err);
+              });
+          } catch (err: any) {
+            console.error(`@blocklet/uploader: cleanup expired uploads error`, err);
+          }
         },
         options: { runOnInit: false },
       },
     ],
     onError: (err: Error) => {
-      console.error('run job failed', err);
+      console.error('@blocklet/uploader: cleanup job failed', err);
     },
   });
 
   newServer.delete = async (key: string) => {
-    // remove meta data
-    await configstore.delete(key);
-    // remove file
-    await configstore.delete(key, false);
+    try {
+      // remove meta data
+      await configstore.delete(key);
+      // remove file
+      await configstore.delete(key, false);
+    } catch (err) {
+      console.error('@blocklet/uploader: delete error: ', err);
+    }
   };
 
   // Each Patch req finish will trigger
@@ -295,7 +304,7 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
         const prepareUpload = method === 'POST';
 
         if (prepareUpload) {
-          res.status(200); // set 200 will be recognized by fontend component
+          res.status(200); // set 200 will be recognized by frontend component
           res.setHeader('Location', joinUrl(req.headers['x-uploader-base-url'], fileName));
         }
 
@@ -313,7 +322,8 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
               ...metaData.metadata,
               ...realMetaData,
             };
-          } catch (error) {
+          } catch (err) {
+            console.error('@blocklet/uploader: parse metadata error: ', err);
             // ignore
           }
         }
@@ -337,8 +347,8 @@ export async function getMetaDataByFilePath(filePath: string) {
       const metaData = await fs.readFile(metaDataPath, 'utf-8');
       const metaDataJson = JSON.parse(metaData);
       return metaDataJson;
-    } catch (error) {
-      console.error('getMetaDataByPath error: ', error);
+    } catch (err) {
+      console.error('@blocklet/uploader: getMetaDataByPath error: ', err);
     }
   }
   return null;
@@ -358,7 +368,7 @@ export function joinUrl(...args: string[]) {
  * FileConfigstore writes the `Upload` JSON metadata to disk next the uploaded file itself.
  * It uses a queue which only processes one operation at a time to prevent unsafe concurrent access.
  */
-class rewriteFileConfigstore {
+class RewriteFileConfigstore {
   directory: string;
   queue: any;
 
@@ -406,16 +416,16 @@ class rewriteFileConfigstore {
       } else {
         console.log('Can not remove file, the file not exist: ', filePath);
       }
-    } catch (error) {
-      // ignore error
+    } catch (err) {
+      console.error('@blocklet/uploader: safeDeleteFile error: ', err);
     }
   }
 
   async delete(key: string, isMetadata = true): Promise<void> {
     try {
       await this.queue.add(() => this.safeDeleteFile(this.resolve(key, isMetadata)));
-    } catch (error) {
-      // ignore error
+    } catch (err) {
+      console.error('@blocklet/uploader: delete error: ', err);
     }
   }
 
@@ -440,5 +450,17 @@ class rewriteFileConfigstore {
       fileKey = `${key}.json`;
     }
     return path.resolve(this.directory, fileKey);
+  }
+}
+
+class RewriteFileStore extends FileStore {
+  constructor(options: any) {
+    super(options);
+  }
+  async remove(key: string) {
+    // remove metadata
+    this.configstore.delete(key);
+    // remove file
+    this.configstore.delete(key, false);
   }
 }
