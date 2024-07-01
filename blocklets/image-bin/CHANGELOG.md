@@ -1,3 +1,7 @@
+## 0.11.20 (July 01, 2024)
+
+- chore: polish FileStore remove logic
+
 ## 0.11.19 (June 30, 2024)
 
 - chore: polish error logging for uploader handler

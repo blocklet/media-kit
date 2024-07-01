@@ -25,7 +25,7 @@ export function initLocalStorageServer({
 }) {
   const app = express();
   const configstore = new RewriteFileConfigstore(_path); // my configstore
-  const datastore = new FileStore({
+  const datastore = new RewriteFileStore({
     directory: _path,
     expirationPeriodInMilliseconds: expiredUploadTime,
     configstore,
@@ -450,5 +450,17 @@ class RewriteFileConfigstore {
       fileKey = `${key}.json`;
     }
     return path.resolve(this.directory, fileKey);
+  }
+}
+
+class RewriteFileStore extends FileStore {
+  constructor(options: any) {
+    super(options);
+  }
+  async remove(key: string) {
+    // remove metadata
+    this.configstore.delete(key);
+    // remove file
+    this.configstore.delete(key, false);
   }
 }
