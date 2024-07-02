@@ -1,3 +1,7 @@
+## 0.1.19 (July 02, 2024)
+
+- fix: polish uploader onBeforeFileAdded logic to resolve window error mime
+
 ## 0.1.18 (July 01, 2024)
 
 - chore: polish FileStore remove logic

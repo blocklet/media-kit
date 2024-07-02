@@ -1,3 +1,7 @@
+## 0.11.21 (July 02, 2024)
+
+- fix: polish uploader onBeforeFileAdded logic to resolve window error mime
+
 ## 0.11.20 (July 01, 2024)
 
 - chore: polish FileStore remove logic

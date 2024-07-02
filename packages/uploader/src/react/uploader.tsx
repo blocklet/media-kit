@@ -243,6 +243,25 @@ function initUploader(props: any) {
     debug: ['true', true].includes(isDebug || ''),
     // @ts-ignore
     locale: localeMap[locale || 'en'],
+    onBeforeFileAdded: (file, files) => {
+      if (Object.hasOwn(files, file.id)) {
+        // is duplicate file
+        return false;
+      }
+      const standardExt = !!mime.extension(file.type as string);
+      const mimeType = (mime.lookup(file.name) || '') as string;
+
+      // rewrite file extension and type: if file type is not standard and not equal to mime type
+      if (!standardExt && mimeType && mimeType !== file.type) {
+        const ext = getExt(file);
+        if (ext) {
+          file.extension = ext;
+        }
+        file.type = mimeType;
+      }
+
+      return file;
+    },
     ...coreProps,
     restrictions,
   }).use(Tus, {
