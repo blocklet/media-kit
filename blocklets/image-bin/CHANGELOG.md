@@ -1,3 +1,7 @@
+## 0.11.22 (July 19, 2024)
+
+- chore(deps): update deps
+
 ## 0.11.21 (July 02, 2024)
 
 - fix: polish uploader onBeforeFileAdded logic to resolve window error mime
