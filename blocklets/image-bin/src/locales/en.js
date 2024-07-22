@@ -29,7 +29,7 @@ export default flatten({
     emptyResource: 'No Resources Found',
     all: 'ALL',
     upload: 'Upload to {name}',
-    export: 'Export',
+    export: 'Export Resource Blocklet',
     resourceBlocklet: 'Resource Blocklet',
     buckets: 'Buckets',
     resources: 'Resources',

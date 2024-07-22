@@ -29,7 +29,7 @@ export default flatten({
     emptyResource: '暂无资源',
     all: '全部',
     upload: '上传到 {name}',
-    export: '导出',
+    export: '导出资源包',
     createResource: '创建资源',
     buckets: '存储桶',
     resources: '资源',

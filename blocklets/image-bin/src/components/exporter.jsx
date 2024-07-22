@@ -1,12 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
 import Button from '@arcblock/ux/lib/Button';
+import IconButton from '@mui/material/IconButton';
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+// import ExportIcon from '@mui/icons-material/Export';
 import { PROJECT_PAGE_PATH } from '../libs/constants';
 
 export default function Exporter() {
   const { t } = useLocaleContext();
   const [showCreateResource, setShowCreateResource] = useState(false);
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
   const iframeRef = useRef(null);
 
@@ -27,9 +32,11 @@ export default function Exporter() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showCreateResource]);
 
+  const ButtonWrapper = isMobile ? IconButton : Button;
+
   return (
     <>
-      <Button
+      <ButtonWrapper
         key="button"
         variant="outlined"
         color="secondary"
@@ -37,8 +44,8 @@ export default function Exporter() {
         className="submit"
         onClick={() => setShowCreateResource(true)}
         style={{ marginRight: 16 }}>
-        {t('common.export')}
-      </Button>
+        {isMobile ? <FileUploadIcon /> : t('common.export')}
+      </ButtonWrapper>
       {showCreateResource && (
         <iframe
           className="iframe"

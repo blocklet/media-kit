@@ -1,7 +1,10 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { lazy } from 'react';
 import Button from '@arcblock/ux/lib/Button';
+import IconButton from '@mui/material/IconButton';
 import joinUrl from 'url-join';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import { useUploadContext } from '../contexts/upload';
 
@@ -19,21 +22,28 @@ obj.pathname = joinUrl(window.blocklet.prefix, '/api/uploads');
 
 export default function Uploader() {
   const { currentFolderInfo } = useUploadContext();
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('md'));
   const { t } = useLocaleContext();
+
+  const ButtonWrapper = isMobile ? IconButton : Button;
 
   return (
     <UploaderTrigger>
-      <Button
+      <ButtonWrapper
         key="button"
         variant="contained"
         color="secondary"
         type="button"
         className="submit"
         style={{ marginRight: 16 }}>
-        {t('common.upload', {
-          name: currentFolderInfo?.name,
-        })}
-      </Button>
+        {isMobile ? (
+          <AddCircleIcon />
+        ) : (
+          t('common.upload', {
+            name: currentFolderInfo?.name,
+          })
+        )}
+      </ButtonWrapper>
     </UploaderTrigger>
   );
 }

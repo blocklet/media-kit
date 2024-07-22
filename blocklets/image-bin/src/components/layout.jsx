@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import ConnectButton from '@arcblock/did-connect/lib/Button';
 
 import Uploader, { UploaderProviderWrapper } from './uploader';
-import Exporter from './exporter';
+// import Exporter from './exporter';
 import { useUploadContext } from '../contexts/upload';
 import { useSessionContext } from '../contexts/session';
 
@@ -19,7 +19,7 @@ export default function Layout({ title }) {
   const addons = [];
   if (hadLogin && tab === 'bucket') {
     if (hasAdminPermission(session?.user)) {
-      addons.push(<Exporter key="exporter-addon" />);
+      // addons.push(<Exporter key="exporter-addon" />);
     }
     addons.push(<Uploader key="uploader-addon" />);
   }

@@ -15,7 +15,7 @@ import SplitButton from '@arcblock/ux/lib/SplitButton';
 import Button from '@arcblock/ux/lib/Button';
 import { Confirm } from '@arcblock/ux/lib/Dialog';
 import { isValid as isValidDid } from '@arcblock/did';
-
+import { useSessionContext } from '../contexts/session';
 import api, { createImageUrl } from '../libs/api';
 import { useUploadContext } from '../contexts/upload';
 import MediaItem from './media-item';
@@ -23,6 +23,7 @@ import MediaItem from './media-item';
 const filter = createFilterOptions();
 
 export default function ImageActions({ data, isResource }) {
+  const { session } = useSessionContext();
   const [isDeleteOpen, setDeleteOpen] = useState(false);
   const [isMoveOpen, setMoveOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -119,6 +120,8 @@ export default function ImageActions({ data, isResource }) {
     (data.folderId || 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9' ||
     !isValidDid(data.folderId);
 
+  const isAdmin = ['admin', 'owner'].includes(session?.user?.role);
+
   const getDownloadUrl = () => {
     return `${createImageUrl(data.filename, 0, 0)}?filename=${encodeURIComponent(data.originalname)}`;
   };
@@ -136,8 +139,8 @@ export default function ImageActions({ data, isResource }) {
     { children: t('common.download'), onClick: onDownload },
     { children: t('common.copyDownload'), onClick: copyDownload },
     // can't delete other blocklet files
-    { children: t('common.delete'), disabled: !isMediaKitFile, onClick: onDelete },
-    { children: t('common.moveFolder'), disabled: !isMediaKitFile, onClick: onMove },
+    { children: t('common.delete'), disabled: !isMediaKitFile && !isAdmin, onClick: onDelete },
+    { children: t('common.moveFolder'), disabled: !isMediaKitFile && !isAdmin, onClick: onMove },
   ].map((item) => {
     return {
       ...item,
