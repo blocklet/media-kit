@@ -121,7 +121,8 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
     return;
   }
 
-  if (isValidDID(doc.folderId) && doc.folderId !== mediaKitDid) {
+  // admin can remove all files
+  if (isValidDID(doc.folderId) && doc.folderId !== mediaKitDid && !['admin', 'owner'].includes(req.user.role)) {
     res.jsonp({ error: 'Can not remove file which upload from other blocklet' });
     return;
   }

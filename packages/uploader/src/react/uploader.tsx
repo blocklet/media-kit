@@ -646,10 +646,9 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       } as any);
 
   const closeIconSize = isMobile ? '42px' : '40px';
-
   return (
     <Wrapper key="uploader-wrapper" {...wrapperProps}>
-      <ComponentInstaller onClose={close} did={MEDIA_KIT_DID} {...installerProps}>
+      <ComponentInstaller onClose={close} did={MEDIA_KIT_DID} disabled={!state.open} {...installerProps}>
         <GlobalStyles
           styles={() => {
             return {

@@ -1,3 +1,7 @@
+## 0.1.20 (July 19, 2024)
+
+- fix(uploader): disable componentInstaller while uploader is hidden
+
 ## 0.1.19 (July 02, 2024)
 
 - fix: polish uploader onBeforeFileAdded logic to resolve window error mime
