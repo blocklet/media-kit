@@ -80,6 +80,11 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE } = {}) => {
       logger.log('request role is admin / owner');
       // allow admin to see all uploads
       delete condition.createdBy;
+
+      // allow admin to filter by createdBy
+      if (req.query.createdBy) {
+        condition.createdBy = req.query.createdBy;
+      }
     }
 
     if (req.query.folderId) {
