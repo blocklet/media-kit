@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
 const config = require('@blocklet/sdk/lib/config');
+const { xss } = require('express-xss-sanitizer');
 const Upload = require('./states/upload');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
     next
   );
 });
+app.use(xss());
 
 app.use(
   '/uploads',

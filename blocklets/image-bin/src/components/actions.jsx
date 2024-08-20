@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
 import Toast from '@arcblock/ux/lib/Toast';
-
+import DOMPurify from 'dompurify';
 import SplitButton from '@arcblock/ux/lib/SplitButton';
 import Button from '@arcblock/ux/lib/Button';
 import { Confirm } from '@arcblock/ux/lib/Dialog';
@@ -194,9 +194,11 @@ export default function ImageActions({ data, isResource }) {
           <div
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
-              __html: t('common.deleteConfirmMessage', {
-                name: data.originalname,
-              }),
+              __html: DOMPurify.sanitize(
+                t('common.deleteConfirmMessage', {
+                  name: data.originalname,
+                })
+              ),
             }}
           />
         </Typography>

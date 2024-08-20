@@ -6,6 +6,7 @@ import debounce from 'lodash/debounce';
 import EventEmitter from 'wolfy87-eventemitter';
 import { useReactive } from 'ahooks';
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
+import { useSearchParams } from 'react-router-dom';
 
 import api from '../libs/api';
 
@@ -16,6 +17,7 @@ const events = new EventEmitter();
 
 function UploadProvider({ children, pageSize = 12, type = '' }) {
   const { t } = useLocaleContext();
+  const [searchParams] = useSearchParams();
   const pageState = useReactive({
     folderId: '',
     uploads: [],
@@ -54,6 +56,7 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
               pageSize,
               type,
               folderId: pageState.folderId,
+              createdBy: searchParams.get('createdBy') || null,
             },
           })
           .then(({ data }) => {

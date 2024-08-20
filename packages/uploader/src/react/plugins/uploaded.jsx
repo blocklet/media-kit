@@ -186,7 +186,7 @@ class Uploaded extends UIPlugin {
             'pointer-events: none; position: absolute; bottom: 0; left: 0; right: 0; padding: 5px; background: #0000004d; color: #fff; ';
           nameElement.innerHTML = parseStringToDot(currentData.originalname);
 
-          if (['.mp4', '.webm'].find((item) => imgElement.src?.indexOf(item) > -1)) {
+          if (['.mp4', '.webm'].find((item) => imgElement.src?.endsWith(item))) {
             const videoElement = document.createElement('video');
             videoElement.src = imgElement.src;
             videoElement.width = imgElement.width;

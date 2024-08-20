@@ -1,6 +1,7 @@
 // @jsxImportSource preact
 import { UIPlugin } from '@uppy/core';
 import crypto from 'crypto';
+import DOMPurify from 'dompurify';
 import { getObjectURL, getExt, blobToFile, getDownloadUrl, api } from '../../utils';
 
 class DownloadRemoteFiles extends UIPlugin {
@@ -57,10 +58,56 @@ class DownloadRemoteFiles extends UIPlugin {
     }
   };
 
+  // prevent xss attack
+  preventXssAttack = async (uppyFile) => {
+    const { id } = uppyFile;
+    const file = this.uppy.getFile(id); // get real time file
+
+    if (file) {
+      // get real time file
+      const { name, meta } = this.uppy.getFile(id);
+      // clean file name xss attack
+      const cleanName = DOMPurify.sanitize(name);
+
+      if (name !== cleanName) {
+        const ext = getExt(file);
+        const newFileName = cleanName.endsWith(`.${ext}`) ? cleanName : `${cleanName}.${ext}`;
+
+        this.uppy.setFileState(id, {
+          name: newFileName,
+          meta: {
+            ...meta,
+            name: newFileName,
+            filename: newFileName,
+          },
+        });
+      }
+
+      // clean svg file xss attack
+      if (file.type?.includes('image/svg')) {
+        // get real time file
+        const { data, name, type } = this.uppy.getFile(id);
+        const fileText = await data.text();
+        const cleanFile = DOMPurify.sanitize(fileText, { USE_PROFILES: { svg: true, svgFilters: true } });
+
+        if (fileText !== cleanFile) {
+          // rewrite clean file
+          const blob = new Blob([cleanFile], { type: type });
+          const blobFile = blobToFile(blob, name);
+          this.uppy.setFileState(id, {
+            ...this.uppy.getFile(id),
+            data: blobFile,
+          });
+        }
+      }
+    }
+  };
+
   prepareUploadWrapper = async (uppyFile) => {
     await this.tryDownloadRemoteFile(uppyFile);
     await this.getPreviewFromData(uppyFile);
     await this.setHashFileName(uppyFile);
+    await this.preventXssAttack(uppyFile);
     await this.setMetaData(uppyFile);
   };
 
