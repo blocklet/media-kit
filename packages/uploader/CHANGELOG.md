@@ -1,3 +1,7 @@
+## 0.1.21 (August 20, 2024)
+
+- fix: polish uploader logic to prevent xss attack
+
 ## 0.1.20 (July 19, 2024)
 
 - fix(uploader): disable componentInstaller while uploader is hidden
