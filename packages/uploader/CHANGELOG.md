@@ -1,3 +1,7 @@
+## 0.1.23 (August 22, 2024)
+
+- feat: support disableAutoPrefix in uploader
+
 ## 0.1.22 (August 22, 2024)
 
 - fix: polish local storage logic to avoid xss attack
