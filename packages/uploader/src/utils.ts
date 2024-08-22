@@ -83,9 +83,13 @@ export const mediaKitMountPoint = getMediaKitComponent()?.mountPoint;
 // @ts-ignore
 export let prefixPath = mediaKitMountPoint || window?.blocklet?.prefix || '/';
 
-export const setPrefixPath = (disableMediaKitPrefix: boolean) => {
-  // @ts-ignore
-  prefixPath = (disableMediaKitPrefix ? '' : mediaKitMountPoint) || window?.blocklet?.prefix || '/';
+export const setPrefixPath = (apiPathProps: any) => {
+  if (apiPathProps.disableMediaKitPrefix) {
+    // @ts-ignore
+    prefixPath = window?.blocklet?.prefix || '/';
+    return;
+  }
+  prefixPath = mediaKitMountPoint || '/';
 };
 
 export const api = axios.create();
@@ -99,8 +103,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export function getUploaderEndpoint(apiPath: string | undefined) {
-  return joinUrl(window.location.origin, prefixPath === '/' ? '' : prefixPath, apiPath || '');
+export function getUploaderEndpoint(uploadedProps: any) {
+  const uploaderUrl = joinUrl(
+    window.location.origin,
+    prefixPath === '/' || uploadedProps.disableAutoPrefix ? '' : prefixPath,
+    uploadedProps.uploader || ''
+  );
+
+  const companionUrl = joinUrl(
+    window.location.origin,
+    prefixPath === '/' || uploadedProps.disableAutoPrefix ? '' : prefixPath,
+    uploadedProps.companion || ''
+  );
+  return {
+    uploaderUrl,
+    companionUrl,
+  };
 }
 
 export function getUrl(...args: string[]) {

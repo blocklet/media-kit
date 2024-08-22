@@ -64,6 +64,8 @@ const UploaderComponent = lazy(() => import('@blocklet/uploader/react').then((re
   apiPathProps={{
     uploader: '/api/uploads',
     companion: '/api/companion',
+    disableMediaKitPrefix: false,
+    disableAutoPrefix: false,
   }}
 />;
 ```
