@@ -1,3 +1,7 @@
+## 0.1.22 (August 22, 2024)
+
+- fix: polish local storage logic to avoid xss attack
+
 ## 0.1.21 (August 20, 2024)
 
 - fix: polish uploader logic to prevent xss attack

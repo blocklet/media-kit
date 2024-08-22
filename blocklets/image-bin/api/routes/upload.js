@@ -332,6 +332,13 @@ router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (r
     return;
   }
 
+  // double check the file path is valid
+  const filePath = path.join(env.uploadDir, doc.filename);
+  if (!filePath.startsWith(env.uploadDir)) {
+    res.jsonp({ error: 'Invalid file path' });
+    return;
+  }
+
   const result = await Upload.remove({ _id: req.params.id });
 
   if (result) {
