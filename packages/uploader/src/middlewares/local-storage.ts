@@ -9,6 +9,15 @@ const mime = require('mime-types');
 const joinUrlLib = require('url-join');
 const { default: queue } = require('p-queue');
 
+const validFilePathInDirPath = (dirPath: string, filePath: string) => {
+  const fileName = path.basename(filePath);
+  if (!filePath.startsWith(dirPath) || path.join(dirPath, fileName) !== filePath) {
+    console.error('Invalid file path: ', filePath);
+    throw new Error('Invalid file path');
+  }
+  return true;
+};
+
 export function initLocalStorageServer({
   path: _path,
   onUploadFinish: _onUploadFinish,
@@ -50,7 +59,7 @@ export function initLocalStorageServer({
       const { id, metadata, size } = cloneUploadMetadata;
       cloneUploadMetadata.runtime = {
         relativePath: metadata?.relativePath,
-        absolutePath: path.resolve(_path, id),
+        absolutePath: path.join(_path, id),
         size,
         hashFileName: id,
         originFileName: metadata?.filename,
@@ -115,7 +124,15 @@ export function initLocalStorageServer({
     path: '/', // UNUSED
     relativeLocation: true,
     // respectForwardedHeaders: true,
-    namingFunction,
+    namingFunction: (req: any) => {
+      const fileName = getFileName(req);
+
+      const filePath = path.join(_path, fileName);
+
+      validFilePathInDirPath(_path, filePath);
+
+      return fileName;
+    },
     datastore,
     onUploadFinish: async (req: any, res: any, uploadMetadata: any) => {
       uploadMetadata = formatMetadata(uploadMetadata);
@@ -197,7 +214,7 @@ export function initLocalStorageServer({
   return newServer;
 }
 
-export const namingFunction = (req: any) => {
+export const getFileName = (req: any) => {
   const ext = req.headers['x-uploader-file-ext'];
   const randomName = `${crypto.randomBytes(16).toString('hex')}${ext ? `.${ext}` : ''}`;
   return req.headers['x-uploader-file-name'] || randomName; // use a random name
@@ -229,8 +246,9 @@ export function getLocalStorageFile({ server }: any) {
   return async (req: any, res: any, next: any) => {
     // get file name
     const fileName = getFileNameParam(req, res);
-
     const filePath = path.join(server.datastore.directory, fileName);
+
+    validFilePathInDirPath(server.datastore.directory, filePath);
 
     // check if file exists
     const fileExists = await fs.stat(filePath).catch(() => false);
@@ -292,8 +310,12 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
 
   // check if file exists
   if (['PATCH', 'POST'].includes(method)) {
-    const fileName = namingFunction(req);
-    const filePath = path.join(uploaderProps.server.datastore.directory, fileName);
+    const _path = uploaderProps.server.datastore.directory;
+    const fileName = getFileName(req);
+    const filePath = path.join(_path, fileName);
+
+    validFilePathInDirPath(_path, filePath);
+
     const isExist = await fs.stat(filePath).catch(() => false);
 
     if (isExist) {
@@ -409,8 +431,11 @@ class RewriteFileConfigstore {
   }
 
   async safeDeleteFile(filePath: string): Promise<void> {
+    validFilePathInDirPath(this.directory, filePath);
+
     try {
       const isExist = await fs.stat(filePath).catch(() => false);
+
       if (isExist) {
         await fs.rm(filePath);
       } else {
@@ -449,7 +474,7 @@ class RewriteFileConfigstore {
     if (isMetadata) {
       fileKey = `${key}.json`;
     }
-    return path.resolve(this.directory, fileKey);
+    return path.join(this.directory, fileKey);
   }
 }
 
