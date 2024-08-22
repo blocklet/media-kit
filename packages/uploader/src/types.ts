@@ -15,7 +15,7 @@ export type UploaderProps = {
   installerProps?: {
     disabled?: boolean;
     fallback?: any;
-  }
+  };
   uploadedProps?: {
     params?: any;
     onSelectedFiles?: Function;
@@ -28,6 +28,7 @@ export type UploaderProps = {
     uploader?: string;
     companion?: string;
     disableMediaKitPrefix?: boolean;
+    disableAutoPrefix?: boolean;
   };
   dropTargetProps?: DropTarget;
 };

@@ -76,7 +76,7 @@ const isDebug = localStorage.getItem('uppy_debug');
 const getPluginList = (props: any) => {
   const { apiPathProps, availablePluginMap = {}, uploadedProps } = props;
 
-  const companionUrl = getUploaderEndpoint(apiPathProps?.companion as string);
+  const { companionUrl } = getUploaderEndpoint(apiPathProps);
 
   const getAIImageAPI = async (payload: any) => {
     const result = await api.post('/api/image/generations', payload);
@@ -233,7 +233,7 @@ function initUploader(props: any) {
   // Adding to global `meta` will add it to every file.
   // Every Uppy instance needs a unique ID.
 
-  const endpoint = getUploaderEndpoint(apiPathProps?.uploader as string);
+  const { uploaderUrl } = getUploaderEndpoint(apiPathProps);
 
   let currentUppy = new Uppy({
     id,
@@ -269,7 +269,7 @@ function initUploader(props: any) {
     removeFingerprintOnSuccess: true,
     // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
     withCredentials: true,
-    endpoint,
+    endpoint: uploaderUrl,
     async onBeforeRequest(req, file) {
       // @ts-ignore
       const { hashFileName, id, meta } = file;
@@ -281,7 +281,7 @@ function initUploader(props: any) {
       req.setHeader('x-uploader-file-id', `${id}`);
       req.setHeader('x-uploader-file-ext', `${ext}`);
       req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
-      req.setHeader('x-uploader-endpoint-url', endpoint);
+      req.setHeader('x-uploader-endpoint-url', uploaderUrl);
       req.setHeader(
         'x-uploader-metadata',
         JSON.stringify(meta, (key, value) => {
@@ -618,8 +618,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   );
 
   useEffect(() => {
-    setPrefixPath(apiPathProps.disableMediaKitPrefix);
-  }, [apiPathProps.disableMediaKitPrefix]);
+    setPrefixPath(apiPathProps);
+  }, [apiPathProps]);
 
   const Wrapper = popup ? Backdrop : Fragment;
   const wrapperProps = popup
