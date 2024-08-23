@@ -1,3 +1,7 @@
+## 0.1.24 (August 23, 2024)
+
+- feat: add @blocklet/xss lib
+
 ## 0.1.23 (August 22, 2024)
 
 - feat: support disableAutoPrefix in uploader
