@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/xss",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "blocklet prevent xss attack",
   "publishConfig": {
     "access": "public"
@@ -8,16 +8,16 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "require": "./lib/index.js",
+      "require": "./cjs/index.js",
       "import": "./es/index.js",
-      "types": "./lib/index.d.ts"
+      "types": "./es/index.d.ts"
     }
   },
-  "main": "./lib/index.js",
+  "main": "./cjs/index.js",
   "module": "./es/index.js",
-  "types": "./lib/index.d.ts",
+  "types": "./es/index.d.ts",
   "files": [
-    "lib",
+    "cjs",
     "es",
     "*.d.ts"
   ],
@@ -29,7 +29,7 @@
     "prepublish": "pnpm run build",
     "prebuild:dep": "pnpm run build",
     "preversion": "npm run lint && npm run test",
-    "test": "mocha"
+    "test": "jest"
   },
   "keywords": [
     "blocklet",
@@ -38,20 +38,22 @@
   "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
   "license": "MIT",
   "dependencies": {
+    "lodash": "^4.17.21",
     "xss": "^1.0.14"
   },
   "devDependencies": {
     "@arcblock/eslint-config-ts": "^0.2.4",
     "@types/chai": "^4.3.17",
-    "@types/mocha": "^10.0.7",
+    "@types/jest": "^29.5.12",
     "@types/supertest": "^6.0.2",
     "body-parser": "^1.20.2",
     "chai": "^5.1.1",
     "eslint": "^8.57.0",
     "esm": "^3.2.25",
     "express": "^4.19.2",
-    "mocha": "^10.7.3",
+    "jest": "^29.7.0",
     "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "unbuild": "^2.0.0"

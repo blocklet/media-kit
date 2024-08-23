@@ -5,10 +5,12 @@
 import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';
-import { expect } from 'chai';
+
 import { xss, initSanitize } from '../src';
 
-const sanitize = initSanitize();
+const sanitize = initSanitize({
+  allowedKeys: ['allowedKeys'],
+});
 
 describe('Express xss Sanitize', function () {
   describe('Sanitize with default settings as middleware before all routes', function () {
@@ -35,6 +37,85 @@ describe('Express xss Sanitize', function () {
       });
     });
 
+    describe('Sanitize some text & object', function () {
+      it('should sanitize simple string.', function (done) {
+        expect(sanitize('<script>alert("XSS")</script>')).toEqual('');
+        expect(sanitize('<&gagaga')).toEqual('<&gagaga');
+        expect(sanitize('`我饿了` 你呢')).toEqual('`我饿了` 你呢');
+        expect(sanitize('<快乐的一天> 3412312 <222')).toEqual('<快乐的一天> 3412312 <222');
+        done();
+      });
+
+      it('should sanitize allowedKeys.', function (done) {
+        expect(
+          sanitize({
+            allowedKeys: '<script> alert("XSS")</script>',
+            aaa: '<script> alert("XSS")</script>',
+          })
+        ).toEqual({
+          allowedKeys: '<script> alert("XSS")</script>',
+          aaa: '',
+        });
+        done();
+      });
+
+      it('should sanitize text body.', function (done) {
+        request(app)
+          .post('/body')
+          .send({
+            chunchun:
+              '<!-- something --> <<<<<<< 123& <Box>312</Box> `abc`  ../../abg.png <script>alert("XSS")</script><div onclick="alert(123)">312</div><input value="321"/> <svg viewBox="0 0 209.621 248.055"> </svg><a href="https://32.com">2312</a>',
+            title: '<test> title',
+            title2: '<2312312312312&&',
+            happy: '快乐的一天  <gagagagagaga',
+            happy2: '快乐的一天 <日记> ',
+          })
+          .expect(
+            200,
+            {
+              body: {
+                chunchun:
+                  ' <<<<<<< 123& <Box>312</Box> `abc`  ../../abg.png <div>312</div>  <a href="https://32.com">2312</a>',
+                title: '<test> title',
+                title2: '<2312312312312&&',
+                happy: '快乐的一天  <gagagagagaga',
+                happy2: '快乐的一天 <日记> ',
+              },
+            },
+            done
+          );
+      });
+
+      it('should sanitize "x-" header.', function (done) {
+        request(app)
+          .post('/headers')
+          .set({
+            x: '.../abc.png',
+            'x-abc': '.../abc.png',
+            'x-uploader-xxx': JSON.stringify({
+              name: '<object>99999-xxx</object>',
+              url: '.../abc.png',
+            }),
+            'x-error': '<script>alert("XSS")</script>',
+          })
+          .expect(200)
+          .expect(function (res) {
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                x: '.../abc.png',
+                'x-abc': '.../abc.png',
+                'x-uploader-xxx': JSON.stringify({
+                  name: '99999-xxx',
+                  url: '.../abc.png',
+                }),
+                'x-error': '',
+              })
+            );
+          })
+          .end(done);
+      });
+    });
+
     describe('Sanitize simple object', function () {
       it('should sanitize clean body.', function (done) {
         request(app)
@@ -44,8 +125,6 @@ describe('Express xss Sanitize', function () {
             z: false,
             w: 'bla bla',
             a: '<p>Test</p>',
-            chunchun:
-              '<!-- something --> <<<<<<< 123& <Box>312</Box> `abc`  ../../abg.png <script>alert("XSS")</script><div onclick="alert(123)">312</div><input value="321"/> <svg viewBox="0 0 209.621 248.055"> </svg><a href="https://32.com">2312</a>',
           })
           .expect(
             200,
@@ -55,7 +134,6 @@ describe('Express xss Sanitize', function () {
                 z: false,
                 w: 'bla bla',
                 a: '<p>Test</p>',
-                chunchun: ' <<<<<<< 123& 312 `abc`  ../../abg.png <div>312</div>  <a href="https://32.com">2312</a>',
               },
             },
             done
@@ -73,12 +151,14 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              y: '4',
-              z: 'false',
-              w: 'bla bla',
-              a: '<p>Test</p>',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                y: '4',
+                z: 'false',
+                w: 'bla bla',
+                a: '<p>Test</p>',
+              })
+            );
           })
           .end(done);
       });
@@ -147,11 +227,13 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              a: '',
-              b: '<p>Test</p>',
-              c: '',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                a: '',
+                b: '<p>Test</p>',
+                c: '',
+              })
+            );
           })
           .end(done);
       });
@@ -321,12 +403,14 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              y: '4',
-              z: 'false',
-              w: 'bla bla',
-              a: '<p>Test</p>',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                y: '4',
+                z: 'false',
+                w: 'bla bla',
+                a: '<p>Test</p>',
+              })
+            );
           })
           .end(done);
       });
@@ -395,11 +479,13 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              a: '',
-              b: '<p>Test</p>',
-              c: '',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                a: '',
+                b: '<p>Test</p>',
+                c: '',
+              })
+            );
           })
           .end(done);
       });
@@ -565,12 +651,14 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              y: '4',
-              z: 'false',
-              w: 'bla bla',
-              a: '<p>Test</p>',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                y: '4',
+                z: 'false',
+                w: 'bla bla',
+                a: '<p>Test</p>',
+              })
+            );
           })
           .end(done);
       });
@@ -639,11 +727,13 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              a: '',
-              b: '<p>Test</p>',
-              c: '',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                a: '',
+                b: '<p>Test</p>',
+                c: '',
+              })
+            );
           })
           .end(done);
       });
@@ -809,12 +899,14 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              y: '4',
-              z: 'false',
-              w: 'bla bla',
-              a: '<p>Test</p>',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                y: '4',
+                z: 'false',
+                w: 'bla bla',
+                a: '<p>Test</p>',
+              })
+            );
           })
           .end(done);
       });
@@ -883,11 +975,13 @@ describe('Express xss Sanitize', function () {
           })
           .expect(200)
           .expect(function (res) {
-            expect(res.body.headers).to.include({
-              a: '',
-              b: '<p>Test</p>',
-              c: '',
-            });
+            expect(res.body.headers).toEqual(
+              expect.objectContaining({
+                a: '',
+                b: '<p>Test</p>',
+                c: '',
+              })
+            );
           })
           .end(done);
       });
@@ -1008,7 +1102,7 @@ describe('Express xss Sanitize', function () {
             w: 'bla bla',
             a: '<p>Test</p>',
           })
-        ).to.eql({
+        ).toEqual({
           y: 4,
           z: false,
           w: 'bla bla',
@@ -1024,7 +1118,7 @@ describe('Express xss Sanitize', function () {
             b: '<p onclick="return;">Test</p>',
             c: '',
           })
-        ).to.eql({
+        ).toEqual({
           a: '',
           b: '<p>Test</p>',
           c: '',
@@ -1056,7 +1150,7 @@ describe('Express xss Sanitize', function () {
               },
             },
           })
-        ).to.eql({
+        ).toEqual({
           y: 4,
           z: false,
           w: 'bla bla',
@@ -1100,7 +1194,7 @@ describe('Express xss Sanitize', function () {
               },
             },
           })
-        ).to.eql({
+        ).toEqual({
           a: '',
           b: '<p>Test</p>',
           c: '',
@@ -1125,7 +1219,7 @@ describe('Express xss Sanitize', function () {
 
     describe('Sanitize null value', function () {
       it('should return null.', function (done) {
-        expect(sanitize(null)).to.eql(null);
+        expect(sanitize(null)).toEqual(null);
         done();
       });
     });
@@ -1143,7 +1237,7 @@ describe('Express xss Sanitize', function () {
             },
             { allowedKeys: ['c'] }
           )
-        ).to.eql({
+        ).toEqual({
           a: '',
           b: '<p>Test</p>',
           c: '',
@@ -1166,7 +1260,7 @@ describe('Express xss Sanitize', function () {
               },
             }
           )
-        ).to.eql({
+        ).toEqual({
           d: '',
         });
         done();
@@ -1198,7 +1292,7 @@ describe('Express xss Sanitize', function () {
             },
             { allowedKeys: ['e'] }
           )
-        ).to.eql({
+        ).toEqual({
           a: '',
           b: '<p>Test</p>',
           c: '',
@@ -1234,7 +1328,7 @@ describe('Express xss Sanitize', function () {
             },
             { allowedKeys: ['c'] }
           )
-        ).to.eql({
+        ).toEqual({
           a: '',
           b: '<p>Test</p>',
           c: '',
@@ -1254,7 +1348,7 @@ describe('Express xss Sanitize', function () {
             },
             {}
           )
-        ).to.eql({
+        ).toEqual({
           a: '',
         });
         done();

@@ -32,7 +32,7 @@ export default defineBuildConfig({
     },
     {
       ...shared,
-      outDir: './lib',
+      outDir: './cjs',
       format: 'cjs',
     },
   ],
