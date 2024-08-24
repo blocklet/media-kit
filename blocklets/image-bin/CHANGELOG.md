@@ -1,3 +1,7 @@
+## 0.11.29 (八月 24, 2024)
+
+- chore: polish ci
+
 ## 0.11.28 (August 24, 2024)
 
 - feat: add ignoreTagList to xss lib

@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { ReactNode, createContext, lazy, useContext, useRef } from 'react';
+import { ReactNode, createContext, lazy, useContext, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 
 // @ts-ignore
@@ -45,21 +45,19 @@ export function UploaderTrigger({ onChange, children, ...restProps }: { onChange
   );
 }
 
-export function UploaderProvider({ children, ...restProps }: UploaderProviderProps) {
+export function UploaderProvider({ children, popup, ...restProps }: UploaderProviderProps) {
   const uploaderRef = useRef(null);
+  const uploaderRender = useMemo(() => {
+    if (popup) {
+      return createPortal(<Uploader key="uploader" ref={uploaderRef} popup={true} {...restProps} />, document.body);
+    }
+    return <Uploader key="uploader" ref={uploaderRef} popup={false} {...restProps} />;
+  }, [popup, restProps]);
 
   return (
     <UploaderContext.Provider value={uploaderRef as any}>
       {children}
-      {createPortal(
-        <Uploader
-          key="uploader"
-          ref={uploaderRef} // ref
-          popup
-          {...restProps}
-        />,
-        document.body
-      )}
+      {uploaderRender}
     </UploaderContext.Provider>
   );
 }

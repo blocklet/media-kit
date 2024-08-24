@@ -7,7 +7,7 @@
     "update:deps": "taze -r -n '/arcblock|ocap|abtnode|blocklet|did-connect|did-comment|nedb/' -w && pnpm install",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
-    "postinstall": "pnpm -r --filter @blocklet/uploader run build",
+    "postinstall": "pnpm -r --filter @blocklet/* run build",
     "deduplicate": "pnpm dedupe"
   },
   "keywords": [],
