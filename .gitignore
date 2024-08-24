@@ -20,6 +20,8 @@ yalc.lock
 **/dist
 lib
 es
+cjs
+coverage
 
 # local env files
 .env.local

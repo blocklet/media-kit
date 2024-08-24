@@ -10,7 +10,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "jsx": "react-jsx"
-  },
-  "include": ["src", "tests"]
+    "jsx": "react-jsx",
+    "types": ["jest"]
+  }
 }

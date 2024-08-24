@@ -1,36 +1,55 @@
 import * as xss from 'xss';
-
+import omit from 'lodash/omit';
 import { SanitizeOptions } from './types';
+
+const ignoreTagList = [
+  // here is a blacklist
+  'script',
+  'img',
+  'iframe',
+  'body',
+  'form',
+  'style',
+  'link',
+  'meta',
+  'bgsound',
+  'svg',
+  'embed',
+  'object',
+  'video',
+  'audio',
+  'source',
+  'track',
+  'marquee',
+  'blink',
+  'noscript',
+  'param',
+  'textarea',
+  'input',
+  'select',
+  'button',
+] as string[];
+
+const ignoreTagMap = ignoreTagList.reduce((acc: any, item: string) => {
+  acc[item] = true;
+  return acc;
+}, {});
 
 let defaultOptions = {
   escapeHtml: (str) => str,
-  stripIgnoreTag: true,
+  whiteList: omit(xss.getDefaultWhiteList(), ignoreTagList),
+  onIgnoreTag: function (tag, html, options) {
+    if (ignoreTagMap[tag]) {
+      return '';
+    }
+  },
   stripIgnoreTagBody: ['script'],
 } as SanitizeOptions;
-
-function hasOwn(object: object, key: string): boolean {
-  const keys = Reflect.ownKeys(object).filter((item) => typeof item !== 'symbol') as string[];
-  return keys.includes(key);
-}
-
-const initializeOptions = (options: SanitizeOptions): SanitizeOptions => {
-  const sanitizerOptions: any = {};
-
-  if (hasOwn(options, 'allowedKeys') && Array.isArray(options.allowedKeys) && options.allowedKeys.length > 0) {
-    sanitizerOptions.allowedKeys = options.allowedKeys;
-  }
-
-  if (hasOwn(options, 'whiteList') && typeof options.whiteList === 'object') {
-    sanitizerOptions.whiteList = options.whiteList;
-  }
-
-  return sanitizerOptions;
-};
 
 export const initSanitize = (_options: SanitizeOptions = {}): any => {
   const options = {
     ...defaultOptions,
-    ...initializeOptions(_options),
+    ..._options,
   };
 
   const xssInstance = new xss.FilterXSS(options);

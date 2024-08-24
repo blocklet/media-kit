@@ -1,3 +1,7 @@
+## 0.11.28 (August 24, 2024)
+
+- feat: add ignoreTagList to xss lib
+
 ## 0.11.27 (August 23, 2024)
 
 - feat: add @blocklet/xss lib
