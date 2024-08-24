@@ -1,3 +1,7 @@
+## 0.1.4 (八月 24, 2024)
+
+- chore(ci): polish github action to avoid ci stop
+
 ## 0.1.3 (八月 24, 2024)
 
 - chore: polish ci
