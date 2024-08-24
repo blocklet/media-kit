@@ -52,7 +52,7 @@ export function UploaderProvider({ children, popup, ...restProps }: UploaderProv
       return createPortal(<Uploader key="uploader" ref={uploaderRef} popup={true} {...restProps} />, document.body);
     }
     return <Uploader key="uploader" ref={uploaderRef} popup={false} {...restProps} />;
-  }, [popup, restProps]);
+  }, [uploaderRef, popup, restProps]);
 
   return (
     <UploaderContext.Provider value={uploaderRef as any}>
