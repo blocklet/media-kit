@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/xss",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "blocklet prevent xss attack",
   "publishConfig": {
     "access": "public"
