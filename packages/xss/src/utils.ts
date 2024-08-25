@@ -88,7 +88,7 @@ export const initSanitize = (_options: SanitizeOptions = {}): any => {
     return data;
   };
 
-  console.info('sanitize ready:', options);
+  // console.info('sanitize ready:', options);
 
   return sanitize;
 };

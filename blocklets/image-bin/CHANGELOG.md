@@ -1,3 +1,7 @@
+## 0.11.30 (八月 25, 2024)
+
+- chore: remove useless code
+
 ## 0.11.29 (八月 24, 2024)
 
 - chore: polish ci
