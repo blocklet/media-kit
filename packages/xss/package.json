@@ -1,0 +1,61 @@
+{
+  "name": "@blocklet/xss",
+  "version": "0.1.5",
+  "description": "blocklet prevent xss attack",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "import": "./es/index.js",
+      "types": "./es/index.d.ts"
+    }
+  },
+  "main": "./cjs/index.js",
+  "module": "./es/index.js",
+  "types": "./es/index.d.ts",
+  "files": [
+    "cjs",
+    "es",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "coverage": "pnpm test -- --coverage",
+    "build": "unbuild",
+    "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' --ignore 'es/*' ",
+    "dev": "pnpm run build:watch",
+    "prepublish": "pnpm run build",
+    "prebuild:dep": "pnpm run build",
+    "preversion": "npm run lint && npm run test",
+    "test": "jest"
+  },
+  "keywords": [
+    "blocklet",
+    "xss"
+  ],
+  "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "xss": "^1.0.14"
+  },
+  "devDependencies": {
+    "@arcblock/eslint-config-ts": "^0.2.4",
+    "@types/chai": "^4.3.17",
+    "@types/jest": "^29.5.12",
+    "@types/supertest": "^6.0.2",
+    "body-parser": "^1.20.2",
+    "chai": "^5.1.1",
+    "eslint": "^8.57.0",
+    "esm": "^3.2.25",
+    "express": "^4.19.2",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5",
+    "unbuild": "^2.0.0"
+  }
+}

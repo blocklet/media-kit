@@ -1,3 +1,19 @@
+## 0.1.27 (八月 24, 2024)
+
+- chore(ci): polish github action to avoid ci stop
+
+## 0.1.26 (八月 24, 2024)
+
+- chore: polish ci
+
+## 0.1.25 (August 24, 2024)
+
+- feat: add ignoreTagList to xss lib
+
+## 0.1.24 (August 23, 2024)
+
+- feat: add @blocklet/xss lib
+
 ## 0.1.23 (August 22, 2024)
 
 - feat: support disableAutoPrefix in uploader

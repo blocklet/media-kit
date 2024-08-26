@@ -1,3 +1,19 @@
+## 0.11.30 (八月 25, 2024)
+
+- chore: remove useless code
+
+## 0.11.29 (八月 24, 2024)
+
+- chore: polish ci
+
+## 0.11.28 (August 24, 2024)
+
+- feat: add ignoreTagList to xss lib
+
+## 0.11.27 (August 23, 2024)
+
+- feat: add @blocklet/xss lib
+
 ## 0.11.26 (August 22, 2024)
 
 - feat: support disableAutoPrefix in uploader
