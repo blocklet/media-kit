@@ -1,3 +1,7 @@
+## 0.1.28 (八月 29, 2024)
+
+- chore: bump deps to latest
+
 ## 0.1.27 (八月 24, 2024)
 
 - chore(ci): polish github action to avoid ci stop

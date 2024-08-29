@@ -1,3 +1,7 @@
+## 0.11.31 (八月 29, 2024)
+
+- chore: bump deps to latest
+
 ## 0.11.30 (八月 25, 2024)
 
 - chore: remove useless code
