@@ -1,3 +1,7 @@
+## 0.1.29 (九月 04, 2024)
+
+- feat: support to prevent zip bomb attack in uploader
+
 ## 0.1.28 (八月 29, 2024)
 
 - chore: bump deps to latest
