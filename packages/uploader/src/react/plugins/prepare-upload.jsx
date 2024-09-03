@@ -126,23 +126,35 @@ class DownloadRemoteFiles extends UIPlugin {
 
         let maxDepth = 0;
 
-        const getTotalUnzippedSize = (_unzippedMap) => {
+        const getTotalUnzippedSize = (_unzippedMap, _name) => {
           maxDepth++;
           return Object.entries(
             // if is Uint8Array, convert it to {filename: Uint8Array}
             _unzippedMap instanceof Uint8Array
               ? {
-                  [file.name]: _unzippedMap,
+                  [_name || file.name]: _unzippedMap,
                 }
               : _unzippedMap
           ).reduce((acc, [name, item]) => {
-            if (maxDepth > 200) {
+            const baseAcc = acc + item.byteLength;
+
+            if (maxDepth >= 5 || baseAcc > file.size * 100) {
+              console.error('Zip bomb detected, please check your file', {
+                maxDepth,
+                baseAcc,
+                fileSize: file.size,
+              });
               throw new Error('Zip bomb detected, please check your file');
             }
-            if (zipBombMap[mime.extension(mime.lookup(name))]) {
-              return acc + getTotalUnzippedSize(item);
+
+            const ext = mime.extension(mime.lookup(name));
+
+            if (zipBombMap[ext]) {
+              const childUnzippedMap = zipBombMap[ext](item);
+              return baseAcc + getTotalUnzippedSize(childUnzippedMap, name);
             }
-            return acc + item.byteLength;
+
+            return baseAcc;
           }, 0);
         };
 
@@ -150,8 +162,8 @@ class DownloadRemoteFiles extends UIPlugin {
 
         console.info(file.name, { totalUnzippedSize, maxDepth, zippedSize: file.size });
 
-        // if totalUnzippedSize > file.size * 100 or maxDepth > 200, throw error
-        if (totalUnzippedSize > file.size * 100 || maxDepth > 200) {
+        // if totalUnzippedSize > file.size * 100, throw error
+        if (totalUnzippedSize > file.size * 100) {
           throw new Error('Zip bomb detected, please check your file');
         }
       }
