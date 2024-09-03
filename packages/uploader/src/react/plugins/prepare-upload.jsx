@@ -3,6 +3,15 @@ import { UIPlugin } from '@uppy/core';
 import crypto from 'crypto';
 import DOMPurify from 'dompurify';
 import { getObjectURL, getExt, blobToFile, getDownloadUrl, api } from '../../utils';
+import { unzipSync, decompressSync } from 'fflate';
+import mime from 'mime-types';
+
+const zipBombMap = {
+  zip: unzipSync,
+  gz: decompressSync,
+  tgz: decompressSync,
+  deflate: decompressSync,
+};
 
 class DownloadRemoteFiles extends UIPlugin {
   constructor(uppy, opts) {
@@ -103,11 +112,64 @@ class DownloadRemoteFiles extends UIPlugin {
     }
   };
 
+  // prevent zip bomb attack
+  preventZipBombAttack = async (uppyFile) => {
+    const { id } = uppyFile;
+    const file = this.uppy.getFile(id); // get real time file
+
+    try {
+      if (file && zipBombMap[file.extension]) {
+        const { data } = file;
+
+        // object {filename: Uint8Array} or Uint8Array
+        const unzippedMap = zipBombMap[file.extension](new Uint8Array(await data.arrayBuffer()));
+
+        let maxDepth = 0;
+
+        const getTotalUnzippedSize = (_unzippedMap) => {
+          maxDepth++;
+          return Object.entries(
+            // if is Uint8Array, convert it to {filename: Uint8Array}
+            _unzippedMap instanceof Uint8Array
+              ? {
+                  [file.name]: _unzippedMap,
+                }
+              : _unzippedMap
+          ).reduce((acc, [name, item]) => {
+            if (maxDepth > 200) {
+              throw new Error('Zip bomb detected, please check your file');
+            }
+            if (zipBombMap[mime.extension(mime.lookup(name))]) {
+              return acc + getTotalUnzippedSize(item);
+            }
+            return acc + item.byteLength;
+          }, 0);
+        };
+
+        const totalUnzippedSize = getTotalUnzippedSize(unzippedMap);
+
+        console.info(file.name, { totalUnzippedSize, maxDepth, zippedSize: file.size });
+
+        // if totalUnzippedSize > file.size * 100 or maxDepth > 200, throw error
+        if (totalUnzippedSize > file.size * 100 || maxDepth > 200) {
+          throw new Error('Zip bomb detected, please check your file');
+        }
+      }
+    } catch (error) {
+      // if Zip bomb attack, delete file
+      if (error.message.includes('Zip bomb detected')) {
+        throw error;
+      }
+      // if other error, ignore
+    }
+  };
+
   prepareUploadWrapper = async (uppyFile) => {
     await this.tryDownloadRemoteFile(uppyFile);
     await this.getPreviewFromData(uppyFile);
     await this.setHashFileName(uppyFile);
     await this.preventXssAttack(uppyFile);
+    await this.preventZipBombAttack(uppyFile);
     await this.setMetaData(uppyFile);
   };
 
