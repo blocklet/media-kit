@@ -24,6 +24,7 @@ const shared: BuildEntry = {
 };
 export default defineBuildConfig({
   failOnWarn: false,
+  externals: ['fflate'],
   entries: [
     {
       ...shared,

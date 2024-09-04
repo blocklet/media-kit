@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -46,11 +46,11 @@
   "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
   "license": "ISC",
   "dependencies": {
-    "@abtnode/cron": "^1.16.30",
-    "@blocklet/constant": "^1.16.30",
-    "@blocklet/logger": "^1.16.30",
-    "@blocklet/sdk": "^1.16.30",
-    "@blocklet/ui-react": "^2.10.27",
+    "@abtnode/cron": "^1.16.31",
+    "@blocklet/constant": "^1.16.31",
+    "@blocklet/logger": "^1.16.31",
+    "@blocklet/sdk": "^1.16.31",
+    "@blocklet/ui-react": "^2.10.28",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@tus/file-store": "1.0.0",
@@ -77,6 +77,7 @@
     "body-parser": "^1.20.2",
     "crypto": "^1.0.1",
     "dompurify": "^3.1.6",
+    "fflate": "^0.8.2",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.0",
     "mime-types": "^2.1.35",
