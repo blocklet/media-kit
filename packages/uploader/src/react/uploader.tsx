@@ -662,6 +662,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         />
         {/* ignore backdrop trigger */}
         <Box
+          className="uploader-container"
           key="uploader-container"
           id={target}
           onClick={(e: any) => e.stopPropagation()}
@@ -733,28 +734,30 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               },
             },
           }}>
-          <IconButton
-            aria-label="close"
-            onClick={close}
-            sx={{
-              color: '#fafafa',
-              position: 'absolute',
-              ...(isMobile
-                ? {
-                    bottom: `calc(0px - ${closeIconSize} - 16px)`,
-                    left: `calc(50vw - ${closeIconSize} - 8px)`,
-                  }
-                : {
-                    right: `calc(0px - ${closeIconSize} - 16px)`,
-                    top: -12,
-                  }),
-            }}>
-            <CloseIcon
+          {popup && (
+            <IconButton
+              aria-label="close"
+              onClick={close}
               sx={{
-                fontSize: closeIconSize,
-              }}
-            />
-          </IconButton>
+                color: '#fafafa',
+                position: 'absolute',
+                ...(isMobile
+                  ? {
+                      bottom: `calc(0px - ${closeIconSize} - 16px)`,
+                      left: `calc(50vw - ${closeIconSize} - 8px)`,
+                    }
+                  : {
+                      right: `calc(0px - ${closeIconSize} - 16px)`,
+                      top: -12,
+                    }),
+              }}>
+              <CloseIcon
+                sx={{
+                  fontSize: closeIconSize,
+                }}
+              />
+            </IconButton>
+          )}
           {/* @ts-ignore */}
           {state.uppy && (
             <Dashboard

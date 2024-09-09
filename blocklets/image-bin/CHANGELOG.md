@@ -1,3 +1,7 @@
+## 0.11.34 (九月 09, 2024)
+
+- chore: remove useless close button when popup is false
+
 ## 0.11.33 (九月 09, 2024)
 
 - fix: resolve the bug of setPrefixPath not working
