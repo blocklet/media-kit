@@ -1,3 +1,7 @@
+## 0.1.30 (九月 09, 2024)
+
+- fix: resolve the bug of setPrefixPath not working
+
 ## 0.1.29 (九月 04, 2024)
 
 - feat: support to prevent zip bomb attack in uploader

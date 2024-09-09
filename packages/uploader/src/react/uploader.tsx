@@ -504,6 +504,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   );
 
   useEffect(() => {
+    setPrefixPath(apiPathProps);
     // @ts-ignore
     state.uppy = initUploader({
       ...props,
@@ -616,10 +617,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         close: Function;
       })
   );
-
-  useEffect(() => {
-    setPrefixPath(apiPathProps);
-  }, [apiPathProps]);
 
   const Wrapper = popup ? Backdrop : Fragment;
   const wrapperProps = popup
