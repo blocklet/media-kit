@@ -1,3 +1,7 @@
+## 0.1.32 (九月 11, 2024)
+
+- refactor: polish checking exist file logic
+
 ## 0.1.31 (九月 09, 2024)
 
 - chore: remove useless close button when popup is false
