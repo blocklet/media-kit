@@ -1,28 +1,32 @@
-## 0.11.35 (九月 11, 2024)
+## 0.11.36 (September 11, 2024)
+
+- chore: polish CHANGELOG date i18n
+
+## 0.11.35 (September 11, 2024)
 
 - refactor: polish checking exist file logic
 
-## 0.11.34 (九月 09, 2024)
+## 0.11.34 (September 09, 2024)
 
 - chore: remove useless close button when popup is false
 
-## 0.11.33 (九月 09, 2024)
+## 0.11.33 (September 09, 2024)
 
 - fix: resolve the bug of setPrefixPath not working
 
-## 0.11.32 (九月 04, 2024)
+## 0.11.32 (September 04, 2024)
 
 - feat: support to prevent zip bomb attack in uploader
 
-## 0.11.31 (八月 29, 2024)
+## 0.11.31 (August 29, 2024)
 
 - chore: bump deps to latest
 
-## 0.11.30 (八月 25, 2024)
+## 0.11.30 (August 25, 2024)
 
 - chore: remove useless code
 
-## 0.11.29 (八月 24, 2024)
+## 0.11.29 (August 24, 2024)
 
 - chore: polish ci
 
@@ -90,7 +94,7 @@
 
 - fix(core): use native fs instead of fs-extra
 
-## 0.11.12 (六月 19, 2024)
+## 0.11.12 (June 19, 2024)
 
 - chore: ensure blocklet works in isolation mode
 
@@ -295,7 +299,7 @@
 
 - chore: polish protectedRoutes match rules
 
-## 0.10.54 (十二月 14, 2023)
+## 0.10.54 (December 14, 2023)
 
 - feat: add remove image sdk
 
@@ -349,11 +353,11 @@
 
 - fix: resolve the bug of missing wrapperRef
 
-## 0.10.41 (十一月 20, 2023)
+## 0.10.41 (November 20, 2023)
 
 - chore: set generate image number in dall-e 3
 
-## 0.10.40 (十一月 20, 2023)
+## 0.10.40 (November 20, 2023)
 
 - chore: support select model
 
@@ -365,7 +369,7 @@
 
 - chore: update deps
 
-## 0.10.36 (十一月 15, 2023)
+## 0.10.36 (November 15, 2023)
 
 - chore: support dall-e-3
 
@@ -642,7 +646,7 @@
 
 - chore: update deps
 
-## 0.8.11 (五月 27, 2023)
+## 0.8.11 (May 27, 2023)
 
 - chore: support filer images by tags
 

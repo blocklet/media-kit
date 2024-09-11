@@ -1,28 +1,32 @@
-## 0.1.32 (九月 11, 2024)
+## 0.1.33 (September 11, 2024)
+
+- chore: polish CHANGELOG date i18n
+
+## 0.1.32 (September 11, 2024)
 
 - refactor: polish checking exist file logic
 
-## 0.1.31 (九月 09, 2024)
+## 0.1.31 (September 09, 2024)
 
 - chore: remove useless close button when popup is false
 
-## 0.1.30 (九月 09, 2024)
+## 0.1.30 (September 09, 2024)
 
 - fix: resolve the bug of setPrefixPath not working
 
-## 0.1.29 (九月 04, 2024)
+## 0.1.29 (September 04, 2024)
 
 - feat: support to prevent zip bomb attack in uploader
 
-## 0.1.28 (八月 29, 2024)
+## 0.1.28 (August 29, 2024)
 
 - chore: bump deps to latest
 
-## 0.1.27 (八月 24, 2024)
+## 0.1.27 (August 24, 2024)
 
 - chore(ci): polish github action to avoid ci stop
 
-## 0.1.26 (八月 24, 2024)
+## 0.1.26 (August 24, 2024)
 
 - chore: polish ci
 
@@ -237,7 +241,7 @@
 - chore: update deps
 - chore: adjust uploader provider to use createPortal
 
-## 0.0.53 (十二月 14, 2023)
+## 0.0.53 (December 14, 2023)
 
 - feat: add remove sdk
 
@@ -269,11 +273,11 @@
 
 - chore: update deps
 
-## 0.0.45 (十一月 20, 2023)
+## 0.0.45 (November 20, 2023)
 
 - chore: set generate image number in dall-e 3
 
-## 0.0.44 (十一月 20, 2023)
+## 0.0.44 (November 20, 2023)
 
 - chore: support select model
 
@@ -285,7 +289,7 @@
 
 - chore: update deps
 
-## 0.0.40 (十一月 15, 2023)
+## 0.0.40 (November 15, 2023)
 
 - chore: support dalle3
 

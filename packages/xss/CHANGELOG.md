@@ -1,16 +1,20 @@
-## 0.1.6 (九月 11, 2024)
+## 0.1.7 (September 11, 2024)
+
+- chore: polish CHANGELOG date i18n
+
+## 0.1.6 (September 11, 2024)
 
 - refactor: polish checking exist file logic
 
-## 0.1.5 (八月 25, 2024)
+## 0.1.5 (August 25, 2024)
 
 - chore: remove useless code
 
-## 0.1.4 (八月 24, 2024)
+## 0.1.4 (August 24, 2024)
 
 - chore(ci): polish github action to avoid ci stop
 
-## 0.1.3 (八月 24, 2024)
+## 0.1.3 (August 24, 2024)
 
 - chore: polish ci
 

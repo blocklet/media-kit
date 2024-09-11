@@ -3,6 +3,24 @@ import { execSync } from "child_process";
 import { $, chalk, fs, path, YAML } from "zx";
 import prompts from "prompts";
 
+const monthMap = {
+  一月: "January",
+  二月: "February",
+  三月: "March",
+  四月: "April",
+  五月: "May",
+  六月: "June",
+  七月: "July",
+  八月: "August",
+  九月: "September",
+  十月: "October",
+  十一月: "November",
+  十二月: "December",
+};
+
+const toEnglishDate = (log) =>
+  log.replace(/[\u4e00-\u9fa5]+月/g, (match) => monthMap[match]);
+
 const file = fs.readFileSync("pnpm-workspace.yaml", "utf8");
 const data = YAML.parse(file);
 const dirs = [];
@@ -94,7 +112,7 @@ async function updateSelectedDir(selectedDir) {
     .filter((item) => !!item)
     .join("\n\n");
 
-  await fs.writeFile(changelogPath, changelog);
+  await fs.writeFile(changelogPath, toEnglishDate(changelog));
   console.log(chalk.greenBright(`[info]: ${changelogPath} modified.`));
 
   await fs.writeFileSync(versionPath, version);
