@@ -1,3 +1,7 @@
+## 0.1.6 (九月 11, 2024)
+
+- refactor: polish checking exist file logic
+
 ## 0.1.5 (八月 25, 2024)
 
 - chore: remove useless code

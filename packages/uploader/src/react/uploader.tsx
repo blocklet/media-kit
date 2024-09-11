@@ -270,9 +270,17 @@ function initUploader(props: any) {
     // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
     withCredentials: true,
     endpoint: uploaderUrl,
+
     async onBeforeRequest(req, file) {
       // @ts-ignore
       const { hashFileName, id, meta } = file;
+
+      // @ts-ignore
+      const mockResponse = currentUppy.getFile(id)?.mockResponse || null;
+      if (req.getMethod() === 'PATCH' && mockResponse) {
+        // mock response to avoid next step upload
+        req.send = () => mockResponse;
+      }
 
       const ext = getExt(file);
 
@@ -333,11 +341,18 @@ function initUploader(props: any) {
         });
       }
 
+      const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
+
+      // @ts-ignore
+      if (req.getMethod() === 'PATCH' && file.mockResponse) {
+        // mock response do nothing
+        return;
+      }
+
       // only call onUploadFinish if it's a PATCH / POST request
       if (['PATCH', 'POST'].includes(result.method) && [200, 500].includes(result.status)) {
         const isExist = [true, 'true'].includes(result.headers['x-uploader-file-exist']);
         const uploadURL = getUrl(result.url, result.headers['x-uploader-file-name']); // upload URL with file name
-        const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
 
         result.file = file;
         result.uploadURL = uploadURL;
@@ -346,14 +361,20 @@ function initUploader(props: any) {
         if (isExist && file) {
           // if POST method check exist
           if (result.method === 'POST') {
-            // pause first,  that not trigger PATCH request
-            currentUppy.pauseResume(file.id);
+            // set mock response to avoid next step upload
+            currentUppy.setFileState(file.id, {
+              mockResponse: res,
+            });
           }
 
           // only trigger uppy event when exist
-          currentUppy.emit('upload-success', file, {
+          currentUppy.emit('upload-success', currentUppy.getFile(file.id), {
             uploadURL,
+            status: 200,
+            body: result.data,
           });
+
+          currentUppy.emit('postprocess-complete', currentUppy.getFile(file.id));
 
           // @ts-ignore
           currentUppy.calculateTotalProgress();
@@ -373,15 +394,25 @@ function initUploader(props: any) {
       }
 
       const uploadProgressDone = currentUppy.getState().totalProgress === 100;
+
       const shouldAutoCloseAfterDropUpload = currentUppy.getFiles().every((item: any) => item.source === 'DropTarget');
 
       // close uploader when upload progress done and all files are from DropTarget
-      if (uploadProgressDone && shouldAutoCloseAfterDropUpload) currentUppy.close();
+      if (uploadProgressDone && shouldAutoCloseAfterDropUpload) {
+        currentUppy.close();
+      }
     },
     ...tusProps,
   });
-
   // .use(GoldenRetriever);
+
+  currentUppy.on('upload', ({ fileIDs, id }: { fileIDs: string[]; id: string }) => {
+    fileIDs.forEach((fileId: any) => {
+      currentUppy.setFileState(fileId, {
+        uploadID: id,
+      });
+    });
+  });
 
   // add drop target
   if (dropTargetProps) {
