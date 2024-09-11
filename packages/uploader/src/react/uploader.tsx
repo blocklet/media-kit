@@ -357,6 +357,15 @@ function initUploader(props: any) {
         result.file = file;
         result.uploadURL = uploadURL;
 
+        const responseResult = {
+          uploadURL,
+          ...result,
+        };
+
+        currentUppy.setFileState(file.id, {
+          responseResult,
+        });
+
         // exist but not upload
         if (isExist && file) {
           // if POST method check exist
@@ -369,11 +378,9 @@ function initUploader(props: any) {
 
           // only trigger uppy event when exist
           currentUppy.emit('upload-success', currentUppy.getFile(file.id), {
-            uploadURL,
-            status: 200,
+            ...responseResult,
             body: result.data,
           });
-
           currentUppy.emit('postprocess-complete', currentUppy.getFile(file.id));
 
           // @ts-ignore

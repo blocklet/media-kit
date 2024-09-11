@@ -1,3 +1,7 @@
+## 0.11.37 (September 11, 2024)
+
+- chore: add uploader responseResult in sdk
+
 ## 0.11.36 (September 11, 2024)
 
 - chore: polish CHANGELOG date i18n
