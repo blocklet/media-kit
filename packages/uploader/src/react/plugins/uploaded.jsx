@@ -3,7 +3,7 @@ import { UIPlugin } from '@uppy/core';
 import { ProviderViews } from '@uppy/provider-views';
 import uniqBy from 'lodash/uniqBy';
 import debounce from 'lodash/debounce';
-import { api, createImageUrl, parseStringToDot } from '../../utils';
+import { mediaKitApi, createImageUrl, parseStringToDot, mediaKitMountPoint } from '../../utils';
 
 const initUploadedAPIData = {
   data: [], // origin data
@@ -80,18 +80,12 @@ class Uploaded extends UIPlugin {
       this.uploadedAPIData.loading = true;
       this.uploadedAPIData.page += 1;
 
-      const folderId = window.uploaderComponentId || (window?.blocklet?.componentId || '').split('/').pop();
-
       // use image-bin uploads api, so can hard code /api/uploads
-      const { data } = await api.get(`/api/uploads`, {
+      const { data } = await mediaKitApi.get(`/api/uploads`, {
         params: {
           page,
           pageSize,
-          folderId,
           ...this.params,
-        },
-        headers: {
-          'x-component-did': folderId,
         },
       });
 
@@ -107,9 +101,9 @@ class Uploaded extends UIPlugin {
 
             const { filename, _id, originalname } = item;
 
-            const fileUrl = createImageUrl(filename);
+            const fileUrl = createImageUrl(filename, 0, 0, mediaKitMountPoint);
 
-            previewUrl = createImageUrl(filename, 400);
+            previewUrl = createImageUrl(filename, 400, 0, mediaKitMountPoint);
 
             return {
               ...item,

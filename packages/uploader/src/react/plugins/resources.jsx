@@ -4,7 +4,7 @@ import { ProviderViews } from '@uppy/provider-views';
 import uniqBy from 'lodash/uniqBy';
 import debounce from 'lodash/debounce';
 import toUpper from 'lodash/toUpper';
-import { api, createImageUrl } from '../../utils';
+import { mediaKitApi, createImageUrl, mediaKitMountPoint } from '../../utils';
 
 const initAPIData = {
   initialized: false,
@@ -14,7 +14,6 @@ const initAPIData = {
   page: 1,
   loading: false,
   hasMore: true,
-  folderId: '',
   componentDid: '',
   components: [],
 };
@@ -133,7 +132,7 @@ class Resources extends UIPlugin {
       this.apiData.loading = true;
 
       // use image-bin uploads api, so can hard code /api/uploads
-      const { data } = await api.get(`/api/resources`, {
+      const { data } = await mediaKitApi.get(`/api/resources`, {
         params: {
           componentDid: this.apiData.componentDid,
         },
@@ -151,9 +150,9 @@ class Resources extends UIPlugin {
 
             const { filename } = item;
 
-            const fileUrl = createImageUrl(filename);
+            const fileUrl = createImageUrl(filename, 0, 0, mediaKitMountPoint);
 
-            previewUrl = createImageUrl(filename, 400);
+            previewUrl = createImageUrl(filename, 400, 0, mediaKitMountPoint);
 
             return {
               filename,
@@ -235,7 +234,7 @@ class Resources extends UIPlugin {
     // hacker donePicking
     this.view.donePicking = () => {
       const { currentSelection } = this.resources.getPluginState();
-      this.uppy.emit('uploaded:selected', currentSelection);
+      this.uppy.emit('resources:selected', currentSelection);
       this.resources.parent.hideAllPanels();
     };
 

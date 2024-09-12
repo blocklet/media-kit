@@ -44,7 +44,7 @@ import '@uppy/drop-target/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
 import {
-  api,
+  mediaKitApi,
   setPrefixPath,
   isMediaKit,
   getMediaKitComponent,
@@ -74,12 +74,12 @@ const uploaderDashboardId = 'uploader-dashboard';
 const isDebug = localStorage.getItem('uppy_debug');
 
 const getPluginList = (props: any) => {
-  const { apiPathProps, availablePluginMap = {}, uploadedProps } = props;
+  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps } = props;
 
   const { companionUrl } = getUploaderEndpoint(apiPathProps);
 
   const getAIImageAPI = async (payload: any) => {
-    const result = await api.post('/api/image/generations', payload);
+    const result = await mediaKitApi.post('/api/image/generations', payload);
     return result.data;
   };
 
@@ -99,18 +99,18 @@ const getPluginList = (props: any) => {
       alwayUse: true,
     },
     // other blocklet may can use this plugin
-    (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
+    (isDebug || (getMediaKitComponent() && availablePluginMap.Uploaded && !isMediaKit())) && {
       id: 'Uploaded',
       plugin: Uploaded, //
       options: {
         params: uploadedProps?.params,
       },
     },
-    (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
+    (isDebug || (getMediaKitComponent() && availablePluginMap.Resources && !isMediaKit())) && {
       id: 'Resources',
       plugin: Resources, // use image from resource blocklets
       options: {
-        params: uploadedProps?.params,
+        params: resourcesProps?.params,
       },
     },
     // with AI Kit
@@ -138,8 +138,12 @@ const getPluginList = (props: any) => {
                       const uploader = ref.current.getUploader();
                       uploader?.emit('ai-image:selected', data);
 
-                      data.forEach((base64: any, index: number) => {
-                        const fileName = `AI Image [${index + 1}].png`; // must be png
+                      data.forEach(({ src: base64, alt }: any, index: number) => {
+                        const getSliceText = (str: string) => {
+                          return str?.length > 16 ? `${str?.slice(0, 8)}...${str?.slice(-4)}` : str;
+                        };
+
+                        const fileName = `${getSliceText(alt) || getSliceText(base64)}.png`; // must be png
 
                         const formatFile = {
                           name: fileName,
@@ -474,6 +478,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     id = 'Uploader',
     popup = false,
     uploadedProps,
+    resourcesProps,
     onOpen,
     onClose,
     locale,
@@ -493,11 +498,13 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       let restrictions = (!isNil(props?.coreProps?.restrictions) ? props?.coreProps?.restrictions : {}) as any;
 
       // check if the media-kit is installed
-      if (getMediaKitComponent() && !apiPathProps.disableMediaKitPrefix && isNil(props?.coreProps?.restrictions)) {
-        await api.get('/api/uploader/status').then(({ data }: any) => {
+      if (getMediaKitComponent()) {
+        await mediaKitApi.get('/api/uploader/status').then(({ data }: any) => {
           state.availablePluginMap = data.availablePluginMap;
 
-          restrictions = data.restrictions || {};
+          if (!apiPathProps.disableMediaKitPrefix && isNil(props?.coreProps?.restrictions)) {
+            restrictions = data.restrictions || {};
+          }
         });
       }
 
@@ -562,28 +569,47 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       onShowPanel?.(ref);
     });
 
-    // handle uploaded:selected
-    if (plugins.includes('Uploaded') || plugins.includes('Resources')) {
-      state.uppy.off('uploaded:selected');
-      // @ts-ignore
-      state.uppy.on('uploaded:selected', (files: Object[]) => {
-        files.forEach((data: any) => {
-          // emit to upload success, mock http response
-          state.uppy.emitUploadSuccess(
-            {
-              id: data._id, // mock id
-            },
-            {
-              data,
-              isMock: true,
-            }
-          );
-        });
-        uploadedProps?.onSelectedFiles?.(files);
-        // auto close
-        close();
+    // handle plugin selection event
+    const handlePluginSelection = (files: Object[], state: any, props: any, pluginName: string) => {
+      const formatFiles = files.map((data: any) => {
+        const formatFile = {
+          name: data.id || data.fileUrl?.split('/')?.slice(-1)?.[0],
+          type: data.mimetype || mime.lookup(data.fileUrl),
+          data: '', // mock a data, will upload auto download by isRemote
+          preview: data.fileUrl,
+          source: pluginName,
+          isRemote: true,
+        };
+
+        const fileId = state.uppy.addFile(formatFile);
+
+        return {
+          ...data,
+          uppyFile: state.uppy.getFile(fileId),
+        };
       });
-    }
+
+      const propsKey = `${pluginName.toLowerCase()}Props`;
+      props[propsKey]?.onSelectedFiles?.(formatFiles);
+    };
+
+    const pluginHandlers = [
+      {
+        name: 'Uploaded',
+        event: 'uploaded:selected',
+      },
+      {
+        name: 'Resources',
+        event: 'resources:selected',
+      },
+    ];
+
+    pluginHandlers.forEach(({ name, event }) => {
+      if (plugins.includes(name)) {
+        state.uppy.off(event);
+        state.uppy.on(event, (files: Object[]) => handlePluginSelection(files, state, props, name));
+      }
+    });
   }, [
     JSON.stringify({
       id,

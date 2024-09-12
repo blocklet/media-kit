@@ -103,6 +103,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+export const mediaKitApi = axios.create();
+
+mediaKitApi.interceptors.request.use(
+  (config) => {
+    config.baseURL = mediaKitMountPoint || '/';
+    config.timeout = 200000;
+
+    // @ts-ignore
+    const folderId = window?.uploaderComponentId || (window?.blocklet?.componentId || '').split('/').pop();
+    config.headers['x-component-did'] = folderId;
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export function getUploaderEndpoint(uploadedProps: any) {
   const uploaderUrl = joinUrl(
     window.location.origin,
@@ -110,11 +126,13 @@ export function getUploaderEndpoint(uploadedProps: any) {
     uploadedProps.uploader || ''
   );
 
+  // however, companionUrl must use mediaKitMountPoint
   const companionUrl = joinUrl(
     window.location.origin,
-    prefixPath === '/' || uploadedProps.disableAutoPrefix ? '' : prefixPath,
+    mediaKitMountPoint === '/' || uploadedProps.disableAutoPrefix ? '' : mediaKitMountPoint,
     uploadedProps.companion || ''
   );
+
   return {
     uploaderUrl,
     companionUrl,
@@ -131,11 +149,17 @@ export function getUrl(...args: string[]) {
   return joinUrl(...realArgs);
 }
 
-export function createImageUrl(filename: string, width = 0, height = 0) {
+export function createImageUrl(filename: string, width = 0, height = 0, overwritePrefixPath: string = '') {
   // @ts-ignore
   const { CDN_HOST = '' } = window?.blocklet || {};
   const obj = new URL(CDN_HOST || window.location.origin);
-  obj.pathname = joinUrl(prefixPath === '/' ? '' : prefixPath, '/uploads/', filename);
+  let prefix = prefixPath === '/' ? '' : prefixPath;
+
+  if (overwritePrefixPath) {
+    prefix = overwritePrefixPath;
+  }
+
+  obj.pathname = joinUrl(prefix, '/uploads/', filename);
 
   const extension = filename.split('.').pop() || '';
   if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {

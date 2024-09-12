@@ -51,6 +51,7 @@
     "@blocklet/logger": "^1.16.31",
     "@blocklet/sdk": "^1.16.31",
     "@blocklet/ui-react": "^2.10.30",
+    "@blocklet/uploader": "file:.yalc/@blocklet/uploader",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "ahooks": "^3.7.11",

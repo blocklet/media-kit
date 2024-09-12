@@ -2,11 +2,15 @@
 import Skeleton from '@mui/material/Skeleton';
 import { useReactive } from 'ahooks';
 import IconButton from '@mui/material/IconButton';
+// @ts-ignore
+import ClickToCopy from '@arcblock/ux/lib/ClickToCopy';
 import styled from '@emotion/styled';
+import Typography from '@mui/material/Typography';
 import {
   RadioButtonUnchecked as RadioButtonUncheckedIcon,
   CheckCircleTwoTone as CheckCircleTwoToneIcon,
   Delete as DeleteIcon,
+  TipsAndUpdates as TipsAndUpdatesIcon,
 } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 
@@ -15,6 +19,7 @@ const LoadingImage = ({
   selected,
   onLoad,
   src,
+  alt,
   ...rest
 }: {
   onDelete: (src: string) => void;
@@ -41,7 +46,7 @@ const LoadingImage = ({
           justifyContent: 'center',
         }}>
         <img
-          alt=""
+          alt={alt}
           src={src}
           {...rest}
           onLoad={() => {
@@ -68,9 +73,40 @@ const LoadingImage = ({
         />
       )}
 
-      <DeleteButton onClick={() => onDelete(src)} sx={{ position: 'absolute', left: 10, bottom: 10 }}>
+      <StyledIconButton onClick={() => onDelete(src)} sx={{ position: 'absolute', left: 10, bottom: 10 }}>
         <DeleteIcon sx={{ fontSize: 20 }} />
-      </DeleteButton>
+      </StyledIconButton>
+
+      {alt && (
+        <StyledClickToCopy
+          unstyled
+          tip={alt}
+          sx={{
+            position: 'absolute',
+            right: 10,
+            bottom: 10,
+            fontSize: 14,
+            width: 'calc(100% - 20px - 10px - 36px)',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+          arrow
+          tipPlacement="top"
+          PopperProps={{
+            disablePortal: true,
+          }}>
+          <TipsAndUpdatesIcon sx={{ fontSize: 20, mr: 0.5 }} />
+          <Typography
+            sx={{
+              fontSize: 14,
+              overflowX: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}>
+            {alt}
+          </Typography>
+        </StyledClickToCopy>
+      )}
 
       <Box sx={{ position: 'absolute', right: 8, top: 8 }} onClick={rest?.onClick}>
         {selected ? (
@@ -85,7 +121,24 @@ const LoadingImage = ({
 
 export default LoadingImage;
 
-const DeleteButton = styled(IconButton)`
+const StyledClickToCopy = styled(ClickToCopy)`
+  height: 36px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.42);
+  color: #f7f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  color: #fff;
+  transition: all 0.3s;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.69);
+  }
+`;
+
+const StyledIconButton = styled(IconButton)`
   height: 36px;
   width: 36px;
   padding: 0;
@@ -95,6 +148,7 @@ const DeleteButton = styled(IconButton)`
   justify-content: center;
   align-items: center;
   border-radius: 6px;
+  transition: all 0.3s;
 
   &:hover {
     background: rgba(0, 0, 0, 0.69);

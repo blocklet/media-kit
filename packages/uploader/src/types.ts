@@ -20,6 +20,10 @@ export type UploaderProps = {
     params?: any;
     onSelectedFiles?: Function;
   };
+  resourcesProps?: {
+    params?: any;
+    onSelectedFiles?: Function;
+  };
   tusProps?: TusOptions;
   wrapperProps?: any;
   coreProps?: UppyOptions;

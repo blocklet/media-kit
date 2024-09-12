@@ -15,7 +15,7 @@ const uniq = require('lodash/uniq');
 const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader/middlewares');
 const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
-
+const { getResourceComponents } = require('./resources');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
@@ -420,6 +420,7 @@ router.post('/image/generations', user, auth, async (req, res) => {
     data: { model, prompt, size, n: parseInt(number, 10), responseFormat },
     responseType: 'stream',
   });
+
   res.set('Content-Type', response.headers['content-type']);
   response.data.pipe(res);
 });
@@ -429,6 +430,8 @@ router.get('/uploader/status', async (req, res) => {
   const availablePluginMap = {
     AIImage: false,
     Unsplash: false,
+    Uploaded: false,
+    Resources: false,
   };
 
   const AIKit = config.components?.find((item) => item.did === 'z8ia3xzq2tMq8CRHfaXj1BTYJyYnEcHbqP8cJ');
@@ -447,6 +450,21 @@ router.get('/uploader/status', async (req, res) => {
   // can use Unsplash
   if (config.env.UNSPLASH_KEY && config.env.UNSPLASH_SECRET) {
     availablePluginMap.Unsplash = true;
+  }
+
+  // can use Uploaded
+  req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
+  const folder = await Folder.findOne({ _id: req.componentDid });
+  const component = config.components.find((x) => x.did === req.componentDid);
+
+  // mean this is a valid folder and upload image to this folder
+  if (folder && component) {
+    availablePluginMap.Uploaded = true;
+  }
+
+  if (getResourceComponents().length > 0) {
+    // can use Resources
+    availablePluginMap.Resources = true;
   }
 
   const defaultExtsInput = '*';
