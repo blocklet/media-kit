@@ -1,3 +1,7 @@
+## 0.1.35 (September 13, 2024)
+
+- chore: add peer-deps to deps
+
 ## 0.1.34 (September 11, 2024)
 
 - chore: add uploader responseResult in sdk
