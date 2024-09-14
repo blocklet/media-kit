@@ -33,6 +33,7 @@ import localeMap from './i18n';
 import { ComponentInstaller } from '@blocklet/ui-react';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
+import Cookie from 'js-cookie';
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
@@ -299,6 +300,11 @@ function initUploader(props: any) {
           return value;
         })
       );
+      // add csrf token if exist
+      const csrfToken = Cookie.get('x-csrf-token');
+      if (csrfToken) {
+        req.setHeader('x-csrf-token', csrfToken);
+      }
 
       // @ts-ignore get folderId when upload using
       const componentDid = window?.uploaderComponentId || window?.blocklet?.componentId;

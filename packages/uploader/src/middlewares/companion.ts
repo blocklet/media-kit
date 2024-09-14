@@ -1,10 +1,7 @@
-const path = require('path');
-
 // const express = require("express");
 const companion = require('@uppy/companion');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-
 const axios = require('axios');
 const crypto = require('crypto');
 
