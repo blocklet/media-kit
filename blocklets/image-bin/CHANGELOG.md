@@ -1,3 +1,7 @@
+## 0.11.39 (September 14, 2024)
+
+- chore: add x-csrf-token into request headers
+
 ## 0.11.38 (September 13, 2024)
 
 - chore: add peer-deps to deps

@@ -1,18 +1,9 @@
-import axios from 'axios';
+import { createAxios } from '@blocklet/js-sdk';
 import joinUrl from 'url-join';
 
-const api = axios.create();
-
-api.interceptors.request.use(
-  (config) => {
-    const prefix = window.blocklet ? window.blocklet.prefix : '/';
-    config.baseURL = prefix || '';
-    config.timeout = 200000;
-
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+const api = createAxios({
+  timeout: 200000,
+});
 
 export default api;
 

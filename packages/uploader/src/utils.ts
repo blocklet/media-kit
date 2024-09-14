@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { createAxios } from '@blocklet/js-sdk';
 import joinUrl from 'url-join';
 import mime from 'mime-types';
 
@@ -92,7 +92,9 @@ export const setPrefixPath = (apiPathProps: any) => {
   prefixPath = mediaKitMountPoint || '/';
 };
 
-export const api = axios.create();
+export const api = createAxios({
+  timeout: 200000,
+});
 
 api.interceptors.request.use(
   (config) => {
