@@ -49,7 +49,11 @@ export const mappingResource = async () => {
       })
       .filter(Boolean);
 
-    logger.info('Mapping can use resources count: ', canUseResources.length, canUseResources);
+    logger.info(
+      'Mapping can use resources count: ',
+      canUseResources.length
+      // canUseResources
+    );
 
     return canUseResources;
   } catch (error) {

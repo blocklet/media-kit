@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.1.29",
+  "version": "0.1.36",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -50,7 +50,7 @@
     "@blocklet/constant": "^1.16.31",
     "@blocklet/logger": "^1.16.31",
     "@blocklet/sdk": "^1.16.31",
-    "@blocklet/ui-react": "^2.10.28",
+    "@blocklet/ui-react": "^2.10.30",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@tus/file-store": "1.0.0",
@@ -78,6 +78,7 @@
     "crypto": "^1.0.1",
     "dompurify": "^3.1.6",
     "fflate": "^0.8.2",
+    "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.0",
     "mime-types": "^2.1.35",
@@ -87,6 +88,28 @@
     "ufo": "^1.5.3",
     "url-join": "^4.0.1",
     "xbytes": "^1.9.1"
+  },
+  "peerDependencies": {
+    "@tus/file-store": "1.0.0",
+    "@tus/server": "1.0.0",
+    "@uppy/companion": "4.13.2",
+    "@uppy/core": "3.11.2",
+    "@uppy/dashboard": "3.8.3",
+    "@uppy/drag-drop": "3.1.0",
+    "@uppy/drop-target": "2.1.0",
+    "@uppy/file-input": "3.1.2",
+    "@uppy/golden-retriever": "3.2.0",
+    "@uppy/image-editor": "2.4.5",
+    "@uppy/locales": "3.5.3",
+    "@uppy/progress-bar": "3.1.1",
+    "@uppy/provider-views": "3.12.0",
+    "@uppy/react": "3.3.1",
+    "@uppy/status-bar": "3.3.3",
+    "@uppy/tus": "3.5.4",
+    "@uppy/unsplash": "3.3.1",
+    "@uppy/url": "3.6.1",
+    "@uppy/webcam": "3.4.1",
+    "preact": "10.20.1"
   },
   "devDependencies": {
     "@arcblock/eslint-config-ts": "^0.2.4",

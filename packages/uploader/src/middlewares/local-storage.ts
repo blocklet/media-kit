@@ -328,6 +328,8 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
         if (prepareUpload) {
           res.status(200); // set 200 will be recognized by frontend component
           res.setHeader('Location', joinUrl(req.headers['x-uploader-base-url'], fileName));
+          res.setHeader('Upload-Offset', +metaData.offset);
+          res.setHeader('Upload-Length', +metaData.size);
         }
 
         // must: get real metadata from header, avoid the bug of exist file metadata
