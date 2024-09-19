@@ -32,6 +32,7 @@ export default {
         dropPasteImportBoth: '拖拽文件到这里、粘贴、%{browseFiles}、%{browseFolders}或者通过下方导入：',
         dropPasteImportFiles: '拖拽文件到这里、粘贴、%{browseFiles}或者通过下方导入：',
         dropPasteImportFolders: '拖拽文件到这里、粘贴、%{browseFolders}或者通过下方导入：',
+        cancel: '返回',
       },
     }
   ),
@@ -61,6 +62,7 @@ export default {
         dropPasteImportBoth: 'Drop files here, paste, %{browseFiles}, %{browseFolders} or import from:',
         dropPasteImportFiles: 'Drop files here, paste, %{browseFiles} or import from:',
         dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
+        cancel: 'Back',
       },
     }
   ),
