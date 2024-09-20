@@ -105,6 +105,23 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+export const mediaKitApi = createAxios({
+  timeout: 200000,
+});
+
+mediaKitApi.interceptors.request.use(
+  (config) => {
+    config.baseURL = mediaKitMountPoint || '/';
+
+    // @ts-ignore
+    const folderId = window?.uploaderComponentId || (window?.blocklet?.componentId || '').split('/').pop();
+    config.headers['x-component-did'] = folderId;
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export function getUploaderEndpoint(uploadedProps: any) {
   const uploaderUrl = joinUrl(
     window.location.origin,
@@ -112,11 +129,13 @@ export function getUploaderEndpoint(uploadedProps: any) {
     uploadedProps.uploader || ''
   );
 
+  // however, companionUrl must use mediaKitMountPoint
   const companionUrl = joinUrl(
     window.location.origin,
-    prefixPath === '/' || uploadedProps.disableAutoPrefix ? '' : prefixPath,
+    mediaKitMountPoint === '/' || uploadedProps.disableAutoPrefix ? '' : mediaKitMountPoint,
     uploadedProps.companion || ''
   );
+
   return {
     uploaderUrl,
     companionUrl,
@@ -133,11 +152,17 @@ export function getUrl(...args: string[]) {
   return joinUrl(...realArgs);
 }
 
-export function createImageUrl(filename: string, width = 0, height = 0) {
+export function createImageUrl(filename: string, width = 0, height = 0, overwritePrefixPath: string = '') {
   // @ts-ignore
   const { CDN_HOST = '' } = window?.blocklet || {};
   const obj = new URL(CDN_HOST || window.location.origin);
-  obj.pathname = joinUrl(prefixPath === '/' ? '' : prefixPath, '/uploads/', filename);
+  let prefix = prefixPath === '/' ? '' : prefixPath;
+
+  if (overwritePrefixPath) {
+    prefix = overwritePrefixPath;
+  }
+
+  obj.pathname = joinUrl(prefix, '/uploads/', filename);
 
   const extension = filename.split('.').pop() || '';
   if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
@@ -298,10 +323,11 @@ export function initUppy(currentUppy: any) {
     currentUppy.calculateTotalProgress();
 
     const removedFileIDs = Object.keys(removedFiles);
-    // not emit file-removed
-    // removedFileIDs.forEach((fileID) => {
-    //   currentUppy.emit('file-removed', removedFiles[fileID], reason);
-    // });
+    // not emit original file-removed, set a new event, because will delete remote files
+    removedFileIDs.forEach((fileID) => {
+      // currentUppy.emit('file-removed', removedFiles[fileID]);
+      currentUppy.emit('file-removed-success', removedFiles[fileID]);
+    });
 
     if (removedFileIDs.length > 5) {
       currentUppy.log(`Removed ${removedFileIDs.length} files`);
@@ -385,6 +411,22 @@ export function initUppy(currentUppy: any) {
 
     currentUppy.setState({ totalProgress });
     currentUppy.emit('progress', totalProgress);
+  };
+
+  // rewrite upload method
+  const originalUpload = currentUppy.upload.bind(currentUppy);
+
+  currentUppy.upload = async () => {
+    const files = currentUppy.getFiles();
+
+    files.forEach((file: { id: any }) => {
+      currentUppy.setFileState(file.id, {
+        progress: { uploadComplete: false, uploadStarted: false },
+        error: null,
+      });
+    });
+
+    return await originalUpload();
   };
 
   return currentUppy;

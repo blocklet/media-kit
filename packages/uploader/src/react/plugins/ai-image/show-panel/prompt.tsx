@@ -152,7 +152,6 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
       <Button
         sx={{ m: 2, my: 1, transition: 'all 0.3s' }}
         className={'submit-ai'}
-        type="submit"
         variant="contained"
         onClick={run}
         disabled={loading}>

@@ -9,19 +9,25 @@ const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
+const { LRUCache } = require('lru-cache');
 const { isValid: isValidDID } = require('@arcblock/did');
 const xbytes = require('xbytes');
 const uniq = require('lodash/uniq');
 const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader/middlewares');
 const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
-
+const { getResourceComponents } = require('./resources');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
 const { user, auth, ensureAdmin } = require('../libs/auth');
 
 const router = express.Router();
+
+const statusCache = new LRUCache({
+  max: 100,
+  ttl: 1000 * 60 * 5,
+});
 
 const ensureFolderId = () => async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
@@ -420,15 +426,27 @@ router.post('/image/generations', user, auth, async (req, res) => {
     data: { model, prompt, size, n: parseInt(number, 10), responseFormat },
     responseType: 'stream',
   });
+
   res.set('Content-Type', response.headers['content-type']);
   response.data.pipe(res);
 });
 
 router.get('/uploader/status', async (req, res) => {
+  req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
+
+  const cachedStatus = statusCache.get(req.componentDid);
+
+  if (cachedStatus) {
+    res.json(cachedStatus);
+    return;
+  }
+
   // setting available plugins
   const availablePluginMap = {
     AIImage: false,
     Unsplash: false,
+    Uploaded: false,
+    Resources: false,
   };
 
   const AIKit = config.components?.find((item) => item.did === 'z8ia3xzq2tMq8CRHfaXj1BTYJyYnEcHbqP8cJ');
@@ -447,6 +465,20 @@ router.get('/uploader/status', async (req, res) => {
   // can use Unsplash
   if (config.env.UNSPLASH_KEY && config.env.UNSPLASH_SECRET) {
     availablePluginMap.Unsplash = true;
+  }
+
+  // can use Uploaded
+  const folder = await Folder.findOne({ _id: req.componentDid });
+  const component = config.components.find((x) => x.did === req.componentDid);
+
+  // mean this is a valid folder and upload image to this folder
+  if (folder && component) {
+    availablePluginMap.Uploaded = true;
+  }
+
+  if (getResourceComponents().length > 0) {
+    // can use Resources
+    availablePluginMap.Resources = true;
   }
 
   const defaultExtsInput = '*';
@@ -483,14 +515,18 @@ router.get('/uploader/status', async (req, res) => {
     maxFileSize,
   };
 
-  res.json({
+  const statusResult = {
     availablePluginMap,
     preferences: {
       extsInput,
       maxUploadSize,
     },
     restrictions,
-  });
+  };
+
+  statusCache.set(req.componentDid, statusResult);
+
+  res.json(statusResult);
 });
 
 module.exports = router;

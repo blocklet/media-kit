@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
 import { Close as CloseIcon } from '@mui/icons-material';
-
 import { useState } from 'react';
 import { useReactive, useAsyncEffect } from 'ahooks';
 
@@ -14,6 +13,7 @@ import Lottie from './lottie';
 import lottieJsonErrorUrl from './lottie-error.json';
 import lottieJsonLoadingUrl from './lottie-loading.json';
 import lottieJsonWelcomeUrl from './lottie-welcome.json';
+import { keyBy } from 'lodash';
 
 export default function Output({
   options,
@@ -25,13 +25,13 @@ export default function Output({
 }: {
   options?: AIImagePromptProps;
   handleApi: (data: any) => any;
-  onSelect: (data?: string[]) => void;
+  onSelect: (data?: { src: string; width: number; alt: string }[]) => void;
   onFinish: () => void;
   onClose?: Function | boolean;
   isMobile?: boolean;
 }) {
   const { loading, onLoading, restrictions, i18n } = useAIImageContext();
-  const [response, setResponse] = useState<{ src: string; width: number }[]>([]);
+  const [response, setResponse] = useState<{ src: string; width: number; alt: string }[]>([]);
   const [error, setError] = useState<Error>();
 
   const maxNumberOfFiles = restrictions?.maxNumberOfFiles;
@@ -58,6 +58,7 @@ export default function Output({
         const arr = list.map((item: { b64_json: string; b64Json: string }) => ({
           src: `data:image/png;base64,${item.b64Json || item.b64_json}`, // TODO b64Json 为ai-kit新兼容字段， b64_json为老字段，一个月可移除
           width: options.size ? Number((options.size || '').split('x')[0]) : 1024,
+          alt: options.prompt,
         }));
 
         if (response) {
@@ -211,9 +212,9 @@ export default function Output({
                 textTransform: 'none',
               },
             }}>
-            {onClose && (
-              <Button color="primary" variant="outlined" onClick={onClose}>
-                <CloseIcon fontSize="20px" />
+            {onClose && typeof onClose === 'function' && (
+              <Button color="primary" variant="outlined" onClick={onClose as any}>
+                <CloseIcon />
               </Button>
             )}
 
@@ -222,7 +223,8 @@ export default function Output({
               variant="contained"
               disabled={!Boolean(selectedUrls.length) || loading}
               onClick={() => {
-                onSelect(selectedUrls);
+                const responseMap = keyBy(response, 'src');
+                onSelect(selectedUrls.map((src) => responseMap[src]));
               }}>
               {Boolean(selectedUrls.length) ? i18n('aiImageSelectedUse') : i18n('aiImageSelectedTip')}
             </Button>
