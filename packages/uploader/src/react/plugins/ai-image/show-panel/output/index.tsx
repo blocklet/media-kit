@@ -2,10 +2,12 @@ import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+
 import Skeleton from '@mui/material/Skeleton';
 import { Close as CloseIcon } from '@mui/icons-material';
 import { useState } from 'react';
 import { useReactive, useAsyncEffect } from 'ahooks';
+import { useTheme } from '@mui/material/styles';
 
 import { useAIImageContext, AIImagePromptProps } from '../context';
 import LoadingImage from './loading-image';
@@ -33,7 +35,7 @@ export default function Output({
   const { loading, onLoading, restrictions, i18n } = useAIImageContext();
   const [response, setResponse] = useState<{ src: string; width: number; alt: string }[]>([]);
   const [error, setError] = useState<Error>();
-
+  const theme = useTheme();
   const maxNumberOfFiles = restrictions?.maxNumberOfFiles;
 
   const selected = useReactive<{ [key: string]: boolean }>({});
@@ -182,7 +184,9 @@ export default function Output({
                           objectFit: 'cover',
                           cursor: 'pointer',
                           transition: 'all 0.3s',
-                          border: selected[item.src] ? '2px solid #2482F6' : '2px solid transparent',
+                          border: selected[item.src]
+                            ? `2px solid ${theme.palette.primary.main}`
+                            : '2px solid transparent',
                           WebkitUserDrag: 'none',
                           width: '100%',
                           height: '100%',
