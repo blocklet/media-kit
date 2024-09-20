@@ -916,6 +916,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                 background: 'rgba(256, 256, 256, 0.2)',
                 backdropFilter: 'blur(4px)',
                 borderRadius: 1,
+                pointerEvents: 'none',
               }}>
               <Spinner size={32} />
               <Typography
@@ -937,7 +938,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               inline
               // @ts-ignore
               target={`#${target}`}
-              disabled={loadingStatus}
               id={uploaderDashboardId}
               uppy={state.uppy}
               plugins={plugins}
