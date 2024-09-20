@@ -1,3 +1,7 @@
+## 0.11.42 (September 20, 2024)
+
+- fix: polish uploader get endpoint url logic
+
 ## 0.11.41 (September 20, 2024)
 
 - fix: polish status api component did logic
