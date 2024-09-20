@@ -1,3 +1,7 @@
+## 0.11.40 (September 20, 2024)
+
+- chore: enhancing the integration experience
+
 ## 0.11.39 (September 14, 2024)
 
 - chore: add x-csrf-token into request headers
