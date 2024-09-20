@@ -112,4 +112,5 @@ const staticResourceMiddleware = initStaticResourceMiddleware({
 module.exports = {
   router,
   staticResourceMiddleware,
+  getResourceComponents,
 };

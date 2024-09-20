@@ -2,11 +2,12 @@ import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+
 import Skeleton from '@mui/material/Skeleton';
 import { Close as CloseIcon } from '@mui/icons-material';
-
 import { useState } from 'react';
 import { useReactive, useAsyncEffect } from 'ahooks';
+import { useTheme } from '@mui/material/styles';
 
 import { useAIImageContext, AIImagePromptProps } from '../context';
 import LoadingImage from './loading-image';
@@ -14,6 +15,7 @@ import Lottie from './lottie';
 import lottieJsonErrorUrl from './lottie-error.json';
 import lottieJsonLoadingUrl from './lottie-loading.json';
 import lottieJsonWelcomeUrl from './lottie-welcome.json';
+import { keyBy } from 'lodash';
 
 export default function Output({
   options,
@@ -25,15 +27,15 @@ export default function Output({
 }: {
   options?: AIImagePromptProps;
   handleApi: (data: any) => any;
-  onSelect: (data?: string[]) => void;
+  onSelect: (data?: { src: string; width: number; alt: string }[]) => void;
   onFinish: () => void;
   onClose?: Function | boolean;
   isMobile?: boolean;
 }) {
   const { loading, onLoading, restrictions, i18n } = useAIImageContext();
-  const [response, setResponse] = useState<{ src: string; width: number }[]>([]);
+  const [response, setResponse] = useState<{ src: string; width: number; alt: string }[]>([]);
   const [error, setError] = useState<Error>();
-
+  const theme = useTheme();
   const maxNumberOfFiles = restrictions?.maxNumberOfFiles;
 
   const selected = useReactive<{ [key: string]: boolean }>({});
@@ -58,6 +60,7 @@ export default function Output({
         const arr = list.map((item: { b64_json: string; b64Json: string }) => ({
           src: `data:image/png;base64,${item.b64Json || item.b64_json}`, // TODO b64Json 为ai-kit新兼容字段， b64_json为老字段，一个月可移除
           width: options.size ? Number((options.size || '').split('x')[0]) : 1024,
+          alt: options.prompt,
         }));
 
         if (response) {
@@ -181,7 +184,9 @@ export default function Output({
                           objectFit: 'cover',
                           cursor: 'pointer',
                           transition: 'all 0.3s',
-                          border: selected[item.src] ? '2px solid #2482F6' : '2px solid transparent',
+                          border: selected[item.src]
+                            ? `2px solid ${theme.palette.primary.main}`
+                            : '2px solid transparent',
                           WebkitUserDrag: 'none',
                           width: '100%',
                           height: '100%',
@@ -211,9 +216,9 @@ export default function Output({
                 textTransform: 'none',
               },
             }}>
-            {onClose && (
-              <Button color="primary" variant="outlined" onClick={onClose}>
-                <CloseIcon fontSize="20px" />
+            {onClose && typeof onClose === 'function' && (
+              <Button color="primary" variant="outlined" onClick={onClose as any}>
+                <CloseIcon />
               </Button>
             )}
 
@@ -222,7 +227,8 @@ export default function Output({
               variant="contained"
               disabled={!Boolean(selectedUrls.length) || loading}
               onClick={() => {
-                onSelect(selectedUrls);
+                const responseMap = keyBy(response, 'src');
+                onSelect(selectedUrls.map((src) => responseMap[src]));
               }}>
               {Boolean(selectedUrls.length) ? i18n('aiImageSelectedUse') : i18n('aiImageSelectedTip')}
             </Button>

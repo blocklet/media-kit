@@ -1,3 +1,11 @@
+## 0.1.38 (September 20, 2024)
+
+- fix: polish status api component did logic
+
+## 0.1.37 (September 20, 2024)
+
+- chore: enhancing the integration experience
+
 ## 0.1.36 (September 14, 2024)
 
 - chore: add x-csrf-token into request headers

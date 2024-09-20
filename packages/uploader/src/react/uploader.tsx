@@ -1,6 +1,6 @@
 import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
-import { useReactive } from 'ahooks';
+import { useReactive, useRequest } from 'ahooks';
 import { createRoot } from 'react-dom/client';
 import {
   Fragment,
@@ -11,6 +11,8 @@ import {
   lazy,
   useLayoutEffect,
 } from 'react';
+import get from 'lodash/get';
+import { useTheme } from '@mui/material/styles';
 import Backdrop from '@mui/material/Backdrop';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import IconButton from '@mui/material/IconButton';
@@ -34,6 +36,8 @@ import { ComponentInstaller } from '@blocklet/ui-react';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
 import Cookie from 'js-cookie';
+// @ts-ignore
+import Spinner from '@arcblock/ux/lib/Spinner';
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
@@ -45,7 +49,7 @@ import '@uppy/drop-target/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
 import {
-  api,
+  mediaKitApi,
   setPrefixPath,
   isMediaKit,
   getMediaKitComponent,
@@ -66,6 +70,8 @@ import PrepareUpload from './plugins/prepare-upload';
 // @ts-ignore
 import AIImage from './plugins/ai-image';
 import { MEDIA_KIT_DID } from './constants';
+import { cloneDeep } from 'lodash';
+import Typography from '@mui/material/Typography';
 // @ts-ignore
 const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
@@ -75,12 +81,12 @@ const uploaderDashboardId = 'uploader-dashboard';
 const isDebug = localStorage.getItem('uppy_debug');
 
 const getPluginList = (props: any) => {
-  const { apiPathProps, availablePluginMap = {}, uploadedProps } = props;
+  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps, theme } = props;
 
   const { companionUrl } = getUploaderEndpoint(apiPathProps);
 
   const getAIImageAPI = async (payload: any) => {
-    const result = await api.post('/api/image/generations', payload);
+    const result = await mediaKitApi.post('/api/image/generations', payload);
     return result.data;
   };
 
@@ -100,18 +106,18 @@ const getPluginList = (props: any) => {
       alwayUse: true,
     },
     // other blocklet may can use this plugin
-    (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
+    (isDebug || (getMediaKitComponent() && availablePluginMap.Uploaded && !isMediaKit())) && {
       id: 'Uploaded',
       plugin: Uploaded, //
       options: {
         params: uploadedProps?.params,
       },
     },
-    (isDebug || (getMediaKitComponent() && !isMediaKit())) && {
+    (isDebug || (getMediaKitComponent() && availablePluginMap.Resources && !isMediaKit())) && {
       id: 'Resources',
       plugin: Resources, // use image from resource blocklets
       options: {
-        params: uploadedProps?.params,
+        params: resourcesProps?.params,
       },
     },
     // with AI Kit
@@ -132,6 +138,7 @@ const getPluginList = (props: any) => {
               if (root) {
                 createRoot(root).render(
                   <AIImageShowPanel
+                    theme={theme}
                     api={getAIImageAPI}
                     restrictions={AIrestrictions}
                     i18n={ref.current?.getUploader()?.i18n}
@@ -139,8 +146,12 @@ const getPluginList = (props: any) => {
                       const uploader = ref.current.getUploader();
                       uploader?.emit('ai-image:selected', data);
 
-                      data.forEach((base64: any, index: number) => {
-                        const fileName = `AI Image [${index + 1}].png`; // must be png
+                      data.forEach(({ src: base64, alt }: any, index: number) => {
+                        const getSliceText = (str: string) => {
+                          return str?.length > 16 ? `${str?.slice(0, 8)}...${str?.slice(-4)}` : str;
+                        };
+
+                        const fileName = `${getSliceText(alt) || getSliceText(base64)}.png`; // must be png
 
                         const formatFile = {
                           name: fileName,
@@ -227,6 +238,8 @@ function initUploader(props: any) {
     dropTargetProps,
     pluginList,
     restrictions,
+    onChange,
+    initialFiles,
   } = props;
 
   const pluginMap = keyBy(pluginList, 'id');
@@ -419,13 +432,33 @@ function initUploader(props: any) {
   });
   // .use(GoldenRetriever);
 
-  currentUppy.on('upload', ({ fileIDs, id }: { fileIDs: string[]; id: string }) => {
+  const appendUploadIdEvent = ({ fileIDs, id }: { fileIDs: string[]; id: string }) => {
     fileIDs.forEach((fileId: any) => {
       currentUppy.setFileState(fileId, {
         uploadID: id,
       });
     });
-  });
+  };
+
+  // add upload event
+  currentUppy.off('upload', appendUploadIdEvent);
+  currentUppy.on('upload', appendUploadIdEvent);
+
+  const onChangeEvent = (file: any) => {
+    if (typeof onChange === 'function') {
+      onChange(file, currentUppy.getFiles());
+    }
+  };
+
+  // add file event
+  currentUppy.off('file-added', onChangeEvent);
+  currentUppy.on('file-added', onChangeEvent);
+
+  // remove file event, use a new event
+  // @ts-ignore
+  currentUppy.off('file-removed-success', onChangeEvent);
+  // @ts-ignore
+  currentUppy.on('file-removed-success', onChangeEvent);
 
   // add drop target
   if (dropTargetProps) {
@@ -449,6 +482,11 @@ function initUploader(props: any) {
 
   initUppy(currentUppy);
 
+  // add initial files
+  if (initialFiles && initialFiles?.length > 0) {
+    currentUppy.addFiles(initialFiles);
+  }
+
   return currentUppy;
 }
 
@@ -468,11 +506,14 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     restrictions: {} as any,
   });
 
+  const theme = useTheme();
+
   const pluginList = getPluginList({
     ...props,
     apiPathProps,
     availablePluginMap: state.availablePluginMap,
     restrictions: state.restrictions,
+    theme,
   });
 
   const {
@@ -480,6 +521,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     id = 'Uploader',
     popup = false,
     uploadedProps,
+    resourcesProps,
     onOpen,
     onClose,
     locale,
@@ -494,17 +536,25 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   const plugins = uniq([..._plugins, ...pluginList.filter((item) => item.alwayUse).map((item) => item.id)]);
 
-  useLayoutEffect(() => {
-    const updateRestrictions = async () => {
-      let restrictions = (!isNil(props?.coreProps?.restrictions) ? props?.coreProps?.restrictions : {}) as any;
+  const { loading: loadingStatus } = useRequest(
+    async () => {
+      let restrictions = (
+        !isNil(props?.coreProps?.restrictions) ? cloneDeep(props?.coreProps?.restrictions) : {}
+      ) as any;
 
       // check if the media-kit is installed
-      if (getMediaKitComponent() && !apiPathProps.disableMediaKitPrefix && isNil(props?.coreProps?.restrictions)) {
-        await api.get('/api/uploader/status').then(({ data }: any) => {
-          state.availablePluginMap = data.availablePluginMap;
+      if (getMediaKitComponent()) {
+        try {
+          await mediaKitApi.get('/api/uploader/status').then(({ data }: any) => {
+            state.availablePluginMap = data.availablePluginMap;
 
-          restrictions = data.restrictions || {};
-        });
+            if (!apiPathProps.disableMediaKitPrefix && isNil(props?.coreProps?.restrictions)) {
+              restrictions = data.restrictions || {};
+            }
+          });
+        } catch (error) {
+          // ignore error
+        }
       }
 
       // no include allowedFileTypes and has allowedFileExts
@@ -526,11 +576,17 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         restrictions.maxFileSize = xbytes.parseSize(restrictions.maxFileSize, { iec: false }) || undefined;
       }
 
-      state.restrictions = restrictions;
-    };
-
-    updateRestrictions();
-  }, []);
+      state.restrictions = cloneDeep(restrictions);
+    },
+    {
+      refreshDeps: [
+        JSON.stringify({
+          apiPathProps,
+          restrictionsProps: props?.coreProps?.restrictions,
+        }),
+      ],
+    }
+  );
 
   useKeyPress(
     'esc',
@@ -563,33 +619,56 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     state.uppy.close = close;
     state.uppy.openPlugin = openPlugin;
 
-    state.uppy.on('dashboard:show-panel', (source: string) => {
+    const onShowPanelEvent = (source: string) => {
       const { onShowPanel } = pluginMap[source];
       onShowPanel?.(ref);
-    });
+    };
 
-    // handle uploaded:selected
-    if (plugins.includes('Uploaded') || plugins.includes('Resources')) {
-      state.uppy.off('uploaded:selected');
-      // @ts-ignore
-      state.uppy.on('uploaded:selected', (files: Object[]) => {
-        files.forEach((data: any) => {
-          // emit to upload success, mock http response
-          state.uppy.emitUploadSuccess(
-            {
-              id: data._id, // mock id
-            },
-            {
-              data,
-              isMock: true,
-            }
-          );
-        });
-        uploadedProps?.onSelectedFiles?.(files);
-        // auto close
-        close();
+    state.uppy.off('dashboard:show-panel', onShowPanelEvent);
+
+    state.uppy.on('dashboard:show-panel', onShowPanelEvent);
+
+    // handle plugin selection event
+    const handlePluginSelection = (files: Object[], state: any, props: any, pluginName: string) => {
+      const formatFiles = files.map((data: any) => {
+        const formatFile = {
+          name: data.id || data.fileUrl?.split('/')?.slice(-1)?.[0],
+          type: data.mimetype || mime.lookup(data.fileUrl),
+          data: '', // mock a data, will upload auto download by isRemote
+          preview: data.fileUrl,
+          source: pluginName,
+          isRemote: true,
+        };
+
+        const fileId = state.uppy.addFile(formatFile);
+
+        return {
+          ...data,
+          uppyFile: state.uppy.getFile(fileId),
+        };
       });
-    }
+
+      const propsKey = `${pluginName.toLowerCase()}Props`;
+      props[propsKey]?.onSelectedFiles?.(formatFiles);
+    };
+
+    const pluginHandlers = [
+      {
+        name: 'Uploaded',
+        event: 'uploaded:selected',
+      },
+      {
+        name: 'Resources',
+        event: 'resources:selected',
+      },
+    ];
+
+    pluginHandlers.forEach(({ name, event }) => {
+      if (plugins.includes(name)) {
+        state.uppy.off(event);
+        state.uppy.on(event, (files: Object[]) => handlePluginSelection(files, state, props, name));
+      }
+    });
   }, [
     JSON.stringify({
       id,
@@ -597,6 +676,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       apiPathProps,
       locale,
       restrictions: state.restrictions,
+      theme,
     }),
   ]);
 
@@ -687,6 +767,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       } as any);
 
   const closeIconSize = isMobile ? '42px' : '40px';
+
   return (
     <Wrapper key="uploader-wrapper" {...wrapperProps}>
       <ComponentInstaller onClose={close} did={MEDIA_KIT_DID} disabled={!state.open} {...installerProps}>
@@ -777,6 +858,23 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                 width: '70%',
               },
             },
+            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done':
+              {
+                color: `${theme?.palette?.primary?.main}`,
+                transition: 'all 0.3s ease-in-out',
+                '&:hover, &:focus': {
+                  color: `${theme?.palette?.primary?.main}`,
+                  filter: 'brightness(1.2)',
+                },
+              },
+            '& .uppy-c-btn-primary': {
+              backgroundColor: `${theme?.palette?.primary?.main} !important`,
+              transition: 'all 0.3s ease-in-out',
+              '&:hover, &:focus': {
+                backgroundColor: `${theme?.palette?.primary?.main} !important`,
+                filter: 'brightness(1.2)',
+              },
+            },
           }}>
           {popup && (
             <IconButton
@@ -802,6 +900,35 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               />
             </IconButton>
           )}
+          {loadingStatus && (
+            <Box
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                zIndex: 99999999999,
+                flexDirection: 'column',
+                background: 'rgba(256, 256, 256, 0.2)',
+                backdropFilter: 'blur(4px)',
+                borderRadius: 1,
+              }}>
+              <Spinner size={32} />
+              <Typography
+                variant="body2"
+                color="primary"
+                sx={{
+                  mt: 1.5,
+                  fontWeight: 'bold',
+                }}>
+                {get(localeMap, `${locale}.strings.loadingStatus`)}
+              </Typography>
+            </Box>
+          )}
           {/* @ts-ignore */}
           {state.uppy && (
             <Dashboard
@@ -810,10 +937,11 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               inline
               // @ts-ignore
               target={`#${target}`}
+              disabled={loadingStatus}
               id={uploaderDashboardId}
               uppy={state.uppy}
               plugins={plugins}
-              fileManagerSelectionType="both"
+              fileManagerSelectionType={state.restrictions?.maxNumberOfFiles === 1 ? 'files' : 'both'}
               proudlyDisplayPoweredByUppy={false}
               showProgressDetails
               disableThumbnailGenerator
