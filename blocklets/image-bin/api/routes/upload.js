@@ -432,7 +432,7 @@ router.post('/image/generations', user, auth, async (req, res) => {
 });
 
 router.get('/uploader/status', async (req, res) => {
-  req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
+  req.componentDid = req.headers['x-component-did'];
 
   const cachedStatus = statusCache.get(req.componentDid);
 

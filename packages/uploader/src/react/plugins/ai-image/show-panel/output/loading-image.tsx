@@ -157,7 +157,7 @@ const StyledIconButton = styled(IconButton)`
 
 const CheckCircleIcon = styled(CheckCircleTwoToneIcon)`
   & path:first-of-type {
-    fill: #2482f6;
+    fill: ${({ theme }: { theme: any }) => theme.palette?.primary?.main || '#1976d2'};
     opacity: 1;
   }
   & path:last-child {

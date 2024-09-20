@@ -12,9 +12,10 @@ interface Props {
   restrictions?: any;
   api: any;
   i18n: Function;
+  theme?: any;
 }
 
-function AIImage({ onSelect, api, restrictions, i18n }: Props) {
+function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
   const [parameters, setParameters] = useState<AIImagePromptProps>();
   const [open, setOpen] = useState<boolean>(false);
   const onFinish = () => setParameters(undefined);
@@ -37,7 +38,7 @@ function AIImage({ onSelect, api, restrictions, i18n }: Props) {
   const onCloseOutput = isMobile ? onClose : false;
 
   return (
-    <AIImageProvider restrictions={restrictions} i18n={i18n}>
+    <AIImageProvider restrictions={restrictions} i18n={i18n} theme={theme}>
       <Box
         sx={{
           display: 'flex',

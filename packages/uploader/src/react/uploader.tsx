@@ -81,7 +81,7 @@ const uploaderDashboardId = 'uploader-dashboard';
 const isDebug = localStorage.getItem('uppy_debug');
 
 const getPluginList = (props: any) => {
-  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps } = props;
+  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps, theme } = props;
 
   const { companionUrl } = getUploaderEndpoint(apiPathProps);
 
@@ -138,6 +138,7 @@ const getPluginList = (props: any) => {
               if (root) {
                 createRoot(root).render(
                   <AIImageShowPanel
+                    theme={theme}
                     api={getAIImageAPI}
                     restrictions={AIrestrictions}
                     i18n={ref.current?.getUploader()?.i18n}
@@ -505,11 +506,14 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     restrictions: {} as any,
   });
 
+  const theme = useTheme();
+
   const pluginList = getPluginList({
     ...props,
     apiPathProps,
     availablePluginMap: state.availablePluginMap,
     restrictions: state.restrictions,
+    theme,
   });
 
   const {
@@ -529,7 +533,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   // @ts-ignore
   const isMobile = useMediaQuery((theme) => theme?.breakpoints?.down('md'));
-  const theme = useTheme();
 
   const plugins = uniq([..._plugins, ...pluginList.filter((item) => item.alwayUse).map((item) => item.id)]);
 
@@ -673,6 +676,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       apiPathProps,
       locale,
       restrictions: state.restrictions,
+      theme,
     }),
   ]);
 
