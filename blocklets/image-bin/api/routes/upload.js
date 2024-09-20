@@ -9,6 +9,7 @@ const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
+const { LRUCache } = require('lru-cache');
 const { isValid: isValidDID } = require('@arcblock/did');
 const xbytes = require('xbytes');
 const uniq = require('lodash/uniq');
@@ -22,6 +23,11 @@ const Folder = require('../states/folder');
 const { user, auth, ensureAdmin } = require('../libs/auth');
 
 const router = express.Router();
+
+const statusCache = new LRUCache({
+  max: 100,
+  ttl: 1000 * 60 * 5,
+});
 
 const ensureFolderId = () => async (req, res, next) => {
   req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
@@ -426,6 +432,15 @@ router.post('/image/generations', user, auth, async (req, res) => {
 });
 
 router.get('/uploader/status', async (req, res) => {
+  req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
+
+  const cachedStatus = statusCache.get(req.componentDid);
+
+  if (cachedStatus) {
+    res.json(cachedStatus);
+    return;
+  }
+
   // setting available plugins
   const availablePluginMap = {
     AIImage: false,
@@ -453,7 +468,6 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   // can use Uploaded
-  req.componentDid = req.headers['x-component-did'] || MEDIA_KIT_DID;
   const folder = await Folder.findOne({ _id: req.componentDid });
   const component = config.components.find((x) => x.did === req.componentDid);
 
@@ -501,14 +515,18 @@ router.get('/uploader/status', async (req, res) => {
     maxFileSize,
   };
 
-  res.json({
+  const statusResult = {
     availablePluginMap,
     preferences: {
       extsInput,
       maxUploadSize,
     },
     restrictions,
-  });
+  };
+
+  statusCache.set(req.componentDid, statusResult);
+
+  res.json(statusResult);
 });
 
 module.exports = router;

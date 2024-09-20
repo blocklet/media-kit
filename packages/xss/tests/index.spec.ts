@@ -46,6 +46,31 @@ describe('Express xss Sanitize', function () {
         done();
       });
 
+      it('should sanitize backup object.', function (done) {
+        request(app)
+          .post('/body')
+          .send({
+            data: {
+              data: '<!BACKUP V2.0.0>\n[0,"zNKYwnJSLskANbQTNwbXnCbDwz4rwoyWzF9f",0,0,"ArcBlock Staging","https://www.staging.arcblock.io/.well-known/service/blocklet/logo","https://www.staging.arcblock.io","/.well-known/service/websocket",1726728837055,1,0,1]\n[0,"zNKdGk4p2FQZLAGfzQGNTsufoJuiaa9KhFD5",0,0,"ArcBlock Launcher","https://launcher.arcblock.io/payment/.well-known/service/blocklet/logo?v=1.0.0","https://launcher.arcblock.io","/.well-known/service/websocket",1717725098541,1,0,1]\n[0,"zNKiVVb2cPQsszM938Jq1BcU5dTuuhyFJdE2",0,0,"Token Data","https://token-data.arcblock.io/.well-known/service/blocklet/logo","https://token-data.arcblock.io","/.well-known/service/websocket",1717725031626,1,0,1]\n[0,"zNKZNVyUAJyyv2A7V8B8BDTWGU1dJk5adhzh",0,0,"Dapp Explore","https://explore.didwallet.io/.well-known/service/blocklet/logo?version=0.1.3","https://explore.didwallet.io","/.well-known/service/websocket",1717725031492,1,0,1]',
+            },
+            method: 'PUT',
+            url: '/app/api/space/zNKfzqbhy9xt7mq7PWFSqSLgxzPHfKQ1yyQo/app/z1iiLgvaVnFikDApL7Z4w2SmYX4gbpjX7uc/object/app-records.txt',
+          })
+          .expect(
+            200,
+            {
+              body: {
+                data: {
+                  data: '<!BACKUP V2.0.0>\n[0,"zNKYwnJSLskANbQTNwbXnCbDwz4rwoyWzF9f",0,0,"ArcBlock Staging","https://www.staging.arcblock.io/.well-known/service/blocklet/logo","https://www.staging.arcblock.io","/.well-known/service/websocket",1726728837055,1,0,1]\n[0,"zNKdGk4p2FQZLAGfzQGNTsufoJuiaa9KhFD5",0,0,"ArcBlock Launcher","https://launcher.arcblock.io/payment/.well-known/service/blocklet/logo?v=1.0.0","https://launcher.arcblock.io","/.well-known/service/websocket",1717725098541,1,0,1]\n[0,"zNKiVVb2cPQsszM938Jq1BcU5dTuuhyFJdE2",0,0,"Token Data","https://token-data.arcblock.io/.well-known/service/blocklet/logo","https://token-data.arcblock.io","/.well-known/service/websocket",1717725031626,1,0,1]\n[0,"zNKZNVyUAJyyv2A7V8B8BDTWGU1dJk5adhzh",0,0,"Dapp Explore","https://explore.didwallet.io/.well-known/service/blocklet/logo?version=0.1.3","https://explore.didwallet.io","/.well-known/service/websocket",1717725031492,1,0,1]',
+                },
+                method: 'PUT',
+                url: '/app/api/space/zNKfzqbhy9xt7mq7PWFSqSLgxzPHfKQ1yyQo/app/z1iiLgvaVnFikDApL7Z4w2SmYX4gbpjX7uc/object/app-records.txt',
+              },
+            },
+            done
+          );
+      });
+
       it('should sanitize allowedKeys.', function (done) {
         expect(
           sanitize({

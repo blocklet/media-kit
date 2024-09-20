@@ -33,6 +33,7 @@ export default {
         dropPasteImportFiles: '拖拽文件到这里、粘贴、%{browseFiles}或者通过下方导入：',
         dropPasteImportFolders: '拖拽文件到这里、粘贴、%{browseFolders}或者通过下方导入：',
         cancel: '返回',
+        loadingStatus: '正在获取状态...',
       },
     }
   ),
@@ -63,6 +64,7 @@ export default {
         dropPasteImportFiles: 'Drop files here, paste, %{browseFiles} or import from:',
         dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
         cancel: 'Back',
+        loadingStatus: 'Getting status...',
       },
     }
   ),

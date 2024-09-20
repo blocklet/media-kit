@@ -11,6 +11,7 @@ export type UploaderProps = {
   onUploadFinish?: (request: any) => void;
   onOpen?: Function;
   onClose?: Function;
+  onChange?: Function;
   plugins?: string[];
   installerProps?: {
     disabled?: boolean;
@@ -35,4 +36,5 @@ export type UploaderProps = {
     disableAutoPrefix?: boolean;
   };
   dropTargetProps?: DropTarget;
+  initialFiles?: any[];
 };

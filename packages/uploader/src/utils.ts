@@ -105,12 +105,13 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export const mediaKitApi = axios.create();
+export const mediaKitApi = createAxios({
+  timeout: 200000,
+});
 
 mediaKitApi.interceptors.request.use(
   (config) => {
     config.baseURL = mediaKitMountPoint || '/';
-    config.timeout = 200000;
 
     // @ts-ignore
     const folderId = window?.uploaderComponentId || (window?.blocklet?.componentId || '').split('/').pop();
@@ -322,10 +323,11 @@ export function initUppy(currentUppy: any) {
     currentUppy.calculateTotalProgress();
 
     const removedFileIDs = Object.keys(removedFiles);
-    // not emit file-removed
-    // removedFileIDs.forEach((fileID) => {
-    //   currentUppy.emit('file-removed', removedFiles[fileID], reason);
-    // });
+    // not emit original file-removed, set a new event, because will delete remote files
+    removedFileIDs.forEach((fileID) => {
+      // currentUppy.emit('file-removed', removedFiles[fileID]);
+      currentUppy.emit('file-removed-success', removedFiles[fileID]);
+    });
 
     if (removedFileIDs.length > 5) {
       currentUppy.log(`Removed ${removedFileIDs.length} files`);
@@ -409,6 +411,22 @@ export function initUppy(currentUppy: any) {
 
     currentUppy.setState({ totalProgress });
     currentUppy.emit('progress', totalProgress);
+  };
+
+  // rewrite upload method
+  const originalUpload = currentUppy.upload.bind(currentUppy);
+
+  currentUppy.upload = async () => {
+    const files = currentUppy.getFiles();
+
+    files.forEach((file: { id: any }) => {
+      currentUppy.setFileState(file.id, {
+        progress: { uploadComplete: false, uploadStarted: false },
+        error: null,
+      });
+    });
+
+    return await originalUpload();
   };
 
   return currentUppy;
