@@ -78,7 +78,7 @@ export const isMediaKit = () =>
   window?.blocklet?.componentId.indexOf('z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9') > -1;
 
 // @ts-ignore
-export const mediaKitMountPoint = getMediaKitComponent()?.mountPoint;
+export const mediaKitMountPoint = getMediaKitComponent()?.mountPoint || '/';
 
 // @ts-ignore
 export let prefixPath = mediaKitMountPoint || window?.blocklet?.prefix || '/';
@@ -122,18 +122,18 @@ mediaKitApi.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-export function getUploaderEndpoint(uploadedProps: any) {
+export function getUploaderEndpoint(apiPathProps: any) {
   const uploaderUrl = joinUrl(
     window.location.origin,
-    prefixPath === '/' || uploadedProps.disableAutoPrefix ? '' : prefixPath,
-    uploadedProps.uploader || ''
+    prefixPath === '/' || apiPathProps.disableAutoPrefix ? '' : prefixPath,
+    apiPathProps.uploader || ''
   );
 
   // however, companionUrl must use mediaKitMountPoint
   const companionUrl = joinUrl(
     window.location.origin,
-    mediaKitMountPoint === '/' || uploadedProps.disableAutoPrefix ? '' : mediaKitMountPoint,
-    uploadedProps.companion || ''
+    mediaKitMountPoint === '/' || apiPathProps.disableAutoPrefix ? '' : mediaKitMountPoint,
+    apiPathProps.companion || ''
   );
 
   return {
