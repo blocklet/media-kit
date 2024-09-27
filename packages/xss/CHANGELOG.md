@@ -1,3 +1,7 @@
+## 0.1.8 (September 27, 2024)
+
+- chore: polish uploader logic
+
 ## 0.1.7 (September 11, 2024)
 
 - chore: polish CHANGELOG date i18n

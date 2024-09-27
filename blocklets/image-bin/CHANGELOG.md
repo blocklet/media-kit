@@ -1,3 +1,7 @@
+## 0.11.43 (September 27, 2024)
+
+- chore: polish uploader logic
+
 ## 0.11.42 (September 20, 2024)
 
 - fix: polish uploader get endpoint url logic
