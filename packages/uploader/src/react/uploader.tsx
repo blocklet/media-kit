@@ -722,7 +722,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     uppyRoot?.focus?.();
     uppyRoot?.click?.();
 
-    if (popup) {
+    if (isDebug && popup) {
       document.addEventListener('mousedown', handleFocus);
       document.addEventListener('touchstart', handleFocus);
     }
@@ -742,7 +742,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       }
     }, 500);
 
-    if (popup) {
+    if (isDebug && popup) {
       document.removeEventListener('mousedown', handleFocus);
       document.removeEventListener('touchstart', handleFocus);
     }
