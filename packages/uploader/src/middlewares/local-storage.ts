@@ -82,11 +82,21 @@ export function initLocalStorageServer({
       await configstore.set(id, uploadMetadata);
     }
   };
+
   const onUploadCreate = async (req: any, res: any, uploadMetadata: any) => {
     uploadMetadata = formatMetadata(uploadMetadata);
 
     // check offset
     await rewriteMetaDataFile(uploadMetadata);
+
+    // resolve the bug of upload empty file, otherwise will be upload twice
+    if (uploadMetadata.offset === 0 && uploadMetadata.size === 0) {
+      res.status(200); // set 200 will be recognized by frontend component
+      res.setHeader('Location', joinUrl(req.headers['x-uploader-base-url'], uploadMetadata.id));
+      res.setHeader('Upload-Offset', 0);
+      res.setHeader('Upload-Length', 0);
+      res.setHeader('x-uploader-file-exist', true);
+    }
 
     if (_onUploadCreate) {
       const result = await _onUploadCreate(req, res, uploadMetadata);
