@@ -1,3 +1,11 @@
+## 0.1.41 (September 27, 2024)
+
+- chore: polish uploader logic
+
+## 0.1.40 (September 20, 2024)
+
+- fix: polish loading status bug
+
 ## 0.1.39 (September 20, 2024)
 
 - fix: polish uploader get endpoint url logic

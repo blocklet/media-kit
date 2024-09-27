@@ -6,6 +6,8 @@ import {
   Fragment,
   IframeHTMLAttributes,
   forwardRef,
+  useCallback,
+  useRef,
   useEffect,
   useImperativeHandle,
   lazy,
@@ -499,6 +501,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     ...props?.apiPathProps,
   };
 
+  const uploaderContainerRef = useRef<HTMLDivElement>(null);
+
   const state = useReactive({
     open: false,
     uppy: null as any,
@@ -693,6 +697,12 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     }
   }
 
+  const handleFocus = useCallback((event: MouseEvent | TouchEvent) => {
+    if (isDebug && uploaderContainerRef.current && !uploaderContainerRef.current.contains(event.target as Node)) {
+      console.info('debug focus', uploaderContainerRef.current, event.target);
+    }
+  }, []);
+
   function open(pluginName?: string | undefined) {
     state.open = true;
 
@@ -711,6 +721,11 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     // uppyRoot?.setAttribute?.('tabIndex', '0');
     uppyRoot?.focus?.();
     uppyRoot?.click?.();
+
+    if (isDebug && popup) {
+      document.addEventListener('mousedown', handleFocus);
+      document.addEventListener('touchstart', handleFocus);
+    }
   }
 
   function close() {
@@ -726,6 +741,11 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         state.uppy.calculateTotalProgress();
       }
     }, 500);
+
+    if (isDebug && popup) {
+      document.removeEventListener('mousedown', handleFocus);
+      document.removeEventListener('touchstart', handleFocus);
+    }
   }
 
   useImperativeHandle(
@@ -751,6 +771,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
           '& > *': {
             display: !state.open ? 'none' : 'block', // hide uppy when close
           },
+          ...props?.wrapperProps?.sx,
         },
         invisible: true,
         open: state.open,
@@ -789,6 +810,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
         <Box
           className="uploader-container"
           key="uploader-container"
+          ref={uploaderContainerRef}
           id={target}
           onClick={(e: any) => e.stopPropagation()}
           sx={{
@@ -916,6 +938,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                 background: 'rgba(256, 256, 256, 0.2)',
                 backdropFilter: 'blur(4px)',
                 borderRadius: 1,
+                pointerEvents: 'none',
               }}>
               <Spinner size={32} />
               <Typography
@@ -937,7 +960,6 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               inline
               // @ts-ignore
               target={`#${target}`}
-              disabled={loadingStatus}
               id={uploaderDashboardId}
               uppy={state.uppy}
               plugins={plugins}

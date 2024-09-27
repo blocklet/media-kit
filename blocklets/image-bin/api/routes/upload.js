@@ -26,7 +26,7 @@ const router = express.Router();
 
 const statusCache = new LRUCache({
   max: 100,
-  ttl: 1000 * 60 * 5,
+  ttl: 1000 * 60 * 5, // 5min
 });
 
 const ensureFolderId = () => async (req, res, next) => {
@@ -228,6 +228,7 @@ const companion = initCompanion({
 config.events.on(config.Events.envUpdate, () => {
   logger.info('env update, try to re-init companion now');
   env.updateEnv();
+  statusCache.clear();
   // wait for env update
   setTimeout(() => {
     companion.setProviderOptions(env.getProviderOptions());
