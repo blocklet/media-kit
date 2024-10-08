@@ -97,8 +97,10 @@ class DownloadRemoteFiles extends UIPlugin {
         // get real time file
         const { data, name, type } = this.uppy.getFile(id);
         const fileText = await data.text();
-        const cleanFile = DOMPurify.sanitize(fileText, { USE_PROFILES: { svg: true, svgFilters: true } });
-
+        const cleanFile = DOMPurify.sanitize(fileText, {
+          USE_PROFILES: { svg: true, svgFilters: true },
+          ADD_TAGS: ['use'],
+        });
         if (fileText !== cleanFile) {
           // rewrite clean file
           const blob = new Blob([cleanFile], { type: type });

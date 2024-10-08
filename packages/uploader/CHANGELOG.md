@@ -1,3 +1,7 @@
+## 0.1.42 (October 08, 2024)
+
+- fix: polish clear svg logic
+
 ## 0.1.41 (September 27, 2024)
 
 - chore: polish uploader logic
