@@ -88,10 +88,10 @@ importers:
         specifier: ^1.18.135
         version: 1.18.135
       '@arcblock/did-connect':
-        specifier: ^2.10.39
+        specifier: ^2.10.41
         version: 2.10.41(etgisscr635dhnjtbprqqurvju)
       '@arcblock/ux':
-        specifier: ^2.10.39
+        specifier: ^2.10.41
         version: 2.10.41(@babel/core@7.25.7)(@emotion/react@11.13.3(@types/react@18.3.11)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.11)(react@18.3.1))(@types/react@18.3.11)(react@18.3.1))(@mui/icons-material@5.14.15(@mui/material@5.14.15(@emotion/react@11.13.3(@types/react@18.3.11)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.11)(react@18.3.1))(@types/react@18.3.11)(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.11)(react@18.3.1))(@mui/material@5.14.15(@emotion/react@11.13.3(@types/react@18.3.11)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.11)(react@18.3.1))(@types/react@18.3.11)(react@18.3.1))(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(prop-types@15.8.1)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.26.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@blocklet/constant':
         specifier: ^1.16.32
@@ -170,7 +170,7 @@ importers:
         specifier: ^0.2.4
         version: 0.2.4(@typescript-eslint/eslint-plugin@5.62.0(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1)(typescript@5.6.2))(@typescript-eslint/parser@5.62.0(eslint@8.57.1)(typescript@5.6.2))(eslint@8.57.1)(jest@29.7.0(@types/node@20.16.11)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@20.16.11)(typescript@5.6.2)))(prettier@2.8.8)(react@18.3.1)(typescript@5.6.2)
       '@blocklet/ui-react':
-        specifier: ^2.10.39
+        specifier: ^2.10.41
         version: 2.10.41(r7w33ixo2i6wdwjewudstx4aly)
       '@emotion/react':
         specifier: ^11.11.4
@@ -257,7 +257,7 @@ importers:
         specifier: ^1.16.32
         version: 1.16.32
       '@blocklet/ui-react':
-        specifier: ^2.10.39
+        specifier: ^2.10.41
         version: 2.10.41(r7w33ixo2i6wdwjewudstx4aly)
       '@mui/icons-material':
         specifier: 5.14.15
