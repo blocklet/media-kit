@@ -24,7 +24,7 @@
     "zx": "^7.2.3"
   },
   "resolutions": {
-    "@abtnode/cron": "^1.16.32",
+    "@abtnode/cron": "1.16.33-beta-20241001-015316-119b726d",
     "@arcblock/did": "^1.18.135",
     "@arcblock/did-auth": "^1.18.135",
     "@arcblock/did-ext": "^1.18.135",
@@ -33,10 +33,10 @@
     "@arcblock/validator": "^1.18.135",
     "@arcblock/vc": "^1.18.135",
     "@arcblock/ws": "^1.18.135",
-    "@blocklet/constant": "^1.16.32",
-    "@blocklet/js-sdk": "^1.16.32",
-    "@blocklet/logger": "^1.16.32",
-    "@blocklet/sdk": "^1.16.32",
+    "@blocklet/constant": "1.16.33-beta-20241001-015316-119b726d",
+    "@blocklet/js-sdk": "1.16.33-beta-20241001-015316-119b726d",
+    "@blocklet/logger": "1.16.33-beta-20241001-015316-119b726d",
+    "@blocklet/sdk": "1.16.33-beta-20241001-015316-119b726d",
     "@mui/icons-material": "5.14.15",
     "@mui/material": "5.14.15",
     "@mui/system": "5.14.15",
