@@ -42,7 +42,7 @@
     "xss": "^1.0.14"
   },
   "devDependencies": {
-    "@arcblock/eslint-config-ts": "^0.2.4",
+    "@arcblock/eslint-config-ts": "^0.3.2",
     "@types/chai": "^4.3.17",
     "@types/jest": "^29.5.12",
     "@types/supertest": "^6.0.2",

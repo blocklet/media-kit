@@ -66,6 +66,49 @@ const upload = multer({
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
 
+// init uploader server
+const localStorageServer = initLocalStorageServer({
+  path: env.uploadDir,
+  express,
+  onUploadFinish: async (req, res, uploadMetadata) => {
+    const {
+      id: filename,
+      size,
+      metadata: { filename: originalname, filetype: mimetype },
+    } = uploadMetadata;
+
+    const obj = new URL(env.appUrl);
+    obj.protocol = req.get('x-forwarded-proto') || req.protocol;
+    obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
+
+    const doc = await Upload.insert({
+      mimetype,
+      originalname,
+      filename,
+      size,
+      remark: req.body.remark || '',
+      tags: (req.body.tags || '')
+        .split(',')
+        .map((x) => x.trim())
+        .filter(Boolean),
+      folderId: req.componentDid,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: req.user.did,
+      updatedBy: req.user.did,
+    });
+
+    const resData = { url: obj.href, ...doc };
+
+    return resData;
+  },
+  // only for debug uploader
+  // onUploadCreate(req, res, uploadMetadata) {
+  //   console.warn(uploadMetadata);
+  //   throw new Error('debug error');
+  // },
+});
+
 const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE } = {}) => {
   return async (req, res) => {
     let page = Number(req.query.page || 1);
@@ -165,49 +208,6 @@ router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
   );
 
   res.jsonp(updatedDoc);
-});
-
-// init uploader server
-const localStorageServer = initLocalStorageServer({
-  path: env.uploadDir,
-  express,
-  onUploadFinish: async (req, res, uploadMetadata) => {
-    const {
-      id: filename,
-      size,
-      metadata: { filename: originalname, filetype: mimetype },
-    } = uploadMetadata;
-
-    const obj = new URL(env.appUrl);
-    obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-    obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
-
-    const doc = await Upload.insert({
-      mimetype,
-      originalname,
-      filename,
-      size,
-      remark: req.body.remark || '',
-      tags: (req.body.tags || '')
-        .split(',')
-        .map((x) => x.trim())
-        .filter(Boolean),
-      folderId: req.componentDid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: req.user.did,
-      updatedBy: req.user.did,
-    });
-
-    const resData = { url: obj.href, ...doc };
-
-    return resData;
-  },
-  // only for debug uploader
-  // onUploadCreate(req, res, uploadMetadata) {
-  //   console.warn(uploadMetadata);
-  //   throw new Error('debug error');
-  // },
 });
 
 router.use('/uploads', user, auth, ensureFolderId(), localStorageServer.handle);
