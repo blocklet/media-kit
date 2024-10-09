@@ -1,3 +1,7 @@
+## 0.1.43 (October 09, 2024)
+
+- chore: update deps and add csrf middleware
+
 ## 0.1.42 (October 08, 2024)
 
 - fix: polish clear svg logic

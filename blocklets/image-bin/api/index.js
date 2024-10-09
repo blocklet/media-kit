@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
 const config = require('@blocklet/sdk/lib/config');
 const { xss } = require('@blocklet/xss');
+const { csrf } = require('@blocklet/sdk/lib/middlewares');
 const Upload = require('./states/upload');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
@@ -35,6 +36,7 @@ app.use((req, res, next) => {
   );
 });
 app.use(xss());
+app.use(csrf());
 
 app.use(
   '/uploads',
