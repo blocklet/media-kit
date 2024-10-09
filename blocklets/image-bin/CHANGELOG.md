@@ -1,3 +1,7 @@
+## 0.11.45 (October 09, 2024)
+
+- chore: update deps
+
 ## 0.11.44 (October 08, 2024)
 
 - fix: polish clear svg logic

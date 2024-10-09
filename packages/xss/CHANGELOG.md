@@ -1,3 +1,7 @@
+## 0.1.9 (October 09, 2024)
+
+- chore: update deps
+
 ## 0.1.8 (September 27, 2024)
 
 - chore: polish uploader logic
