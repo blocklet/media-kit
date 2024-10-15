@@ -1,3 +1,7 @@
+## 0.11.46 (October 15, 2024)
+
+- chore: lock sdk version to beta
+
 ## 0.11.45 (October 09, 2024)
 
 - chore: update deps and add csrf middleware
