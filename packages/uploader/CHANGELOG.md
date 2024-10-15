@@ -1,3 +1,7 @@
+## 0.1.45 (October 15, 2024)
+
+- chore: re-bump version
+
 ## 0.1.44 (October 15, 2024)
 
 - chore: lock sdk version to beta
