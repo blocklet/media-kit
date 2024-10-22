@@ -61,7 +61,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
               required
               placeholder={i18n('aiImagePromptTip')}
               multiline
-              minRows={6}
+              minRows={5}
               maxRows={6}
               value={values.prompt ?? ''}
               onChange={(e: any) => {
@@ -150,8 +150,9 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
       </Box>
 
       <Button
-        sx={{ m: 2, my: 1, transition: 'all 0.3s' }}
+        sx={{ m: 2, transition: 'all 0.3s' }}
         className={'submit-ai'}
+        key={loading ? 'loading-submit' : 'submit'}
         variant="contained"
         onClick={run}
         disabled={loading}>
@@ -183,13 +184,14 @@ const Root = styled(Box)`
   .submit-ai {
     height: 40px;
     background: linear-gradient(90deg, #45e4fa 0%, #8a45fa 52.08%, #fa45bc 100%);
+    color: #fff;
     border-radius: 30px;
     box-shadow: none;
     text-transform: none;
 
     &.Mui-disabled {
-      color: rgba(0, 0, 0, 0.26);
-      background: rgba(0, 0, 0, 0.12);
+      color: rgba(0, 0, 0, 0.26) !important;
+      background: rgba(0, 0, 0, 0.12) !important;
     }
   }
 

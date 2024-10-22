@@ -69,7 +69,7 @@ export default function CreateFolder({ children }) {
             onChange={(e) => {
               setFolder(e.target.value);
             }}
-            sx={{ width: 300 }}
+            sx={{ width: 300, my: 1 }}
           />
         </Confirm>
       )}
