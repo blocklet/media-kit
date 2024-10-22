@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.1.45",
+  "version": "0.1.46",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -50,7 +50,7 @@
     "@blocklet/constant": "1.16.33-beta-20241001-015316-119b726d",
     "@blocklet/logger": "1.16.33-beta-20241001-015316-119b726d",
     "@blocklet/sdk": "1.16.33-beta-20241001-015316-119b726d",
-    "@blocklet/ui-react": "^2.10.41",
+    "@blocklet/ui-react": "^2.10.48",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@tus/file-store": "1.0.0",

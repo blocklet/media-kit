@@ -1,3 +1,7 @@
+## 0.1.46 (October 22, 2024)
+
+- chore: update deps
+
 ## 0.1.45 (October 15, 2024)
 
 - chore: re-bump version
