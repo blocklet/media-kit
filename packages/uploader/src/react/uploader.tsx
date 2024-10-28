@@ -11,7 +11,6 @@ import {
   useEffect,
   useImperativeHandle,
   lazy,
-  useLayoutEffect,
 } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
@@ -83,7 +82,7 @@ const uploaderDashboardId = 'uploader-dashboard';
 const isDebug = localStorage.getItem('uppy_debug');
 
 const getPluginList = (props: any) => {
-  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps, theme } = props;
+  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps, imageEditorProps = {}, theme } = props;
 
   const { companionUrl } = getUploaderEndpoint(apiPathProps);
 
@@ -104,6 +103,7 @@ const getPluginList = (props: any) => {
       plugin: ImageEditor, // use image editor
       options: {
         quality: 1,
+        ...imageEditorProps,
       },
       alwayUse: true,
     },
@@ -242,6 +242,7 @@ function initUploader(props: any) {
     restrictions,
     onChange,
     initialFiles,
+    imageEditorProps,
   } = props;
 
   const pluginMap = keyBy(pluginList, 'id');
@@ -461,6 +462,42 @@ function initUploader(props: any) {
   currentUppy.off('file-removed-success', onChangeEvent);
   // @ts-ignore
   currentUppy.on('file-removed-success', onChangeEvent);
+
+  // present submit if crop is forced
+  if (imageEditorProps?.cropperOptions?.autoCrop && imageEditorProps?.cropperOptions?.aspectRatio) {
+    currentUppy.on('file-editor:complete', (updatedFile: any) => {
+      // add a property to indicate the image went through the image editor, and would have forced the aspect ratio to be applied.
+      updatedFile.aspectRatioApplied = true;
+    });
+
+    currentUppy.on('upload', (files: Record<string, unknown>) => {
+      console.log('upload', files);
+      const filesArray = Object.entries(files);
+
+      const validFiles = filesArray.filter(([, file]) => {
+        const typedFile = file as { aspectRatioApplied?: boolean; id: string };
+        if (typedFile.aspectRatioApplied) return true;
+
+        currentUppy.info({
+          message: 'Please edit each image to apply a required crop.',
+          details: 'Image cropping required'
+        });
+
+        // FIXME: @liangyongzhuo this does not work
+        const dashboard = currentUppy.getPlugin('Dashboard');
+        if (dashboard) {
+          dashboard.openFileEditor(typedFile.id);
+        }
+
+        return false;
+      });
+
+      if (validFiles.length !== filesArray.length) {
+        // Prevent upload if not all files are valid
+        return false;
+      }
+    });
+  }
 
   // add drop target
   if (dropTargetProps) {
