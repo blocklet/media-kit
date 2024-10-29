@@ -103,6 +103,7 @@ const getPluginList = (props: any) => {
       plugin: ImageEditor, // use image editor
       options: {
         quality: 1,
+        // docs: https://uppy.io/docs/image-editor/#options
         ...imageEditorProps,
       },
       alwayUse: true,
@@ -212,6 +213,7 @@ const getPluginList = (props: any) => {
       plugin: PrepareUpload,
       options: {
         companionUrl,
+        cropperOptions: imageEditorProps?.cropperOptions || null,
       },
       alwayUse: true,
     },
@@ -242,7 +244,6 @@ function initUploader(props: any) {
     restrictions,
     onChange,
     initialFiles,
-    imageEditorProps,
   } = props;
 
   const pluginMap = keyBy(pluginList, 'id');
@@ -881,7 +882,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                 width: '70%',
               },
             },
-            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done':
+            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done, & .uppy-DashboardContent-save':
               {
                 color: `${theme?.palette?.primary?.main}`,
                 transition: 'all 0.3s ease-in-out',

@@ -13,12 +13,12 @@ const zipBombMap = {
   deflate: decompressSync,
 };
 
-class DownloadRemoteFiles extends UIPlugin {
+class PrepareUpload extends UIPlugin {
   constructor(uppy, opts) {
     const defaultOptions = {};
     super(uppy, { ...defaultOptions, ...opts });
 
-    this.id = this.opts.id || 'DownloadRemoteFiles';
+    this.id = this.opts.id || 'PrepareUpload';
     this.type = 'modifier';
 
     this.i18nInit();
@@ -178,6 +178,71 @@ class DownloadRemoteFiles extends UIPlugin {
     }
   };
 
+  // validate image respect cropper options
+  validateImagesRespectCropperOptions = async () => {
+    return this.uppy.getFiles().reduce(async (promise, uppyFile) => {
+      await promise; // Wait for previous validation
+      const { id } = uppyFile;
+      const file = this.uppy.getFile(id);
+
+      if (
+        !this.opts.cropperOptions?.aspectRatio ||
+        !file?.type?.includes('image') ||
+        file.type?.includes('image/svg')
+      ) {
+        return Promise.resolve();
+      }
+
+      const { aspectRatio: _aspectRatio } = this.opts.cropperOptions;
+      const ImageEditor = this.uppy.getPlugin('ImageEditor');
+
+      // get image element to calculate aspect ratio
+      const imageElement =
+        document.querySelector(`[src="${file.preview}"]`) || document.getElementById('uppy_' + id).querySelector('img');
+
+      const width = imageElement?.naturalWidth;
+      const height = imageElement?.naturalHeight;
+
+      const imageAspectRatio = Number(width / height).toFixed(2);
+      const aspectRatio = Number(_aspectRatio).toFixed(2);
+
+      if (imageAspectRatio === aspectRatio) {
+        return Promise.resolve();
+      }
+
+      this.uppy.emit('preprocess-progress', file, {
+        mode: 'indeterminate',
+        message: this.i18n('editorLoading'),
+      });
+
+      const Dashboard = ImageEditor.parent;
+      Dashboard.openFileEditor(file);
+
+      const tip = this.i18n('aspectRatioMessage', {
+        imageAspectRatio,
+        aspectRatio,
+      });
+
+      // send tip to user
+      this.uppy.info({
+        message: tip,
+        details: tip,
+      });
+
+      // Return a promise that resolves when the editor is complete
+      return new Promise((resolve, reject) => {
+        this.uppy.once('file-editor:complete', () => {
+          // wait for editor complete
+          setTimeout(() => {
+            resolve();
+          }, 200);
+        });
+
+        this.uppy.once('file-editor:cancel', () => {});
+      });
+    }, Promise.resolve());
+  };
+
   prepareUploadWrapper = async (uppyFile) => {
     await this.tryDownloadRemoteFile(uppyFile);
     await this.getPreviewFromData(uppyFile);
@@ -326,7 +391,10 @@ class DownloadRemoteFiles extends UIPlugin {
     }
   };
 
-  prepareUpload = (fileIDs) => {
+  prepareUpload = async (fileIDs) => {
+    // validate all images aspect ratio
+    await this.validateImagesRespectCropperOptions();
+
     const promises = fileIDs.map(async (id) => {
       const file = this.uppy.getFile(id);
       // had some file downloading
@@ -371,4 +439,4 @@ class DownloadRemoteFiles extends UIPlugin {
   }
 }
 
-export default DownloadRemoteFiles;
+export default PrepareUpload;
