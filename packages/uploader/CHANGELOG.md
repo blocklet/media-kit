@@ -1,3 +1,8 @@
+## 0.1.47 (October 29, 2024)
+
+- feat: support aspect ratio before upload
+- feat: support image editor props
+
 ## 0.1.46 (October 22, 2024)
 
 - chore: update deps

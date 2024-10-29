@@ -77,6 +77,17 @@ function UploaderProviderWrapper({ children }) {
           // target: document.body, // use body as drop target
         }
       }
+      // only for debug
+      // imageEditorProps={{
+      //   cropperOptions: {
+      //     aspectRatio: 16 / 9,
+      //   },
+      //   actions: {
+      //     cropSquare: false,
+      //     cropWidescreen: false,
+      //     cropWidescreenVertical: false,
+      //   },
+      // }}
       apiPathProps={{
         uploader: '/api/uploads',
         companion: '/api/companion',

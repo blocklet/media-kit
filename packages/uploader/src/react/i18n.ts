@@ -34,6 +34,8 @@ export default {
         dropPasteImportFolders: '拖拽文件到这里、粘贴、%{browseFolders}或者通过下方导入：',
         cancel: '返回',
         loadingStatus: '正在获取状态...',
+        aspectRatioMessage: '请编辑图片适配所需比例，目前图片比例为 %{imageAspectRatio}，需要 %{aspectRatio}',
+        editorLoading: '等待图片编辑...',
       },
     }
   ),
@@ -65,6 +67,9 @@ export default {
         dropPasteImportFolders: 'Drop files here, paste, %{browseFolders} or import from:',
         cancel: 'Back',
         loadingStatus: 'Getting status...',
+        aspectRatioMessage:
+          'Please edit the required ratio for image, currently the image ratio is %{imageAspectRatio}, need %{aspectRatio}',
+        editorLoading: 'Waiting for image editor...',
       },
     }
   ),

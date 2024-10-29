@@ -1,6 +1,7 @@
-import { UppyOptions } from '@uppy/core';
-import { DashboardOptions } from '@uppy/dashboard';
-import { TusOptions } from '@uppy/tus';
+import type { UppyOptions } from '@uppy/core';
+import type { DashboardOptions } from '@uppy/dashboard';
+import type { TusOptions } from '@uppy/tus';
+import type { ImageEditorOptions } from '@uppy/image-editor';
 import type DropTarget from '@uppy/drop-target';
 
 export type UploaderProps = {
@@ -37,4 +38,5 @@ export type UploaderProps = {
   };
   dropTargetProps?: DropTarget;
   initialFiles?: any[];
+  imageEditorProps?: ImageEditorOptions;
 };
