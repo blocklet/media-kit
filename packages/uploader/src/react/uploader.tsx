@@ -882,7 +882,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                 width: '70%',
               },
             },
-            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done, & .uppy-DashboardContent-save':
+            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done, & .uppy-DashboardContent-save, & .uppy-StatusBar-actionBtn--upload':
               {
                 color: `${theme?.palette?.primary?.main}`,
                 transition: 'all 0.3s ease-in-out',
