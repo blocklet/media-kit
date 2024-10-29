@@ -183,7 +183,13 @@ class PrepareUpload extends UIPlugin {
     return this.uppy.getFiles().reduce(async (promise, uppyFile) => {
       await promise; // Wait for previous validation
       const { id } = uppyFile;
-      const file = this.uppy.getFile(id);
+      let file = this.uppy.getFile(id);
+
+      if (file.isRemote) {
+        // remote file should be downloaded
+        await this.tryDownloadRemoteFile(file);
+        file = this.uppy.getFile(id);
+      }
 
       if (
         !this.opts.cropperOptions?.aspectRatio ||
