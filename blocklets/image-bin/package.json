@@ -46,6 +46,7 @@
     "@blocklet/logger": "1.16.33-beta-20241001-015316-119b726d",
     "@blocklet/sdk": "1.16.33-beta-20241001-015316-119b726d",
     "@blocklet/uploader": "workspace:^",
+    "@blocklet/uploader-server": "workspace:^",
     "@blocklet/xss": "workspace:^",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
