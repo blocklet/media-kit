@@ -1,3 +1,7 @@
+## 0.1.50 (October 30, 2024)
+
+- chore: remove useless deps
+
 ## 0.1.49 (October 30, 2024)
 
 - chore: re-bump version

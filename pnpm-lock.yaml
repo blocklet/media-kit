@@ -247,18 +247,6 @@ importers:
 
   packages/uploader:
     dependencies:
-      '@abtnode/cron':
-        specifier: 1.16.33-beta-20241001-015316-119b726d
-        version: 1.16.33-beta-20241001-015316-119b726d
-      '@blocklet/constant':
-        specifier: 1.16.33-beta-20241001-015316-119b726d
-        version: 1.16.33-beta-20241001-015316-119b726d
-      '@blocklet/logger':
-        specifier: 1.16.33-beta-20241001-015316-119b726d
-        version: 1.16.33-beta-20241001-015316-119b726d
-      '@blocklet/sdk':
-        specifier: 1.16.33-beta-20241001-015316-119b726d
-        version: 1.16.33-beta-20241001-015316-119b726d
       '@blocklet/ui-react':
         specifier: ^2.10.48
         version: 2.10.48(gvmucsr4dqqyi5mzaqlotw4exa)
@@ -340,9 +328,6 @@ importers:
       mime-types:
         specifier: ^2.1.35
         version: 2.1.35
-      p-queue:
-        specifier: 6.6.2
-        version: 6.6.2
       preact:
         specifier: 10.20.1
         version: 10.20.1
