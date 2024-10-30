@@ -1,3 +1,7 @@
+## 0.11.51 (October 30, 2024)
+
+- chore: re-bump version
+
 ## 0.11.50 (October 30, 2024)
 
 - chore: split @blocklet/uploader lib
