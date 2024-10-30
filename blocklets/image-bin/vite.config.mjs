@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: [
           {
-            find: '@blocklet/uploader/react',
+            find: '@blocklet/uploader',
             replacement: join(__dirname, '../../packages/uploader/src/react.ts'),
           },
           {

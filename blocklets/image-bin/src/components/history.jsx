@@ -33,7 +33,7 @@ import CreateFolder from './create-folder';
 
 const UploaderTrigger = lazy(() =>
   // eslint-disable-next-line import/no-unresolved
-  import('@blocklet/uploader/react').then((res) => ({ default: res.UploaderTrigger }))
+  import('@blocklet/uploader').then((res) => ({ default: res.UploaderTrigger }))
 );
 
 const borderRadius = '4px !important';

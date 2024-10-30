@@ -4,7 +4,7 @@
 
 ## Package Structure
 
-The package is composed of both frontend and backend components. The frontend code resides in the `react` folder, while the backend code can be found in the `middlewares` folder.
+The package is composed of both frontend and backend components. The frontend code resides in the `react` folder.
 
 ## Development
 
@@ -45,7 +45,7 @@ pnpm run dev
 import { lazy } from 'react';
 
 // eslint-disable-next-line import/no-unresolved
-const UploaderComponent = lazy(() => import('@blocklet/uploader/react').then((res) => ({ default: res.Uploader })));
+const UploaderComponent = lazy(() => import('@blocklet/uploader').then((res) => ({ default: res.Uploader })));
 
 <UploaderComponent
   key="uploader"
@@ -68,63 +68,6 @@ const UploaderComponent = lazy(() => import('@blocklet/uploader/react').then((re
     disableAutoPrefix: false,
   }}
 />;
-```
-
-## Backend Example
-
-```javascript
-const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader/middlewares');
-
-// init uploader server
-const localStorageServer = initLocalStorageServer({
-  path: env.uploadDir,
-  express,
-  onUploadFinish: async (req, res, uploadMetadata) => {
-    const {
-      id: filename,
-      size,
-      metadata: { filename: originalname, filetype: mimetype },
-    } = uploadMetadata;
-
-    const obj = new URL(env.appUrl);
-    obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-    obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
-
-    const doc = await Upload.insert({
-      mimetype,
-      originalname,
-      filename,
-      size,
-      remark: req.body.remark || '',
-      tags: (req.body.tags || '')
-        .split(',')
-        .map((x) => x.trim())
-        .filter(Boolean),
-      folderId: req.componentDid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: req.user.did,
-      updatedBy: req.user.did,
-    });
-
-    const resData = { url: obj.href, ...doc };
-
-    return resData;
-  },
-});
-
-router.use('/uploads', user, auth, ensureComponentDid, localStorageServer.handle);
-
-// if you need to load file from remote
-// companion
-const companion = initCompanion({
-  path: env.uploadDir,
-  express,
-  providerOptions: env.providerOptions,
-  uploadUrls: [env.appUrl],
-});
-
-router.use('/companion', user, auth, ensureComponentDid, companion.handle);
 ```
 
 ## License

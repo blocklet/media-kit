@@ -1,0 +1,13 @@
+diff --git a/lib/middlewares/component.js b/lib/middlewares/component.js
+index 86742f6a557f014f858e91bf5912cafa1f393975..bc29e096fd52cac06cf6f8598496b0a0ca47e534 100644
+--- a/lib/middlewares/component.js
++++ b/lib/middlewares/component.js
+@@ -37,7 +37,7 @@ const latestFn = (req) => {
+ const verifySig = (req, res, next) => {
+     try {
+         const sig = req.get('x-component-sig');
+-        const sigVersion = req.get('x-component-sig-version');
++        const sigVersion = req.get('x-component-sig-version') || constant_1.SIG_VERSION.V0;
+         if (!sig) {
+             return res.status(400).json({ error: 'Bad Request' });
+         }

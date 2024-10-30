@@ -1,3 +1,19 @@
+## 0.11.52 (October 30, 2024)
+
+- chore: upgrade @blocklet/sdk
+
+## 0.11.51 (October 30, 2024)
+
+- chore: re-bump version
+
+## 0.11.50 (October 30, 2024)
+
+- chore: split @blocklet/uploader lib
+
+## 0.11.49 (October 29, 2024)
+
+- chore: update deps
+
 ## 0.11.48 (October 22, 2024)
 
 - chore: update deps

@@ -10,11 +10,11 @@ import { useUploadContext } from '../contexts/upload';
 
 const UploaderTrigger = lazy(() =>
   // eslint-disable-next-line import/no-unresolved
-  import('@blocklet/uploader/react').then((res) => ({ default: res.UploaderTrigger }))
+  import('@blocklet/uploader').then((res) => ({ default: res.UploaderTrigger }))
 );
 const UploaderProvider = lazy(() =>
   // eslint-disable-next-line import/no-unresolved
-  import('@blocklet/uploader/react').then((res) => ({ default: res.UploaderProvider }))
+  import('@blocklet/uploader').then((res) => ({ default: res.UploaderProvider }))
 );
 
 const obj = new window.URL(window.location.origin);
@@ -77,6 +77,17 @@ function UploaderProviderWrapper({ children }) {
           // target: document.body, // use body as drop target
         }
       }
+      // only for debug
+      // imageEditorProps={{
+      //   cropperOptions: {
+      //     aspectRatio: 16 / 9,
+      //   },
+      //   actions: {
+      //     cropSquare: false,
+      //     cropWidescreen: false,
+      //     cropWidescreenVertical: false,
+      //   },
+      // }}
       apiPathProps={{
         uploader: '/api/uploads',
         companion: '/api/companion',

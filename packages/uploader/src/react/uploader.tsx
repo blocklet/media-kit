@@ -11,7 +11,6 @@ import {
   useEffect,
   useImperativeHandle,
   lazy,
-  useLayoutEffect,
 } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
@@ -82,10 +81,16 @@ const uploaderDashboardId = 'uploader-dashboard';
 
 const isDebug = localStorage.getItem('uppy_debug');
 
+const getCompanionHeaders = () => {
+  return Cookie.get('x-csrf-token') ? { 'x-csrf-token': Cookie.get('x-csrf-token') } : {};
+};
+
 const getPluginList = (props: any) => {
-  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps, theme } = props;
+  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps, imageEditorProps = {}, theme } = props;
 
   const { companionUrl } = getUploaderEndpoint(apiPathProps);
+
+  const companionHeaders = getCompanionHeaders();
 
   const getAIImageAPI = async (payload: any) => {
     const result = await mediaKitApi.post('/api/image/generations', payload);
@@ -104,6 +109,8 @@ const getPluginList = (props: any) => {
       plugin: ImageEditor, // use image editor
       options: {
         quality: 1,
+        // docs: https://uppy.io/docs/image-editor/#options
+        ...imageEditorProps,
       },
       alwayUse: true,
     },
@@ -130,6 +137,7 @@ const getPluginList = (props: any) => {
         plugin: AIImage,
         options: {
           companionUrl,
+          companionHeaders,
         },
         onShowPanel: (ref: any) => {
           function renderAIImageShowPanel() {
@@ -181,6 +189,7 @@ const getPluginList = (props: any) => {
       plugin: ImportFromUrl,
       options: {
         companionUrl,
+        companionHeaders,
       },
     },
     {
@@ -203,7 +212,7 @@ const getPluginList = (props: any) => {
         plugin: Unsplash,
         options: {
           companionUrl,
-          companionHeaders: {},
+          companionHeaders,
           companionCookiesRule: 'same-origin',
         },
       },
@@ -212,6 +221,8 @@ const getPluginList = (props: any) => {
       plugin: PrepareUpload,
       options: {
         companionUrl,
+        companionHeaders,
+        cropperOptions: imageEditorProps?.cropperOptions || null,
       },
       alwayUse: true,
     },
@@ -880,7 +891,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                 width: '70%',
               },
             },
-            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done':
+            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done, & .uppy-DashboardContent-save, & .uppy-StatusBar-actionBtn--upload':
               {
                 color: `${theme?.palette?.primary?.main}`,
                 transition: 'all 0.3s ease-in-out',

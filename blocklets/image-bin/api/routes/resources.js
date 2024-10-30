@@ -3,7 +3,7 @@ const path = require('path');
 const express = require('express');
 const toUpper = require('lodash/toUpper');
 const flatten = require('lodash/flatten');
-const { initStaticResourceMiddleware } = require('@blocklet/uploader/middlewares');
+const { initStaticResourceMiddleware } = require('@blocklet/uploader-server');
 const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/component');
 
 const env = require('../libs/env');
