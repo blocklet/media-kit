@@ -1,3 +1,7 @@
+## 0.11.52 (October 30, 2024)
+
+- chore: upgrade @blocklet/sdk
+
 ## 0.11.51 (October 30, 2024)
 
 - chore: re-bump version
