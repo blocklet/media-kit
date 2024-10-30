@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.1.47",
+  "version": "0.1.48",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -11,11 +11,6 @@
       "require": "./lib/index.js",
       "import": "./es/index.js",
       "types": "./lib/index.d.ts"
-    },
-    "./middlewares": {
-      "require": "./lib/middlewares.js",
-      "import": "./es/middlewares.js",
-      "types": "./lib/middlewares.d.ts"
     },
     "./react": {
       "require": "./lib/react.js",
@@ -53,9 +48,6 @@
     "@blocklet/ui-react": "^2.10.48",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
-    "@tus/file-store": "1.0.0",
-    "@tus/server": "1.0.0",
-    "@uppy/companion": "4.15.1",
     "@uppy/core": "3.13.1",
     "@uppy/dashboard": "3.9.1",
     "@uppy/drag-drop": "3.1.1",
@@ -74,8 +66,6 @@
     "@uppy/webcam": "3.4.2",
     "ahooks": "^3.7.11",
     "axios": "^1.6.8",
-    "body-parser": "^1.20.2",
-    "crypto": "^1.0.1",
     "dompurify": "^3.1.6",
     "fflate": "^0.8.2",
     "js-cookie": "^3.0.5",
@@ -90,9 +80,6 @@
     "xbytes": "^1.9.1"
   },
   "peerDependencies": {
-    "@tus/file-store": "1.0.0",
-    "@tus/server": "1.0.0",
-    "@uppy/companion": "4.15.1",
     "@uppy/core": "3.13.1",
     "@uppy/dashboard": "3.9.1",
     "@uppy/drag-drop": "3.1.1",

@@ -1,0 +1,77 @@
+{
+  "name": "@blocklet/uploader-server",
+  "version": "0.1.48",
+  "description": "blocklet upload server",
+  "publishConfig": {
+    "access": "public"
+  },
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "import": "./es/index.js",
+      "types": "./lib/index.d.ts"
+    },
+    "./middlewares": {
+      "require": "./lib/middlewares.js",
+      "import": "./es/middlewares.js",
+      "types": "./lib/middlewares.d.ts"
+    },
+    "./lib/": "./lib/",
+    "./es/": "./es/"
+  },
+  "files": [
+    "lib",
+    "es",
+    "*.d.ts"
+  ],
+  "scripts": {
+    "coverage": "pnpm test -- --coverage",
+    "test": "vitest tests",
+    "build": "unbuild",
+    "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' --ignore 'es/*' ",
+    "dev": "pnpm run build:watch",
+    "prepublish": "pnpm run build",
+    "prebuild:dep": "pnpm run build"
+  },
+  "keywords": [
+    "blocklet",
+    "uploader",
+    "server"
+  ],
+  "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
+  "license": "ISC",
+  "peerDependencies": {
+    "@tus/file-store": "1.0.0",
+    "@tus/server": "1.0.0",
+    "@uppy/companion": "4.15.1"
+  },
+  "dependencies": {
+    "@abtnode/cron": "1.16.33-beta-20241001-015316-119b726d",
+    "@blocklet/constant": "1.16.33-beta-20241001-015316-119b726d",
+    "@blocklet/logger": "1.16.33-beta-20241001-015316-119b726d",
+    "@blocklet/sdk": "1.16.33-beta-20241001-015316-119b726d",
+    "@tus/file-store": "1.0.0",
+    "@tus/server": "1.0.0",
+    "@uppy/companion": "4.15.1",
+    "body-parser": "^1.20.2",
+    "express-session": "1.17.3",
+    "mime-types": "^2.1.35",
+    "p-queue": "^6.6.2",
+    "ufo": "^1.5.3",
+    "url-join": "^4.0.1",
+    "crypto": "^1.0.1"
+  },
+  "devDependencies": {
+    "@arcblock/eslint-config-ts": "^0.2.4",
+    "@types/express": "^4.17.21",
+    "@types/mime-types": "^2.1.4",
+    "@types/node": "^20.12.7",
+    "@types/url-join": "^4.0.3",
+    "@vitest/coverage-c8": "^0.33.0",
+    "typescript": "^5.4.5",
+    "unbuild": "^2.0.0",
+    "vitest": "^1.5.0",
+    "vitest-fetch-mock": "^0.2.2"
+  }
+}
