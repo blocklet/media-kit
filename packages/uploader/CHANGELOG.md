@@ -1,3 +1,7 @@
+## 0.1.51 (October 31, 2024)
+
+- chore: polish dep bundle size 
+
 ## 0.1.50 (October 30, 2024)
 
 - chore: remove useless deps

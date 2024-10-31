@@ -1,11 +1,11 @@
 import { lazy } from 'react';
 
-const Lottie = lazy(() => import('lottie-react'));
+const Lottie = lazy(() => import('@lottiefiles/react-lottie-player').then((mod) => ({ default: mod.Player })));
 
 export interface LottieProps {
   src: any;
 }
 
 export default function LottieComp({ src }: LottieProps) {
-  return <Lottie animationData={src} loop />;
+  return <Lottie src={src} loop autoplay />;
 }

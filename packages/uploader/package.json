@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.1.50",
+  "version": "0.1.51",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -42,6 +42,7 @@
   "license": "ISC",
   "dependencies": {
     "@blocklet/ui-react": "^2.10.48",
+    "@lottiefiles/react-lottie-player": "^3.5.4",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@uppy/core": "3.13.1",
@@ -66,7 +67,6 @@
     "fflate": "^0.8.2",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
-    "lottie-react": "^2.4.0",
     "mime-types": "^2.1.35",
     "preact": "10.20.1",
     "react-player": "^2.16.0",
