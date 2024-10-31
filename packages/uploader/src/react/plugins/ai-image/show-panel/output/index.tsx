@@ -15,7 +15,7 @@ import Lottie from './lottie';
 import lottieJsonErrorUrl from './lottie-error.json';
 import lottieJsonLoadingUrl from './lottie-loading.json';
 import lottieJsonWelcomeUrl from './lottie-welcome.json';
-import { keyBy } from 'lodash';
+import keyBy from 'lodash/keyBy';
 
 export default function Output({
   options,
