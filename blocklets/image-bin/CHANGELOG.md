@@ -1,3 +1,7 @@
+## 0.11.54 (November 01, 2024)
+
+- chore: polish blocklet screenshots
+
 ## 0.11.53 (October 31, 2024)
 
 - chore: update @blocklet/sdk
