@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.11.54
+version: 0.11.55
 title: Media Kit
 description: A simple media assets upload and hosting blocklet
 keywords:
@@ -88,8 +88,9 @@ capabilities:
   component: true
   navigation: true
 screenshots:
-  - 1955571c0f0124a68fac73ec3783d756.png
-  - 3166e6cd07521ea0fb4c9fa8273c9bae.png
+  - 3cabb4ca41133b1c50e037feeb190d2d.jpeg
+  - 2799c67ab5f052e985593d6b96a24496.png
+  - 808f0744b5954530f867e4146fca0295.png
 components: []
 navigation:
   - title:
