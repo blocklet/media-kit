@@ -25,7 +25,7 @@ interfaces:
   - type: web
     name: publicUrl
     path: /
-    prefix: "*"
+    prefix: '*'
     port: BLOCKLET_PORT
     protocol: http
     cacheable:
@@ -51,16 +51,16 @@ interfaces:
 community: https://community.arcblock.io
 documentation: https://developer.blocklet.io
 homepage: https://store.blocklet.dev
-license: ""
+license: ''
 payment:
   price: []
   share: []
 timeout:
   start: 60
 requirements:
-  server: ">=1.6.29"
-  os: "*"
-  cpu: "*"
+  server: '>=1.6.29'
+  os: '*'
+  cpu: '*'
 scripts:
   preStart: node api/hooks/pre-start.js
   dev: npm run start
@@ -68,19 +68,19 @@ environments:
   - name: CDN_HOST
     description: Use CDN Host for image load speed
     required: false
-    default: ""
+    default: ''
     secure: false
     shared: true
   - name: UNSPLASH_KEY
     description: The Unsplash API key, you can get on https://unsplash.com/developers
     required: false
-    default: ""
+    default: ''
     secure: false
     shared: true
   - name: UNSPLASH_SECRET
     description: The Unsplash API secret, you can get on https://unsplash.com/developers
     required: false
-    default: ""
+    default: ''
     secure: true
     shared: false
 capabilities:
@@ -88,9 +88,10 @@ capabilities:
   component: true
   navigation: true
 screenshots:
-  - 3cabb4ca41133b1c50e037feeb190d2d.jpeg
   - 2799c67ab5f052e985593d6b96a24496.png
-  - 808f0744b5954530f867e4146fca0295.png
+  - 247a6ac7d7bec943e74986bcaac651bd.png
+  - 59f13e4e6619cff2d177ce0f7fa09fd3.png
+  - 823a17847b574e2bdafb1e442726946e.png
 components: []
 navigation:
   - title:
