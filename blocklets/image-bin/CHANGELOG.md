@@ -1,3 +1,7 @@
+## 0.11.55 (November 11, 2024)
+
+- chore: polish screenshots
+
 ## 0.11.54 (November 01, 2024)
 
 - chore: polish blocklet screenshots
