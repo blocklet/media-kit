@@ -1,3 +1,7 @@
+## 0.11.56 (November 18, 2024)
+
+- fix: add img tag alt attribute
+
 ## 0.11.55 (November 11, 2024)
 
 - chore: polish screenshots
