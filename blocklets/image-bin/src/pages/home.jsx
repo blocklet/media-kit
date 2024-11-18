@@ -33,7 +33,7 @@ export default function Home() {
       <Box mx="auto" maxWidth={800}>
         {blocklet && (
           <Stack alignItems="center" gap={2}>
-            <Box component="img" src={blocklet.appLogo} width={80} />
+            <Box component="img" src={blocklet.appLogo} alt="" width={80} />
             <Typography variant="h4">{blocklet.appName}</Typography>
             <Typography variant="caption" component="div">
               v{blocklet.version}
