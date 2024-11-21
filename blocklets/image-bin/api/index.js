@@ -8,6 +8,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
+const { initProxyToMediaKitUploadsMiddleware } = require('@blocklet/uploader-server');
 const config = require('@blocklet/sdk/lib/config');
 const { xss } = require('@blocklet/xss');
 const { csrf } = require('@blocklet/sdk/lib/middlewares');
@@ -71,6 +72,13 @@ app.use(
   },
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
   resources.staticResourceMiddleware
+);
+
+app.use(
+  '/proxy-to-uploads',
+  initProxyToMediaKitUploadsMiddleware({
+    express,
+  })
 );
 
 const router = express.Router();

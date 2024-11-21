@@ -1,3 +1,7 @@
+## 0.11.57 (November 21, 2024)
+
+- chore: polish initProxyToMediaKitUploadsMiddleware logic
+
 ## 0.11.56 (November 18, 2024)
 
 - fix: add img tag alt attribute
