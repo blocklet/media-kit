@@ -1,4 +1,4 @@
-# @blocklet/uploader-server-server
+# @blocklet/uploader-server
 
 **@blocklet/uploader-server** is a package that integrates the **uppy** service to provide universal upload capability for blocklets. For more information about uppy, refer to the [official documentation](https://uppy.io/docs/quick-start/).
 

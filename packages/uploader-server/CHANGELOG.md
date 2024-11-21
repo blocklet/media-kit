@@ -1,3 +1,7 @@
+## 0.1.53 (November 21, 2024)
+
+- fix: remove README typo
+
 ## 0.1.52 (November 21, 2024)
 
 - chore: update deps
