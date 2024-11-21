@@ -1,7 +1,11 @@
 const { existsSync } = require('fs');
-const { join } = require('path');
+const { join, basename } = require('path');
 const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');
+const httpProxy = require('http-proxy');
+const joinUrl = require('url-join');
+
+const proxy = httpProxy.createProxyServer();
 
 const logger = console;
 
@@ -127,16 +131,28 @@ export const getCanUseResources = () => canUseResources;
 
 export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} as any) => {
   return (req: any, res: any, next: Function) => {
-    if (!mediaKitInfo?.uploadsDir) {
+    if (!mediaKitInfo?.webEndpoint) {
       return next();
     }
 
-    return express.static(mediaKitInfo.uploadsDir, {
-      maxAge: '365d',
-      immutable: true,
-      index: false,
-      // fallthrough: false,
-      ...options,
-    })(req, res, next);
+    // Rewrite the URL to point to media kit /uploads/
+    // eg. https://did-domain/image-bin/uploads2/123.png -> http://127.0.0.1:3000/uploads/123.png
+    const filename = basename(req.url);
+    req.url = joinUrl('/uploads/', filename);
+
+    // Proxy requests to mediaKit's webEndpoint
+    proxy.web(
+      req,
+      res,
+      {
+        target: mediaKitInfo.webEndpoint,
+        changeOrigin: true,
+        ...options,
+      },
+      (err: any) => {
+        console.error('Proxy error:', err);
+        res.status(502).end();
+      }
+    );
   };
 };

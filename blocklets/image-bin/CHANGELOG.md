@@ -1,3 +1,15 @@
+## 0.11.58 (November 21, 2024)
+
+- chore: update deps
+
+## 0.11.57 (November 21, 2024)
+
+- chore: polish initProxyToMediaKitUploadsMiddleware logic
+
+## 0.11.56 (November 18, 2024)
+
+- fix: add img tag alt attribute
+
 ## 0.11.55 (November 11, 2024)
 
 - chore: polish screenshots

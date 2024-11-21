@@ -1,3 +1,11 @@
+## 0.1.52 (November 21, 2024)
+
+- chore: update deps
+
+## 0.1.51 (November 21, 2024)
+
+- chore: polish initProxyToMediaKitUploadsMiddleware logic
+
 ## 0.1.50 (October 30, 2024)
 
 - chore: remove useless deps
