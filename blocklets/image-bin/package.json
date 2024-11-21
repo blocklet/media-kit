@@ -93,7 +93,8 @@
     "swiper": "^9.4.1",
     "timeago.js": "^4.0.2",
     "vite": "^5.2.9",
-    "vite-plugin-blocklet": "^0.7.9",
+    "vite-plugin-blocklet": "^0.9.13",
+    "vite-plugin-svgr": "^4.3.0",
     "wolfy87-eventemitter": "^5.2.9"
   }
 }
