@@ -57,7 +57,7 @@
       },
       "checkReferer": {
         "type": "boolean",
-        "title": "Hotlink Protection",
+        "title": "Hotlink Protection (Beta)",
         "x-decorator": "FormItem",
         "x-component": "Switch",
         "x-validator": [],

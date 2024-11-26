@@ -26,10 +26,11 @@ export async function getTrustedDomainsCache({
   forceUpdate = false,
   ttl = DEFAULT_TTL,
 }: { forceUpdate?: boolean; ttl?: number } = {}) {
+  //  @FIXME: use sdk to get trustedDomains
   // check if the getTrustedDomains can be called
-  if (typeof authClient.getTrustedDomains !== 'function') {
-    return null;
-  }
+  //   if (typeof authClient.getTrustedDomains !== 'function') {
+  //     return null;
+  //   }
 
   const now = Date.now();
 
