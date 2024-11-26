@@ -2,6 +2,7 @@ import axios from 'axios';
 import config from '@blocklet/sdk/lib/config';
 import path from 'path';
 import joinUrl from 'url-join';
+import { isbot } from 'isbot';
 // @ts-ignore
 import AuthService from '@blocklet/sdk/service/auth';
 
@@ -53,6 +54,11 @@ export async function getTrustedDomainsCache({
 }
 
 export async function checkTrustedReferer(req: any, res: any, next?: Function) {
+  // Allow OpenGraph crawlers by checking user agent
+  if (isbot(req.get('user-agent'))) {
+    return next?.();
+  }
+
   // Check referer
   const referer = req.headers.referer;
   if (!referer) {

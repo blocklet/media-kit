@@ -61,6 +61,7 @@
     "crypto": "^1.0.1",
     "express-session": "1.17.3",
     "http-proxy": "^1.18.1",
+    "isbot": "^5.1.17",
     "mime-types": "^2.1.35",
     "p-queue": "^6.6.2",
     "ufo": "^1.5.3",
