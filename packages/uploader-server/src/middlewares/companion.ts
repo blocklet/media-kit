@@ -2,8 +2,8 @@
 const companion = require('@uppy/companion');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const axios = require('axios');
 const crypto = require('crypto');
+const { checkTrustedReferer, proxyImageDownload } = require('../utils');
 
 const secret = crypto.randomBytes(32).toString('hex');
 
@@ -28,7 +28,7 @@ export function initCompanion({
   app.use(bodyParser.json());
   app.use(session({ secret }));
 
-  app.use('/proxy', proxyImageDownload);
+  app.use('/proxy', checkTrustedReferer, proxyImageDownload);
 
   let dynamicProviderOptions = providerOptions;
 
@@ -80,44 +80,4 @@ export function initCompanion({
   };
 
   return newCompanion;
-}
-
-export async function proxyImageDownload(req: any, res: any, next?: Function) {
-  let { url, responseType = 'stream' } = {
-    ...req.query,
-    ...req.body,
-  } as {
-    url: string;
-    responseType: string;
-  };
-
-  if (url) {
-    // fix chinese url bug
-    url = encodeURI(url);
-    try {
-      const { headers, data, status } = await axios.get(url, {
-        responseType,
-      });
-
-      if (data && status >= 200 && status < 302) {
-        res.setHeader('Content-Type', headers['content-type']);
-        try {
-        } catch (error) {}
-        if (responseType === 'stream') {
-          data.pipe(res);
-        } else if (responseType === 'arraybuffer') {
-          res.end(data?.toString?.('binary'), 'binary'); // format to binary
-        } else {
-          res.send(data);
-        }
-      } else {
-        throw new Error('download image error');
-      }
-    } catch (err) {
-      console.error('Proxy url failed: ', err);
-      res.status(500).send('Proxy url failed');
-    }
-  } else {
-    res.status(500).send('Parameter "url" is required');
-  }
 }

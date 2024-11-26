@@ -1,3 +1,7 @@
+## 0.1.54 (November 26, 2024)
+
+- chore: enhanced security against xss attacks
+
 ## 0.1.53 (November 21, 2024)
 
 - fix: remove README typo

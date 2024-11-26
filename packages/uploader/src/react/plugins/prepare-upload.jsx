@@ -2,7 +2,7 @@
 import { UIPlugin } from '@uppy/core';
 import crypto from 'crypto';
 import DOMPurify from 'dompurify';
-import { getObjectURL, getExt, blobToFile, getDownloadUrl, api } from '../../utils';
+import { getObjectURL, getExt, blobToFile, getDownloadUrl, api, isSvgFile } from '../../utils';
 import { unzipSync, decompressSync } from 'fflate';
 import mime from 'mime-types';
 
@@ -92,8 +92,11 @@ class PrepareUpload extends UIPlugin {
         });
       }
 
+      // type is image/svg or file content with <svg tag
+      const isSvg = await isSvgFile(file);
+
       // clean svg file xss attack
-      if (file.type?.includes('image/svg')) {
+      if (isSvg) {
         // get real time file
         const { data, name, type } = this.uppy.getFile(id);
         const fileText = await data.text();
@@ -109,6 +112,7 @@ class PrepareUpload extends UIPlugin {
             ...this.uppy.getFile(id),
             data: blobFile,
           });
+          console.info('clean svg file xss attack', { name, originalFile: file.data.text(), cleanFile });
         }
       }
     }
@@ -297,8 +301,18 @@ class PrepareUpload extends UIPlugin {
       const url = getDownloadUrl(preview || remote?.body?.url);
       // retry 3 times
       if (errorCount >= 3) {
+        // set file error
+        this.uppy.setFileState(id, {
+          error: this.i18n('downloadRemoteFileFailure'),
+          meta: {
+            ...meta,
+            name: this.i18n('downloadRemoteFileFailure'),
+          },
+        });
+
         throw new Error('Download remote file failure');
       }
+
       this.uppy.setFileState(id, {
         isLoading: true,
         isDownloading: true,
@@ -315,7 +329,6 @@ class PrepareUpload extends UIPlugin {
           responseType: 'blob',
           params: {
             url,
-            // responseType: 'stream',
           },
         })
         .then((response) => {

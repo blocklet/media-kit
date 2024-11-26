@@ -14,6 +14,7 @@ const { isValid: isValidDID } = require('@arcblock/did');
 const xbytes = require('xbytes');
 const uniq = require('lodash/uniq');
 const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader-server');
+const { checkTrustedReferer } = require('@blocklet/uploader-server');
 const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
 const { getResourceComponents } = require('./resources');
@@ -210,7 +211,7 @@ const localStorageServer = initLocalStorageServer({
   // },
 });
 
-router.use('/uploads', user, auth, ensureFolderId(), localStorageServer.handle);
+router.use('/uploads', checkTrustedReferer, user, auth, ensureFolderId(), localStorageServer.handle);
 
 const defaultCompanionOptions = {
   path: env.uploadDir,

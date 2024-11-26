@@ -1,10 +1,15 @@
+## 0.1.53 (November 26, 2024)
+
+- chore: enhanced security against xss attacks
+- chore: add underline to uploader button
+
 ## 0.1.52 (November 21, 2024)
 
 - chore: update deps
 
 ## 0.1.51 (October 31, 2024)
 
-- chore: polish dep bundle size 
+- chore: polish dep bundle size
 
 ## 0.1.50 (October 30, 2024)
 

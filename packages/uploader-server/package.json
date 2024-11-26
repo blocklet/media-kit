@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader-server",
-  "version": "0.1.53",
+  "version": "0.1.54",
   "description": "blocklet upload server",
   "publishConfig": {
     "access": "public"
@@ -17,8 +17,11 @@
       "import": "./es/middlewares.js",
       "types": "./lib/middlewares.d.ts"
     },
-    "./lib/": "./lib/",
-    "./es/": "./es/"
+    "./utils": {
+      "require": "./lib/utils.js",
+      "import": "./es/utils.js",
+      "types": "./lib/utils.d.ts"
+    }
   },
   "files": [
     "lib",
@@ -47,10 +50,10 @@
     "@uppy/companion": "4.15.1"
   },
   "dependencies": {
-    "@abtnode/cron": "^1.16.33",
-    "@blocklet/constant": "^1.16.33",
-    "@blocklet/logger": "^1.16.33",
-    "@blocklet/sdk": "^1.16.33",
+    "@abtnode/cron": "1.16.34-beta-20241126-104450-d60e25c2",
+    "@blocklet/constant": "1.16.34-beta-20241126-104450-d60e25c2",
+    "@blocklet/logger": "1.16.34-beta-20241126-104450-d60e25c2",
+    "@blocklet/sdk": "1.16.34-beta-20241126-104450-d60e25c2",
     "@tus/file-store": "1.0.0",
     "@tus/server": "1.0.0",
     "@uppy/companion": "4.15.1",
@@ -66,6 +69,7 @@
   "devDependencies": {
     "@arcblock/eslint-config-ts": "^0.2.4",
     "@types/express": "^4.17.21",
+    "@types/http-proxy": "^1.17.15",
     "@types/mime-types": "^2.1.4",
     "@types/node": "^20.12.7",
     "@types/url-join": "^4.0.3",
