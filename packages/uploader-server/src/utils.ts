@@ -54,8 +54,8 @@ export async function getTrustedDomainsCache({
 }
 
 export async function checkTrustedReferer(req: any, res: any, next?: Function) {
-  // Allow OpenGraph crawlers by checking user agent
-  if (isbot(req.get('user-agent'))) {
+  // Allow OpenGraph crawlers by checking user agent, and allow login user
+  if (isbot(req.get('user-agent')) || req.user?.did) {
     return next?.();
   }
 
