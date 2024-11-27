@@ -4,6 +4,7 @@ const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');
 const httpProxy = require('http-proxy');
 const joinUrl = require('url-join');
+const { setPDFDownloadHeader } = require('../utils');
 
 const proxy = httpProxy.createProxyServer();
 
@@ -139,6 +140,9 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
     // eg. https://did-domain/image-bin/uploads2/123.png -> http://127.0.0.1:3000/uploads/123.png
     const filename = basename(req.url);
     req.url = joinUrl('/uploads/', filename);
+
+    // set pdf download header if it's a pdf
+    setPDFDownloadHeader(req, res);
 
     // Proxy requests to mediaKit's webEndpoint
     proxy.web(
