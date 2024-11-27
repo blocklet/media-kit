@@ -1,3 +1,7 @@
+## 0.11.60 (November 27, 2024)
+
+- chore: polish checkReferer logic
+
 ## 0.11.59 (November 26, 2024)
 
 - chore: enhanced security against xss attacks
