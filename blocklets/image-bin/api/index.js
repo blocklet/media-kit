@@ -12,6 +12,7 @@ const { initProxyToMediaKitUploadsMiddleware } = require('@blocklet/uploader-ser
 const config = require('@blocklet/sdk/lib/config');
 const { xss } = require('@blocklet/xss');
 const { csrf } = require('@blocklet/sdk/lib/middlewares');
+const { setPDFDownloadHeader, checkTrustedReferer } = require('@blocklet/uploader-server');
 const Upload = require('./states/upload');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
@@ -41,6 +42,13 @@ app.use(csrf());
 
 app.use(
   '/uploads',
+  (req, res, next) => {
+    if (config.env.preferences?.checkReferer) {
+      checkTrustedReferer(req, res, next);
+      return;
+    }
+    next();
+  },
   async (req, res, next) => {
     // fix missing ext
     const urlPath = req.url;
@@ -64,10 +72,14 @@ app.use(
       const { filename } = req.query;
       if (filename) {
         res.attachment(filename);
+      } else {
+        // set pdf download header if it's a pdf
+        setPDFDownloadHeader(req, res);
       }
     } catch (error) {
       // ignore error
     }
+
     next();
   },
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),

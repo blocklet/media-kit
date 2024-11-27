@@ -900,6 +900,9 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                   filter: 'brightness(1.2)',
                 },
               },
+            '& .uppy-Dashboard-browse': {
+              textDecoration: 'underline !important',
+            },
             '& .uppy-c-btn-primary': {
               backgroundColor: `${theme?.palette?.primary?.main} !important`,
               transition: 'all 0.3s ease-in-out',

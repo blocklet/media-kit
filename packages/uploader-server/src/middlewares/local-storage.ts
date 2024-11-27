@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const mime = require('mime-types');
 const joinUrlLib = require('url-join');
 const { default: queue } = require('p-queue');
+const { setPDFDownloadHeader } = require('../utils');
 
 const validFilePathInDirPath = (dirPath: string, filePath: string) => {
   const fileName = path.basename(filePath);
@@ -308,6 +309,9 @@ export function setHeaders(req: any, res: any, next?: Function) {
     if (contentType) {
       res.setHeader('Content-Type', contentType);
     }
+
+    // set pdf download header if it's a pdf
+    setPDFDownloadHeader(req, res);
   }
 
   next?.();

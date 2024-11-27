@@ -1,3 +1,7 @@
+## 0.11.59 (November 26, 2024)
+
+- chore: enhanced security against xss attacks
+
 ## 0.11.58 (November 21, 2024)
 
 - chore: update deps
