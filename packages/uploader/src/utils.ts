@@ -436,3 +436,28 @@ export function parseStringToDot(str: any) {
   if (typeof str !== 'string') return '';
   return str && str.length > 12 ? str.substring(0, 7) + '...' + str.substring(str.length - 5) : str;
 }
+
+export const isSvgFile = async (file: any) => {
+  // Check MIME type
+  if (file.type?.toLowerCase().includes('svg')) return true;
+
+  // Check file extension
+  if (file.name?.toLowerCase().endsWith('.svg')) return true;
+
+  // Check file content
+  try {
+    const chunkSize = 1024 * 512; // 512 KB
+    // Only read chunkSize bytes to check SVG signature
+    const blob = file.data?.slice(0, chunkSize);
+    if (!blob) return false;
+
+    const content = await blob.text();
+    if (!content) return false;
+
+    // Check for SVG signature in content
+    const svgRegex = /<svg[^>]*?(?:>|\/>)|<\?xml[^>]*>\s*<svg[^>]*?(?:>|\/?>)/i;
+    return svgRegex.test(content);
+  } catch (e) {
+    return false;
+  }
+};
