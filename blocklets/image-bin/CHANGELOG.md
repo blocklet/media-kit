@@ -1,3 +1,7 @@
+## 0.11.61 (November 28, 2024)
+
+- chore: update deps
+
 ## 0.11.60 (November 27, 2024)
 
 - chore: polish checkReferer logic
