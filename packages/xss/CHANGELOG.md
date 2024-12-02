@@ -1,3 +1,7 @@
+## 0.1.14 (December 02, 2024)
+
+- chore: polish ci node version
+
 ## 0.1.13 (December 02, 2024)
 
 - chore: update sdk lib version
