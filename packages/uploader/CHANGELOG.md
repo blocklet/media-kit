@@ -1,3 +1,7 @@
+## 0.1.54 (December 02, 2024)
+
+- chore: update sdk lib version
+
 ## 0.1.53 (November 26, 2024)
 
 - chore: enhanced security against xss attacks

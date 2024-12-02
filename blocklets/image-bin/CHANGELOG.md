@@ -1,3 +1,7 @@
+## 0.11.62 (December 02, 2024)
+
+- chore: update sdk lib version
+
 ## 0.11.61 (November 28, 2024)
 
 - chore: update deps
