@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader-server",
-  "version": "0.1.58",
+  "version": "0.1.59",
   "description": "blocklet upload server",
   "publishConfig": {
     "access": "public"
@@ -16,11 +16,6 @@
       "require": "./lib/middlewares.js",
       "import": "./es/middlewares.js",
       "types": "./lib/middlewares.d.ts"
-    },
-    "./utils": {
-      "require": "./lib/utils.js",
-      "import": "./es/utils.js",
-      "types": "./lib/utils.d.ts"
     }
   },
   "files": [

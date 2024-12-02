@@ -1,3 +1,7 @@
+## 0.1.59 (December 02, 2024)
+
+- fix: polish @blocklet/uploader-server import bug
+
 ## 0.1.58 (December 02, 2024)
 
 - chore: polish ci node version
