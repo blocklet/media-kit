@@ -1,3 +1,7 @@
+## 0.11.65 (December 03, 2024)
+
+- fix: resolve the bug of selecting folder miss relativePath
+
 ## 0.11.64 (December 02, 2024)
 
 - fix: polish @blocklet/uploader-server import bug

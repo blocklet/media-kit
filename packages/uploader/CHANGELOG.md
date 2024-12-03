@@ -1,3 +1,7 @@
+## 0.1.56 (December 03, 2024)
+
+- fix: resolve the bug of selecting folder miss relativePath
+
 ## 0.1.55 (December 02, 2024)
 
 - chore: polish ci node version
