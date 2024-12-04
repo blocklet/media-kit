@@ -1,3 +1,7 @@
+## 0.1.61 (December 05, 2024)
+
+- chore: bump deps and use built-in crypto
+
 ## 0.1.60 (December 04, 2024)
 
 - fix: use process.env instead of sdk to avoid server crash
