@@ -38,9 +38,9 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did": "^1.18.152",
-    "@arcblock/did-connect": "^2.10.74",
-    "@arcblock/ux": "^2.10.74",
+    "@arcblock/did": "^1.18.153",
+    "@arcblock/did-connect": "^2.10.80",
+    "@arcblock/ux": "^2.10.80",
     "@blocklet/constant": "1.16.34-beta-20241129-100152-679bd732",
     "@blocklet/embed": "^0.1.11",
     "@blocklet/js-sdk": "1.16.34-beta-20241129-100152-679bd732",
@@ -72,7 +72,7 @@
   },
   "devDependencies": {
     "@arcblock/eslint-config": "^0.2.4",
-    "@blocklet/ui-react": "^2.10.74",
+    "@blocklet/ui-react": "^2.10.80",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@vitejs/plugin-react": "^4.3.4",
@@ -94,7 +94,7 @@
     "swiper": "^9.4.1",
     "timeago.js": "^4.0.2",
     "vite": "^5.4.11",
-    "vite-plugin-blocklet": "^0.9.13",
+    "vite-plugin-blocklet": "^0.9.14",
     "vite-plugin-svgr": "^4.3.0",
     "wolfy87-eventemitter": "^5.2.9"
   }
