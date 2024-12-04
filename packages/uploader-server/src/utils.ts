@@ -1,12 +1,7 @@
 import axios from 'axios';
-import config from '@blocklet/sdk/lib/config';
 import path from 'path';
 import joinUrl from 'url-join';
 import { isbot } from 'isbot';
-// @ts-ignore
-import AuthService from '@blocklet/sdk/service/auth';
-
-const authClient = new AuthService();
 
 // Cache interface to store domain and timestamp
 interface DomainsCache {
@@ -16,6 +11,7 @@ interface DomainsCache {
 
 // Cache duration in milliseconds
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
+const appUrl = process.env.BLOCKLET_APP_URL || '';
 
 // simple LRU cache to record the trustedDomains with timestamp
 const trustedDomainsCache: DomainsCache = {
@@ -27,11 +23,9 @@ export async function getTrustedDomainsCache({
   forceUpdate = false,
   ttl = DEFAULT_TTL,
 }: { forceUpdate?: boolean; ttl?: number } = {}) {
-  //  @FIXME: use sdk to get trustedDomains
-  // check if the getTrustedDomains can be called
-  //   if (typeof authClient.getTrustedDomains !== 'function') {
-  //     return null;
-  //   }
+  if (!appUrl) {
+    return [];
+  }
 
   const now = Date.now();
 
@@ -42,11 +36,8 @@ export async function getTrustedDomainsCache({
     }
   }
 
-  // Update cache
-  // @FIXME: use sdk to get trustedDomains
-  // trustedDomainsCache.domains = await authClient.getTrustedDomains();
   trustedDomainsCache.domains = await axios
-    .get(joinUrl(config.env.appUrl, '/.well-known/service/api/federated/getTrustedDomains'))
+    .get(joinUrl(appUrl, '/.well-known/service/api/federated/getTrustedDomains'))
     .then((res) => res.data);
   trustedDomainsCache.timestamp = now;
 
