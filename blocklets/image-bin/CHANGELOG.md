@@ -1,3 +1,7 @@
+## 0.11.66 (December 04, 2024)
+
+- fix: use process.env instead of sdk to avoid server crash
+
 ## 0.11.65 (December 03, 2024)
 
 - fix: resolve the bug of selecting folder miss relativePath
