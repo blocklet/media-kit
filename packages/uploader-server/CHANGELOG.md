@@ -1,3 +1,7 @@
+## 0.1.60 (December 04, 2024)
+
+- fix: use process.env instead of sdk to avoid server crash
+
 ## 0.1.59 (December 02, 2024)
 
 - fix: polish @blocklet/uploader-server import bug
