@@ -1,3 +1,7 @@
+## 0.1.57 (December 05, 2024)
+
+- chore: bump deps and use built-in crypto
+
 ## 0.1.56 (December 03, 2024)
 
 - fix: resolve the bug of selecting folder miss relativePath
