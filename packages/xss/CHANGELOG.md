@@ -1,3 +1,7 @@
+## 0.1.15 (December 11, 2024)
+
+- chore: update deps
+
 ## 0.1.14 (December 02, 2024)
 
 - chore: polish ci node version
