@@ -1,3 +1,7 @@
+## 0.1.57 (December 11, 2024)
+
+- chore: update deps
+
 ## 0.1.56 (December 03, 2024)
 
 - fix: resolve the bug of selecting folder miss relativePath

@@ -245,8 +245,7 @@ router.post(
   upload.single('data'),
   ensureFolderId(),
   async (req, res) => {
-    // data maybe a file buffer format by multer
-    const { type, filename: originalFileName, data = req?.file?.buffer, repeatInsert = true } = req.body;
+    const { type, filename: originalFileName, data = req.file?.buffer, repeatInsert = true } = req.body;
 
     if (!type || !originalFileName || !data) {
       res.json({ error: 'missing required body `type` or `filename` or `data`' });
@@ -258,13 +257,13 @@ router.post(
     if (type === 'base64') {
       buffer = Buffer.from(data, 'base64');
     } else if (type === 'path') {
-      buffer = fs.readFileSync(data);
+      throw new Error('`path` type is not supported, please use `file` or `base64` instead');
     } else if (type === 'file') {
-      buffer = data;
+      buffer = Buffer.isBuffer(data) ? data : Buffer.from(data.data);
     }
 
     if (!buffer) {
-      res.json({ error: 'invalid upload type, should be [file, path, base64]' });
+      res.json({ error: 'invalid upload type, should be [file, base64]' });
       return;
     }
 

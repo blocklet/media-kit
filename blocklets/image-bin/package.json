@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.11.66",
+  "version": "0.11.67",
   "private": true,
   "scripts": {
     "dev": "blocklet dev",
@@ -41,11 +41,11 @@
     "@arcblock/did": "^1.18.152",
     "@arcblock/did-connect": "^2.10.74",
     "@arcblock/ux": "^2.10.74",
-    "@blocklet/constant": "1.16.34-beta-20241129-100152-679bd732",
+    "@blocklet/constant": "1.16.34-beta-20241207-134904-3c3d9a35",
     "@blocklet/embed": "^0.1.11",
-    "@blocklet/js-sdk": "1.16.34-beta-20241129-100152-679bd732",
-    "@blocklet/logger": "1.16.34-beta-20241129-100152-679bd732",
-    "@blocklet/sdk": "1.16.34-beta-20241129-100152-679bd732",
+    "@blocklet/js-sdk": "1.16.34-beta-20241207-134904-3c3d9a35",
+    "@blocklet/logger": "1.16.34-beta-20241207-134904-3c3d9a35",
+    "@blocklet/sdk": "1.16.34-beta-20241207-134904-3c3d9a35",
     "@blocklet/uploader": "workspace:^",
     "@blocklet/uploader-server": "workspace:^",
     "@blocklet/xss": "workspace:^",

@@ -1,3 +1,8 @@
+## 0.11.67 (December 11, 2024)
+
+- chore: update deps
+- refactor: polish sdk upload logic
+
 ## 0.11.66 (December 04, 2024)
 
 - fix: use process.env instead of sdk to avoid server crash
