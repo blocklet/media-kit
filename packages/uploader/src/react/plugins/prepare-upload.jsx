@@ -58,10 +58,11 @@ class PrepareUpload extends UIPlugin {
 
     if (file) {
       const {
-        data: { relativePath, name },
+        data: { webkitRelativePath, relativePath, name },
         hashFileName,
       } = file;
-      const relativePathWithFileName = relativePath || name || hashFileName;
+
+      const relativePathWithFileName = relativePath || webkitRelativePath || name || hashFileName;
       // relativePath must had file name
       this.uppy.setFileMeta(id, { relativePath: relativePathWithFileName, name: relativePathWithFileName });
     }

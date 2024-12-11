@@ -1,3 +1,27 @@
+## 0.11.66 (December 04, 2024)
+
+- fix: use process.env instead of sdk to avoid server crash
+
+## 0.11.65 (December 03, 2024)
+
+- fix: resolve the bug of selecting folder miss relativePath
+
+## 0.11.64 (December 02, 2024)
+
+- fix: polish @blocklet/uploader-server import bug
+
+## 0.11.63 (December 02, 2024)
+
+- chore: polish ci node version
+
+## 0.11.62 (December 02, 2024)
+
+- chore: update sdk lib version
+
+## 0.11.61 (November 28, 2024)
+
+- chore: update deps
+
 ## 0.11.60 (November 27, 2024)
 
 - chore: polish checkReferer logic
