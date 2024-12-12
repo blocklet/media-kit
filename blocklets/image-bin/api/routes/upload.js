@@ -245,7 +245,7 @@ router.post(
   upload.single('data'),
   ensureFolderId(),
   async (req, res) => {
-    const { type, filename: originalFileName, data = req.file?.buffer, repeatInsert = true } = req.body;
+    const { type, filename: originalFileName, data = req.file?.buffer, repeatInsert = false } = req.body;
 
     if (!type || !originalFileName || !data) {
       res.json({ error: 'missing required body `type` or `filename` or `data`' });
@@ -273,10 +273,8 @@ router.post(
     const fileName = `${hash.digest('hex')}${path.extname(originalFileName).replace(/\.+$/, '')}`;
     const filePath = path.join(env.uploadDir, fileName);
 
-    fs.writeFileSync(filePath, buffer);
-
     const file = {
-      size: fs.lstatSync(filePath).size,
+      size: buffer.length,
       filename: fileName,
       originalname: originalFileName,
       mimetype: mime.lookup(fileName) || '',
@@ -298,6 +296,10 @@ router.post(
         return;
       }
     }
+
+    fs.writeFileSync(filePath, buffer);
+    file.size = fs.lstatSync(filePath).size; // 更新为实际写入的文件大小
+
     const doc = await Upload.insert({
       ...pick(file, ['size', 'filename', 'originalname', 'mimetype']),
       tags: (req.body.tags || '')

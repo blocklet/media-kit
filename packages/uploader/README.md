@@ -66,6 +66,7 @@ const UploaderComponent = lazy(() => import('@blocklet/uploader').then((res) => 
     companion: '/api/companion',
     disableMediaKitPrefix: false,
     disableAutoPrefix: false,
+    disableMediaKitStatus: false,
   }}
 />;
 ```

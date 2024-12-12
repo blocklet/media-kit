@@ -509,6 +509,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     uploader: '/api/uploads',
     companion: '/api/companion',
     disableMediaKitPrefix: false,
+    disableMediaKitStatus: false,
     ...props?.apiPathProps,
   };
 
@@ -558,7 +559,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
       ) as any;
 
       // check if the media-kit is installed
-      if (getMediaKitComponent()) {
+      if (!apiPathProps.disableMediaKitStatus && getMediaKitComponent()) {
         try {
           await mediaKitApi.get('/api/uploader/status').then(({ data }: any) => {
             state.availablePluginMap = data.availablePluginMap;
