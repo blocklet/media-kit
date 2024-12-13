@@ -1,3 +1,16 @@
+## 0.11.69 (December 13, 2024)
+
+- fix: resolve the bug of sdk upload
+
+## 0.11.68 (December 12, 2024)
+
+- feat: add apiPathProps.disableMediaKitStatus to uploader
+
+## 0.11.67 (December 11, 2024)
+
+- chore: update deps
+- refactor: polish sdk upload logic
+
 ## 0.11.66 (December 04, 2024)
 
 - fix: use process.env instead of sdk to avoid server crash

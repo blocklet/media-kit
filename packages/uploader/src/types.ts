@@ -35,6 +35,7 @@ export type UploaderProps = {
     companion?: string;
     disableMediaKitPrefix?: boolean;
     disableAutoPrefix?: boolean;
+    disableMediaKitStatus?: boolean;
   };
   dropTargetProps?: DropTarget;
   initialFiles?: any[];
