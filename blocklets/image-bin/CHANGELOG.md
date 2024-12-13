@@ -1,3 +1,7 @@
+## 0.11.69 (December 13, 2024)
+
+- fix: resolve the bug of sdk upload
+
 ## 0.11.68 (December 12, 2024)
 
 - feat: add apiPathProps.disableMediaKitStatus to uploader
