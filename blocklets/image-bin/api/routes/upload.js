@@ -4,7 +4,6 @@ const crypto = require('crypto');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
-const multer = require('multer');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
@@ -58,11 +57,6 @@ const ensureFolderId = () => async (req, res, next) => {
 
   next();
 };
-
-// multer only use for /sdk/uploads, not filter allow type
-const upload = multer({
-  storage: multer.memoryStorage(),
-});
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -238,84 +232,73 @@ config.events.on(config.Events.envUpdate, () => {
 
 router.use('/companion', user, auth, ensureFolderId(), companion.handle);
 
-router.post(
-  '/sdk/uploads',
-  user,
-  middleware.component.verifySig,
-  upload.single('data'),
-  ensureFolderId(),
-  async (req, res) => {
-    const { type, filename: originalFileName, data = req.file?.buffer, repeatInsert = false } = req.body;
+router.post('/sdk/uploads', user, middleware.component.verifySig, ensureFolderId(), async (req, res) => {
+  const { filename: originalFileName, base64, repeatInsert = false } = req.body;
 
-    if (!type || !originalFileName || !data) {
-      res.json({ error: 'missing required body `type` or `filename` or `data`' });
-      return;
-    }
-
-    let buffer = null;
-
-    if (type === 'base64') {
-      buffer = Buffer.from(data, 'base64');
-    } else if (type === 'path') {
-      throw new Error('`path` type is not supported, please use `file` or `base64` instead');
-    } else if (type === 'file') {
-      buffer = Buffer.isBuffer(data) ? data : Buffer.from(data.data);
-    }
-
-    if (!buffer) {
-      res.json({ error: 'invalid upload type, should be [file, base64]' });
-      return;
-    }
-
-    const hash = crypto.createHash('md5');
-    hash.update(buffer);
-
-    const fileName = `${hash.digest('hex')}${path.extname(originalFileName).replace(/\.+$/, '')}`;
-    const filePath = path.join(env.uploadDir, fileName);
-
-    const file = {
-      size: buffer.length,
-      filename: fileName,
-      originalname: originalFileName,
-      mimetype: mime.lookup(fileName) || '',
-    };
-
-    // current url
-    const obj = new URL(env.appUrl);
-    obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-    obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', file.filename);
-
-    const extraResult = {
-      url: obj.href,
-    };
-
-    if (['false', false].includes(repeatInsert)) {
-      const existItem = await Upload.findOne(file);
-      if (existItem) {
-        res.json({ ...extraResult, ...existItem, repeat: true });
-        return;
-      }
-    }
-
-    fs.writeFileSync(filePath, buffer);
-    file.size = fs.lstatSync(filePath).size; // 更新为实际写入的文件大小
-
-    const doc = await Upload.insert({
-      ...pick(file, ['size', 'filename', 'originalname', 'mimetype']),
-      tags: (req.body.tags || '')
-        .split(',')
-        .map((x) => x.trim())
-        .filter(Boolean),
-      folderId: req.componentDid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      createdBy: req.user?.did,
-      updatedBy: req.user?.did,
-    });
-
-    res.json({ ...extraResult, ...doc });
+  if (!originalFileName || !base64) {
+    res.json({ error: 'missing required body `filename` or `base64`' });
+    return;
   }
-);
+
+  const buffer = Buffer.from(base64, 'base64');
+
+  if (!buffer) {
+    res.json({
+      error: 'invalid upload params',
+      base64,
+    });
+    return;
+  }
+
+  const hash = crypto.createHash('md5');
+  hash.update(buffer);
+
+  const fileName = `${hash.digest('hex')}${path.extname(originalFileName).replace(/\.+$/, '')}`;
+  const filePath = path.join(env.uploadDir, fileName);
+
+  const file = {
+    size: buffer.length,
+    filename: fileName,
+    originalname: originalFileName,
+    mimetype: mime.lookup(fileName) || '',
+  };
+
+  // current url
+  const obj = new URL(env.appUrl);
+  obj.protocol = req.get('x-forwarded-proto') || req.protocol;
+  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', file.filename);
+
+  const extraResult = {
+    url: obj.href,
+  };
+
+  if (['false', false].includes(repeatInsert)) {
+    const existItem = await Upload.findOne(file);
+    const existFile = await fs.existsSync(filePath);
+    if (existItem && existFile) {
+      res.json({ ...extraResult, ...existItem, repeat: true });
+      return;
+    }
+  }
+
+  fs.writeFileSync(filePath, buffer);
+  file.size = fs.lstatSync(filePath).size; // 更新为实际写入的文件大小
+
+  const doc = await Upload.insert({
+    ...pick(file, ['size', 'filename', 'originalname', 'mimetype']),
+    tags: (req.body.tags || '')
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean),
+    folderId: req.componentDid,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    createdBy: req.user?.did,
+    updatedBy: req.user?.did,
+  });
+
+  res.json({ ...extraResult, ...doc });
+});
 
 router.get(
   '/sdk/uploads',
