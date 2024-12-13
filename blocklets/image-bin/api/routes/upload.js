@@ -274,7 +274,8 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureFolderId
 
   if (['false', false].includes(repeatInsert)) {
     const existItem = await Upload.findOne(file);
-    if (existItem) {
+    const existFile = await fs.existsSync(filePath);
+    if (existItem && existFile) {
       res.json({ ...extraResult, ...existItem, repeat: true });
       return;
     }
