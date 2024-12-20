@@ -1,3 +1,8 @@
+## 0.1.59 (December 20, 2024)
+
+- chore: update deps
+- chore: polish Uploaded Plugin and Resource Plugin logic
+
 ## 0.1.58 (December 12, 2024)
 
 - feat: add apiPathProps.disableMediaKitStatus to uploader

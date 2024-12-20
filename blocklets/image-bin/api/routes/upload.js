@@ -78,7 +78,7 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE } = {}) => {
     };
 
     if (isMediaKitRequest && ['admin', 'owner'].includes(req.user.role)) {
-      logger.log('request role is admin / owner');
+      // logger.log('request role is admin / owner');
       // allow admin to see all uploads
       delete condition.createdBy;
 
@@ -100,10 +100,10 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE } = {}) => {
       condition.tags = { $in: tags };
     }
 
-    const uploads = await Upload.paginate({ condition, sort: { createdAt: -1 }, page, size: pageSize });
+    const uploads = await Upload.paginate({ condition, sort: { updatedAt: -1 }, page, size: pageSize });
     const total = await Upload.count(condition);
 
-    const folders = await Folder.cursor({}).sort({ createdAt: -1 }).exec();
+    const folders = await Folder.cursor({}).sort({ updatedAts: -1 }).exec();
 
     res.jsonp({ uploads, folders, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
   };
@@ -177,22 +177,46 @@ const localStorageServer = initLocalStorageServer({
     obj.protocol = req.get('x-forwarded-proto') || req.protocol;
     obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
 
-    const doc = await Upload.insert({
-      mimetype,
-      originalname,
-      filename,
+    const file = {
       size,
-      remark: req.body.remark || '',
-      tags: (req.body.tags || '')
-        .split(',')
-        .map((x) => x.trim())
-        .filter(Boolean),
-      folderId: req.componentDid,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      filename,
+      mimetype,
+      // should filter by createdBy
       createdBy: req.user.did,
-      updatedBy: req.user.did,
-    });
+    };
+
+    let doc = await Upload.findOne(file);
+
+    // if file not exist, insert it
+    if (!doc) {
+      doc = await Upload.insert({
+        mimetype,
+        originalname,
+        filename,
+        size,
+        remark: req.body.remark || '',
+        tags: (req.body.tags || '')
+          .split(',')
+          .map((x) => x.trim())
+          .filter(Boolean),
+        folderId: req.componentDid,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        createdBy: req.user.did,
+        updatedBy: req.user.did,
+      });
+    } else {
+      logger.info('file already exist, update it');
+      await Upload.update(
+        { _id: doc._id },
+        {
+          $set: {
+            updatedAt: new Date().toISOString(),
+            updatedBy: req.user.did,
+          },
+        }
+      );
+    }
 
     const resData = { url: obj.href, ...doc };
 
@@ -259,8 +283,8 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureFolderId
   const file = {
     size: buffer.length,
     filename: fileName,
-    originalname: originalFileName,
     mimetype: mime.lookup(fileName) || '',
+    createdBy: req.user?.did,
   };
 
   // current url
@@ -276,6 +300,7 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureFolderId
     const existItem = await Upload.findOne(file);
     const existFile = await fs.existsSync(filePath);
     if (existItem && existFile) {
+      logger.info('file already exist, skip repeat insert');
       res.json({ ...extraResult, ...existItem, repeat: true });
       return;
     }

@@ -1,3 +1,8 @@
+## 0.11.70 (December 20, 2024)
+
+- chore: update deps
+- chore: polish upload history logic to show updatedAt
+
 ## 0.11.69 (December 13, 2024)
 
 - fix: resolve the bug of sdk upload

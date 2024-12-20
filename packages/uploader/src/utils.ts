@@ -461,3 +461,110 @@ export const isSvgFile = async (file: any) => {
     return false;
   }
 };
+
+export const mockUploaderFileResponse = (file: any) => {
+  if (!file) return null;
+
+  try {
+    // ensure the file is valid
+    const safeFile = {
+      fileUrl: file.fileUrl || file.icon || '',
+      mimetype: file.mimetype || mime.lookup(file.fileUrl),
+      originalname: file.originalname || file.name || 'unknown',
+      filename: file.filename || file._id || `${Date.now()}.unknown`,
+      size: file.size || 0,
+      remark: file.remark || '',
+      tags: Array.isArray(file.tags) ? file.tags : [],
+      folderId: file.folderId || '',
+      createdAt: file.createdAt || new Date().toISOString(),
+      updatedAt: file.updatedAt || new Date().toISOString(),
+      createdBy: file.createdBy || '',
+      updatedBy: file.updatedBy || '',
+      _id: file._id || file.id || `${Date.now()}`,
+      previewUrl: file.previewUrl || file.icon || file.fileUrl || '',
+    };
+
+    // ensure the baseUrl is valid
+    let baseUrl = '';
+    try {
+      baseUrl = new URL(safeFile.fileUrl).origin;
+    } catch (e) {
+      baseUrl = window.location.origin;
+    }
+
+    const fileId = `Uploader-${safeFile.originalname.toLowerCase().replace(/[^a-z0-9]/g, '')}-${Date.now()}`;
+
+    const data = {
+      url: safeFile.fileUrl,
+      mimetype: safeFile.mimetype,
+      originalname: safeFile.originalname,
+      filename: safeFile.filename,
+      size: safeFile.size,
+      remark: safeFile.remark,
+      tags: safeFile.tags,
+      folderId: safeFile.folderId,
+      createdAt: safeFile.createdAt,
+      updatedAt: safeFile.updatedAt,
+      createdBy: safeFile.createdBy,
+      updatedBy: safeFile.updatedBy,
+      _id: safeFile._id,
+    };
+
+    return {
+      data,
+      method: 'POST',
+      url: baseUrl + '/image-bin/api/uploads',
+      status: 200,
+      headers: {
+        'Tus-Resumable': '1.0.0',
+        'Upload-Length': String(safeFile.size),
+        'x-uploader-file-name': safeFile.filename,
+        'x-uploader-file-id': fileId,
+        'x-uploader-file-ext': safeFile.filename.split('.').pop() || 'unknown',
+        'x-uploader-base-url': '/image-bin/api/uploads',
+        'x-uploader-endpoint-url': baseUrl + '/image-bin/api/uploads',
+        'x-uploader-metadata': JSON.stringify({
+          uploaderId: 'Uploader',
+          relativePath: safeFile.originalname,
+          name: safeFile.originalname,
+          type: safeFile.mimetype,
+        }),
+        'x-component-did': safeFile.folderId,
+        'x-uploader-file-exist': 'true',
+      },
+      file: {
+        source: 'uploader-dashboard',
+        id: fileId,
+        name: safeFile.originalname,
+        extension: safeFile.filename.split('.').pop() || 'unknown',
+        meta: {
+          uploaderId: 'Uploader',
+          relativePath: safeFile.originalname,
+          name: safeFile.originalname,
+          type: safeFile.mimetype,
+        },
+        type: safeFile.mimetype,
+        data,
+        progress: {
+          uploadStarted: Date.now(),
+          uploadComplete: false,
+          percentage: 0,
+          bytesUploaded: 0,
+          bytesTotal: safeFile.size,
+        },
+        size: safeFile.size,
+        isGhost: false,
+        isRemote: false,
+        remote: '',
+        preview: safeFile.previewUrl,
+        hashFileName: safeFile.filename,
+        error: null,
+        uploadID: Math.random().toString(36).substring(2, 15),
+      },
+      uploadURL: safeFile.fileUrl,
+    };
+  } catch (error) {
+    console.error('Error in mockResponse:', error);
+    return null;
+  }
+};

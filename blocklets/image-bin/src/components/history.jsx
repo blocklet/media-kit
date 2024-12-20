@@ -23,6 +23,7 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Tooltip from '@mui/material/Tooltip';
 import { useUploadContext } from '../contexts/upload';
 import { useResourceContext } from '../contexts/resource';
 import { createImageUrl } from '../libs/api';
@@ -190,16 +191,18 @@ function Gallery({ uploads, type }) {
                 position="below"
                 title={
                   !isResource && (
-                    <Box
-                      sx={{
-                        fontSize: 14,
-                        textOverflow: 'ellipsis',
-                        overflow: 'hidden',
-                        whiteSpace: 'nowrap',
-                        lineHeight: 1.4,
-                      }}>
-                      {parseStringToDot(x.originalname) || 'unknown'}
-                    </Box>
+                    <Tooltip title={x.originalname || 'unknown'} arrow placement="top">
+                      <Box
+                        sx={{
+                          fontSize: 14,
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap',
+                          lineHeight: 1.4,
+                        }}>
+                        {parseStringToDot(x.originalname) || 'unknown'}
+                      </Box>
+                    </Tooltip>
                   )
                 }
                 subtitle={
@@ -211,7 +214,7 @@ function Gallery({ uploads, type }) {
                         locale,
                       })}
                       &nbsp;·&nbsp;
-                      {format(x.createdAt, localeMap[locale] || locale)}
+                      {format(x.updatedAt, localeMap[locale] || locale)}
                     </>
                   )
                 }
