@@ -1,3 +1,7 @@
+## 0.11.70 (December 22, 2024)
+
+- chore: bump deps to latest
+
 ## 0.11.69 (December 13, 2024)
 
 - fix: resolve the bug of sdk upload

@@ -1,3 +1,7 @@
+## 0.1.59 (December 22, 2024)
+
+- chore: bump deps to latest
+
 ## 0.1.58 (December 12, 2024)
 
 - feat: add apiPathProps.disableMediaKitStatus to uploader
