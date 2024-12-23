@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "bump-version": "zx scripts/bump-version.mjs --quiet",
-    "update:deps": "taze -r -n '/arcblock|ocap|abtnode|blocklet|did-connect|did-comment|nedb/' -w && pnpm install && pnpm run deduplicate",
+    "update:deps": "npx -y taze -r -w -n '/@abtnode|@aigne|@arcblock|@blocklet|@did-connect|@did-pay|@did-space|@nft-store|@nft-studio|@ocap/' && pnpm install && pnpm run deduplicate",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
     "postinstall": "pnpm -r --filter @blocklet/* run build",

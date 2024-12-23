@@ -54,7 +54,7 @@ const getResourceListMiddleware = () => {
 router.get('/resources', user, auth, getResourceListMiddleware());
 
 router.get('/resources/export', ensureAdmin, async (_req, res) => {
-  const folders = await Folder.cursor({}).sort({ createdAt: -1 }).exec();
+  const folders = await Folder.cursor({}).sort({ updatedAt: -1 }).exec();
   const resources = (folders || []).map((x) => ({
     id: x._id,
     name: toUpper(x.name),

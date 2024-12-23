@@ -19,7 +19,7 @@ class PrepareUpload extends UIPlugin {
     super(uppy, { ...defaultOptions, ...opts });
 
     this.id = this.opts.id || 'PrepareUpload';
-    this.type = 'modifier';
+    this.type = 'progressindicator';
 
     this.i18nInit();
   }
@@ -456,6 +456,10 @@ class PrepareUpload extends UIPlugin {
 
   uninstall() {
     this.uppy.removePreProcessor(this.prepareUpload);
+  }
+
+  render() {
+    return <></>;
   }
 }
 
