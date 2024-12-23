@@ -1,7 +1,6 @@
-## 0.1.59 (December 20, 2024)
+## 0.1.59 (December 22, 2024)
 
-- chore: update deps
-- chore: polish Uploaded Plugin and Resource Plugin logic
+- chore: bump deps to latest
 
 ## 0.1.58 (December 12, 2024)
 
