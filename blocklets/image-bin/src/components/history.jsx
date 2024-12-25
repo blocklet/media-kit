@@ -191,7 +191,7 @@ function Gallery({ uploads, type }) {
                 position="below"
                 title={
                   !isResource && (
-                    <Tooltip title={x.originalname || 'unknown'} arrow placement="top">
+                    <Tooltip title={x.originalname || 'Unknown'} arrow placement="top">
                       <Box
                         sx={{
                           fontSize: 14,
@@ -200,7 +200,7 @@ function Gallery({ uploads, type }) {
                           whiteSpace: 'nowrap',
                           lineHeight: 1.4,
                         }}>
-                        {parseStringToDot(x.originalname) || 'unknown'}
+                        {parseStringToDot(x.originalname) || 'Unknown'}
                       </Box>
                     </Tooltip>
                   )
