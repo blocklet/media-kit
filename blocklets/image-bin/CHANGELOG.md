@@ -1,3 +1,7 @@
+## 0.11.72 (December 25, 2024)
+
+- chore: polish sdk upload hash logic
+
 ## 0.11.71 (December 23, 2024)
 
 - chore: update deps

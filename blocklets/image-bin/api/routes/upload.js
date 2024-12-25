@@ -274,10 +274,16 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureFolderId
     return;
   }
 
+  // keep same logic as uploader prepare-upload.jsx
+  const chunkSize = 1024 * 1024 * 5; // 5 MB
+  const blobSlice = buffer.slice(0, chunkSize); // use slice to get hash
+
   const hash = crypto.createHash('md5');
-  hash.update(buffer);
+
+  hash.update(blobSlice.toString());
 
   const fileName = `${hash.digest('hex')}${path.extname(originalFileName).replace(/\.+$/, '')}`;
+
   const filePath = path.join(env.uploadDir, fileName);
 
   const file = {
@@ -310,12 +316,13 @@ router.post('/sdk/uploads', user, middleware.component.verifySig, ensureFolderId
   file.size = fs.lstatSync(filePath).size; // 更新为实际写入的文件大小
 
   const doc = await Upload.insert({
-    ...pick(file, ['size', 'filename', 'originalname', 'mimetype']),
+    ...pick(file, ['size', 'filename', 'mimetype']),
     tags: (req.body.tags || '')
       .split(',')
       .map((x) => x.trim())
       .filter(Boolean),
     folderId: req.componentDid,
+    originalname: originalFileName,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     createdBy: req.user?.did,
