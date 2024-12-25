@@ -60,6 +60,7 @@ import {
   getAIKitComponent,
   getUrl,
   initUppy,
+  mockUploaderFileResponse,
 } from '../utils';
 
 // @ts-ignore
@@ -536,8 +537,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     plugins: _plugins = pluginList.map((item) => item.id),
     id = 'Uploader',
     popup = false,
-    uploadedProps,
-    resourcesProps,
+    onUploadFinish: _onUploadFinish,
     onOpen,
     onClose,
     locale,
@@ -646,26 +646,44 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
     // handle plugin selection event
     const handlePluginSelection = (files: Object[], state: any, props: any, pluginName: string) => {
-      const formatFiles = files.map((data: any) => {
-        const formatFile = {
-          name: data.id || data.fileUrl?.split('/')?.slice(-1)?.[0],
-          type: data.mimetype || mime.lookup(data.fileUrl),
-          data: '', // mock a data, will upload auto download by isRemote
-          preview: data.fileUrl,
-          source: pluginName,
-          isRemote: true,
-        };
-
-        const fileId = state.uppy.addFile(formatFile);
-
-        return {
-          ...data,
-          uppyFile: state.uppy.getFile(fileId),
-        };
-      });
-
       const propsKey = `${pluginName.toLowerCase()}Props`;
-      props[propsKey]?.onSelectedFiles?.(formatFiles);
+      const onSelectedFiles = props[propsKey]?.onSelectedFiles;
+
+      if (typeof onSelectedFiles === 'function') {
+        const formatFiles = files.map((data: any) => {
+          const formatFile = {
+            name: data.id || data.fileUrl?.split('/')?.slice(-1)?.[0],
+            type: data.mimetype || mime.lookup(data.fileUrl),
+            data: '', // mock a data, will upload auto download by isRemote
+            preview: data.fileUrl,
+            source: pluginName,
+            isRemote: true,
+          };
+
+          const fileId = state.uppy.addFile(formatFile);
+
+          return {
+            ...data,
+            uppyFile: state.uppy.getFile(fileId),
+          };
+        });
+
+        onSelectedFiles?.(formatFiles);
+      } else {
+        Promise.all(
+          files.map(async (file: any) => {
+            const result = mockUploaderFileResponse(file);
+
+            await _onUploadFinish?.(result);
+
+            // @ts-ignore custom event
+            state.uppy.emitUploadSuccess(result.file, result);
+          })
+        ).then(() => {
+          // auto close when selected files
+          state.uppy.close();
+        });
+      }
     };
 
     const pluginHandlers = [

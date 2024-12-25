@@ -18,7 +18,7 @@ router.get('/recent', async (req, res) => {
   const page = 1;
   const pageSize = 9;
 
-  const uploads = await Upload.paginate({ sort: { createdAt: -1 }, page, size: pageSize });
+  const uploads = await Upload.paginate({ sort: { updatedAt: -1 }, page, size: pageSize });
   res.jsonp(uploads);
 });
 
