@@ -1,3 +1,7 @@
+## 0.1.18 (December 30, 2024)
+
+- chore: update deps
+
 ## 0.1.17 (December 23, 2024)
 
 - chore: update deps
