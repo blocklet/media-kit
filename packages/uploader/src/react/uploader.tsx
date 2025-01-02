@@ -604,6 +604,8 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     }
   );
 
+  const disabledUpload = !state.restrictions?.allowedFileTypes?.length;
+
   useKeyPress(
     'esc',
     (e) => {
@@ -994,6 +996,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               // @ts-ignore
               target={`#${target}`}
               id={uploaderDashboardId}
+              disabled={disabledUpload}
               uppy={state.uppy}
               plugins={plugins}
               fileManagerSelectionType={state.restrictions?.maxNumberOfFiles === 1 ? 'files' : 'both'}
@@ -1001,7 +1004,15 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               showProgressDetails
               disableThumbnailGenerator
               // theme="light"
-              note=""
+              note={
+                disabledUpload
+                  ? get(localeMap, `${locale}.strings.noAllowedFileTypes`)
+                  : get(localeMap, `${locale}.strings.allowedFileTypes`) +
+                    state.restrictions?.allowedFileTypes
+                      ?.map((item: string) => mime.extension(item))
+                      .filter(Boolean)
+                      .join(', ')
+              }
               doneButtonHandler={close}
               {...props.dashboardProps}
             />

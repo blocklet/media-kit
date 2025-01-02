@@ -21,11 +21,12 @@ files:
   - dist
   - screenshots
   - api/hooks/pre-start.js
+  - api/hooks/pre-config.js
 interfaces:
   - type: web
     name: publicUrl
     path: /
-    prefix: "*"
+    prefix: '*'
     port: BLOCKLET_PORT
     protocol: http
     cacheable:
@@ -51,36 +52,37 @@ interfaces:
 community: https://community.arcblock.io
 documentation: https://developer.blocklet.io
 homepage: https://store.blocklet.dev
-license: ""
+license: ''
 payment:
   price: []
   share: []
 timeout:
   start: 60
 requirements:
-  server: ">=1.6.29"
-  os: "*"
-  cpu: "*"
+  server: '>=1.6.29'
+  os: '*'
+  cpu: '*'
 scripts:
   preStart: node api/hooks/pre-start.js
+  preConfig: node api/hooks/pre-config.js
   dev: npm run start
 environments:
   - name: CDN_HOST
     description: Use CDN Host for image load speed
     required: false
-    default: ""
+    default: ''
     secure: false
     shared: true
   - name: UNSPLASH_KEY
     description: The Unsplash API key, you can get on https://unsplash.com/developers
     required: false
-    default: ""
+    default: ''
     secure: false
     shared: true
   - name: UNSPLASH_SECRET
     description: The Unsplash API secret, you can get on https://unsplash.com/developers
     required: false
-    default: ""
+    default: ''
     secure: true
     shared: false
 capabilities:

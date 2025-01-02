@@ -16,7 +16,12 @@
         "title": "Supported Media Types Extensions",
         "x-decorator": "FormItem",
         "x-component": "Input.TextArea",
-        "x-validator": [],
+        "x-validator": [
+          {
+            "triggerType": "onInput",
+            "pattern": "^[^*]+$"
+          }
+        ],
         "x-component-props": {
           "showCount": false
         },
@@ -38,8 +43,9 @@
         "name": "extsInput",
         "x-designable-id": "y0kp36yu7ps",
         "x-index": 0,
-        "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols. If empty, all types are allowed by default.",
-        "default": ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico,.mp4,.avi,.mov,.wmv,.mkv,.pdf,.zip,.rar,.7z,.tar.gz"
+        "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols. Not allowed to contain ‘*’.",
+        "default": ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico",
+        "required": true
       },
       "maxUploadSize": {
         "type": "string",
@@ -70,6 +76,6 @@
         "x-index": 2
       }
     },
-    "x-designable-id": "7dorr1vzu77"
+    "x-designable-id": "k0gu7gl3pjg"
   }
 }
