@@ -324,14 +324,16 @@ class PrepareUpload extends UIPlugin {
         },
       });
 
-      // get image from proxy url
       await api
-        .get(`${this.opts.companionUrl}/proxy`, {
-          responseType: 'blob',
-          params: {
-            url,
-          },
-        })
+        .get(
+          // get image from user's url in frontend
+          url,
+          // get image from proxy url
+          // `${this.opts.companionUrl}/proxy`,
+          {
+            responseType: 'blob',
+          }
+        )
         .then((response) => {
           return response?.data;
         })
