@@ -604,7 +604,20 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     }
   );
 
-  const disabledUpload = !state.restrictions?.allowedFileTypes?.length;
+  const withoutAnyAllowedFileTypes =
+    typeof state.restrictions?.allowedFileTypes === 'object' && state.restrictions?.allowedFileTypes?.length === 0;
+
+  let note = '' as any;
+  if (withoutAnyAllowedFileTypes) {
+    note = get(localeMap, `${locale}.strings.noAllowedFileTypes`);
+  } else if (state.restrictions?.allowedFileTypes?.length) {
+    note =
+      get(localeMap, `${locale}.strings.allowedFileTypes`) +
+      state.restrictions?.allowedFileTypes
+        ?.map((item: string) => mime.extension(item))
+        .filter(Boolean)
+        .join(', ');
+  }
 
   useKeyPress(
     'esc',
@@ -996,7 +1009,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               // @ts-ignore
               target={`#${target}`}
               id={uploaderDashboardId}
-              disabled={disabledUpload}
+              disabled={withoutAnyAllowedFileTypes}
               uppy={state.uppy}
               plugins={plugins}
               fileManagerSelectionType={state.restrictions?.maxNumberOfFiles === 1 ? 'files' : 'both'}
@@ -1004,15 +1017,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
               showProgressDetails
               disableThumbnailGenerator
               // theme="light"
-              note={
-                disabledUpload
-                  ? get(localeMap, `${locale}.strings.noAllowedFileTypes`)
-                  : get(localeMap, `${locale}.strings.allowedFileTypes`) +
-                    state.restrictions?.allowedFileTypes
-                      ?.map((item: string) => mime.extension(item))
-                      .filter(Boolean)
-                      .join(', ')
-              }
+              note={note}
               doneButtonHandler={close}
               {...props.dashboardProps}
             />

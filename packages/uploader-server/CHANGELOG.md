@@ -1,3 +1,7 @@
+## 0.1.66 (January 02, 2025)
+
+- refactor: enhancing security
+
 ## 0.1.65 (December 30, 2024)
 
 - chore: update deps
