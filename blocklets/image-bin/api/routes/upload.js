@@ -499,7 +499,7 @@ router.get('/uploader/status', async (req, res) => {
     availablePluginMap.Resources = true;
   }
 
-  const defaultExtsInput = '*';
+  const defaultExtsInput = '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico';
 
   const { types, maxUploadSize } = config.env.preferences || {};
 
@@ -512,7 +512,7 @@ router.get('/uploader/status', async (req, res) => {
   let allowedFileTypes = [];
 
   // extsInput only will be string
-  if (extsInput) {
+  if (typeof extsInput === 'string') {
     allowedFileTypes = uniq(
       extsInput
         ?.split(',')
@@ -528,8 +528,7 @@ router.get('/uploader/status', async (req, res) => {
   const maxFileSize = xbytes.parseSize(maxUploadSize, { iec: false }) || Infinity;
 
   const restrictions = {
-    // if empty array, will be allowed all types
-    allowedFileTypes: allowedFileTypes?.length === 0 ? undefined : allowedFileTypes,
+    allowedFileTypes,
     maxFileSize,
   };
 

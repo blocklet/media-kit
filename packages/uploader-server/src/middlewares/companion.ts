@@ -3,7 +3,7 @@ const companion = require('@uppy/companion');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const crypto = require('crypto');
-const { checkTrustedReferer, proxyImageDownload } = require('../utils');
+// const { checkTrustedReferer, proxyImageDownload } = require('../utils');
 
 const secret = crypto.randomBytes(32).toString('hex');
 
@@ -28,7 +28,8 @@ export function initCompanion({
   app.use(bodyParser.json());
   app.use(session({ secret }));
 
-  app.use('/proxy', checkTrustedReferer, proxyImageDownload);
+  // FIXME：prevent SSRF attack
+  // app.use('/proxy', checkTrustedReferer, proxyImageDownload);
 
   let dynamicProviderOptions = providerOptions;
 

@@ -1,3 +1,11 @@
+## 0.11.74 (January 02, 2025)
+
+- refactor: enhancing security
+
+## 0.11.73 (December 30, 2024)
+
+- chore: update deps
+
 ## 0.11.72 (December 25, 2024)
 
 - chore: polish sdk upload hash logic

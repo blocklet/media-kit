@@ -38,6 +38,8 @@ export default {
         editorLoading: '等待图片编辑...',
         // download remote file failure
         downloadRemoteFileFailure: '获取远程文件失败 ❌',
+        noAllowedFileTypes: '不允许上传任何文件类型',
+        allowedFileTypes: '允许上传的文件类型：',
       },
     }
   ),
@@ -74,6 +76,8 @@ export default {
         editorLoading: 'Waiting for image editor...',
         // download remote file failure
         downloadRemoteFileFailure: 'Failure to get remote file ❌',
+        noAllowedFileTypes: 'No allowed any file types',
+        allowedFileTypes: 'Allowed file types: ',
       },
     }
   ),

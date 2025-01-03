@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.11.72
+version: 0.11.74
 title: Media Kit
 description: A simple media assets upload and hosting blocklet
 keywords:
@@ -21,6 +21,7 @@ files:
   - dist
   - screenshots
   - api/hooks/pre-start.js
+  - api/hooks/pre-config.js
 interfaces:
   - type: web
     name: publicUrl
@@ -63,6 +64,7 @@ requirements:
   cpu: "*"
 scripts:
   preStart: node api/hooks/pre-start.js
+  preConfig: node api/hooks/pre-config.js
   dev: npm run start
 environments:
   - name: CDN_HOST
