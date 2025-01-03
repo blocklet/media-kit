@@ -43,9 +43,9 @@
         "name": "extsInput",
         "x-designable-id": "y0kp36yu7ps",
         "x-index": 0,
-        "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols. Not allowed to contain ‘*’.",
+        "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols. Not allowed to contain ‘*’. If this item is empty, then .jpeg, .png, .gif, .svg, .webp, .bmp, .ico will be allowed.",
         "default": ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico",
-        "required": true
+        "required": false
       },
       "maxUploadSize": {
         "type": "string",
@@ -76,6 +76,6 @@
         "x-index": 2
       }
     },
-    "x-designable-id": "k0gu7gl3pjg"
+    "x-designable-id": "fi8g1antyk3"
   }
 }

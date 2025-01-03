@@ -1,3 +1,7 @@
+## 0.11.75 (January 03, 2025)
+
+- chore: polish prefs setting
+
 ## 0.11.74 (January 02, 2025)
 
 - refactor: enhancing security
