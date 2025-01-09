@@ -1,3 +1,7 @@
+## 0.11.76 (January 09, 2025)
+
+- chore: update deps
+
 ## 0.11.75 (January 03, 2025)
 
 - chore: polish prefs setting
