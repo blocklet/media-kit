@@ -243,7 +243,7 @@ function initUploader(props: any) {
   const {
     id,
     plugins,
-    locale,
+    locale = 'en',
     onAfterResponse: _onAfterResponse,
     onUploadFinish: _onUploadFinish,
     coreProps,
@@ -270,7 +270,7 @@ function initUploader(props: any) {
     },
     debug: ['true', true].includes(isDebug || ''),
     // @ts-ignore
-    locale: localeMap[locale || 'en'],
+    locale: localeMap[locale],
     onBeforeFileAdded: (file, files) => {
       if (Object.hasOwn(files, file.id)) {
         // is duplicate file
@@ -540,7 +540,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     onUploadFinish: _onUploadFinish,
     onOpen,
     onClose,
-    locale,
+    locale = 'en',
     installerProps,
   } = props;
 
@@ -609,10 +609,10 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 
   let note = '' as any;
   if (withoutAnyAllowedFileTypes) {
-    note = get(localeMap, `${locale}.strings.noAllowedFileTypes`);
+    note = get(localeMap, `${locale}.strings.noAllowedFileTypes`, 'No allowed file types');
   } else if (state.restrictions?.allowedFileTypes?.length) {
     note =
-      get(localeMap, `${locale}.strings.allowedFileTypes`) +
+      get(localeMap, `${locale}.strings.allowedFileTypes`, 'Allowed file types: ') +
       state.restrictions?.allowedFileTypes
         ?.map((item: string) => mime.extension(item))
         .filter(Boolean)
@@ -996,7 +996,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
                   mt: 1.5,
                   fontWeight: 'bold',
                 }}>
-                {get(localeMap, `${locale}.strings.loadingStatus`)}
+                {get(localeMap, `${locale}.strings.loadingStatus`, 'Loading...')}
               </Typography>
             </Box>
           )}
