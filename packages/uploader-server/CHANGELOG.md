@@ -1,3 +1,7 @@
+## 0.1.71 (January 10, 2025)
+
+- chore: polish middleware to support 304 httpStatus
+
 ## 0.1.70 (January 10, 2025)
 
 - fix: resolve the bug of error proxy

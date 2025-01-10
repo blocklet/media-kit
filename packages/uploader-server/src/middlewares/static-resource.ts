@@ -176,7 +176,7 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
     setPDFDownloadHeader(req, res);
 
     proxy.once('proxyRes', (proxyRes: any, req: any, res: any) => {
-      if (proxyRes.statusCode >= 200 && proxyRes.statusCode < 300) {
+      if (proxyRes.statusCode >= 200 && proxyRes.statusCode < 400) {
         res.writeHead(proxyRes.statusCode, proxyRes.headers);
         proxyRes.pipe(res);
       } else {
