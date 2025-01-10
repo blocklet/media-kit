@@ -1,3 +1,7 @@
+## 0.1.69 (January 10, 2025)
+
+- fix: resolve the bug of middleware no response
+
 ## 0.1.68 (January 10, 2025)
 
 - feat: polish initStaticResourceMiddleware and initProxyToMediaKitUploadsMiddleware logic

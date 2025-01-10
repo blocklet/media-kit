@@ -154,7 +154,7 @@ export const initStaticResourceMiddleware = (
         ...options,
       })(req, res, next);
     } else {
-      res.status(404).end();
+      next();
     }
   };
 };
@@ -184,11 +184,7 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
         changeOrigin: true,
         ...options,
       },
-      (err: any) => {
-        console.error('Proxy error:', err);
-        // Instead of returning 502, call next() to try other middlewares
-        next();
-      }
+      next
     );
   };
 };

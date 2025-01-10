@@ -1,3 +1,7 @@
+## 0.11.78 (January 10, 2025)
+
+- fix: resolve the bug of middleware no response
+
 ## 0.11.77 (January 10, 2025)
 
 - chore: polish @blocklet/uploader-server middlewares logic

@@ -83,14 +83,20 @@ app.use(
     next();
   },
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
-  resources.staticResourceMiddleware
+  resources.staticResourceMiddleware,
+  (req, res) => {
+    res.status(404).send('404 NOT FOUND').end();
+  }
 );
 
 app.use(
   '/proxy-to-uploads',
   initProxyToMediaKitUploadsMiddleware({
     express,
-  })
+  }),
+  (req, res) => {
+    res.status(404).send('404 NOT FOUND').end();
+  }
 );
 
 const router = express.Router();
