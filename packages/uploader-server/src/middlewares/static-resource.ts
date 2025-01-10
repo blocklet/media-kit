@@ -175,6 +175,20 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
     // set pdf download header if it's a pdf
     setPDFDownloadHeader(req, res);
 
+    proxy.once('proxyRes', (proxyRes: any, req: any, res: any) => {
+      if (proxyRes.statusCode >= 200 && proxyRes.statusCode < 300) {
+        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+        proxyRes.pipe(res);
+      } else {
+        next();
+      }
+    });
+
+    // 添加错误处理
+    proxy.once('error', (err: Error, req: any, res: any) => {
+      next(err);
+    });
+
     // Proxy requests to mediaKit's webEndpoint
     proxy.web(
       req,
@@ -182,6 +196,7 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
       {
         target: mediaKitInfo.webEndpoint,
         changeOrigin: true,
+        selfHandleResponse: true,
         ...options,
       },
       next

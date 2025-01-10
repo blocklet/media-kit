@@ -1,3 +1,7 @@
+## 0.11.79 (January 10, 2025)
+
+- fix: resolve the bug of error proxy
+
 ## 0.11.78 (January 10, 2025)
 
 - fix: resolve the bug of middleware no response

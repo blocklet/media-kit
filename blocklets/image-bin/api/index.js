@@ -85,7 +85,7 @@ app.use(
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
   resources.staticResourceMiddleware,
   (req, res) => {
-    res.status(404).send('404 NOT FOUND').end();
+    res.status(404).send('404 NOT FOUND');
   }
 );
 
@@ -95,7 +95,7 @@ app.use(
     express,
   }),
   (req, res) => {
-    res.status(404).send('404 NOT FOUND').end();
+    res.status(404).send('404 NOT FOUND BY PROXY');
   }
 );
 
