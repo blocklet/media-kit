@@ -1,3 +1,7 @@
+## 0.1.68 (January 10, 2025)
+
+- feat: polish initStaticResourceMiddleware and initProxyToMediaKitUploadsMiddleware logic
+
 ## 0.1.67 (January 09, 2025)
 
 - chore: update deps

@@ -22,6 +22,13 @@ const resourceTypes = [
   //   type: 'postpack',
   //   did: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu',
   // },
+  // only for test pages kit resource (pages folder)
+  // {
+  //   type: 'page',
+  //   did: 'z8iZiDFg3vkkrPwsiba1TLXy3H9XHzFERsP8o',
+  //   folder: ['pages', 'components'],
+  //   blacklist: ['.yml'],
+  // },
 ];
 
 const router = express.Router();

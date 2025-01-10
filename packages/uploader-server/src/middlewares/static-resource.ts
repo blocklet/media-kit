@@ -16,12 +16,19 @@ const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
 let skipRunningCheck = false;
 let mediaKitInfo = null as any;
 
-// can change by initStaticResourceMiddleware resourceTypes
-let resourceTypes = [
+type ResourceType = {
+  type: string;
+  did: string;
+  folder: string | string[];
+  whitelist?: string[]; // 允许访问的文件扩展名
+  blacklist?: string[]; // 禁止访问的文件扩展名
+};
+
+let resourceTypes: ResourceType[] = [
   {
     type: ImgResourceType,
     did: ImageBinDid,
-    folder: '', // default is root, can be set to 'public' or 'assets' or any other folder
+    folder: '', // can be string or string[]
   },
 ];
 
@@ -49,10 +56,18 @@ export const mappingResource = async () => {
           return false;
         }
 
-        const { folder = '' } = resourceType;
-        return { originDir, dir: join(originDir, folder || ''), blockletInfo: resource };
+        const folders = Array.isArray(resourceType.folder) ? resourceType.folder : [resourceType.folder || ''];
+
+        return folders.map((folder) => ({
+          originDir,
+          dir: join(originDir, folder),
+          blockletInfo: resource,
+          whitelist: resourceType.whitelist,
+          blacklist: resourceType.blacklist,
+        }));
       })
-      .filter(Boolean);
+      .filter(Boolean)
+      .flat();
 
     logger.info(
       'Mapping can use resources count: ',
@@ -112,14 +127,30 @@ export const initStaticResourceMiddleware = (
 
   return (req: any, res: any, next: Function) => {
     const urlPath = new URL(`http://localhost${req.url}`).pathname;
-    const matchCanUseResourceItem = canUseResources.find((item: any) => existsSync(join(item.dir, urlPath)));
-    // dynamic get can use resources assets
+
+    const matchCanUseResourceItem = canUseResources.find((item: any) => {
+      // 检查文件是否存在
+      if (!existsSync(join(item.dir, urlPath))) {
+        return false;
+      }
+
+      // 检查黑白名单
+      const { whitelist, blacklist } = item;
+      if (whitelist?.length && !whitelist.some((ext: string) => urlPath.endsWith(ext))) {
+        return false;
+      }
+      if (blacklist?.length && blacklist.some((ext: string) => urlPath.endsWith(ext))) {
+        return false;
+      }
+
+      return true;
+    });
+
     if (matchCanUseResourceItem) {
       express.static(matchCanUseResourceItem.dir, {
         maxAge: '365d',
         immutable: true,
         index: false,
-        // fallthrough: false,
         ...options,
       })(req, res, next);
     } else {
@@ -155,7 +186,8 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
       },
       (err: any) => {
         console.error('Proxy error:', err);
-        res.status(502).end();
+        // Instead of returning 502, call next() to try other middlewares
+        next();
       }
     );
   };
