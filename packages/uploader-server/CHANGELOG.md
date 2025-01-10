@@ -1,3 +1,7 @@
+## 0.1.72 (January 10, 2025)
+
+- fix: resolve the bug of req.url not match file
+
 ## 0.1.71 (January 10, 2025)
 
 - chore: polish middleware to support 304 httpStatus

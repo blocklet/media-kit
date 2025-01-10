@@ -126,20 +126,20 @@ export const initStaticResourceMiddleware = (
   mappingResource();
 
   return (req: any, res: any, next: Function) => {
-    const urlPath = new URL(`http://localhost${req.url}`).pathname;
+    const fileName = basename(req.url);
 
     const matchCanUseResourceItem = canUseResources.find((item: any) => {
-      // 检查文件是否存在
-      if (!existsSync(join(item.dir, urlPath))) {
+      // 检查黑白名单
+      const { whitelist, blacklist } = item;
+      if (whitelist?.length && !whitelist.some((ext: string) => fileName.endsWith(ext))) {
+        return false;
+      }
+      if (blacklist?.length && blacklist.some((ext: string) => fileName.endsWith(ext))) {
         return false;
       }
 
-      // 检查黑白名单
-      const { whitelist, blacklist } = item;
-      if (whitelist?.length && !whitelist.some((ext: string) => urlPath.endsWith(ext))) {
-        return false;
-      }
-      if (blacklist?.length && blacklist.some((ext: string) => urlPath.endsWith(ext))) {
+      // 检查文件是否存在
+      if (!existsSync(join(item.dir, fileName))) {
         return false;
       }
 
@@ -167,11 +167,6 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
       return next();
     }
 
-    // Rewrite the URL to point to media kit /uploads/
-    // eg. https://did-domain/image-bin/uploads2/123.png -> http://127.0.0.1:3000/uploads/123.png
-    const filename = basename(req.url);
-    req.url = joinUrl('/uploads/', filename);
-
     // set pdf download header if it's a pdf
     setPDFDownloadHeader(req, res);
 
@@ -194,7 +189,7 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
       req,
       res,
       {
-        target: mediaKitInfo.webEndpoint,
+        target: joinUrl(mediaKitInfo.webEndpoint, '/uploads', basename(req.url)),
         changeOrigin: true,
         selfHandleResponse: true,
         ...options,
