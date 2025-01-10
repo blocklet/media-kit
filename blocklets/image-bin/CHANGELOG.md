@@ -1,6 +1,6 @@
 ## 0.11.77 (January 10, 2025)
 
-- chore: polish initStaticResourceMiddleware and initProxyToMediaKitUploadsMiddleware logic
+- chore: polish @blocklet/uploader-server middlewares logic
 
 ## 0.11.76 (January 09, 2025)
 
