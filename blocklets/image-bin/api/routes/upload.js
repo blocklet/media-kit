@@ -272,6 +272,26 @@ const tempUpload = multer({
   }),
 });
 
+const ensureFileMetadata = (filePath, { fileName, fileSize, originalFileName, fileType }) => {
+  if (!fs.existsSync(`${filePath}.json`)) {
+    const metadata = {
+      id: fileName,
+      size: fileSize,
+      offset: fileSize,
+      metadata: {
+        uploaderId: 'Media Kit SDK',
+        relativePath: originalFileName,
+        name: originalFileName,
+        type: fileType,
+        filetype: fileType,
+        filename: originalFileName,
+      },
+      creation_date: new Date().toISOString(),
+    };
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(metadata));
+  }
+};
+
 router.post(
   '/sdk/uploads',
   (req, res, next) => {
@@ -338,40 +358,21 @@ router.post(
       const existItem = await Upload.findOne(file);
       const existFile = await fs.existsSync(filePath);
       if (existItem && existFile) {
-        logger.info('file already exist, skip repeat insert');
-        res.json({ ...extraResult, ...existItem, repeat: true });
-        return;
+        const existingStats = fs.statSync(filePath);
+        if (existingStats.size === fileSize) {
+          ensureFileMetadata(filePath, { fileName, fileSize, originalFileName, fileType });
+          logger.info('file already exist with same size, skip repeat insert');
+          res.json({ ...extraResult, ...existItem, repeat: true });
+          return;
+        }
       }
     }
 
-    // Stream file to destination
+    // Stream file to destination only if file doesn't exist or has different size
     await pipeline(fs.createReadStream(req.file.path), fs.createWriteStream(filePath));
 
-    // Set file metadata
-    if (!fs.existsSync(`${filePath}.json`)) {
-      const metadata = {
-        id: fileName,
-        size: fileSize,
-        offset: fileSize,
-        metadata: {
-          uploaderId: 'Media Kit SDK',
-          relativePath: originalFileName,
-          name: originalFileName,
-          type: fileType,
-          filetype: fileType,
-          filename: originalFileName,
-        },
-        creation_date: new Date().toISOString(),
-      };
-      fs.writeFileSync(`${filePath}.json`, JSON.stringify(metadata));
-    }
-
-    // Clean up temp file
-    try {
-      await fs.promises.unlink(req.file.path);
-    } catch (err) {
-      logger.warn('Failed to clean up temp file:', err);
-    }
+    // Ensure metadata for new file
+    ensureFileMetadata(filePath, { fileName, fileSize, originalFileName, fileType });
 
     const doc = await Upload.insert({
       ...pick(file, ['size', 'filename', 'mimetype']),
