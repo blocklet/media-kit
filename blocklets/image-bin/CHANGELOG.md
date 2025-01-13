@@ -1,3 +1,10 @@
+## 0.11.82 (January 13, 2025)
+
+- chore: update deps
+- chore: add getMediaKitFileStream function to sdk
+- chore: update @blocklet/uploader-server middlewares logic
+- chore: add uploadToMediaKit function to sdk
+
 ## 0.11.81 (January 10, 2025)
 
 - fix: resolve the bug of req.url not match file

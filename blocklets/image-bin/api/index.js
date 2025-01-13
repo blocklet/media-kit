@@ -23,6 +23,10 @@ if (fs.existsSync(env.uploadDir) === false) {
   fs.mkdirSync(env.uploadDir, { recursive: true });
 }
 
+if (fs.existsSync(env.uploadTempDir) === false) {
+  fs.mkdirSync(env.uploadTempDir, { recursive: true });
+}
+
 const app = express();
 
 app.set('trust proxy', true);

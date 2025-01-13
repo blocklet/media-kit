@@ -1,3 +1,7 @@
+## 0.1.73 (January 13, 2025)
+
+- chore: update deps
+
 ## 0.1.72 (January 10, 2025)
 
 - fix: resolve the bug of req.url not match file
