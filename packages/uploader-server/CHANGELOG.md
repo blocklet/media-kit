@@ -1,3 +1,7 @@
+## 0.1.74 (January 14, 2025)
+
+- chore: polish sdk logic to receive more options
+
 ## 0.1.73 (January 13, 2025)
 
 - chore: update deps

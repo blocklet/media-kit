@@ -8,6 +8,20 @@ import { createReadStream } from 'fs';
 import crypto from 'crypto';
 import { getSignData } from '@blocklet/sdk/lib/util/verify-sign';
 import FormData from 'form-data';
+import type { Method } from 'axios';
+import omit from 'lodash/omit';
+
+// fork from @blocklet/sdk/lib/component/index.d.ts
+type CallComponentOptions<D = any, P = any> = {
+  name?: string;
+  method?: Method;
+  path: string;
+  data?: D;
+  params?: P;
+  headers?: {
+    [key: string]: any;
+  };
+};
 
 // Cache interface to store domain and timestamp
 interface DomainsCache {
@@ -142,10 +156,12 @@ export async function uploadToMediaKit({
   filePath,
   fileName,
   base64,
+  extraComponentCallOptions,
 }: {
   filePath?: string;
   fileName?: string;
   base64?: string;
+  extraComponentCallOptions?: CallComponentOptions;
 }) {
   if (!filePath && !base64) {
     throw new Error('filePath or base64 is required');
@@ -162,6 +178,7 @@ export async function uploadToMediaKit({
         base64,
         filename: fileName,
       },
+      ...omit(extraComponentCallOptions, ['name', 'path', 'data']),
     });
 
     return res;
@@ -190,9 +207,11 @@ export async function uploadToMediaKit({
             },
             method: 'POST',
             url: '/api/sdk/uploads',
-            params: {},
+            params: extraComponentCallOptions?.params || {},
           }).sig,
+          ...extraComponentCallOptions?.headers,
         },
+        ...omit(extraComponentCallOptions, ['name', 'path', 'data', 'headers']),
       },
       {
         retries: 0,
