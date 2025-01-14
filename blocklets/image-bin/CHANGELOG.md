@@ -1,3 +1,7 @@
+## 0.11.83 (January 14, 2025)
+
+- fix: resolve the bug of upload list sort error
+
 ## 0.11.82 (January 13, 2025)
 
 - chore: update deps

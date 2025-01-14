@@ -104,10 +104,10 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE } = {}) => {
       condition.tags = { $in: tags };
     }
 
-    const uploads = await Upload.paginate({ condition, sort: { updatedAt: -1 }, page, size: pageSize });
+    const uploads = await Upload.paginate({ condition, sort: { createdAt: -1, updatedAt: -1 }, page, size: pageSize });
     const total = await Upload.count(condition);
 
-    const folders = await Folder.cursor({}).sort({ updatedAts: -1 }).exec();
+    const folders = await Folder.cursor({}).sort({ createdAt: -1, updatedAt: -1 }).exec();
 
     res.jsonp({ uploads, folders, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
   };
