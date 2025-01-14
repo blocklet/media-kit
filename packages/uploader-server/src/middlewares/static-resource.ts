@@ -2,19 +2,16 @@ const { existsSync } = require('fs');
 const { join, basename } = require('path');
 const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');
-const httpProxy = require('http-proxy');
 const joinUrl = require('url-join');
+const component = require('@blocklet/sdk/lib/component');
 const { setPDFDownloadHeader } = require('../utils');
-
-const proxy = httpProxy.createProxyServer();
+const { ImageBinDid } = require('../constants');
 
 const logger = console;
 
 const ImgResourceType = 'imgpack';
-const ImageBinDid = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
 
 let skipRunningCheck = false;
-let mediaKitInfo = null as any;
 
 type ResourceType = {
   type: string;
@@ -35,12 +32,6 @@ let resourceTypes: ResourceType[] = [
 let canUseResources = [] as any;
 
 export const mappingResource = async () => {
-  mediaKitInfo = config.components.find((item: any) => item.did === ImageBinDid);
-
-  if (mediaKitInfo) {
-    mediaKitInfo.uploadsDir = config.env.dataDir.replace(/\/[^/]*$/, '/image-bin/uploads');
-  }
-
   try {
     const resources = getResources({
       types: resourceTypes,
@@ -129,17 +120,23 @@ export const initStaticResourceMiddleware = (
     const fileName = basename(req.url);
 
     const matchCanUseResourceItem = canUseResources.find((item: any) => {
+      // 防止路径遍历攻击
+      const normalizedPath = join(item.dir, fileName);
+      if (!normalizedPath.startsWith(item.dir)) {
+        return false;
+      }
+
+      // 检查文件是否存在
+      if (!existsSync(normalizedPath)) {
+        return false;
+      }
+
       // 检查黑白名单
       const { whitelist, blacklist } = item;
       if (whitelist?.length && !whitelist.some((ext: string) => fileName.endsWith(ext))) {
         return false;
       }
       if (blacklist?.length && blacklist.some((ext: string) => fileName.endsWith(ext))) {
-        return false;
-      }
-
-      // 检查文件是否存在
-      if (!existsSync(join(item.dir, fileName))) {
         return false;
       }
 
@@ -162,39 +159,37 @@ export const initStaticResourceMiddleware = (
 export const getCanUseResources = () => canUseResources;
 
 export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} as any) => {
-  return (req: any, res: any, next: Function) => {
-    if (!mediaKitInfo?.webEndpoint) {
+  return async (req: any, res: any, next: Function) => {
+    if (!component.getComponentWebEndpoint(ImageBinDid)) {
       return next();
     }
 
-    // set pdf download header if it's a pdf
     setPDFDownloadHeader(req, res);
 
-    proxy.once('proxyRes', (proxyRes: any, req: any, res: any) => {
-      if (proxyRes.statusCode >= 200 && proxyRes.statusCode < 400) {
-        res.writeHead(proxyRes.statusCode, proxyRes.headers);
-        proxyRes.pipe(res);
+    try {
+      const { data, status, headers } = await component.call({
+        name: ImageBinDid,
+        path: joinUrl('/uploads', basename(req.url)),
+        responseType: 'stream',
+        method: 'GET',
+      });
+
+      if (data && status >= 200 && status < 400) {
+        res.set('Content-Type', headers['content-type']);
+
+        data
+          .on('error', (err: Error) => {
+            next();
+          })
+          .pipe(res)
+          .on('error', (err: Error) => {
+            next();
+          });
       } else {
         next();
       }
-    });
-
-    // 添加错误处理
-    proxy.once('error', (err: Error, req: any, res: any) => {
-      next(err);
-    });
-
-    // Proxy requests to mediaKit's webEndpoint
-    proxy.web(
-      req,
-      res,
-      {
-        target: joinUrl(mediaKitInfo.webEndpoint, '/uploads', basename(req.url)),
-        changeOrigin: true,
-        selfHandleResponse: true,
-        ...options,
-      },
-      next
-    );
+    } catch (error) {
+      next();
+    }
   };
 };

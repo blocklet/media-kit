@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
@@ -8,11 +7,15 @@ const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
 const Component = require('@blocklet/sdk/lib/component');
+
 const { LRUCache } = require('lru-cache');
 const { isValid: isValidDID } = require('@arcblock/did');
 const xbytes = require('xbytes');
+
 const uniq = require('lodash/uniq');
-const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader-server');
+const multer = require('multer');
+const { pipeline } = require('stream/promises');
+const { initLocalStorageServer, initCompanion, getFileHash } = require('@blocklet/uploader-server');
 const { checkTrustedReferer } = require('@blocklet/uploader-server');
 const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
@@ -20,6 +23,7 @@ const { getResourceComponents } = require('./resources');
 const env = require('../libs/env');
 const Upload = require('../states/upload');
 const Folder = require('../states/folder');
+
 const { user, auth, ensureAdmin } = require('../libs/auth');
 
 const router = express.Router();
@@ -256,81 +260,146 @@ config.events.on(config.Events.envUpdate, () => {
 
 router.use('/companion', user, auth, ensureFolderId(), companion.handle);
 
-router.post('/sdk/uploads', user, middleware.component.verifySig, ensureFolderId(), async (req, res) => {
-  const { filename: originalFileName, base64, repeatInsert = false } = req.body;
+const tempUpload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, env.uploadTempDir);
+    },
+    filename: (req, file, cb) => {
+      // 使用时间戳作为临时文件名
+      cb(null, `${Date.now()}-${file.originalname}`);
+    },
+  }),
+});
 
-  if (!originalFileName || !base64) {
-    res.json({ error: 'missing required body `filename` or `base64`' });
-    return;
+const ensureFileMetadata = (filePath, { fileName, fileSize, originalFileName, fileType }) => {
+  if (!fs.existsSync(`${filePath}.json`)) {
+    const metadata = {
+      id: fileName,
+      size: fileSize,
+      offset: fileSize,
+      metadata: {
+        uploaderId: 'Media Kit SDK',
+        relativePath: originalFileName,
+        name: originalFileName,
+        type: fileType,
+        filetype: fileType,
+        filename: originalFileName,
+      },
+      creation_date: new Date().toISOString(),
+    };
+    fs.writeFileSync(`${filePath}.json`, JSON.stringify(metadata));
   }
+};
 
-  const buffer = Buffer.from(base64, 'base64');
+router.post(
+  '/sdk/uploads',
+  (req, res, next) => {
+    // use upload sig to verify if exist
+    if (req.headers['x-component-upload-sig']) {
+      req.headers['x-component-sig'] = req.headers['x-component-upload-sig'];
+    }
+    next();
+  },
+  user,
+  tempUpload.single('file'),
+  middleware.component.verifySig,
+  ensureFolderId(),
+  async (req, res) => {
+    const { filename: originalFileName, base64, repeatInsert = false } = req.body || {};
 
-  if (!buffer) {
-    res.json({
-      error: 'invalid upload params',
-      base64,
-    });
-    return;
-  }
+    if (base64) {
+      // write to temp file
+      const tempFilePath = path.join(env.uploadTempDir, `${Date.now()}-${originalFileName}`);
+      // Remove data URI scheme prefix if present
+      const cleanBase64 = base64.replace(/^data:image\/\w+;base64,/, '');
+      fs.writeFileSync(tempFilePath, Buffer.from(cleanBase64, 'base64'));
+      req.file = {
+        path: tempFilePath,
+        originalname: originalFileName,
+      };
+    }
 
-  // keep same logic as uploader prepare-upload.jsx
-  const chunkSize = 1024 * 1024 * 5; // 5 MB
-  const blobSlice = buffer.slice(0, chunkSize); // use slice to get hash
-
-  const hash = crypto.createHash('md5');
-
-  hash.update(blobSlice.toString());
-
-  const fileName = `${hash.digest('hex')}${path.extname(originalFileName).replace(/\.+$/, '')}`;
-
-  const filePath = path.join(env.uploadDir, fileName);
-
-  const file = {
-    size: buffer.length,
-    filename: fileName,
-    mimetype: mime.lookup(fileName) || '',
-    createdBy: req.user?.did,
-  };
-
-  // current url
-  const obj = new URL(env.appUrl);
-  obj.protocol = req.get('x-forwarded-proto') || req.protocol;
-  obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', file.filename);
-
-  const extraResult = {
-    url: obj.href,
-  };
-
-  if (['false', false].includes(repeatInsert)) {
-    const existItem = await Upload.findOne(file);
-    const existFile = await fs.existsSync(filePath);
-    if (existItem && existFile) {
-      logger.info('file already exist, skip repeat insert');
-      res.json({ ...extraResult, ...existItem, repeat: true });
+    if (!req.file.path) {
+      res.json({
+        error: 'invalid upload file',
+        base64,
+      });
       return;
     }
+
+    const tempFilePath = req.file.path;
+
+    // Calculate file size without loading entire file
+    const stats = fs.statSync(tempFilePath);
+    const fileSize = stats.size;
+
+    // Replace the existing hash calculation in the /sdk/uploads route
+    const fileHash = await getFileHash(tempFilePath);
+    const fileName = `${fileHash}${path.extname(originalFileName).replace(/\.+$/, '')}`;
+    const filePath = path.join(env.uploadDir, fileName);
+    const fileType = req?.file?.mimetype || mime.lookup(fileName) || '';
+
+    const file = {
+      size: fileSize,
+      filename: fileName,
+      mimetype: fileType,
+      createdBy: req.user?.did,
+    };
+
+    // current url
+    const obj = new URL(env.appUrl);
+    obj.protocol = req.get('x-forwarded-proto') || req.protocol;
+    obj.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', file.filename);
+
+    const extraResult = {
+      url: obj.href,
+    };
+
+    if (['false', false].includes(repeatInsert)) {
+      const existItem = await Upload.findOne(file);
+      const existFile = await fs.existsSync(filePath);
+      if (existItem && existFile) {
+        const existingStats = fs.statSync(filePath);
+        if (existingStats.size === fileSize) {
+          ensureFileMetadata(filePath, { fileName, fileSize, originalFileName, fileType });
+          logger.info('file already exist with same size, skip repeat insert');
+          res.json({ ...extraResult, ...existItem, repeat: true });
+          return;
+        }
+      }
+    }
+
+    // Stream file to destination only if file doesn't exist or has different size
+    await pipeline(fs.createReadStream(tempFilePath), fs.createWriteStream(filePath));
+
+    // Ensure metadata for new file
+    ensureFileMetadata(filePath, { fileName, fileSize, originalFileName, fileType });
+
+    // Remove temp file
+    try {
+      await fs.promises.unlink(tempFilePath);
+    } catch (err) {
+      logger.warn('Failed to clean up temp file:', err);
+    }
+
+    const doc = await Upload.insert({
+      ...pick(file, ['size', 'filename', 'mimetype']),
+      tags: (req.body.tags || '')
+        .split(',')
+        .map((x) => x.trim())
+        .filter(Boolean),
+      folderId: req.componentDid,
+      originalname: originalFileName || fileName,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: req.user?.did,
+      updatedBy: req.user?.did,
+    });
+
+    res.json({ ...extraResult, ...doc });
   }
-
-  fs.writeFileSync(filePath, buffer);
-  file.size = fs.lstatSync(filePath).size; // 更新为实际写入的文件大小
-
-  const doc = await Upload.insert({
-    ...pick(file, ['size', 'filename', 'mimetype']),
-    tags: (req.body.tags || '')
-      .split(',')
-      .map((x) => x.trim())
-      .filter(Boolean),
-    folderId: req.componentDid,
-    originalname: originalFileName,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    createdBy: req.user?.did,
-    updatedBy: req.user?.did,
-  });
-
-  res.json({ ...extraResult, ...doc });
-});
+);
 
 router.get(
   '/sdk/uploads',
