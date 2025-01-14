@@ -1,3 +1,7 @@
+## 0.11.84 (January 14, 2025)
+
+- chore: polish sdk logic to receive more options
+
 ## 0.11.83 (January 14, 2025)
 
 - fix: resolve the bug of upload list sort error
