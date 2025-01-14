@@ -328,12 +328,14 @@ router.post(
       return;
     }
 
+    const tempFilePath = req.file.path;
+
     // Calculate file size without loading entire file
-    const stats = fs.statSync(req.file.path);
+    const stats = fs.statSync(tempFilePath);
     const fileSize = stats.size;
 
     // Replace the existing hash calculation in the /sdk/uploads route
-    const fileHash = await getFileHash(req.file.path);
+    const fileHash = await getFileHash(tempFilePath);
     const fileName = `${fileHash}${path.extname(originalFileName).replace(/\.+$/, '')}`;
     const filePath = path.join(env.uploadDir, fileName);
     const fileType = req?.file?.mimetype || mime.lookup(fileName) || '';
@@ -369,10 +371,17 @@ router.post(
     }
 
     // Stream file to destination only if file doesn't exist or has different size
-    await pipeline(fs.createReadStream(req.file.path), fs.createWriteStream(filePath));
+    await pipeline(fs.createReadStream(tempFilePath), fs.createWriteStream(filePath));
 
     // Ensure metadata for new file
     ensureFileMetadata(filePath, { fileName, fileSize, originalFileName, fileType });
+
+    // Remove temp file
+    try {
+      await fs.promises.unlink(tempFilePath);
+    } catch (err) {
+      logger.warn('Failed to clean up temp file:', err);
+    }
 
     const doc = await Upload.insert({
       ...pick(file, ['size', 'filename', 'mimetype']),
