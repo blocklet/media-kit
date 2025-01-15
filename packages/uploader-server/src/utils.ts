@@ -2,6 +2,26 @@ import axios from 'axios';
 import path from 'path';
 import joinUrl from 'url-join';
 import { isbot } from 'isbot';
+import component from '@blocklet/sdk/lib/component';
+import { ImageBinDid } from './constants';
+import { createReadStream } from 'fs';
+import crypto from 'crypto';
+import { getSignData } from '@blocklet/sdk/lib/util/verify-sign';
+import FormData from 'form-data';
+import type { Method } from 'axios';
+import omit from 'lodash/omit';
+
+// fork from @blocklet/sdk/lib/component/index.d.ts
+type CallComponentOptions<D = any, P = any> = {
+  name?: string;
+  method?: Method;
+  path: string;
+  data?: D;
+  params?: P;
+  headers?: {
+    [key: string]: any;
+  };
+};
 
 // Cache interface to store domain and timestamp
 interface DomainsCache {
@@ -115,4 +135,102 @@ export function setPDFDownloadHeader(req: any, res: any) {
     // set pdf download
     res.setHeader('Content-Disposition', `attachment; ${filename ? `filename="${filename}"` : ''}`);
   }
+}
+
+export const getFileHash = async (filePath: string, maxBytes = 5 * 1024 * 1024) => {
+  const hash = crypto.createHash('md5');
+  const readStream = createReadStream(filePath, {
+    start: 0,
+    end: maxBytes - 1,
+    highWaterMark: 1024 * 1024, // 1MB chunks
+  });
+
+  for await (const chunk of readStream) {
+    hash.update(chunk.toString());
+  }
+
+  return hash.digest('hex');
+};
+
+export async function uploadToMediaKit({
+  filePath,
+  fileName,
+  base64,
+  extraComponentCallOptions,
+}: {
+  filePath?: string;
+  fileName?: string;
+  base64?: string;
+  extraComponentCallOptions?: CallComponentOptions;
+}) {
+  if (!filePath && !base64) {
+    throw new Error('filePath or base64 is required');
+  }
+
+  if (base64) {
+    if (!fileName) {
+      throw new Error('fileName is required when base64 is provided');
+    }
+    const res = await component.call({
+      name: ImageBinDid,
+      path: '/api/sdk/uploads',
+      data: {
+        base64,
+        filename: fileName,
+      },
+      ...omit(extraComponentCallOptions, ['name', 'path', 'data']),
+    });
+
+    return res;
+  }
+
+  if (filePath) {
+    const fileStream = createReadStream(filePath);
+    const filename = fileName || path.basename(filePath);
+    const form = new FormData();
+    const fileHash = await getFileHash(filePath);
+
+    form.append('file', fileStream as any);
+    form.append('filename', filename);
+    form.append('hash', fileHash);
+
+    const res = await component.call(
+      {
+        name: ImageBinDid,
+        path: '/api/sdk/uploads',
+        data: form,
+        headers: {
+          'x-component-upload-sig': getSignData({
+            data: {
+              filename,
+              hash: fileHash,
+            },
+            method: 'POST',
+            url: '/api/sdk/uploads',
+            params: extraComponentCallOptions?.params || {},
+          }).sig,
+          ...extraComponentCallOptions?.headers,
+        },
+        ...omit(extraComponentCallOptions, ['name', 'path', 'data', 'headers']),
+      },
+      {
+        retries: 0,
+      }
+    );
+
+    return res;
+  }
+}
+
+export async function getMediaKitFileStream(filePath: string) {
+  const fileName = path.basename(filePath);
+
+  const res = await component.call({
+    name: ImageBinDid,
+    path: joinUrl('/uploads', fileName),
+    responseType: 'stream',
+    method: 'GET',
+  });
+
+  return res;
 }

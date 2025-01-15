@@ -35,6 +35,7 @@ export function initLocalStorageServer({
 }) {
   const app = express();
   const configstore = new RewriteFileConfigstore(_path); // my configstore
+
   const datastore = new RewriteFileStore({
     directory: _path,
     expirationPeriodInMilliseconds: expiredUploadTime,
@@ -436,7 +437,7 @@ class RewriteFileConfigstore {
   }
 
   async set(key: string, value: any) {
-    // no recording run time
+    // no recording runtime
     if (value?.runtime) {
       delete value.runtime;
     }

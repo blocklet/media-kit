@@ -1,3 +1,38 @@
+## 0.11.84 (January 14, 2025)
+
+- chore: polish sdk logic to receive more options
+
+## 0.11.83 (January 14, 2025)
+
+- fix: resolve the bug of upload list sort error
+
+## 0.11.82 (January 13, 2025)
+
+- chore: update deps
+- chore: add getMediaKitFileStream function to sdk
+- chore: update @blocklet/uploader-server middlewares logic
+- chore: add uploadToMediaKit function to sdk
+
+## 0.11.81 (January 10, 2025)
+
+- fix: resolve the bug of req.url not match file
+
+## 0.11.80 (January 10, 2025)
+
+- chore: polish middleware to support 304 httpStatus
+
+## 0.11.79 (January 10, 2025)
+
+- fix: resolve the bug of error proxy
+
+## 0.11.78 (January 10, 2025)
+
+- fix: resolve the bug of middleware no response
+
+## 0.11.77 (January 10, 2025)
+
+- chore: polish @blocklet/uploader-server middlewares logic
+
 ## 0.11.76 (January 09, 2025)
 
 - chore: update deps

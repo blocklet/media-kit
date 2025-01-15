@@ -1,3 +1,31 @@
+## 0.1.74 (January 14, 2025)
+
+- chore: polish sdk logic to receive more options
+
+## 0.1.73 (January 13, 2025)
+
+- chore: update deps
+
+## 0.1.72 (January 10, 2025)
+
+- fix: resolve the bug of req.url not match file
+
+## 0.1.71 (January 10, 2025)
+
+- chore: polish middleware to support 304 httpStatus
+
+## 0.1.70 (January 10, 2025)
+
+- fix: resolve the bug of error proxy
+
+## 0.1.69 (January 10, 2025)
+
+- fix: resolve the bug of middleware no response
+
+## 0.1.68 (January 10, 2025)
+
+- feat: polish initStaticResourceMiddleware and initProxyToMediaKitUploadsMiddleware logic
+
 ## 0.1.67 (January 09, 2025)
 
 - chore: update deps

@@ -23,6 +23,10 @@ if (fs.existsSync(env.uploadDir) === false) {
   fs.mkdirSync(env.uploadDir, { recursive: true });
 }
 
+if (fs.existsSync(env.uploadTempDir) === false) {
+  fs.mkdirSync(env.uploadTempDir, { recursive: true });
+}
+
 const app = express();
 
 app.set('trust proxy', true);
@@ -83,14 +87,20 @@ app.use(
     next();
   },
   express.static(env.uploadDir, { maxAge: '356d', immutable: true, index: false }),
-  resources.staticResourceMiddleware
+  resources.staticResourceMiddleware,
+  (req, res) => {
+    res.status(404).send('404 NOT FOUND');
+  }
 );
 
 app.use(
   '/proxy-to-uploads',
   initProxyToMediaKitUploadsMiddleware({
     express,
-  })
+  }),
+  (req, res) => {
+    res.status(404).send('404 NOT FOUND BY PROXY');
+  }
 );
 
 const router = express.Router();

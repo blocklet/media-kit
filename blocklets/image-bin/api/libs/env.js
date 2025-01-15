@@ -11,6 +11,7 @@ const updateEnv = () => {
   envMap = {
     ...config.env,
     uploadDir: path.join(config.env.dataDir, 'uploads'),
+    uploadTempDir: path.join(config.env.dataDir, 'uploads-temp'),
     getProviderOptions: () => {
       const providerOptions = {};
       // unsplash
