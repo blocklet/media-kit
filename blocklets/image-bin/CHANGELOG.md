@@ -1,3 +1,7 @@
+## 0.11.85 (January 23, 2025)
+
+- fix: resolve the bug of safari can't play video
+
 ## 0.11.84 (January 14, 2025)
 
 - chore: polish sdk logic to receive more options

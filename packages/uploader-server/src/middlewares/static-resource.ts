@@ -175,7 +175,10 @@ export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} a
       });
 
       if (data && status >= 200 && status < 400) {
-        res.set('Content-Type', headers['content-type']);
+        // proxy headers
+        Object.keys(headers).forEach((key) => {
+          res.set(key, headers[key]);
+        });
 
         data
           .on('error', (err: Error) => {
