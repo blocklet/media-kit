@@ -1,3 +1,7 @@
+## 0.1.76 (January 26, 2025)
+
+- chore: update deps
+
 ## 0.1.75 (January 23, 2025)
 
 - fix: resolve the bug of safari can't play video

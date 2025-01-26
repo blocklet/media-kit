@@ -1,3 +1,9 @@
+## 0.1.65 (January 26, 2025)
+
+- chore: update deps
+- feat: add strict svg clean logic
+- fix: resolve the bug of note typo
+
 ## 0.1.64 (January 13, 2025)
 
 - chore: update deps
