@@ -520,7 +520,7 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
     open: false,
     uppy: null as any,
     availablePluginMap: {} as any,
-    restrictions: {} as any,
+    restrictions: cloneDeep(props?.coreProps?.restrictions) || ({} as any),
   });
 
   const theme = useTheme();
@@ -607,16 +607,21 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
   const withoutAnyAllowedFileTypes =
     typeof state.restrictions?.allowedFileTypes === 'object' && state.restrictions?.allowedFileTypes?.length === 0;
 
+  const extsNote =
+    state.restrictions?.allowedFileTypes
+      ?.map((item: string) => mime.extension(item))
+      ?.filter(Boolean)
+      ?.join(', ') || '';
+
   let note = '' as any;
   if (withoutAnyAllowedFileTypes) {
     note = get(localeMap, `${locale}.strings.noAllowedFileTypes`, 'No allowed file types');
-  } else if (state.restrictions?.allowedFileTypes?.length) {
-    note =
-      get(localeMap, `${locale}.strings.allowedFileTypes`, 'Allowed file types: ') +
-      state.restrictions?.allowedFileTypes
-        ?.map((item: string) => mime.extension(item))
-        .filter(Boolean)
-        .join(', ');
+  } else if (state.restrictions?.allowedFileTypes?.length && extsNote) {
+    note = get(localeMap, `${locale}.strings.allowedFileTypes`, 'Allowed file types: ') + extsNote;
+  }
+
+  if (isNil(note) || ['undefined', 'null', undefined, null].includes(note)) {
+    note = '';
   }
 
   useKeyPress(

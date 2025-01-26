@@ -103,7 +103,61 @@ class PrepareUpload extends UIPlugin {
         const fileText = await data.text();
         const cleanFile = DOMPurify.sanitize(fileText, {
           USE_PROFILES: { svg: true, svgFilters: true },
-          ADD_TAGS: ['use'],
+          ALLOWED_TAGS: [
+            'svg',
+            'circle',
+            'ellipse',
+            'line',
+            'path',
+            'polygon',
+            'polyline',
+            'rect',
+            'g',
+            'text',
+            'use',
+            'defs',
+            'clipPath',
+            'mask',
+            'pattern',
+            'linearGradient',
+            'radialGradient',
+            'stop',
+          ],
+          ALLOWED_ATTR: [
+            'd',
+            'points',
+            'x',
+            'y',
+            'width',
+            'height',
+            'r',
+            'cx',
+            'cy',
+            'rx',
+            'ry',
+            'x1',
+            'y1',
+            'x2',
+            'y2',
+            'transform',
+            'fill',
+            'stroke',
+            'stroke-width',
+            'viewBox',
+            'xmlns',
+            'style',
+            'id',
+            'class',
+            'offset',
+            'stop-color',
+            'stop-opacity',
+            'clip-path',
+            'mask',
+            'fill-opacity',
+            'stroke-opacity',
+          ],
+          FORBID_TAGS: ['a', 'script', 'iframe', 'image', 'foreignObject'],
+          FORBID_ATTR: ['href', 'xlink:href', 'onclick', 'onload', 'onerror'],
         });
         if (fileText !== cleanFile) {
           // rewrite clean file
@@ -438,7 +492,7 @@ class PrepareUpload extends UIPlugin {
 
     // Why emit `preprocess-complete` for all files at once, instead of
     // above when each is processed?
-    // Because it leads to StatusBar showing a weird “upload 6 files” button,
+    // Because it leads to StatusBar showing a weird "upload 6 files" button,
     // while waiting for all the files to complete pre-processing.
     return Promise.all(promises).then(emitPreprocessCompleteForAll);
   };
