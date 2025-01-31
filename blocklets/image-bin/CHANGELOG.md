@@ -1,3 +1,7 @@
+## 0.11.87 (February 01, 2025)
+
+chore: update deps
+
 ## 0.11.86 (January 26, 2025)
 
 - chore: update deps
