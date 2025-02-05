@@ -1,3 +1,7 @@
+## 0.1.66 (February 05, 2025)
+
+- chore: polish zip bomb logic
+
 ## 0.1.65 (January 26, 2025)
 
 - chore: update deps
