@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.1.65",
+  "version": "0.1.66",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"

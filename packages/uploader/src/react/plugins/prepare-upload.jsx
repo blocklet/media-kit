@@ -185,23 +185,25 @@ class PrepareUpload extends UIPlugin {
         // object {filename: Uint8Array} or Uint8Array
         const unzippedMap = zipBombMap[file.extension](new Uint8Array(await data.arrayBuffer()));
 
-        let maxDepth = 0;
-
-        const getTotalUnzippedSize = (_unzippedMap, _name) => {
-          maxDepth++;
+        const getTotalUnzippedSize = (_unzippedMap, _name, depth = 0) => {
           return Object.entries(
-            // if is Uint8Array, convert it to {filename: Uint8Array}
             _unzippedMap instanceof Uint8Array
               ? {
                   [_name || file.name]: _unzippedMap,
                 }
               : _unzippedMap
           ).reduce((acc, [name, item]) => {
+            // Add null check and size check for item
+            if (!item || item.byteLength === 0) {
+              console.warn('Invalid or empty item in unzipped content', { name, item });
+              return acc;
+            }
+
             const baseAcc = acc + item.byteLength;
 
-            if (maxDepth >= 5 || baseAcc > file.size * 100) {
+            if (depth >= 5 || baseAcc > file.size * 100) {
               console.error('Zip bomb detected, please check your file', {
-                maxDepth,
+                depth,
                 baseAcc,
                 fileSize: file.size,
               });
@@ -212,7 +214,9 @@ class PrepareUpload extends UIPlugin {
 
             if (zipBombMap[ext]) {
               const childUnzippedMap = zipBombMap[ext](item);
-              return baseAcc + getTotalUnzippedSize(childUnzippedMap, name);
+
+              // Pass current depth + 1 to recursive call
+              return baseAcc + getTotalUnzippedSize(childUnzippedMap, name, depth + 1);
             }
 
             return baseAcc;
@@ -220,8 +224,6 @@ class PrepareUpload extends UIPlugin {
         };
 
         const totalUnzippedSize = getTotalUnzippedSize(unzippedMap);
-
-        console.info(file.name, { totalUnzippedSize, maxDepth, zippedSize: file.size });
 
         // if totalUnzippedSize > file.size * 100, throw error
         if (totalUnzippedSize > file.size * 100) {
