@@ -1,3 +1,7 @@
+## 0.1.77 (February 06, 2025)
+
+- chore: use native crypto from node.js
+
 ## 0.1.76 (January 26, 2025)
 
 - chore: update deps
