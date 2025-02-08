@@ -13,7 +13,7 @@ import omit from 'lodash/omit';
 
 export let logger = console;
 
-// if appUrl is set, means we are running in blocklet environment, use logger from @blocklet/logger
+// it means we are running in blocklet environment, use logger from @blocklet/logger
 if (process.env.BLOCKLET_LOG_DIR) {
   const initLogger = require('@blocklet/logger');
   logger = initLogger('uploader-server');
