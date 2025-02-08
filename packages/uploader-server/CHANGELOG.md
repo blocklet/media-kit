@@ -1,3 +1,8 @@
+## 0.1.78 (February 08, 2025)
+
+- chore: modify the reference to the logger
+- chore: add logger fallback logic to console
+
 ## 0.1.77 (February 06, 2025)
 
 - chore: use native crypto from node.js
