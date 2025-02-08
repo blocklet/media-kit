@@ -4,10 +4,8 @@ const config = require('@blocklet/sdk/lib/config');
 const { getResources } = require('@blocklet/sdk/lib/component');
 const joinUrl = require('url-join');
 const component = require('@blocklet/sdk/lib/component');
-const { setPDFDownloadHeader } = require('../utils');
+const { setPDFDownloadHeader, logger } = require('../utils');
 const { ImageBinDid } = require('../constants');
-
-const logger = console;
 
 const ImgResourceType = 'imgpack';
 
@@ -68,7 +66,7 @@ export const mappingResource = async () => {
 
     return canUseResources;
   } catch (error) {
-    console.error(error);
+    logger.error(error);
   }
 
   return false;

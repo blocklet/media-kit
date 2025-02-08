@@ -8,12 +8,12 @@ const crypto = require('crypto');
 const mime = require('mime-types');
 const joinUrlLib = require('url-join');
 const { default: queue } = require('p-queue');
-const { setPDFDownloadHeader } = require('../utils');
+const { setPDFDownloadHeader, logger } = require('../utils');
 
 const validFilePathInDirPath = (dirPath: string, filePath: string) => {
   const fileName = path.basename(filePath);
   if (!filePath.startsWith(dirPath) || path.join(dirPath, fileName) !== filePath) {
-    console.error('Invalid file path: ', filePath);
+    logger.error('Invalid file path: ', filePath);
     throw new Error('Invalid file path');
   }
   return true;
@@ -122,7 +122,7 @@ export function initLocalStorageServer({
         const result = await _onUploadFinish(req, res, uploadMetadata);
         return result;
       } catch (err) {
-        console.error('@blocklet/uploader: onUploadFinish error: ', err);
+        logger.error('@blocklet/uploader: onUploadFinish error: ', err);
         // if onUploadFinish error, should delete the file and set not exist
         newServer.delete(uploadMetadata.id);
         res.setHeader('x-uploader-file-exist', false);
@@ -185,20 +185,20 @@ export function initLocalStorageServer({
             newServer
               .cleanUpExpiredUploads()
               .then((count: number) => {
-                console.info(`@blocklet/uploader: cleanup expired uploads done: ${count}`);
+                logger.info(`@blocklet/uploader: cleanup expired uploads done: ${count}`);
               })
               .catch((err: Error) => {
-                console.error(`@blocklet/uploader: cleanup expired uploads error`, err);
+                logger.error(`@blocklet/uploader: cleanup expired uploads error`, err);
               });
           } catch (err: any) {
-            console.error(`@blocklet/uploader: cleanup expired uploads error`, err);
+            logger.error(`@blocklet/uploader: cleanup expired uploads error`, err);
           }
         },
         options: { runOnInit: false },
       },
     ],
     onError: (err: Error) => {
-      console.error('@blocklet/uploader: cleanup job failed', err);
+      logger.error('@blocklet/uploader: cleanup job failed', err);
     },
   });
 
@@ -209,7 +209,7 @@ export function initLocalStorageServer({
       // remove file
       await configstore.delete(key, false);
     } catch (err) {
-      console.error('@blocklet/uploader: delete error: ', err);
+      logger.error('@blocklet/uploader: delete error: ', err);
     }
   };
 
@@ -362,7 +362,7 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
               ...realMetaData,
             };
           } catch (err) {
-            console.error('@blocklet/uploader: parse metadata error: ', err);
+            logger.error('@blocklet/uploader: parse metadata error: ', err);
             // ignore
           }
         }
@@ -387,7 +387,7 @@ export async function getMetaDataByFilePath(filePath: string) {
       const metaDataJson = JSON.parse(metaData);
       return metaDataJson;
     } catch (err) {
-      console.error('@blocklet/uploader: getMetaDataByPath error: ', err);
+      logger.error('@blocklet/uploader: getMetaDataByPath error: ', err);
     }
   }
   return null;
@@ -456,10 +456,10 @@ class RewriteFileConfigstore {
       if (isExist) {
         await fs.rm(filePath);
       } else {
-        console.log('Can not remove file, the file not exist: ', filePath);
+        logger.log('Can not remove file, the file not exist: ', filePath);
       }
     } catch (err) {
-      console.error('@blocklet/uploader: safeDeleteFile error: ', err);
+      logger.error('@blocklet/uploader: safeDeleteFile error: ', err);
     }
   }
 
@@ -467,7 +467,7 @@ class RewriteFileConfigstore {
     try {
       await this.queue.add(() => this.safeDeleteFile(this.resolve(key, isMetadata)));
     } catch (err) {
-      console.error('@blocklet/uploader: delete error: ', err);
+      logger.error('@blocklet/uploader: delete error: ', err);
     }
   }
 

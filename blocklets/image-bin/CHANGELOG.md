@@ -1,3 +1,7 @@
+## 0.11.88 (February 08, 2025)
+
+- chore: modify the reference to the logger
+
 ## 0.11.87 (February 05, 2025)
 
 - chore: polish zip bomb logic
