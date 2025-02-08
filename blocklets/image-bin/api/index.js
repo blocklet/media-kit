@@ -12,6 +12,7 @@ const { initProxyToMediaKitUploadsMiddleware } = require('@blocklet/uploader-ser
 const config = require('@blocklet/sdk/lib/config');
 const { xss } = require('@blocklet/xss');
 const { csrf } = require('@blocklet/sdk/lib/middlewares');
+const initLogger = require('@blocklet/logger');
 const { setPDFDownloadHeader, checkTrustedReferer } = require('@blocklet/uploader-server');
 const Upload = require('./states/upload');
 const { name, version } = require('../package.json');
@@ -28,6 +29,8 @@ if (fs.existsSync(env.uploadTempDir) === false) {
 }
 
 const app = express();
+
+initLogger.setupAccessLogger(app);
 
 app.set('trust proxy', true);
 app.use(cookieParser());

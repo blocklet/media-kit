@@ -11,6 +11,8 @@ import FormData from 'form-data';
 import type { Method } from 'axios';
 import omit from 'lodash/omit';
 
+export let logger = console;
+
 // fork from @blocklet/sdk/lib/component/index.d.ts
 type CallComponentOptions<D = any, P = any> = {
   name?: string;
@@ -32,6 +34,12 @@ interface DomainsCache {
 // Cache duration in milliseconds
 const DEFAULT_TTL = 5 * 60 * 1000; // 5 minutes
 const appUrl = process.env.BLOCKLET_APP_URL || '';
+
+// if appUrl is set, means we are running in blocklet environment, use logger from @blocklet/logger
+if (appUrl) {
+  const initLogger = require('@blocklet/logger');
+  logger = initLogger('uploader-server');
+}
 
 // simple LRU cache to record the trustedDomains with timestamp
 const trustedDomainsCache: DomainsCache = {
@@ -120,7 +128,7 @@ export async function proxyImageDownload(req: any, res: any, next?: Function) {
         throw new Error('download image error');
       }
     } catch (err) {
-      console.error('Proxy url failed: ', err);
+      logger.error('Proxy url failed: ', err);
       res.status(500).send('Proxy url failed');
     }
   } else {
