@@ -61,11 +61,16 @@ class PrepareUpload extends UIPlugin {
       const {
         data: { webkitRelativePath, relativePath, name },
         hashFileName,
+        size,
       } = file;
 
       const relativePathWithFileName = relativePath || webkitRelativePath || name || hashFileName;
       // relativePath must had file name
-      this.uppy.setFileMeta(id, { relativePath: relativePathWithFileName, name: relativePathWithFileName });
+      this.uppy.setFileMeta(id, {
+        relativePath: relativePathWithFileName,
+        name: relativePathWithFileName,
+        size, // Add file size to metadata
+      });
     }
   };
 
@@ -361,6 +366,7 @@ class PrepareUpload extends UIPlugin {
 
     this.uppy.setFileState(id, {
       data: newImage,
+      size: newImage.size,
     });
   };
 

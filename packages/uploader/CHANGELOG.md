@@ -1,6 +1,7 @@
 ## 0.1.67 (February 17, 2025)
 
 - chore: upload deps
+- feat: add image exifr logic to rotate image
 
 ## 0.1.66 (February 05, 2025)
 
