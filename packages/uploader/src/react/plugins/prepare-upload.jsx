@@ -321,52 +321,73 @@ class PrepareUpload extends UIPlugin {
 
     if (!file?.type?.startsWith('image/')) return;
 
-    const transform = await rotation(file.data).catch(() => ({
-      deg: 0,
-    }));
+    try {
+      const transform = await rotation(file.data).catch(() => ({
+        deg: 0,
+      }));
 
-    if (!transform.deg) return;
+      if (!transform.deg) return;
 
-    // Calculate target size - aim to keep file size similar to original
-    const targetSize = file.data.size * 0.98; // Reduce target by 98% to account for overhead
+      const targetSize = file.data.size * 0.98; // reduce file size by 98%
 
-    const image = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = URL.createObjectURL(file.data);
-      img.onload = () => {
-        URL.revokeObjectURL(img.src);
-        resolve(img);
-      };
-      img.onerror = reject;
-    });
+      // image load with auto rotate
+      const image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        let objectUrl = URL.createObjectURL(file.data);
+        img.src = objectUrl;
+        img.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          objectUrl = null;
+          resolve(img);
+        };
+        img.onerror = (error) => {
+          if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+            objectUrl = null;
+          }
+          reject(new Error(`Image load failed: ${error.message}`));
+        };
+      });
 
-    // Calculate dimensions to maintain approximate file size
-    const aspectRatio = image.width / image.height;
-    let newWidth = Math.sqrt(targetSize * aspectRatio);
-    let newHeight = newWidth / aspectRatio;
+      const aspectRatio = image.width / image.height;
+      let newWidth = Math.sqrt(targetSize * aspectRatio);
+      let newHeight = newWidth / aspectRatio;
 
-    const canvas = document.createElement('canvas');
-    canvas.width = newWidth;
-    canvas.height = newHeight;
+      const MAX_DIMENSION = 8096;
+      if (newWidth > MAX_DIMENSION || newHeight > MAX_DIMENSION) {
+        const scale = MAX_DIMENSION / Math.max(newWidth, newHeight);
+        newWidth *= scale;
+        newHeight *= scale;
+      }
 
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
+      const canvas = document.createElement('canvas');
+      canvas.width = newWidth;
+      canvas.height = newHeight;
 
-    ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.drawImage(image, -newWidth / 2, -newHeight / 2, newWidth, newHeight);
+      const ctx = canvas.getContext('2d', {
+        willReadFrequently: true,
+        alpha: file.type === 'image/png',
+      });
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
 
-    // Start with quality 0.8 and adjust based on file type
-    let quality = 1;
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.drawImage(image, -newWidth / 2, -newHeight / 2, newWidth, newHeight);
 
-    const newImage = await new Promise((resolve) => {
-      canvas.toBlob(resolve, file.type, quality);
-    });
+      const quality = 1;
 
-    this.uppy.setFileState(id, {
-      data: newImage,
-      size: newImage.size,
-    });
+      const newImage = await new Promise((resolve) => {
+        canvas.toBlob(resolve, file.type, quality);
+      });
+
+      this.uppy.setFileState(id, {
+        data: newImage,
+        size: newImage.size,
+      });
+    } catch (error) {
+      console.error('Image rotation processing failed:', error);
+      return;
+    }
   };
 
   prepareUploadWrapper = async (uppyFile) => {

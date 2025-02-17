@@ -2,7 +2,7 @@ import flatten from '../libs/flatten';
 
 export default flatten({
   common: {
-    goHome: 'Go To Home',
+    goHome: 'Go Home',
     updateFailed: 'Update Image Failed: {reason}',
     updateSuccess: 'Update Image Success',
     cancel: 'Cancel',
