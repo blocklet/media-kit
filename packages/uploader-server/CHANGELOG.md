@@ -1,3 +1,7 @@
+## 0.1.79 (February 17, 2025)
+
+- chore: upload deps
+
 ## 0.1.78 (February 08, 2025)
 
 - chore: modify the reference to the logger
