@@ -69,7 +69,6 @@ class PrepareUpload extends UIPlugin {
       this.uppy.setFileMeta(id, {
         relativePath: relativePathWithFileName,
         name: relativePathWithFileName,
-        size, // Add file size to metadata
       });
     }
   };
