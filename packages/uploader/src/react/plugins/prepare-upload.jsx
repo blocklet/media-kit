@@ -5,6 +5,7 @@ import DOMPurify from 'dompurify';
 import { getObjectURL, getExt, blobToFile, getDownloadUrl, api, isSvgFile } from '../../utils';
 import { unzipSync, decompressSync } from 'fflate';
 import mime from 'mime-types';
+import { rotation } from 'exifr';
 
 const zipBombMap = {
   zip: unzipSync,
@@ -310,8 +311,62 @@ class PrepareUpload extends UIPlugin {
     }, Promise.resolve());
   };
 
+  checkImageOrientation = async (uppyFile) => {
+    const { id } = uppyFile;
+    const file = this.uppy.getFile(id);
+
+    if (!file?.type?.startsWith('image/')) return;
+
+    const transform = await rotation(file.data).catch(() => ({
+      deg: 0,
+    }));
+
+    if (!transform.deg) return;
+
+    // Calculate target size - aim to keep file size similar to original
+    const targetSize = file.data.size * 0.98; // Reduce target by 98% to account for overhead
+
+    const image = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(file.data);
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        resolve(img);
+      };
+      img.onerror = reject;
+    });
+
+    // Calculate dimensions to maintain approximate file size
+    const aspectRatio = image.width / image.height;
+    let newWidth = Math.sqrt(targetSize * aspectRatio);
+    let newHeight = newWidth / aspectRatio;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.drawImage(image, -newWidth / 2, -newHeight / 2, newWidth, newHeight);
+
+    // Start with quality 0.8 and adjust based on file type
+    let quality = 1;
+
+    const newImage = await new Promise((resolve) => {
+      canvas.toBlob(resolve, file.type, quality);
+    });
+
+    this.uppy.setFileState(id, {
+      data: newImage,
+    });
+  };
+
   prepareUploadWrapper = async (uppyFile) => {
     await this.tryDownloadRemoteFile(uppyFile);
+    await this.checkImageOrientation(uppyFile);
     await this.getPreviewFromData(uppyFile);
     await this.setHashFileName(uppyFile);
     await this.preventXssAttack(uppyFile);
