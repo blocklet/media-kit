@@ -50,8 +50,8 @@ export default function Home() {
                     await new Promise((resolve) => {
                       session.login(() => resolve());
                     });
-                    navigate('/admin');
                   }
+                  navigate('/admin');
                 }}
                 variant="contained"
               />

@@ -1,3 +1,8 @@
+## 0.11.89 (February 17, 2025)
+
+- chore: upload deps
+- fix: resolve the bug of login redirect
+
 ## 0.11.88 (February 08, 2025)
 
 - chore: modify the reference to the logger

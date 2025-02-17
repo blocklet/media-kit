@@ -2,6 +2,7 @@ import flatten from '../libs/flatten';
 
 export default flatten({
   common: {
+    goHome: '返回首页',
     updateFailed: '更新图片失败：{reason}',
     updateSuccess: '更新图片成功',
     cancel: '取消',

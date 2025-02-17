@@ -5,6 +5,7 @@ import DOMPurify from 'dompurify';
 import { getObjectURL, getExt, blobToFile, getDownloadUrl, api, isSvgFile } from '../../utils';
 import { unzipSync, decompressSync } from 'fflate';
 import mime from 'mime-types';
+import { rotation } from 'exifr';
 
 const zipBombMap = {
   zip: unzipSync,
@@ -60,11 +61,15 @@ class PrepareUpload extends UIPlugin {
       const {
         data: { webkitRelativePath, relativePath, name },
         hashFileName,
+        size,
       } = file;
 
       const relativePathWithFileName = relativePath || webkitRelativePath || name || hashFileName;
       // relativePath must had file name
-      this.uppy.setFileMeta(id, { relativePath: relativePathWithFileName, name: relativePathWithFileName });
+      this.uppy.setFileMeta(id, {
+        relativePath: relativePathWithFileName,
+        name: relativePathWithFileName,
+      });
     }
   };
 
@@ -310,8 +315,84 @@ class PrepareUpload extends UIPlugin {
     }, Promise.resolve());
   };
 
+  checkImageOrientation = async (uppyFile) => {
+    const { id } = uppyFile;
+    const file = this.uppy.getFile(id);
+
+    if (!file?.type?.startsWith('image/')) return;
+
+    try {
+      const transform = await rotation(file.data).catch(() => ({
+        deg: 0,
+      }));
+
+      if (!transform.deg) return;
+
+      const targetSize = file.data.size * 0.98; // reduce file size by 98%
+
+      // image load with auto rotate
+      const image = await new Promise((resolve, reject) => {
+        const img = new Image();
+        let objectUrl = URL.createObjectURL(file.data);
+        img.src = objectUrl;
+        img.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          objectUrl = null;
+          resolve(img);
+        };
+        img.onerror = (error) => {
+          if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+            objectUrl = null;
+          }
+          reject(new Error(`Image load failed: ${error.message}`));
+        };
+      });
+
+      const aspectRatio = image.width / image.height;
+      let newWidth = Math.sqrt(targetSize * aspectRatio);
+      let newHeight = newWidth / aspectRatio;
+
+      const MAX_DIMENSION = 8096;
+      if (newWidth > MAX_DIMENSION || newHeight > MAX_DIMENSION) {
+        const scale = MAX_DIMENSION / Math.max(newWidth, newHeight);
+        newWidth *= scale;
+        newHeight *= scale;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = newWidth;
+      canvas.height = newHeight;
+
+      const ctx = canvas.getContext('2d', {
+        willReadFrequently: true,
+        alpha: file.type === 'image/png',
+      });
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.drawImage(image, -newWidth / 2, -newHeight / 2, newWidth, newHeight);
+
+      const quality = 1;
+
+      const newImage = await new Promise((resolve) => {
+        canvas.toBlob(resolve, file.type, quality);
+      });
+
+      this.uppy.setFileState(id, {
+        data: newImage,
+        size: newImage.size,
+      });
+    } catch (error) {
+      console.error('Image rotation processing failed:', error);
+      return;
+    }
+  };
+
   prepareUploadWrapper = async (uppyFile) => {
     await this.tryDownloadRemoteFile(uppyFile);
+    await this.checkImageOrientation(uppyFile);
     await this.getPreviewFromData(uppyFile);
     await this.setHashFileName(uppyFile);
     await this.preventXssAttack(uppyFile);
