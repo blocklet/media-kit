@@ -1,3 +1,7 @@
+## 0.1.83 (February 19, 2025)
+
+- chore: re-bump version
+
 ## 0.1.82 (February 19, 2025)
 
 - fix: resolve the bug of uploader-server logger import

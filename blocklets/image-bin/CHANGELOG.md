@@ -1,3 +1,7 @@
+## 0.11.92 (February 19, 2025)
+
+- chore: re-bump version
+
 ## 0.11.91 (February 19, 2025)
 
 - chore: update deps
