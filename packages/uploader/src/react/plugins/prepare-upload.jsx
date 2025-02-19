@@ -41,8 +41,6 @@ class PrepareUpload extends UIPlugin {
       spark.append(text);
       const hash = spark.end();
 
-      console.warn(hash);
-
       const ext = getExt(file);
       const hashFileName = `${hash}${ext ? `.${ext}` : ''}`;
 
