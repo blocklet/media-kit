@@ -1,3 +1,8 @@
+## 0.1.69 (February 19, 2025)
+
+- chore: update deps
+- fix: resolve the bug of download remote image
+
 ## 0.1.68 (February 19, 2025)
 
 - chore: update deps
