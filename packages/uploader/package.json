@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.1.67",
+  "version": "0.1.68",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -17,8 +17,24 @@
       "import": "./es/react.js",
       "types": "./lib/react.d.ts"
     },
-    "./lib/": "./lib/",
-    "./es/": "./es/"
+    "./lib/*": {
+      "require": "./lib/*",
+      "import": "./es/*",
+      "types": "./lib/*"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./es/*.d.ts"
+      ],
+      "react": [
+        "./es/react.d.ts"
+      ],
+      "types": [
+        "./es/types.d.ts"
+      ]
+    }
   },
   "files": [
     "lib",
@@ -41,10 +57,10 @@
   "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
   "license": "ISC",
   "dependencies": {
-    "@blocklet/ui-react": "^2.11.34",
+    "@blocklet/ui-react": "^2.11.36",
     "@lottiefiles/react-lottie-player": "^3.5.4",
-    "@mui/icons-material": "5.14.15",
-    "@mui/material": "5.14.15",
+    "@mui/icons-material": "^5.14.15",
+    "@mui/material": "^5.16.7",
     "@uppy/core": "3.13.1",
     "@uppy/dashboard": "3.9.1",
     "@uppy/drag-drop": "3.1.1",
@@ -71,11 +87,14 @@
     "mime-types": "^2.1.35",
     "preact": "10.20.1",
     "react-player": "^2.16.0",
+    "spark-md5": "^3.0.2",
     "ufo": "^1.5.4",
     "url-join": "^4.0.1",
     "xbytes": "^1.9.1"
   },
   "peerDependencies": {
+    "@mui/icons-material": "^5.14.15",
+    "@mui/material": "^5.16.7",
     "@uppy/core": "3.13.1",
     "@uppy/dashboard": "3.9.1",
     "@uppy/drag-drop": "3.1.1",
