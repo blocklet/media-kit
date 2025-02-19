@@ -1,7 +1,7 @@
 // @jsxImportSource preact
 import { UIPlugin } from '@uppy/core';
 import DOMPurify from 'dompurify';
-import { getObjectURL, getExt, blobToFile, getDownloadUrl, api, isSvgFile } from '../../utils';
+import { getObjectURL, getExt, blobToFile, getDownloadUrl, isSvgFile } from '../../utils';
 import { unzipSync, decompressSync } from 'fflate';
 import mime from 'mime-types';
 import SparkMD5 from 'spark-md5';
@@ -459,18 +459,10 @@ class PrepareUpload extends UIPlugin {
         },
       });
 
-      await api
-        .get(
-          // get image from user's url in frontend
-          url,
-          // get image from proxy url
-          // `${this.opts.companionUrl}/proxy`,
-          {
-            responseType: 'blob',
-          }
-        )
-        .then((response) => {
-          return response?.data;
+      await fetch(url)
+        .then(async (response) => {
+          const blob = await response.blob();
+          return blob;
         })
         .then(async (blob) => {
           const blobFile = blobToFile(blob, fileName);
@@ -499,6 +491,59 @@ class PrepareUpload extends UIPlugin {
         })
         .catch(async (error) => {
           console.error('Axios download remote file error: ', error);
+
+          if (type.startsWith('image/')) {
+            const newType = type.includes('svg') ? 'image/png' : type;
+            const newFileName = fileName.endsWith('.svg') ? fileName.replace('.svg', '.png') : fileName;
+            try {
+              const blob = await new Promise((resolve, reject) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => {
+                  const canvas = document.createElement('canvas');
+                  canvas.width = img.width;
+                  canvas.height = img.height;
+                  const ctx = canvas.getContext('2d');
+
+                  // Center the image on canvas
+                  ctx.translate(canvas.width / 2, canvas.height / 2);
+                  ctx.drawImage(img, -img.width / 2, -img.height / 2, img.width, img.height);
+
+                  canvas.toBlob(resolve, newType);
+                };
+                img.onerror = reject;
+                img.src = url;
+              });
+
+              let blobFile = blobToFile(blob, newFileName);
+
+              this.uppy.setFileState(id, {
+                name: newFileName, // file name
+                extension: ext, // file extension
+                type: newType, // file type
+                data: blobFile, // file blob
+                preview: !preview ? getObjectURL(blobFile) : preview, // file blob
+                source, // optional, determines the source of the file, for example, Instagram.
+                size: blobFile.size,
+                isDownloading: false,
+                isRemote: false,
+                meta: {
+                  ...meta,
+                  name: newFileName,
+                  filename: newFileName,
+                },
+              });
+
+              const uppyFile = this.uppy.getFile(id);
+
+              // emit downloaded event
+              this.uppy.emit(emitKey, id);
+
+              return;
+            } catch (error) {
+              // ignore error
+            }
+          }
 
           this.uppy.setFileState(id, {
             isRemote: true,
