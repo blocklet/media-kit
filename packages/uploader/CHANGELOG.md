@@ -1,3 +1,8 @@
+## 0.1.68 (February 19, 2025)
+
+- chore: update deps
+- refactor: using spark-md5 to get file hash
+
 ## 0.1.67 (February 17, 2025)
 
 - chore: upload deps

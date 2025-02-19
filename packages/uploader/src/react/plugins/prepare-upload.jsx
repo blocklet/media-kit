@@ -1,10 +1,10 @@
 // @jsxImportSource preact
 import { UIPlugin } from '@uppy/core';
-import crypto from 'crypto';
 import DOMPurify from 'dompurify';
 import { getObjectURL, getExt, blobToFile, getDownloadUrl, api, isSvgFile } from '../../utils';
 import { unzipSync, decompressSync } from 'fflate';
 import mime from 'mime-types';
+import SparkMD5 from 'spark-md5';
 import { rotation } from 'exifr';
 
 const zipBombMap = {
@@ -27,23 +27,23 @@ class PrepareUpload extends UIPlugin {
 
   setHashFileName = async (uppyFile) => {
     const { id } = uppyFile;
-
-    const file = this.uppy.getFile(id); // get real time file
+    const file = this.uppy.getFile(id);
 
     if (file) {
       const { data } = file;
-
       const chunkSize = 1024 * 1024 * 5; // 5 MB
-      const blobSlice = data.slice(0, chunkSize); // use slice to get hash
+      const blobSlice = data.slice(0, chunkSize);
 
-      // read file contents, get it MD5 hash
-      const hash = crypto
-        .createHash('md5')
-        .update(await blobSlice.text())
-        .digest('hex');
+      // Get text content from blob
+      const text = await blobSlice.text();
+      // Get MD5 hash using SparkMD5
+      const spark = new SparkMD5();
+      spark.append(text);
+      const hash = spark.end();
+
+      console.warn(hash);
 
       const ext = getExt(file);
-
       const hashFileName = `${hash}${ext ? `.${ext}` : ''}`;
 
       this.uppy.setFileState(id, {
