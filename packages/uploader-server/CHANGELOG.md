@@ -1,3 +1,7 @@
+## 0.1.82 (February 19, 2025)
+
+- fix: resolve the bug of uploader-server logger import
+
 ## 0.1.81 (February 19, 2025)
 
 - chore: update deps
