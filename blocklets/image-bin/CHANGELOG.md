@@ -1,3 +1,7 @@
+## 0.11.94 (February 20, 2025)
+
+- chore: re-bump version
+
 ## 0.11.93 (February 20, 2025)
 
 - fix: resolve the bug of initLogger

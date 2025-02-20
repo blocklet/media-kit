@@ -1,3 +1,7 @@
+## 0.1.70 (February 20, 2025)
+
+- chore: polish uploader types
+
 ## 0.1.69 (February 19, 2025)
 
 - chore: update deps

@@ -2,10 +2,10 @@ import { Box } from '@mui/material';
 import { ReactNode, createContext, lazy, useContext, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Uploader } from './uploader';
+import { UploaderProps } from '../types';
 
-interface UploaderProviderProps {
+interface UploaderProviderProps extends UploaderProps {
   children: ReactNode;
-  popup?: boolean;
 }
 
 export const UploaderContext = createContext(null);

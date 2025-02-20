@@ -2,16 +2,7 @@ import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
 import { useReactive, useRequest } from 'ahooks';
 import { createRoot } from 'react-dom/client';
-import {
-  Fragment,
-  IframeHTMLAttributes,
-  forwardRef,
-  useCallback,
-  useRef,
-  useEffect,
-  useImperativeHandle,
-  lazy,
-} from 'react';
+import { Fragment, forwardRef, useCallback, useRef, useEffect, useImperativeHandle, lazy } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
 import Backdrop from '@mui/material/Backdrop';
@@ -504,7 +495,7 @@ export function initUploader(props: any) {
   return currentUppy;
 }
 
-export const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFrameElement>, ref: any) => {
+export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
   // apiPathProps default is use image-bin
   const apiPathProps = {
     uploader: '/api/uploads',

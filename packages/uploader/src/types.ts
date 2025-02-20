@@ -3,6 +3,8 @@ import type { DashboardOptions } from '@uppy/dashboard';
 import type { TusOptions } from '@uppy/tus';
 import type { ImageEditorOptions } from '@uppy/image-editor';
 import type DropTarget from '@uppy/drop-target';
+import type { HTMLAttributes } from 'react';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 export type UploaderProps = {
   id?: string;
@@ -27,7 +29,11 @@ export type UploaderProps = {
     onSelectedFiles?: Function;
   };
   tusProps?: TusOptions;
-  wrapperProps?: any;
+  wrapperProps?: HTMLAttributes<HTMLDivElement> & {
+    sx?: SxProps<Theme>;
+    className?: string;
+    style?: React.CSSProperties;
+  };
   coreProps?: UppyOptions;
   dashboardProps?: DashboardOptions;
   apiPathProps?: {
