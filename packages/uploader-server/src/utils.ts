@@ -16,10 +16,9 @@ export let logger = console;
 // it means we are running in blocklet environment, use logger from @blocklet/logger
 if (process.env.BLOCKLET_LOG_DIR) {
   try {
-    // @ts-ignore
-    import('@blocklet/logger').then(({ default: initLogger }) => {
-      logger = initLogger('uploader-server');
-    });
+    const initLogger = require('@blocklet/logger');
+    logger = initLogger('uploader-server');
+    logger.info('uploader-server logger init success');
   } catch (error) {
     // ignore
   }
