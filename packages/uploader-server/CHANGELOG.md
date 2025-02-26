@@ -1,3 +1,7 @@
+## 0.1.85 (February 26, 2025)
+
+- chore: update deps
+
 ## 0.1.84 (February 20, 2025)
 
 - fix: resolve the bug of initLogger
