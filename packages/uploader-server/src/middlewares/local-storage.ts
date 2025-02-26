@@ -1,14 +1,15 @@
 import { type ServerOptions } from '@tus/server';
-const { Server, EVENTS } = require('@tus/server');
-const { FileStore } = require('@tus/file-store');
-const cron = require('@abtnode/cron');
-const fs = require('fs').promises;
-const path = require('path');
-const crypto = require('crypto');
-const mime = require('mime-types');
-const joinUrlLib = require('url-join');
-const { default: queue } = require('p-queue');
-const { setPDFDownloadHeader, logger } = require('../utils');
+import { Server, EVENTS } from '@tus/server';
+import { FileStore } from '@tus/file-store';
+// @ts-ignore
+import cron from '@abtnode/cron';
+import { promises as fs, Stats } from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import mime from 'mime-types';
+import joinUrlLib from 'url-join';
+import queue from 'p-queue';
+import { setPDFDownloadHeader, logger } from '../utils';
 
 const validFilePathInDirPath = (dirPath: string, filePath: string) => {
   const fileName = path.basename(filePath);
@@ -124,6 +125,7 @@ export function initLocalStorageServer({
       } catch (err) {
         logger.error('@blocklet/uploader: onUploadFinish error: ', err);
         // if onUploadFinish error, should delete the file and set not exist
+        // @ts-ignore
         newServer.delete(uploadMetadata.id);
         res.setHeader('x-uploader-file-exist', false);
         throw err;
@@ -202,6 +204,7 @@ export function initLocalStorageServer({
     },
   });
 
+  // @ts-ignore
   newServer.delete = async (key: string) => {
     try {
       // remove meta data
@@ -336,7 +339,7 @@ export async function fileExistBeforeUpload(req: any, res: any, next?: Function)
     if (isExist) {
       const metaData = await getMetaDataByFilePath(filePath);
 
-      // is upload exist and size enough
+      // @ts-ignore is upload exist and size enough
       if (isExist?.size >= 0 && isExist?.size === metaData?.size) {
         const prepareUpload = method === 'POST';
 
@@ -423,7 +426,7 @@ class RewriteFileConfigstore {
       // get real offset by file
       if (metadata.offset !== metadata.size) {
         // get file info
-        const info = await fs.stat(this.resolve(key, false)).catch(() => false);
+        const info = (await fs.stat(this.resolve(key, false)).catch(() => false)) as Stats;
         if (info?.size !== metadata?.offset) {
           metadata.offset = info.size;
           // rewrite metadata
@@ -501,8 +504,10 @@ class RewriteFileStore extends FileStore {
   }
   async remove(key: string) {
     // remove metadata
+    // @ts-ignore
     this.configstore.delete(key);
     // remove file
+    // @ts-ignore
     this.configstore.delete(key, false);
   }
 }

@@ -42,7 +42,7 @@ pnpm run dev
 ## Backend Example
 
 ```javascript
-const { initLocalStorageServer, initCompanion } = require('@blocklet/uploader-server');
+import { initLocalStorageServer, initCompanion } from '@blocklet/uploader-server';
 
 // init uploader server
 const localStorageServer = initLocalStorageServer({

@@ -1,3 +1,28 @@
+## 0.1.85 (February 26, 2025)
+
+- chore: update deps
+
+## 0.1.84 (February 20, 2025)
+
+- fix: resolve the bug of initLogger
+
+## 0.1.83 (February 19, 2025)
+
+- chore: re-bump version
+
+## 0.1.82 (February 19, 2025)
+
+- fix: resolve the bug of uploader-server logger import
+
+## 0.1.81 (February 19, 2025)
+
+- chore: update deps
+- refactor: polish require to import middlewares
+
+## 0.1.80 (February 19, 2025)
+
+- chore: update deps
+
 ## 0.1.79 (February 17, 2025)
 
 - chore: upload deps

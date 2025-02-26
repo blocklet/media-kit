@@ -1,11 +1,11 @@
-const { existsSync } = require('fs');
-const { join, basename } = require('path');
-const config = require('@blocklet/sdk/lib/config');
-const { getResources } = require('@blocklet/sdk/lib/component');
-const joinUrl = require('url-join');
-const component = require('@blocklet/sdk/lib/component');
-const { setPDFDownloadHeader, logger } = require('../utils');
-const { ImageBinDid } = require('../constants');
+import { existsSync } from 'fs';
+import { join, basename } from 'path';
+import config from '@blocklet/sdk/lib/config';
+import { getResources } from '@blocklet/sdk/lib/component';
+import joinUrl from 'url-join';
+import component from '@blocklet/sdk/lib/component';
+import { setPDFDownloadHeader, logger } from '../utils';
+import { ImageBinDid } from '../constants';
 
 const ImgResourceType = 'imgpack';
 
@@ -37,7 +37,7 @@ export const mappingResource = async () => {
     });
 
     canUseResources = resources
-      .map((resource: { path: string }) => {
+      .map((resource: any) => {
         // check dir is exists and not in resourceKeys
         const originDir = resource.path;
         const resourceType = resourceTypes.find(({ type }) => originDir.endsWith(type));

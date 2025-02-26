@@ -1,3 +1,21 @@
+## 0.1.71 (February 26, 2025)
+
+- chore: update deps
+
+## 0.1.70 (February 20, 2025)
+
+- chore: polish uploader types
+
+## 0.1.69 (February 19, 2025)
+
+- chore: update deps
+- fix: resolve the bug of download remote image
+
+## 0.1.68 (February 19, 2025)
+
+- chore: update deps
+- refactor: using spark-md5 to get file hash
+
 ## 0.1.67 (February 17, 2025)
 
 - chore: upload deps

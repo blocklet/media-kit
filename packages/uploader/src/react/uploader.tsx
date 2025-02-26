@@ -2,23 +2,14 @@ import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
 import { useReactive, useRequest } from 'ahooks';
 import { createRoot } from 'react-dom/client';
-import {
-  Fragment,
-  IframeHTMLAttributes,
-  forwardRef,
-  useCallback,
-  useRef,
-  useEffect,
-  useImperativeHandle,
-  lazy,
-} from 'react';
+import { Fragment, forwardRef, useCallback, useRef, useEffect, useImperativeHandle, lazy } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
 import Backdrop from '@mui/material/Backdrop';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { useMediaQuery } from '@mui/material';
 import { CancelOutlined as CloseIcon } from '@mui/icons-material';
 import Uppy from '@uppy/core';
 import Webcam from '@uppy/webcam';
@@ -239,7 +230,7 @@ const getPluginList = (props: any) => {
   ].filter(Boolean);
 };
 
-function initUploader(props: any) {
+export function initUploader(props: any) {
   const {
     id,
     plugins,
@@ -504,7 +495,7 @@ function initUploader(props: any) {
   return currentUppy;
 }
 
-const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFrameElement>, ref: any) => {
+export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
   // apiPathProps default is use image-bin
   const apiPathProps = {
     uploader: '/api/uploads',
@@ -1034,5 +1025,3 @@ const Uploader = forwardRef((props: UploaderProps & IframeHTMLAttributes<HTMLIFr
 });
 
 export default Uploader;
-
-export { initUploader, Uploader };

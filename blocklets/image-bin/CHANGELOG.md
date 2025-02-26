@@ -1,3 +1,27 @@
+## 0.11.95 (February 26, 2025)
+
+- chore: update deps
+
+## 0.11.94 (February 20, 2025)
+
+- chore: re-bump version
+
+## 0.11.93 (February 20, 2025)
+
+- fix: resolve the bug of initLogger
+
+## 0.11.92 (February 19, 2025)
+
+- chore: re-bump version
+
+## 0.11.91 (February 19, 2025)
+
+- chore: update deps
+
+## 0.11.90 (February 19, 2025)
+
+- chore: update deps
+
 ## 0.11.89 (February 17, 2025)
 
 - chore: upload deps

@@ -1,9 +1,8 @@
-// const express = require("express");
-const companion = require('@uppy/companion');
-const bodyParser = require('body-parser');
-const session = require('express-session');
-const crypto = require('crypto');
-// const { checkTrustedReferer, proxyImageDownload } = require('../utils');
+import { app as companionAppLib } from '@uppy/companion';
+import bodyParser from 'body-parser';
+import session from 'express-session';
+import crypto from 'crypto';
+// import { checkTrustedReferer, proxyImageDownload } from '../utils';
 
 const secret = crypto.randomBytes(32).toString('hex');
 
@@ -47,7 +46,7 @@ export function initCompanion({
     ...restProps,
   };
 
-  const newCompanion = companion.app(companionOptions);
+  const newCompanion = companionAppLib(companionOptions);
 
   const { app: companionApp } = newCompanion;
 
@@ -73,9 +72,10 @@ export function initCompanion({
     companionApp
   );
 
+  // @ts-ignore
   newCompanion.handle = app;
 
-  // only set provider options
+  // @ts-ignore only set provider options
   newCompanion.setProviderOptions = (options: Object) => {
     dynamicProviderOptions = options;
   };

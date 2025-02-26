@@ -1,11 +1,10 @@
 import { Box } from '@mui/material';
 import { ReactNode, createContext, lazy, useContext, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
+import { Uploader } from './uploader';
+import { UploaderProps } from '../types';
 
-// @ts-ignore
-const Uploader = lazy(() => import('./uploader').then((res) => ({ default: res.Uploader })));
-
-interface UploaderProviderProps {
+interface UploaderProviderProps extends UploaderProps {
   children: ReactNode;
 }
 
