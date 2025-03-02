@@ -331,7 +331,7 @@ router.post(
 
     const tempFilePath = req.file.path;
 
-    const content = fs.readFileSync(tempFilePath, 'utf8');
+    const content = await fs.promises.readFile(tempFilePath, 'utf8');
 
     // check if the file is svg
     const isSvg = isSvgFile(content);
@@ -340,7 +340,7 @@ router.post(
       try {
         const cleanedContent = sanitizeSvg(content);
         if (content !== cleanedContent) {
-          fs.writeFileSync(tempFilePath, cleanedContent);
+          await fs.promises.writeFile(tempFilePath, cleanedContent);
           logger.info('Sanitized SVG file to prevent XSS attack', { filePath: tempFilePath });
         }
       } catch (err) {
