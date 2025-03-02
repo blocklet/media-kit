@@ -345,7 +345,7 @@ router.post(
         }
       } catch (err) {
         logger.warn('Failed to sanitize SVG file:', err);
-        res.json({
+        res.status(400).json({
           error: 'Invalid SVG file',
         });
         return;
