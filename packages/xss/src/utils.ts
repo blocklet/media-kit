@@ -131,11 +131,19 @@ const svgSanitizeOptions: SanitizeOptions = {
     // allow safe style attribute
     if (name === 'style') {
       // only allow safe css attribute
-      const safeValue = value.replace(/expression\(.*\)|javascript:|data:/gi, '');
+      const safeValue = value.replace(/expression\(.*\)|javascript:|data:|@import|behavior|binding|moz-binding/gi, '');
       if (safeValue !== value) {
         return '';
       }
       return `${name}="${safeValue}"`;
+    }
+
+    if (tag === 'use' && (name === 'href' || name === 'xlink:href')) {
+      // only allow internal reference, starting with # and not containing dangerous characters
+      if (value.startsWith('#') && !/[<>"']/.test(value)) {
+        return `${name}="${value}"`;
+      }
+      return '';
     }
 
     // allow safe id, class attribute
@@ -148,7 +156,7 @@ const svgSanitizeOptions: SanitizeOptions = {
 export const sanitizeSvg = (svgContent: string): string => {
   const isSvg = isSvgFile(svgContent);
   if (!isSvg) {
-    return svgContent;
+    throw new Error('Invalid SVG content');
   }
 
   const xssInstance = new xss.FilterXSS(svgSanitizeOptions);
@@ -166,6 +174,14 @@ export const isSvgFile = (
     return false;
   }
 
+  // Check for SVG signature in content
+  const svgRegex = /<svg[^>]*?(?:>|\/>)|<\?xml[^>]*>\s*<svg[^>]*?(?:>|\/?>)/i;
+  const isSvg = svgRegex.test(svgContent);
+
+  if (!isSvg) {
+    return false;
+  }
+
   if (file?.name) {
     const ext = path.extname(file.name).toLowerCase();
     if (ext !== '.svg') {
@@ -174,12 +190,10 @@ export const isSvgFile = (
   }
 
   if (file?.type) {
-    if (!file.type.toLowerCase().includes('svg')) {
+    if (!file.type.toLowerCase().includes('image/svg')) {
       return false;
     }
   }
 
-  // Check for SVG signature in content
-  const svgRegex = /<svg[^>]*?(?:>|\/>)|<\?xml[^>]*>\s*<svg[^>]*?(?:>|\/?>)/i;
-  return svgRegex.test(svgContent);
+  return true;
 };
