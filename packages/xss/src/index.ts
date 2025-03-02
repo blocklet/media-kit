@@ -1,4 +1,4 @@
-import { initSanitize } from './utils';
+import { initSanitize, isSvgFile, sanitizeSvg } from './utils';
 import { SanitizeOptions } from './types';
 export * from './utils';
 
@@ -17,4 +17,6 @@ export function xss(options = {} as SanitizeOptions) {
 export default {
   xss,
   initSanitize,
+  isSvgFile,
+  sanitizeSvg,
 };

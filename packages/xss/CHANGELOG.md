@@ -1,3 +1,7 @@
+## 0.1.27 (March 03, 2025)
+
+- feat: add xss prevent attack logic in sdk
+
 ## 0.1.26 (February 26, 2025)
 
 - chore: update deps

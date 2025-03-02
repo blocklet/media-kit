@@ -17,6 +17,7 @@ const multer = require('multer');
 const { pipeline } = require('stream/promises');
 const { initLocalStorageServer, initCompanion, getFileHash } = require('@blocklet/uploader-server');
 const { checkTrustedReferer } = require('@blocklet/uploader-server');
+const { sanitizeSvg, isSvgFile } = require('@blocklet/xss');
 const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
 const { getResourceComponents } = require('./resources');
@@ -329,6 +330,23 @@ router.post(
     }
 
     const tempFilePath = req.file.path;
+
+    const content = fs.readFileSync(tempFilePath, 'utf8');
+
+    // check if the file is svg
+    const isSvg = isSvgFile(content);
+
+    if (isSvg) {
+      try {
+        const cleanedContent = sanitizeSvg(content);
+        if (content !== cleanedContent) {
+          fs.writeFileSync(tempFilePath, cleanedContent);
+          logger.info('Sanitized SVG file to prevent XSS attack', { filePath: tempFilePath });
+        }
+      } catch (err) {
+        logger.warn('Failed to sanitize SVG file:', err);
+      }
+    }
 
     // Calculate file size without loading entire file
     const stats = fs.statSync(tempFilePath);
