@@ -1,3 +1,7 @@
+## 0.11.97 (March 06, 2025)
+
+- chore: polish initStaticResourceMiddleware fileName logic
+
 ## 0.11.96 (March 03, 2025)
 
 - feat: add xss prevent attack logic in sdk

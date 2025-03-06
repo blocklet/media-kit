@@ -1,3 +1,7 @@
+## 0.1.86 (March 06, 2025)
+
+- chore: polish initStaticResourceMiddleware fileName logic
+
 ## 0.1.85 (February 26, 2025)
 
 - chore: update deps

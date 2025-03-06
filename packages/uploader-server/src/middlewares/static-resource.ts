@@ -115,21 +115,22 @@ export const initStaticResourceMiddleware = (
   mappingResource();
 
   return (req: any, res: any, next: Function) => {
-    const fileName = basename(req.url);
+    // get file name from path without query params
+    const fileName = basename(req.path || req.url?.split('?')[0]);
 
     const matchCanUseResourceItem = canUseResources.find((item: any) => {
-      // 防止路径遍历攻击
+      // prevent path traversal attack
       const normalizedPath = join(item.dir, fileName);
       if (!normalizedPath.startsWith(item.dir)) {
         return false;
       }
 
-      // 检查文件是否存在
+      // check file is exists
       if (!existsSync(normalizedPath)) {
         return false;
       }
 
-      // 检查黑白名单
+      // check whitelist and blacklist
       const { whitelist, blacklist } = item;
       if (whitelist?.length && !whitelist.some((ext: string) => fileName.endsWith(ext))) {
         return false;
