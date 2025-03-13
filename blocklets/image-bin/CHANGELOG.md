@@ -1,3 +1,7 @@
+## 0.11.98 (March 13, 2025)
+
+- chore: update deps
+
 ## 0.11.97 (March 06, 2025)
 
 - chore: polish initStaticResourceMiddleware fileName logic

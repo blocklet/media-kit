@@ -118,38 +118,43 @@ export const initStaticResourceMiddleware = (
     // get file name from path without query params
     const fileName = basename(req.path || req.url?.split('?')[0]);
 
-    const matchCanUseResourceItem = canUseResources.find((item: any) => {
-      // prevent path traversal attack
-      const normalizedPath = join(item.dir, fileName);
-      if (!normalizedPath.startsWith(item.dir)) {
-        return false;
-      }
+    try {
+      const matchCanUseResourceItem = canUseResources.find((item: any) => {
+        // prevent path traversal attack
+        const normalizedPath = join(item.dir, fileName);
+        if (!normalizedPath?.startsWith(item.dir)) {
+          return false;
+        }
 
-      // check file is exists
-      if (!existsSync(normalizedPath)) {
-        return false;
-      }
+        // check file is exists
+        if (!existsSync(normalizedPath)) {
+          return false;
+        }
 
-      // check whitelist and blacklist
-      const { whitelist, blacklist } = item;
-      if (whitelist?.length && !whitelist.some((ext: string) => fileName.endsWith(ext))) {
-        return false;
-      }
-      if (blacklist?.length && blacklist.some((ext: string) => fileName.endsWith(ext))) {
-        return false;
-      }
+        // check whitelist and blacklist
+        const { whitelist, blacklist } = item;
+        if (whitelist?.length && !whitelist.some((ext: string) => fileName?.endsWith(ext))) {
+          return false;
+        }
+        if (blacklist?.length && blacklist.some((ext: string) => fileName?.endsWith(ext))) {
+          return false;
+        }
 
-      return true;
-    });
+        return true;
+      });
 
-    if (matchCanUseResourceItem) {
-      express.static(matchCanUseResourceItem.dir, {
-        maxAge: '365d',
-        immutable: true,
-        index: false,
-        ...options,
-      })(req, res, next);
-    } else {
+      if (matchCanUseResourceItem) {
+        express.static(matchCanUseResourceItem.dir, {
+          maxAge: '365d',
+          immutable: true,
+          index: false,
+          ...options,
+        })(req, res, next);
+      } else {
+        next();
+      }
+    } catch (error) {
+      // ignore error
       next();
     }
   };
