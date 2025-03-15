@@ -29,15 +29,67 @@ jobs:
           fetch-depth: 0
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35.8.0
-        with:
-          files: |
-            blocklets/**/version
-            packages/**/version
-          json: "true"
-          dir_names: true
-          dir_names_exclude_root: true
-          dir_names_max_depth: 2
+        env:
+          MONITORED_DIRS: "blocklets|packages" # Configure which directories to monitor
+          DIR_DEPTH: 2 # Configure depth (2 means dir/subdir)
+        run: |
+          # If pull request, compare the base and head
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE_SHA=${{ github.event.pull_request.base.sha }}
+            HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          else
+            # For push event, compare the before and after
+            BASE_SHA=${{ github.event.before }}
+            HEAD_SHA=${{ github.event.after }}
+            
+            # Handle the empty case (like first run or force push)
+            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+              # If it's the first run, use the parent commit of the last commit
+              BASE_SHA=$(git rev-parse HEAD^)
+              HEAD_SHA=$(git rev-parse HEAD)
+            fi
+          fi
+
+          echo "$BASE_SHA...$HEAD_SHA"
+
+          # Build pattern for grep based on monitored directories
+          VERSION_PATTERN="(${MONITORED_DIRS})/.*/version"
+
+          # Get the changed files list
+          CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA | grep -E "$VERSION_PATTERN" || true)
+
+          # Extract the directory name and limit the depth based on configuration
+          FOLDERS_JSON="["
+          FIRST=true
+
+          for file in $CHANGED_FILES; do
+            # Extract the directory with configurable depth
+            if [ "$DIR_DEPTH" -eq 1 ]; then
+              # If depth is 1, just get the top-level directory
+              DIR=$(echo $file | grep -oE "(${MONITORED_DIRS})" || true)
+            else
+              # If depth is 2 (default), get dir/subdir
+              DIR=$(echo $file | grep -oE "(${MONITORED_DIRS})/[^/]+" || true)
+            fi
+            
+            if [ ! -z "$DIR" ]; then
+              if [ "$FIRST" = true ]; then
+                FIRST=false
+              else
+                FOLDERS_JSON+=","
+              fi
+              FOLDERS_JSON+="\"$DIR\""
+            fi
+          done
+
+          FOLDERS_JSON+="]"
+
+          # Debug output
+          echo "changed files: $CHANGED_FILES"
+          echo "changed folders: $FOLDERS_JSON"
+
+          # Set the output variable
+          echo "all_changed_files=$FOLDERS_JSON" >> $GITHUB_OUTPUT
       - name: List all changed files
         run: |
           echo "${{ steps.changed-files.outputs.all_changed_files }} was changed"

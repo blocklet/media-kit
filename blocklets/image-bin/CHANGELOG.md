@@ -1,3 +1,7 @@
+## 0.11.99 (March 15, 2025)
+
+- chore: update deps and polish ci
+
 ## 0.11.98 (March 13, 2025)
 
 - chore: update deps
