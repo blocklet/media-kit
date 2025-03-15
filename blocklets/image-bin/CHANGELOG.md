@@ -1,3 +1,7 @@
+## 0.11.102 (March 15, 2025)
+
+- chore: polish ci
+
 ## 0.11.101 (March 15, 2025)
 
 - fix: resolve the bug of json stringify in ci
