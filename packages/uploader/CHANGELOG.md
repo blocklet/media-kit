@@ -1,3 +1,7 @@
+## 0.1.74 (March 15, 2025)
+
+- fix: ci stringify bug
+
 ## 0.1.73 (March 15, 2025)
 
 - chore: update deps and polish ci

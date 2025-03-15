@@ -88,8 +88,8 @@ jobs:
           echo "changed files: $CHANGED_FILES"
           echo "changed folders: $FOLDERS_JSON"
 
-          # Set the output variable
-          echo "all_changed_files=$FOLDERS_JSON" >> $GITHUB_OUTPUT
+          # Set the output variable - Use single quotes to avoid double quote escaping issues
+          echo 'all_changed_files='"$FOLDERS_JSON" >> $GITHUB_OUTPUT
       - name: List all changed files
         run: |
           echo "${{ steps.changed-files.outputs.all_changed_files }} was changed"
