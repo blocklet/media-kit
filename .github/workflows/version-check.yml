@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dir: ${{ fromJSON(needs.check-files.outputs.folders) }}
+        dir: ${{ fromJSON(needs.check-files.outputs.folders) || needs.check-files.outputs.folders }}
     steps:
       - name: action-version-check
         uses: arcblock/action-version-check@master
