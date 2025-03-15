@@ -1,3 +1,7 @@
+## 0.11.101 (March 15, 2025)
+
+- fix: resolve the bug of json stringify in ci
+
 ## 0.11.100 (March 15, 2025)
 
 - fix: ci stringify bug

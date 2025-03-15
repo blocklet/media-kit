@@ -58,9 +58,9 @@ jobs:
           # Get the changed files list
           CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA | grep -E "$VERSION_PATTERN" || true)
 
-          # Extract the directory name and limit the depth based on configuration
-          FOLDERS_JSON="["
-          FIRST=true
+          # Extract the directory names using an array instead of string concatenation
+          # Initialize an empty array
+          declare -a FOLDERS_ARRAY
 
           for file in $CHANGED_FILES; do
             # Extract the directory with configurable depth
@@ -73,23 +73,25 @@ jobs:
             fi
             
             if [ ! -z "$DIR" ]; then
-              if [ "$FIRST" = true ]; then
-                FIRST=false
-              else
-                FOLDERS_JSON+=","
-              fi
-              FOLDERS_JSON+="\"$DIR\""
+              # Add to array (will handle duplicates later)
+              FOLDERS_ARRAY+=("$DIR")
             fi
           done
 
-          FOLDERS_JSON+="]"
-
           # Debug output
           echo "changed files: $CHANGED_FILES"
+
+          # Remove duplicates and convert to proper JSON using jq
+          # First create a temporary file with the array items
+          printf "%s\n" "${FOLDERS_ARRAY[@]}" | sort -u > /tmp/folders_list.txt
+
+          # Use jq to properly format the JSON array from the unique entries
+          FOLDERS_JSON=$(jq -R -s -c 'split("\n") | map(select(length > 0))' /tmp/folders_list.txt)
+
           echo "changed folders: $FOLDERS_JSON"
 
-          # Set the output variable - Use single quotes to avoid double quote escaping issues
-          echo 'all_changed_files='"$FOLDERS_JSON" >> $GITHUB_OUTPUT
+          # Set the output variable (jq already handles proper JSON escaping)
+          echo "all_changed_files=$FOLDERS_JSON" >> $GITHUB_OUTPUT
       - name: List all changed files
         run: |
           echo "${{ steps.changed-files.outputs.all_changed_files }} was changed"
