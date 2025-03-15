@@ -90,8 +90,11 @@ jobs:
 
           echo "changed folders: $FOLDERS_JSON"
 
-          # Set the output variable (jq already handles proper JSON escaping)
-          echo "all_changed_files=$FOLDERS_JSON" >> $GITHUB_OUTPUT
+          # escape the double quotes, change " to \"
+          ESCAPED_JSON=$(echo "$FOLDERS_JSON" | sed 's/"/\\"/g')
+
+          # output the escaped JSON string
+          echo "all_changed_files=$ESCAPED_JSON" >> $GITHUB_OUTPUT
       - name: List all changed files
         run: |
           echo "${{ steps.changed-files.outputs.all_changed_files }} was changed"
@@ -107,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dir: ${{ fromJSON(needs.check-files.outputs.folders) }}
+        dir: ${{ fromJSON(needs.check-files.outputs.folders)}}
     steps:
       - name: action-version-check
         uses: arcblock/action-version-check@master
