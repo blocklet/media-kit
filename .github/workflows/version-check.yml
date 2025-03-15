@@ -90,10 +90,10 @@ jobs:
 
           echo "changed folders: $FOLDERS_JSON"
 
-          # 转义双引号，将 " 变成 \"
+          # escape the double quotes, change " to \"
           ESCAPED_JSON=$(echo "$FOLDERS_JSON" | sed 's/"/\\"/g')
 
-          # 输出带转义的 JSON 字符串
+          # output the escaped JSON string
           echo "all_changed_files=$ESCAPED_JSON" >> $GITHUB_OUTPUT
       - name: List all changed files
         run: |
