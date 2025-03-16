@@ -1,3 +1,23 @@
+## 0.1.90 (March 16, 2025)
+
+- chore: update deps
+
+## 0.1.89 (March 16, 2025)
+
+- chore: update deps
+
+## 0.1.88 (March 16, 2025)
+
+- chore: update deps
+
+## 0.1.87 (March 13, 2025)
+
+- chore: update deps
+
+## 0.1.86 (March 06, 2025)
+
+- chore: polish initStaticResourceMiddleware fileName logic
+
 ## 0.1.85 (February 26, 2025)
 
 - chore: update deps

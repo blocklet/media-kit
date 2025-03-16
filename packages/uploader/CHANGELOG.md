@@ -1,3 +1,31 @@
+## 0.1.78 (March 16, 2025)
+
+- chore: update deps
+
+## 0.1.77 (March 16, 2025)
+
+- chore: update deps
+
+## 0.1.76 (March 15, 2025)
+
+- chore: polish ci
+
+## 0.1.75 (March 15, 2025)
+
+- fix: resolve the bug of json stringify in ci
+
+## 0.1.74 (March 15, 2025)
+
+- fix: ci stringify bug
+
+## 0.1.73 (March 15, 2025)
+
+- chore: update deps and polish ci
+
+## 0.1.72 (March 13, 2025)
+
+- chore: update deps
+
 ## 0.1.71 (February 26, 2025)
 
 - chore: update deps

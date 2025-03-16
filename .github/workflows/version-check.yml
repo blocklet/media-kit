@@ -29,15 +29,72 @@ jobs:
           fetch-depth: 0
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v35.8.0
-        with:
-          files: |
-            blocklets/**/version
-            packages/**/version
-          json: "true"
-          dir_names: true
-          dir_names_exclude_root: true
-          dir_names_max_depth: 2
+        env:
+          MONITORED_DIRS: "blocklets|packages" # Configure which directories to monitor
+          DIR_DEPTH: 2 # Configure depth (2 means dir/subdir)
+        run: |
+          # If pull request, compare the base and head
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BASE_SHA=${{ github.event.pull_request.base.sha }}
+            HEAD_SHA=${{ github.event.pull_request.head.sha }}
+          else
+            # For push event, compare the before and after
+            BASE_SHA=${{ github.event.before }}
+            HEAD_SHA=${{ github.event.after }}
+            
+            # Handle the empty case (like first run or force push)
+            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "0000000000000000000000000000000000000000" ]; then
+              # If it's the first run, use the parent commit of the last commit
+              BASE_SHA=$(git rev-parse HEAD^)
+              HEAD_SHA=$(git rev-parse HEAD)
+            fi
+          fi
+
+          echo "$BASE_SHA...$HEAD_SHA"
+
+          # Build pattern for grep based on monitored directories
+          VERSION_PATTERN="(${MONITORED_DIRS})/.*/version"
+
+          # Get the changed files list
+          CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA | grep -E "$VERSION_PATTERN" || true)
+
+          # Extract the directory names using an array instead of string concatenation
+          # Initialize an empty array
+          declare -a FOLDERS_ARRAY
+
+          for file in $CHANGED_FILES; do
+            # Extract the directory with configurable depth
+            if [ "$DIR_DEPTH" -eq 1 ]; then
+              # If depth is 1, just get the top-level directory
+              DIR=$(echo $file | grep -oE "(${MONITORED_DIRS})" || true)
+            else
+              # If depth is 2 (default), get dir/subdir
+              DIR=$(echo $file | grep -oE "(${MONITORED_DIRS})/[^/]+" || true)
+            fi
+            
+            if [ ! -z "$DIR" ]; then
+              # Add to array (will handle duplicates later)
+              FOLDERS_ARRAY+=("$DIR")
+            fi
+          done
+
+          # Debug output
+          echo "changed files: $CHANGED_FILES"
+
+          # Remove duplicates and convert to proper JSON using jq
+          # First create a temporary file with the array items
+          printf "%s\n" "${FOLDERS_ARRAY[@]}" | sort -u > /tmp/folders_list.txt
+
+          # Use jq to properly format the JSON array from the unique entries
+          FOLDERS_JSON=$(jq -R -s -c 'split("\n") | map(select(length > 0))' /tmp/folders_list.txt)
+
+          echo "changed folders: $FOLDERS_JSON"
+
+          # escape the double quotes, change " to \"
+          ESCAPED_JSON=$(echo "$FOLDERS_JSON" | sed 's/"/\\"/g')
+
+          # output the escaped JSON string
+          echo "all_changed_files=$ESCAPED_JSON" >> $GITHUB_OUTPUT
       - name: List all changed files
         run: |
           echo "${{ steps.changed-files.outputs.all_changed_files }} was changed"
@@ -53,7 +110,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dir: ${{ fromJSON(needs.check-files.outputs.folders) }}
+        dir: ${{ fromJSON(needs.check-files.outputs.folders)}}
     steps:
       - name: action-version-check
         uses: arcblock/action-version-check@master

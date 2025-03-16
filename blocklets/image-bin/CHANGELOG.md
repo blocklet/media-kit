@@ -1,3 +1,43 @@
+## 0.11.106 (March 16, 2025)
+
+- chore: update deps
+
+## 0.11.105 (March 16, 2025)
+
+- chore: update deps
+
+## 0.11.104 (March 16, 2025)
+
+- chore: update deps
+
+## 0.11.103 (March 16, 2025)
+
+- chore: update deps
+
+## 0.11.102 (March 15, 2025)
+
+- chore: polish ci
+
+## 0.11.101 (March 15, 2025)
+
+- fix: resolve the bug of json stringify in ci
+
+## 0.11.100 (March 15, 2025)
+
+- fix: ci stringify bug
+
+## 0.11.99 (March 15, 2025)
+
+- chore: update deps and polish ci
+
+## 0.11.98 (March 13, 2025)
+
+- chore: update deps
+
+## 0.11.97 (March 06, 2025)
+
+- chore: polish initStaticResourceMiddleware fileName logic
+
 ## 0.11.96 (March 03, 2025)
 
 - feat: add xss prevent attack logic in sdk
