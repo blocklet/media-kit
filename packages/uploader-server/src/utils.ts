@@ -10,6 +10,10 @@ import { getSignData } from '@blocklet/sdk/lib/util/verify-sign';
 import FormData from 'form-data';
 import type { Method } from 'axios';
 import omit from 'lodash/omit';
+import ms from 'ms';
+import mime from 'mime-types';
+import { existsSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
 
 export let logger = console;
 
@@ -246,4 +250,156 @@ export async function getMediaKitFileStream(filePath: string) {
   });
 
   return res;
+}
+
+// ============= 资源处理通用函数 =============
+
+// 资源文件类型定义
+export type ResourceFile = {
+  filePath: string; // 文件的完整路径
+  dir: string; // 文件所在目录
+  originDir: string; // 原始目录
+  blockletInfo: any; // 组件信息
+  whitelist?: string[]; // 白名单
+  blacklist?: string[]; // 黑名单
+  mtime: Date; // 修改时间
+  size: number; // 文件大小
+  contentType: string; // 内容类型
+};
+
+// 计算缓存控制头
+export function calculateCacheControl(maxAge: string | number = '365d', immutable: boolean = true) {
+  let maxAgeInSeconds: number = 31536000; // 默认1年
+
+  if (typeof maxAge === 'string') {
+    try {
+      const milliseconds = ms(maxAge as any);
+      maxAgeInSeconds = typeof milliseconds === 'number' ? milliseconds / 1000 : 31536000;
+    } catch (e) {
+      logger.warn(`Invalid maxAge format: ${maxAge}, using default 1 year (31536000 seconds)`);
+    }
+  } else {
+    maxAgeInSeconds = maxAge;
+  }
+
+  const cacheControl = `public, max-age=${maxAgeInSeconds}`;
+  const cacheControlImmutable = `${cacheControl}, immutable`;
+
+  return {
+    cacheControl,
+    cacheControlImmutable,
+    maxAgeInSeconds,
+  };
+}
+
+// 服务文件资源
+export function serveResource(req: any, res: any, next: Function, resource: ResourceFile, options: any = {}) {
+  try {
+    // 设置响应头
+    res.setHeader('Content-Type', resource.contentType);
+    res.setHeader('Content-Length', resource.size);
+    res.setHeader('Last-Modified', resource.mtime.toUTCString());
+
+    // 缓存控制
+    const { cacheControl, cacheControlImmutable } = calculateCacheControl(
+      options.maxAge || '365d',
+      options.immutable !== false
+    );
+    res.setHeader('Cache-Control', options.immutable === false ? cacheControl : cacheControlImmutable);
+
+    // 自定义headers
+    if (options.setHeaders && typeof options.setHeaders === 'function') {
+      const statObj = { mtime: resource.mtime, size: resource.size };
+      options.setHeaders(res, resource.filePath, statObj);
+    }
+
+    // 处理条件请求 (If-Modified-Since)
+    const ifModifiedSince = req.headers['if-modified-since'];
+    if (ifModifiedSince) {
+      const ifModifiedSinceDate = new Date(ifModifiedSince);
+      if (resource.mtime <= ifModifiedSinceDate) {
+        res.statusCode = 304;
+        res.end();
+        return;
+      }
+    }
+
+    // 流式传输文件
+    const fileStream = createReadStream(resource.filePath);
+    fileStream.on('error', (error) => {
+      logger.error(`Error streaming file ${resource.filePath}:`, error);
+      next(error);
+    });
+
+    fileStream.pipe(res);
+  } catch (error) {
+    logger.error('Error serving static file:', error);
+    next(error);
+  }
+}
+
+// 扫描目录并创建资源映射
+export function scanDirectory(
+  directory: string,
+  options: {
+    whitelist?: string[];
+    blacklist?: string[];
+    originDir?: string;
+    blockletInfo?: any;
+  } = {}
+): Map<string, ResourceFile> {
+  const resourceMap = new Map<string, ResourceFile>();
+
+  if (!existsSync(directory)) {
+    return resourceMap;
+  }
+
+  try {
+    const files = readdirSync(directory);
+    for (const file of files) {
+      const filePath = join(directory, file);
+
+      let stat;
+      try {
+        stat = statSync(filePath);
+        if (stat.isDirectory()) continue;
+      } catch (e) {
+        continue;
+      }
+
+      // 检查白名单和黑名单
+      if (options.whitelist?.length && !options.whitelist.some((ext: string) => file.endsWith(ext))) {
+        continue;
+      }
+      if (options.blacklist?.length && options.blacklist.some((ext: string) => file.endsWith(ext))) {
+        continue;
+      }
+
+      // 获取文件信息
+      const contentType = mime.lookup(filePath) || 'application/octet-stream';
+
+      // 添加到映射表
+      resourceMap.set(file, {
+        filePath,
+        dir: directory,
+        originDir: options.originDir || directory,
+        blockletInfo: options.blockletInfo || {},
+        whitelist: options.whitelist,
+        blacklist: options.blacklist,
+        mtime: stat.mtime,
+        size: stat.size,
+        contentType,
+      });
+    }
+  } catch (err) {
+    logger.error(`Error scanning directory ${directory}:`, err);
+  }
+
+  return resourceMap;
+}
+
+export function getFileNameFromReq(req: any) {
+  const pathname = req.path || req.url?.split('?')[0];
+  // 解码 URL 中的中文和特殊字符
+  return path.basename(decodeURIComponent(pathname || ''));
 }

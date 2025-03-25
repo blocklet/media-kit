@@ -1,13 +1,19 @@
-import { existsSync, readdirSync, statSync, createReadStream } from 'fs';
-import { join, basename, extname } from 'path';
+import { existsSync } from 'fs';
+import { join, basename } from 'path';
 import config from '@blocklet/sdk/lib/config';
 import { getResources } from '@blocklet/sdk/lib/component';
 import joinUrl from 'url-join';
 import component from '@blocklet/sdk/lib/component';
-import mime from 'mime-types';
-import { setPDFDownloadHeader, logger } from '../utils';
+import {
+  setPDFDownloadHeader,
+  logger,
+  ResourceFile,
+  calculateCacheControl,
+  serveResource,
+  scanDirectory,
+  getFileNameFromReq,
+} from '../utils';
 import { ImageBinDid } from '../constants';
-import ms from 'ms';
 
 const ImgResourceType = 'imgpack';
 
@@ -31,18 +37,6 @@ let resourceTypes: ResourceType[] = [
     folder: '', // can be string or string[]
   },
 ];
-
-type ResourceFile = {
-  filePath: string;
-  dir: string;
-  originDir: string;
-  blockletInfo: any;
-  whitelist?: string[];
-  blacklist?: string[];
-  mtime: Date;
-  size: number;
-  contentType: string;
-};
 
 // 资源映射表
 let resourcesMap = new Map<string, ResourceFile>();
@@ -80,46 +74,23 @@ export const mappingResource = async () => {
 
     // 构建资源映射表
     resourcesMap.clear();
+
+    // 使用新的扫描目录函数
     for (const resource of canUseResources) {
       const { dir, whitelist, blacklist, originDir, blockletInfo } = resource;
 
       if (existsSync(dir)) {
         try {
-          const files = readdirSync(dir);
-          for (const file of files) {
-            const filePath = join(dir, file);
+          const dirResourceMap = scanDirectory(dir, {
+            whitelist,
+            blacklist,
+            originDir,
+            blockletInfo,
+          });
 
-            let stat;
-            try {
-              stat = statSync(filePath);
-              if (stat.isDirectory()) continue;
-            } catch (e) {
-              continue;
-            }
-
-            // 检查白名单和黑名单
-            if (whitelist?.length && !whitelist.some((ext: string) => file.endsWith(ext))) {
-              continue;
-            }
-            if (blacklist?.length && blacklist.some((ext: string) => file.endsWith(ext))) {
-              continue;
-            }
-
-            // 获取文件信息
-            const contentType = mime.lookup(filePath) || 'application/octet-stream';
-
-            // 添加到映射表
-            resourcesMap.set(file, {
-              filePath,
-              dir,
-              originDir,
-              blockletInfo,
-              whitelist,
-              blacklist,
-              mtime: stat.mtime,
-              size: stat.size,
-              contentType,
-            });
+          // 合并资源映射
+          for (const [key, value] of dirResourceMap.entries()) {
+            resourcesMap.set(key, value);
           }
         } catch (err) {
           logger.error(`Error scanning directory ${dir}:`, err);
@@ -163,23 +134,11 @@ export const initStaticResourceMiddleware = (
   // save to global
   skipRunningCheck = !!_skipRunningCheck;
 
-  // 预先计算maxAge的值
-  let maxAgeInSeconds: number = 31536000; // 默认1年
-  const maxAge = options.maxAge || '365d';
-
-  if (typeof maxAge === 'string') {
-    try {
-      const milliseconds = ms(maxAge as any);
-      maxAgeInSeconds = typeof milliseconds === 'number' ? milliseconds / 1000 : 31536000;
-    } catch (e) {
-      logger.warn(`Invalid maxAge format: ${maxAge}, using default 1 year (31536000 seconds)`);
-    }
-  } else {
-    maxAgeInSeconds = maxAge;
-  }
-
-  const cacheControl = `public, max-age=${maxAgeInSeconds}`;
-  const cacheControlImmutable = `${cacheControl}, immutable`;
+  // 使用公共缓存控制计算函数
+  const { cacheControl, cacheControlImmutable } = calculateCacheControl(
+    options.maxAge || '365d',
+    options.immutable !== false
+  );
 
   if (_resourceTypes?.length > 0) {
     resourceTypes = _resourceTypes.map((item: any) => {
@@ -199,46 +158,19 @@ export const initStaticResourceMiddleware = (
 
   return (req: any, res: any, next: Function) => {
     // get file name from path without query params
-    const fileName = basename(req.path || req.url?.split('?')[0]);
+    const fileName = getFileNameFromReq(req);
 
     try {
       // 直接从映射表中查找资源
       const resource = resourcesMap.get(fileName);
 
       if (resource) {
-        // 设置响应头
-        res.setHeader('Content-Type', resource.contentType);
-        res.setHeader('Content-Length', resource.size);
-        res.setHeader('Last-Modified', resource.mtime.toUTCString());
-
-        // 使用预先计算好的缓存控制值
-        res.setHeader('Cache-Control', options.immutable === false ? cacheControl : cacheControlImmutable);
-
-        // 自定义headers
-        if (options.setHeaders && typeof options.setHeaders === 'function') {
-          const statObj = { mtime: resource.mtime, size: resource.size };
-          options.setHeaders(res, resource.filePath, statObj);
-        }
-
-        // 处理条件请求 (If-Modified-Since)
-        const ifModifiedSince = req.headers['if-modified-since'];
-        if (ifModifiedSince) {
-          const ifModifiedSinceDate = new Date(ifModifiedSince);
-          if (resource.mtime <= ifModifiedSinceDate) {
-            res.statusCode = 304;
-            res.end();
-            return;
-          }
-        }
-
-        // 流式传输文件
-        const fileStream = createReadStream(resource.filePath);
-        fileStream.on('error', (error) => {
-          logger.error(`Error streaming file ${resource.filePath}:`, error);
-          next(error);
+        // 使用公共服务资源函数
+        serveResource(req, res, next, resource, {
+          ...options,
+          cacheControl,
+          cacheControlImmutable,
         });
-
-        fileStream.pipe(res);
       } else {
         next();
       }

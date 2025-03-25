@@ -1,3 +1,7 @@
+## 0.11.110 (March 26, 2025)
+
+- feat: add initDynamicResourceMiddleware middleware
+
 ## 0.11.109 (March 25, 2025)
 
 - refactor: polish initStaticResourceMiddleware logic

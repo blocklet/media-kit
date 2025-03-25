@@ -8,7 +8,10 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
 const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
-const { initProxyToMediaKitUploadsMiddleware } = require('@blocklet/uploader-server');
+const {
+  initProxyToMediaKitUploadsMiddleware,
+  // initDynamicResourceMiddleware
+} = require('@blocklet/uploader-server');
 const config = require('@blocklet/sdk/lib/config');
 const { xss } = require('@blocklet/xss');
 const { csrf } = require('@blocklet/sdk/lib/middlewares');
@@ -98,6 +101,14 @@ app.use(
 
 app.use(
   '/proxy-to-uploads',
+  // initDynamicResourceMiddleware({
+  //   componentDid: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
+  //   resourcePaths: [
+  //     {
+  //       path: `${config.env.dataDir}/*`,
+  //     },
+  //   ],
+  // }),
   initProxyToMediaKitUploadsMiddleware({
     express,
   }),
