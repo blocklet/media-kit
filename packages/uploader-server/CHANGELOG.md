@@ -1,6 +1,6 @@
 ## 0.1.91 (March 25, 2025)
 
-- refactor: polish initProxyToMediaKitUploadsMiddleware logic
+- refactor: polish initStaticResourceMiddleware logic
 
 ## 0.1.90 (March 16, 2025)
 
