@@ -4,7 +4,15 @@ import config from '@blocklet/sdk/lib/config';
 import { getResources } from '@blocklet/sdk/lib/component';
 import joinUrl from 'url-join';
 import component from '@blocklet/sdk/lib/component';
-import { setPDFDownloadHeader, logger } from '../utils';
+import {
+  setPDFDownloadHeader,
+  logger,
+  ResourceFile,
+  calculateCacheControl,
+  serveResource,
+  scanDirectory,
+  getFileNameFromReq,
+} from '../utils';
 import { ImageBinDid } from '../constants';
 
 const ImgResourceType = 'imgpack';
@@ -17,6 +25,9 @@ type ResourceType = {
   folder: string | string[];
   whitelist?: string[]; // 允许访问的文件扩展名
   blacklist?: string[]; // 禁止访问的文件扩展名
+  setHeaders?: (res: any, filePath: string, statObj: any) => void;
+  immutable?: boolean;
+  maxAge?: string;
 };
 
 let resourceTypes: ResourceType[] = [
@@ -27,7 +38,8 @@ let resourceTypes: ResourceType[] = [
   },
 ];
 
-let canUseResources = [] as any;
+// 资源映射表
+let resourcesMap = new Map<string, ResourceFile>();
 
 export const mappingResource = async () => {
   try {
@@ -35,6 +47,8 @@ export const mappingResource = async () => {
       types: resourceTypes,
       skipRunningCheck,
     });
+
+    let canUseResources = [] as any;
 
     canUseResources = resources
       .map((resource: any) => {
@@ -58,11 +72,33 @@ export const mappingResource = async () => {
       .filter(Boolean)
       .flat();
 
-    logger.info(
-      'Mapping can use resources count: ',
-      canUseResources.length
-      // canUseResources
-    );
+    // 构建资源映射表
+    resourcesMap.clear();
+
+    // 使用新的扫描目录函数
+    for (const resource of canUseResources) {
+      const { dir, whitelist, blacklist, originDir, blockletInfo } = resource;
+
+      if (existsSync(dir)) {
+        try {
+          const dirResourceMap = scanDirectory(dir, {
+            whitelist,
+            blacklist,
+            originDir,
+            blockletInfo,
+          });
+
+          // 合并资源映射
+          for (const [key, value] of dirResourceMap.entries()) {
+            resourcesMap.set(key, value);
+          }
+        } catch (err) {
+          logger.error(`Error scanning directory ${dir}:`, err);
+        }
+      }
+    }
+
+    logger.info('Mapping resources: files count:', resourcesMap.size, 'directories count:', canUseResources.length);
 
     return canUseResources;
   } catch (error) {
@@ -89,7 +125,7 @@ type initStaticResourceMiddlewareOptions = {
 
 export const initStaticResourceMiddleware = (
   {
-    options,
+    options = {},
     resourceTypes: _resourceTypes = resourceTypes,
     express,
     skipRunningCheck: _skipRunningCheck,
@@ -97,6 +133,12 @@ export const initStaticResourceMiddleware = (
 ) => {
   // save to global
   skipRunningCheck = !!_skipRunningCheck;
+
+  // 使用公共缓存控制计算函数
+  const { cacheControl, cacheControlImmutable } = calculateCacheControl(
+    options.maxAge || '365d',
+    options.immutable !== false
+  );
 
   if (_resourceTypes?.length > 0) {
     resourceTypes = _resourceTypes.map((item: any) => {
@@ -116,51 +158,28 @@ export const initStaticResourceMiddleware = (
 
   return (req: any, res: any, next: Function) => {
     // get file name from path without query params
-    const fileName = basename(req.path || req.url?.split('?')[0]);
+    const fileName = getFileNameFromReq(req);
 
     try {
-      const matchCanUseResourceItem = canUseResources.find((item: any) => {
-        // prevent path traversal attack
-        const normalizedPath = join(item.dir, fileName);
-        if (!normalizedPath?.startsWith(item.dir)) {
-          return false;
-        }
+      // 直接从映射表中查找资源
+      const resource = resourcesMap.get(fileName);
 
-        // check file is exists
-        if (!existsSync(normalizedPath)) {
-          return false;
-        }
-
-        // check whitelist and blacklist
-        const { whitelist, blacklist } = item;
-        if (whitelist?.length && !whitelist.some((ext: string) => fileName?.endsWith(ext))) {
-          return false;
-        }
-        if (blacklist?.length && blacklist.some((ext: string) => fileName?.endsWith(ext))) {
-          return false;
-        }
-
-        return true;
-      });
-
-      if (matchCanUseResourceItem) {
-        express.static(matchCanUseResourceItem.dir, {
-          maxAge: '365d',
-          immutable: true,
-          index: false,
+      if (resource) {
+        // 使用公共服务资源函数
+        serveResource(req, res, next, resource, {
           ...options,
-        })(req, res, next);
+          cacheControl,
+          cacheControlImmutable,
+        });
       } else {
         next();
       }
     } catch (error) {
-      // ignore error
+      logger.error('Error serving static file:', error);
       next();
     }
   };
 };
-
-export const getCanUseResources = () => canUseResources;
 
 export const initProxyToMediaKitUploadsMiddleware = ({ options, express } = {} as any) => {
   return async (req: any, res: any, next: Function) => {

@@ -118,9 +118,9 @@ async function updateSelectedDir(selectedDir) {
   await fs.writeFileSync(versionPath, version);
   console.log(chalk.greenBright(`[info]: ${versionPath} modified.`));
 
-  execSync(`code ${changelogPath}`, {
-    stdio: "inherit",
-  });
+  // execSync(`code ${changelogPath}`, {
+  //   stdio: "inherit",
+  // });
 }
 
 const selectedDirList = dirResponse.value;

@@ -1,3 +1,19 @@
+## 0.11.110 (March 26, 2025)
+
+- feat: add initDynamicResourceMiddleware middleware
+
+## 0.11.109 (March 25, 2025)
+
+- refactor: polish initStaticResourceMiddleware logic
+
+## 0.11.108 (March 25, 2025)
+
+- chore: update deps
+
+## 0.11.107 (March 19, 2025)
+
+- chore: update deps
+
 ## 0.11.106 (March 16, 2025)
 
 - chore: update deps
