@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.11.110",
+  "version": "0.11.111",
   "private": true,
   "scripts": {
     "dev": "blocklet dev",
@@ -41,13 +41,13 @@
   },
   "dependencies": {
     "@arcblock/did": "^1.19.15",
-    "@arcblock/did-connect": "^2.12.44",
-    "@arcblock/ux": "^2.12.44",
-    "@blocklet/constant": "^1.16.40",
+    "@arcblock/did-connect": "^2.12.53",
+    "@arcblock/ux": "^2.12.53",
+    "@blocklet/constant": "^1.16.41",
     "@blocklet/embed": "^0.1.11",
-    "@blocklet/js-sdk": "^1.16.40",
-    "@blocklet/logger": "^1.16.40",
-    "@blocklet/sdk": "^1.16.40",
+    "@blocklet/js-sdk": "^1.16.41",
+    "@blocklet/logger": "^1.16.41",
+    "@blocklet/sdk": "^1.16.41",
     "@blocklet/uploader": "workspace:^",
     "@blocklet/uploader-server": "workspace:^",
     "@blocklet/xss": "workspace:^",
@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@arcblock/eslint-config": "^0.2.4",
-    "@blocklet/ui-react": "^2.12.44",
+    "@blocklet/ui-react": "^2.12.53",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@vitejs/plugin-react": "^4.3.4",
