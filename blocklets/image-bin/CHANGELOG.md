@@ -1,3 +1,7 @@
+## 0.11.111 (April 01, 2025)
+
+- chore: update deps
+
 ## 0.11.110 (March 26, 2025)
 
 - feat: add initDynamicResourceMiddleware middleware

@@ -1,3 +1,5 @@
+## 0.1.93 (April 01, 2025)
+
 ## 0.1.92 (March 26, 2025)
 
 - feat: add initDynamicResourceMiddleware middleware
