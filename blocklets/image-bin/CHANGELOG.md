@@ -1,3 +1,7 @@
+## 0.11.112 (April 02, 2025)
+
+- chore: polish gallery height
+
 ## 0.11.111 (April 01, 2025)
 
 - chore: update deps
