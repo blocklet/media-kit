@@ -91,10 +91,7 @@ function Gallery({ uploads, type }) {
         overflow: 'hidden',
       }}>
       {uploads.map((x) => {
-        const height = isMobile
-          ? `calc(100vw - 24px - 24px + ${x.isNew ? 52 : 0}px)`
-          : `calc((100vw - 255px - 24px - 24px - (16px) * ${cols - 1}) / ${cols} + ${x.isNew ? 52 : 0}px)`;
-
+        const height = isMobile ? 200 : 250;
         return (
           <ImageListItem
             key={x._id}
@@ -171,7 +168,7 @@ function Gallery({ uploads, type }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   background: 'rgba(0,0,0,0.1)',
-                  height,
+                  height: '100%',
                   '&:hover': {
                     cursor: 'pointer',
                     background: (theme) => theme?.palette?.primary?.main,
