@@ -1,3 +1,7 @@
+## 0.11.114 (April 18, 2025)
+
+- chore: update deps
+
 ## 0.11.113 (April 03, 2025)
 
 - chore: revert getCanUseResources function
