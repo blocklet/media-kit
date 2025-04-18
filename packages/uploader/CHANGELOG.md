@@ -1,3 +1,8 @@
+## 0.1.83 (April 18, 2025)
+
+- chore: update deps
+- chore: support match `*` allowedFileTypes and generate exts note
+
 ## 0.1.82 (April 01, 2025)
 
 - chore: update deps

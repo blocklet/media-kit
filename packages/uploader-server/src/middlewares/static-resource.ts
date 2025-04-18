@@ -41,14 +41,17 @@ let resourceTypes: ResourceType[] = [
 // 资源映射表
 let resourcesMap = new Map<string, ResourceFile>();
 
+let canUseResources = [] as any;
+
+// 获取可以使用的资源，Discuss Kit 在用
+export const getCanUseResources = () => canUseResources;
+
 export const mappingResource = async () => {
   try {
     const resources = getResources({
       types: resourceTypes,
       skipRunningCheck,
     });
-
-    let canUseResources = [] as any;
 
     canUseResources = resources
       .map((resource: any) => {
