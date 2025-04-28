@@ -1,6 +1,6 @@
 ## 0.1.84 (April 28, 2025)
 
-- chore: optimise lottle json files import logic 
+- chore: polish lottie json files import logic
 
 ## 0.1.83 (April 18, 2025)
 

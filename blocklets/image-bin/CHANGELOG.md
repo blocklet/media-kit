@@ -1,6 +1,7 @@
 ## 0.11.115 (April 28, 2025)
 
-- chore: optimise lottle json files import logic 
+- chore: update deps
+- chore: polish lottie json files import logic
 
 ## 0.11.114 (April 18, 2025)
 
