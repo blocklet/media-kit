@@ -1,3 +1,7 @@
+## 0.1.84 (April 28, 2025)
+
+- chore: polish lottie json files import logic
+
 ## 0.1.83 (April 18, 2025)
 
 - chore: update deps
