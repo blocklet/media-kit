@@ -5,16 +5,13 @@ import Grid from '@mui/material/Grid';
 
 import Skeleton from '@mui/material/Skeleton';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useReactive, useAsyncEffect } from 'ahooks';
 import { useTheme } from '@mui/material/styles';
 
 import { useAIImageContext, AIImagePromptProps } from '../context';
 import LoadingImage from './loading-image';
 import Lottie from './lottie';
-import lottieJsonErrorUrl from './lottie-error.json';
-import lottieJsonLoadingUrl from './lottie-loading.json';
-import lottieJsonWelcomeUrl from './lottie-welcome.json';
 import keyBy from 'lodash/keyBy';
 
 export default function Output({
@@ -38,6 +35,12 @@ export default function Output({
   const theme = useTheme();
   const maxNumberOfFiles = restrictions?.maxNumberOfFiles;
 
+  const [lottieFiles, setLottieFiles] = useState<{
+    error?: any;
+    loading?: any;
+    welcome?: any;
+  }>({});
+
   const selected = useReactive<{ [key: string]: boolean }>({});
   const selectedUrls: string[] = Object.keys(selected).filter((key) => selected[key]);
 
@@ -45,6 +48,26 @@ export default function Output({
     xs: 6,
     sm: 6,
   };
+
+  useEffect(() => {
+    if (error && !lottieFiles.error) {
+      import('./lottie-error.json').then((module) => {
+        setLottieFiles((prev) => ({ ...prev, error: module.default }));
+      });
+    }
+
+    if (options && !response.length && !lottieFiles.loading) {
+      import('./lottie-loading.json').then((module) => {
+        setLottieFiles((prev) => ({ ...prev, loading: module.default }));
+      });
+    }
+
+    if (!options && !lottieFiles.welcome) {
+      import('./lottie-welcome.json').then((module) => {
+        setLottieFiles((prev) => ({ ...prev, welcome: module.default }));
+      });
+    }
+  }, [error, options, response.length, lottieFiles]);
 
   useAsyncEffect(async () => {
     if (!options) {
@@ -153,7 +176,7 @@ export default function Output({
     if (error) {
       return (
         <Box width={300} height={300} m="auto">
-          <Lottie key="error" src={lottieJsonErrorUrl} />
+          {lottieFiles.error && <Lottie key="error" src={lottieFiles.error} />}
           <Box
             sx={{
               textAlign: 'center',
@@ -240,14 +263,14 @@ export default function Output({
     if (options) {
       return (
         <Box width={220} height={220} m="auto">
-          <Lottie key="loading" src={lottieJsonLoadingUrl} />
+          {lottieFiles.loading && <Lottie key="loading" src={lottieFiles.loading} />}
         </Box>
       );
     }
 
     return (
       <Box width={300} height={300} m="auto">
-        <Lottie key="welcome" src={lottieJsonWelcomeUrl} />
+        {lottieFiles.welcome && <Lottie key="welcome" src={lottieFiles.welcome} />}
       </Box>
     );
   };
