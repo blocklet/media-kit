@@ -139,8 +139,8 @@ export default function ImageActions({ data, isResource }) {
     { children: t('common.download'), onClick: onDownload },
     { children: t('common.copyDownload'), onClick: copyDownload },
     // can't delete other blocklet files
-    { children: t('common.delete'), disabled: !isMediaKitFile && !isAdmin, onClick: onDelete },
-    { children: t('common.moveFolder'), disabled: !isMediaKitFile && !isAdmin, onClick: onMove },
+    { children: t('common.delete'), disabled: !isMediaKitFile || !isAdmin, onClick: onDelete },
+    { children: t('common.moveFolder'), disabled: !isMediaKitFile || !isAdmin, onClick: onMove },
   ].map((item) => {
     return {
       ...item,
