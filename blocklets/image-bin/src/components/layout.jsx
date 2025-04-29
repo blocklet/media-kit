@@ -15,7 +15,7 @@ import Uploader, { UploaderProviderWrapper } from './uploader';
 // import Exporter from './exporter';
 import { useUploadContext } from '../contexts/upload';
 import { useSessionContext } from '../contexts/session';
-import { hasAdminPermission } from '../libs/utils';
+import { hasAdminPermission, hasMediaKitAccessPermission } from '../libs/utils';
 
 export default function Layout({ title }) {
   const { tab } = useUploadContext();
@@ -32,7 +32,11 @@ export default function Layout({ title }) {
     addons.push(<Uploader key="uploader-addon" />);
   }
 
-  const hasPermission = hadLogin && (window?.blocklet?.tenantMode === 'multiple' || adminPermissionInSingleTenant);
+  const hasPermission =
+    hadLogin &&
+    (window?.blocklet?.tenantMode === 'multiple' ||
+      adminPermissionInSingleTenant ||
+      hasMediaKitAccessPermission(session?.user));
 
   const DashWrapper = useMemo(() => {
     return adminPermissionInSingleTenant

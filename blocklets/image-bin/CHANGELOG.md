@@ -1,3 +1,7 @@
+## 0.11.117 (April 29, 2025)
+
+- fix: polish hasMediaKitAccessPermission logic
+
 ## 0.11.116 (April 29, 2025)
 
 - chore: allow member, pagesEditor and blogEditor passports can access Media Kit
