@@ -89,7 +89,7 @@ export default function Layout({ title }) {
           ) : (
             <Result
               status="403"
-              sx={{ height: 'calc(100% - 24px)' }}
+              sx={{ height: 'calc(100% - 24px)', backgroundColor: 'background.default' }}
               extra={
                 <Button
                   color="primary"
