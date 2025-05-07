@@ -1,12 +1,13 @@
 import React, { Suspense, lazy } from 'react'; // eslint-disable-line
 import get from 'lodash/get';
 import joinUrl from 'url-join';
-import { ThemeProvider as MuiThemeProvider, StyledEngineProvider, CssBaseline, CircularProgress } from '@mui/material';
-import { ThemeProvider as EmotionThemeProvider, css, Global } from '@emotion/react';
+import { CssBaseline, CircularProgress } from '@mui/material';
+import { css, Global } from '@emotion/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from '@arcblock/ux/lib/Toast';
-import { LocaleProvider } from '@arcblock/ux/lib/Locale/context';
+import {} from '@arcblock/ux/lib/Locale/context';
 import Center from '@arcblock/ux/lib/Center';
+import { ConfigProvider } from '@arcblock/ux/lib/Config';
 
 import theme from './libs/theme';
 import { SessionProvider } from './contexts/session';
@@ -35,53 +36,47 @@ export default function App() {
   const prefix = window?.blocklet?.prefix || '/';
 
   return (
-    <StyledEngineProvider injectFirst>
-      <MuiThemeProvider theme={theme}>
-        <EmotionThemeProvider theme={theme}>
-          <LocaleProvider translations={translations} fallbackLocale="en">
-            <Router basename={prefix}>
-              <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
-                <CssBaseline />
-                <Global styles={globalStyles} />
-                <ToastProvider>
-                  <Suspense
-                    fallback={
-                      <Center>
-                        <CircularProgress />
-                      </Center>
-                    }>
-                    <Routes>
-                      <Route path="/embed/recent" element={<EmbedRecent />} />
-                      <Route
-                        path="*"
-                        element={
-                          <SessionProvider
-                            serviceHost={prefix}
-                            protectedRoutes={['/admin', '/admin/*'].map((item) => joinUrl(prefix, item))}>
-                            <UploadProvider>
-                              <ResourceProvider>
-                                <Routes>
-                                  <Route path="/" element={<Home />} />
-                                  <Route path="/admin" element={<Layout />}>
-                                    <Route index element={<ImageList />} />
-                                    <Route path="images" element={<ImageList />} />
-                                    <Route path="*" element={<Navigate to="/admin" />} />
-                                  </Route>
-                                </Routes>
-                              </ResourceProvider>
-                            </UploadProvider>
-                          </SessionProvider>
-                        }
-                      />
-                      <Route path="*" element={<Navigate to="/" />} />
-                    </Routes>
-                  </Suspense>
-                </ToastProvider>
-              </SessionProvider>
-            </Router>
-          </LocaleProvider>
-        </EmotionThemeProvider>
-      </MuiThemeProvider>
-    </StyledEngineProvider>
+    <ConfigProvider translations={translations} fallbackLocale="en" theme={theme} injectFirst>
+      <Router basename={prefix}>
+        <SessionProvider serviceHost={get(window, 'blocklet.prefix', '/')}>
+          <CssBaseline />
+          <Global styles={globalStyles} />
+          <ToastProvider>
+            <Suspense
+              fallback={
+                <Center>
+                  <CircularProgress />
+                </Center>
+              }>
+              <Routes>
+                <Route path="/embed/recent" element={<EmbedRecent />} />
+                <Route
+                  path="*"
+                  element={
+                    <SessionProvider
+                      serviceHost={prefix}
+                      protectedRoutes={['/admin', '/admin/*'].map((item) => joinUrl(prefix, item))}>
+                      <UploadProvider>
+                        <ResourceProvider>
+                          <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/admin" element={<Layout />}>
+                              <Route index element={<ImageList />} />
+                              <Route path="images" element={<ImageList />} />
+                              <Route path="*" element={<Navigate to="/admin" />} />
+                            </Route>
+                          </Routes>
+                        </ResourceProvider>
+                      </UploadProvider>
+                    </SessionProvider>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/" />} />
+              </Routes>
+            </Suspense>
+          </ToastProvider>
+        </SessionProvider>
+      </Router>
+    </ConfigProvider>
   );
 }

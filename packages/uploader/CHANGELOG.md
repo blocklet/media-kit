@@ -1,3 +1,8 @@
+## 0.1.85 (May 07, 2025)
+
+- chore: update deps
+- feat: support dark mode in uploader
+
 ## 0.1.84 (April 28, 2025)
 
 - chore: polish lottie json files import logic

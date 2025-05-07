@@ -1,3 +1,8 @@
+## 0.11.118 (May 07, 2025)
+
+- chore: update deps
+- feat: support dark mode in Media Kit
+
 ## 0.11.117 (April 29, 2025)
 
 - fix: polish hasMediaKitAccessPermission logic

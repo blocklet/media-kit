@@ -29,6 +29,7 @@ import mime from 'mime-types';
 import xbytes from 'xbytes';
 import Cookie from 'js-cookie';
 import Spinner from '@mui/material/CircularProgress';
+import { useConfig } from '@arcblock/ux/lib/Config';
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
@@ -513,6 +514,8 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     restrictions: cloneDeep(props?.coreProps?.restrictions) || ({} as any),
   });
 
+  const { mode } = useConfig();
+
   const theme = useTheme();
 
   const pluginList = getPluginList({
@@ -906,6 +909,12 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
           sx={{
             position: 'relative',
             width: isMobile ? '90vw' : 720,
+            '.uppy-Dashboard-inner': {
+              borderColor: 'divider',
+            },
+            '.uppy-ProviderBrowserItem > *': {
+              transition: 'all 0.3s ease-in-out',
+            },
             '.uppy-ProviderBrowserItem-inner': {
               flex: 1,
               color: 'transparent',
@@ -913,17 +922,26 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
                 objectFit: 'contain !important',
               },
             },
+            '.uppy-ProviderBrowserItem-checkbox': {
+              backgroundColor: `${theme?.palette?.primary?.main} !important`,
+            },
             '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner': {
-              background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
+              boxShadow: 'none !important',
+              background: 'repeating-conic-gradient(#e0e0e0 0 25%,#fff 0 50%) 50%/18px 18px !important',
+            },
+            '.uppy-ProviderBrowserItem--selected .uppy-ProviderBrowserItem-inner': {
+              boxShadow: (theme) => `0 0 0 3px ${theme.palette.primary.main} !important`,
             },
             '.uploaded-add-item': {
-              background: 'rgba(0,0,0,0.1) !important',
+              background:
+                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1) !important' : 'rgba(0,0,0,0.1) !important',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               transition: 'all 0.3s ease-in-out',
               '&:hover': {
-                background: 'rgba(0,0,0,0.13)',
+                background:
+                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.13) !important' : 'rgba(0,0,0,0.13) !important',
               },
             },
             '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
@@ -941,7 +959,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               whiteSpace: 'normal',
             },
             '.uppy-ProviderBrowser-body': {
-              background: '#fff',
               height: '100%',
             },
             '.uppy-ProviderBrowser-list': {
@@ -990,13 +1007,27 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
                 filter: 'brightness(1.2)',
               },
             },
+            '& .button-color-style': {
+              border: '1px solid',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              backgroundColor: 'transparent',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                filter: 'brightness(1.2)',
+              },
+            },
+            '& .button-color-style-active': {
+              backgroundColor: 'primary.main',
+              color: 'white',
+            },
           }}>
           {popup && (
             <IconButton
               aria-label="close"
               onClick={close}
               sx={{
-                color: '#fafafa',
+                color: mode === 'dark' ? '#ddd' : '#fafafa',
                 position: 'absolute',
                 ...(isMobile
                   ? {
@@ -1061,7 +1092,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               proudlyDisplayPoweredByUppy={false}
               showProgressDetails
               disableThumbnailGenerator
-              // theme="light"
+              theme={mode === 'dark' ? 'dark' : 'light'}
               note={note}
               doneButtonHandler={close}
               {...props.dashboardProps}
