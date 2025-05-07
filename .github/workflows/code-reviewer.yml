@@ -7,7 +7,7 @@ permissions:
 on:
   pull_request:
     branches:
-      - main
+      - master
   pull_request_review_comment:
     types: [created]
 
@@ -25,10 +25,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          DEBUG: '@aigne/*'
+          DEBUG: "@aigne/*"
         with:
           debug: true
-          language: 'zh-CN'
+          language: "zh-CN"
           review_simple_changes: false
           review_comment_lgtm: false
           disable_review: true
