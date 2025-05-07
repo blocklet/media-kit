@@ -39,7 +39,6 @@ export default function Exporter() {
       <ButtonWrapper
         key="button"
         variant="outlined"
-        color="secondary"
         type="button"
         className="submit"
         onClick={() => setShowCreateResource(true)}

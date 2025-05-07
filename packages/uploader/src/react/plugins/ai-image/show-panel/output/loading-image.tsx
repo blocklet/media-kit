@@ -34,11 +34,11 @@ const LoadingImage = ({
 
   return (
     <div style={{ position: 'relative' }}>
-      <div
+      <Box
         className="lazy-image-wrapper"
-        style={{
+        sx={{
           visibility: state.loading ? 'hidden' : 'visible',
-          background: '#f4f4f4',
+          bgcolor: 'background.paper',
           width: '100%',
           height: '100%',
           display: 'flex',
@@ -59,7 +59,7 @@ const LoadingImage = ({
           }}
           loading="eager" // must be eager to make sure the image is loaded
         />
-      </div>
+      </Box>
 
       {state.loading && (
         <Skeleton
@@ -78,6 +78,7 @@ const LoadingImage = ({
       </StyledIconButton>
 
       {alt && (
+        // @ts-ignore
         <StyledClickToCopy
           unstyled
           tip={alt}

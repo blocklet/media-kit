@@ -42,7 +42,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
   const { run } = useDebounceFn(submit, { wait: 500 });
 
-  const sliderWrapperProps = { width: '100%', pl: '12px', pr: '16px' };
+  const sliderWrapperProps = { width: '100%', pl: 1, pr: 1 };
   const marks = values.model === 'dall-e-2' ? dalle2Sizes : dalle3Sizes;
 
   return (
@@ -50,7 +50,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
       <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', m: 2, mb: 0 }}>
         <Grid container gap={2.5}>
           <Grid item xs={12}>
-            <Typography gutterBottom className="title label">
+            <Typography gutterBottom className="title label" color="text.primary">
               {i18n('aiImagePrompt')}
             </Typography>
 
@@ -73,13 +73,13 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
           </Grid>
 
           <Grid item xs={12}>
-            <Typography gutterBottom className="title label">
+            <Typography gutterBottom className="title label" color="text.primary">
               {`${i18n('aiImageModel')}`}
             </Typography>
 
             <RadioGroup
               row
-              sx={{ '.MuiFormControlLabel-label': { fontSize: '12px' } }}
+              sx={{ '.MuiFormControlLabel-label': { fontSize: '12px', color: 'text.primary' } }}
               value={values.model}
               onChange={(e) => {
                 values.number = 1;
@@ -100,7 +100,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
           </Grid>
 
           <Grid item xs={12}>
-            <Typography gutterBottom className="title label">
+            <Typography gutterBottom className="title label" color="text.primary">
               {`${i18n('aiImageSize')}: ${values.size}`}
             </Typography>
 
@@ -124,7 +124,7 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
 
           {values.model === 'dall-e-2' && (
             <Grid item xs={12}>
-              <Typography gutterBottom className="title label">
+              <Typography gutterBottom className="title label" color="text.primary">
                 {`${i18n('aiImageNumber')}: ${values.number}`}
               </Typography>
 
@@ -190,8 +190,8 @@ const Root = styled(Box)`
     text-transform: none;
 
     &.Mui-disabled {
-      color: rgba(0, 0, 0, 0.26) !important;
-      background: rgba(0, 0, 0, 0.12) !important;
+      color: ${({ theme }: { theme: any }) => theme.palette.text.disabled} !important;
+      background: ${({ theme }: { theme: any }) => theme.palette.action.disabledBackground} !important;
     }
   }
 
@@ -200,13 +200,11 @@ const Root = styled(Box)`
     font-weight: 500;
     font-size: 12px;
     line-height: 14px;
-    color: #9397a1;
     margin: 0;
     margin-top: 4px;
   }
 
   .MuiOutlinedInput-root {
-    background: #fbfbfb;
     border-radius: 4px;
     padding: 0;
 
@@ -215,39 +213,9 @@ const Root = styled(Box)`
     }
 
     fieldset {
-      border: 1px solid #f6f6f6;
     }
 
     &:hover fieldset {
-      border: 1px solid #a482fe;
-    }
-  }
-
-  .Mui-focused {
-    &.MuiFormLabel-root {
-      color: #a482fe;
-    }
-
-    &.MuiOutlinedInput-root {
-      fieldset {
-        border: 1px solid #a482fe;
-      }
-    }
-  }
-
-  .Mui-error {
-    &.MuiFormLabel-root {
-      color: #f16e6e;
-    }
-
-    &.MuiOutlinedInput-root + .MuiFormHelperText-root {
-      color: #f16e6e;
-    }
-
-    &.MuiOutlinedInput-root {
-      fieldset {
-        border: 1px solid #f16e6e;
-      }
     }
   }
 `;
