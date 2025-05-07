@@ -29,7 +29,6 @@ import mime from 'mime-types';
 import xbytes from 'xbytes';
 import Cookie from 'js-cookie';
 import Spinner from '@mui/material/CircularProgress';
-import { useConfig } from '@arcblock/ux/lib/Config';
 
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
@@ -514,9 +513,9 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     restrictions: cloneDeep(props?.coreProps?.restrictions) || ({} as any),
   });
 
-  const { mode } = useConfig();
-
   const theme = useTheme();
+
+  const mode = theme?.palette?.mode;
 
   const pluginList = getPluginList({
     ...props,
