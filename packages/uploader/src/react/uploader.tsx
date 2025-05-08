@@ -27,10 +27,10 @@ import localeMap from './i18n';
 import { ComponentInstaller } from '@blocklet/ui-react';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
-import debounce from 'lodash/debounce';
 import Cookie from 'js-cookie';
 import Spinner from '@mui/material/CircularProgress';
 import { useMutationObserver } from 'ahooks';
+import TrapFocus from '@mui/material/Unstable_TrapFocus';
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
@@ -900,206 +900,208 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
             };
           }}
         />
-        {/* ignore backdrop trigger */}
-        <Box
-          className="uploader-container"
-          key="uploader-container"
-          ref={uploaderContainerRef}
-          id={target}
-          onClick={(e: any) => e.stopPropagation()}
-          sx={{
-            position: 'relative',
-            width: isMobile ? '90vw' : 720,
-            '.uppy-Dashboard-inner': {
-              borderColor: 'divider',
-            },
-            '.uppy-ProviderBrowserItem > *': {
-              transition: 'all 0.3s ease-in-out',
-            },
-            '.uppy-ProviderBrowserItem-inner': {
-              flex: 1,
-              color: 'transparent',
-              'img, object': {
-                objectFit: 'contain !important',
+        <TrapFocus open={popup && state.open}>
+          {/* ignore backdrop trigger */}
+          <Box
+            className="uploader-container"
+            key="uploader-container"
+            ref={uploaderContainerRef}
+            id={target}
+            onClick={(e: any) => e.stopPropagation()}
+            sx={{
+              position: 'relative',
+              width: isMobile ? '90vw' : 720,
+              '.uppy-Dashboard-inner': {
+                borderColor: 'divider',
               },
-            },
-            '.uppy-ProviderBrowserItem-checkbox': {
-              backgroundColor: `${theme?.palette?.primary?.main} !important`,
-            },
-            '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner': {
-              boxShadow: 'none !important',
-              background: 'repeating-conic-gradient(#e0e0e0 0 25%,#fff 0 50%) 50%/18px 18px !important',
-            },
-            '.uppy-ProviderBrowserItem--selected .uppy-ProviderBrowserItem-inner': {
-              boxShadow: (theme) => `0 0 0 3px ${theme.palette.primary.main} !important`,
-            },
-            '.uploaded-add-item': {
-              background:
-                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1) !important' : 'rgba(0,0,0,0.1) !important',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              transition: 'all 0.3s ease-in-out',
-              '&:hover': {
-                background:
-                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.13) !important' : 'rgba(0,0,0,0.13) !important',
-              },
-            },
-            '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
-              justifyContent: 'flex-end',
-            },
-            '.uppy-ProviderBrowser-footer': {
-              button: {
-                marginRight: '0 !important',
-                '&:last-child': {
-                  display: 'none',
-                },
-              },
-            },
-            '.uppy-Dashboard-AddFiles-title': {
-              whiteSpace: 'normal',
-            },
-            '.uppy-ProviderBrowser-body': {
-              height: '100%',
-            },
-            '.uppy-ProviderBrowser-list': {
-              height: 'fit-content',
-              maxHeight: '100%',
-            },
-            '.uploaded, .ai-image': {
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              flexDirection: 'column',
-              '& > div': {
-                width: '100%',
-              },
-              '& .uppy-ProviderBrowser-header': {
-                // hide the logout
-                display: 'none',
-              },
-            },
-            '& .uppy-Url': {
-              width: '100% !important',
-              display: 'flex',
-              justifyContent: 'center',
-              '& input': {
-                width: '70%',
-              },
-            },
-            '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done, & .uppy-DashboardContent-save, & .uppy-StatusBar-actionBtn--upload':
-              {
-                color: `${theme?.palette?.primary?.main}`,
+              '.uppy-ProviderBrowserItem > *': {
                 transition: 'all 0.3s ease-in-out',
-                '&:hover, &:focus': {
-                  color: `${theme?.palette?.primary?.main}`,
-                  filter: 'brightness(1.2)',
+              },
+              '.uppy-ProviderBrowserItem-inner': {
+                flex: 1,
+                color: 'transparent',
+                'img, object': {
+                  objectFit: 'contain !important',
                 },
               },
-            '& .uppy-Dashboard-browse': {
-              textDecoration: 'underline !important',
-            },
-            '& .uppy-c-btn-primary': {
-              backgroundColor: `${theme?.palette?.primary?.main} !important`,
-              transition: 'all 0.3s ease-in-out',
-              '&:hover, &:focus': {
+              '.uppy-ProviderBrowserItem-checkbox': {
                 backgroundColor: `${theme?.palette?.primary?.main} !important`,
-                filter: 'brightness(1.2)',
               },
-            },
-            '& .button-color-style': {
-              border: '1px solid',
-              borderColor: 'primary.main',
-              color: 'primary.main',
-              backgroundColor: 'transparent',
-              transition: 'all 0.3s ease-in-out',
-              '&:hover': {
-                filter: 'brightness(1.2)',
+              '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner': {
+                boxShadow: 'none !important',
+                background: 'repeating-conic-gradient(#e0e0e0 0 25%,#fff 0 50%) 50%/18px 18px !important',
               },
-            },
-            '& .button-color-style-active': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-            },
-          }}>
-          {popup && (
-            <IconButton
-              aria-label="close"
-              onClick={close}
-              sx={{
-                color: mode === 'dark' ? '#ddd' : '#fafafa',
-                position: 'absolute',
-                ...(isMobile
-                  ? {
-                      bottom: `calc(0px - ${closeIconSize} - 16px)`,
-                      left: `calc(50vw - ${closeIconSize} - 8px)`,
-                    }
-                  : {
-                      right: `calc(0px - ${closeIconSize} - 16px)`,
-                      top: -12,
-                    }),
-              }}>
-              <CloseIcon
-                sx={{
-                  fontSize: closeIconSize,
-                }}
-              />
-            </IconButton>
-          )}
-          {loadingStatus && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
+              '.uppy-ProviderBrowserItem--selected .uppy-ProviderBrowserItem-inner': {
+                boxShadow: (theme) => `0 0 0 3px ${theme.palette.primary.main} !important`,
+              },
+              '.uploaded-add-item': {
+                background:
+                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1) !important' : 'rgba(0,0,0,0.1) !important',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                zIndex: 99999999999,
+                transition: 'all 0.3s ease-in-out',
+                '&:hover': {
+                  background:
+                    theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.13) !important' : 'rgba(0,0,0,0.13) !important',
+                },
+              },
+              '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
+                justifyContent: 'flex-end',
+              },
+              '.uppy-ProviderBrowser-footer': {
+                button: {
+                  marginRight: '0 !important',
+                  '&:last-child': {
+                    display: 'none',
+                  },
+                },
+              },
+              '.uppy-Dashboard-AddFiles-title': {
+                whiteSpace: 'normal',
+              },
+              '.uppy-ProviderBrowser-body': {
+                height: '100%',
+              },
+              '.uppy-ProviderBrowser-list': {
+                height: 'fit-content',
+                maxHeight: '100%',
+              },
+              '.uploaded, .ai-image': {
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
                 flexDirection: 'column',
-                background: 'rgba(256, 256, 256, 0.2)',
-                backdropFilter: 'blur(4px)',
-                borderRadius: 1,
-                pointerEvents: 'none',
-              }}>
-              <Spinner size={32} />
-              <Typography
-                variant="body2"
-                color="primary"
+                '& > div': {
+                  width: '100%',
+                },
+                '& .uppy-ProviderBrowser-header': {
+                  // hide the logout
+                  display: 'none',
+                },
+              },
+              '& .uppy-Url': {
+                width: '100% !important',
+                display: 'flex',
+                justifyContent: 'center',
+                '& input': {
+                  width: '70%',
+                },
+              },
+              '& .uppy-Dashboard-browse, & .uppy-DashboardContent-addMore, & .uppy-DashboardContent-back, & .uppy-StatusBar-actionBtn--done, & .uppy-DashboardContent-save, & .uppy-StatusBar-actionBtn--upload':
+                {
+                  color: `${theme?.palette?.primary?.main}`,
+                  transition: 'all 0.3s ease-in-out',
+                  '&:hover, &:focus': {
+                    color: `${theme?.palette?.primary?.main}`,
+                    filter: 'brightness(1.2)',
+                  },
+                },
+              '& .uppy-Dashboard-browse': {
+                textDecoration: 'underline !important',
+              },
+              '& .uppy-c-btn-primary': {
+                backgroundColor: `${theme?.palette?.primary?.main} !important`,
+                transition: 'all 0.3s ease-in-out',
+                '&:hover, &:focus': {
+                  backgroundColor: `${theme?.palette?.primary?.main} !important`,
+                  filter: 'brightness(1.2)',
+                },
+              },
+              '& .button-color-style': {
+                border: '1px solid',
+                borderColor: 'primary.main',
+                color: 'primary.main',
+                backgroundColor: 'transparent',
+                transition: 'all 0.3s ease-in-out',
+                '&:hover': {
+                  filter: 'brightness(1.2)',
+                },
+              },
+              '& .button-color-style-active': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+              },
+            }}>
+            {popup && (
+              <IconButton
+                aria-label="close"
+                onClick={close}
                 sx={{
-                  mt: 1.5,
-                  fontWeight: 'bold',
+                  color: mode === 'dark' ? '#ddd' : '#fafafa',
+                  position: 'absolute',
+                  ...(isMobile
+                    ? {
+                        bottom: `calc(0px - ${closeIconSize} - 16px)`,
+                        left: `calc(50vw - ${closeIconSize} - 8px)`,
+                      }
+                    : {
+                        right: `calc(0px - ${closeIconSize} - 16px)`,
+                        top: -12,
+                      }),
                 }}>
-                {get(localeMap, `${locale}.strings.loadingStatus`, 'Loading...')}
-              </Typography>
-            </Box>
-          )}
-          {/* @ts-ignore */}
-          {state.uppy && (
-            <Dashboard
-              // showNativePhotoCameraButton={isMobile}
-              // showNativeVideoCameraButton={isMobile}
-              inline
-              // @ts-ignore
-              target={`#${target}`}
-              id={uploaderDashboardId}
-              disabled={withoutAnyAllowedFileTypes}
-              uppy={state.uppy}
-              plugins={plugins}
-              fileManagerSelectionType={state.restrictions?.maxNumberOfFiles === 1 ? 'files' : 'both'}
-              proudlyDisplayPoweredByUppy={false}
-              showProgressDetails
-              disableThumbnailGenerator
-              theme={mode === 'dark' ? 'dark' : 'light'}
-              note={note}
-              doneButtonHandler={close}
-              {...props.dashboardProps}
-            />
-          )}
-        </Box>
+                <CloseIcon
+                  sx={{
+                    fontSize: closeIconSize,
+                  }}
+                />
+              </IconButton>
+            )}
+            {loadingStatus && (
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 99999999999,
+                  flexDirection: 'column',
+                  background: 'rgba(256, 256, 256, 0.2)',
+                  backdropFilter: 'blur(4px)',
+                  borderRadius: 1,
+                  pointerEvents: 'none',
+                }}>
+                <Spinner size={32} />
+                <Typography
+                  variant="body2"
+                  color="primary"
+                  sx={{
+                    mt: 1.5,
+                    fontWeight: 'bold',
+                  }}>
+                  {get(localeMap, `${locale}.strings.loadingStatus`, 'Loading...')}
+                </Typography>
+              </Box>
+            )}
+            {/* @ts-ignore */}
+            {state.uppy && (
+              <Dashboard
+                // showNativePhotoCameraButton={isMobile}
+                // showNativeVideoCameraButton={isMobile}
+                inline
+                // @ts-ignore
+                target={`#${target}`}
+                id={uploaderDashboardId}
+                disabled={withoutAnyAllowedFileTypes}
+                uppy={state.uppy}
+                plugins={plugins}
+                fileManagerSelectionType={state.restrictions?.maxNumberOfFiles === 1 ? 'files' : 'both'}
+                proudlyDisplayPoweredByUppy={false}
+                showProgressDetails
+                disableThumbnailGenerator
+                theme={mode === 'dark' ? 'dark' : 'light'}
+                note={note}
+                doneButtonHandler={close}
+                {...props.dashboardProps}
+              />
+            )}
+          </Box>
+        </TrapFocus>
       </ComponentInstaller>
     </Wrapper>
   );

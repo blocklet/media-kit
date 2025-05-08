@@ -1,3 +1,7 @@
+## 0.1.87 (May 08, 2025)
+
+- feat: add TrapFocus to uploader
+
 ## 0.1.86 (May 08, 2025)
 
 - refactor: polish uploader auto focus logic
