@@ -1,3 +1,7 @@
+## 0.1.88 (May 09, 2025)
+
+- refactor: remove useless code and use Modal to render uploader
+
 ## 0.1.87 (May 08, 2025)
 
 - feat: add TrapFocus to uploader
