@@ -27,9 +27,10 @@ import localeMap from './i18n';
 import { ComponentInstaller } from '@blocklet/ui-react';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
+import debounce from 'lodash/debounce';
 import Cookie from 'js-cookie';
 import Spinner from '@mui/material/CircularProgress';
-
+import { useMutationObserver } from 'ahooks';
 // Don't forget the CSS: core and the UI components + plugins you are using.
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
@@ -69,6 +70,7 @@ const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 const target = 'uploader-container';
 const uploaderDashboardId = 'uploader-dashboard';
+const autoFocusOverlaySelector = 'div[tabindex="-1"]';
 
 const isDebug = localStorage.getItem('uppy_debug');
 
@@ -511,6 +513,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     uppy: null as any,
     availablePluginMap: {} as any,
     restrictions: cloneDeep(props?.coreProps?.restrictions) || ({} as any),
+    autoFocus: false,
   });
 
   const theme = useTheme();
@@ -776,6 +779,28 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     }),
   ]);
 
+  useMutationObserver(
+    () => {
+      if (state.autoFocus) {
+        return;
+      }
+
+      const autoFocusOverlay = uploaderContainerRef.current?.querySelector(autoFocusOverlaySelector);
+
+      if (autoFocusOverlay && autoFocusOverlay !== document.activeElement) {
+        // @ts-ignore
+        autoFocusOverlay.focus?.();
+        console.info('[Uploader] Trigger auto focus overlay success');
+        state.autoFocus = true;
+      }
+    },
+    uploaderContainerRef,
+    {
+      childList: true,
+      subtree: true,
+    }
+  );
+
   function openPlugin(pluginName: string) {
     pluginName = pluginName.replace(/\s/g, '');
     // @ts-ignore if plugin exist, click the plugin Button
@@ -789,14 +814,9 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     }
   }
 
-  const handleFocus = useCallback((event: MouseEvent | TouchEvent) => {
-    if (isDebug && uploaderContainerRef.current && !uploaderContainerRef.current.contains(event.target as Node)) {
-      console.info('debug focus', uploaderContainerRef.current, event.target);
-    }
-  }, []);
-
   function open(pluginName?: string | undefined) {
     state.open = true;
+    state.autoFocus = false;
 
     if (pluginName) {
       setTimeout(() => {
@@ -805,19 +825,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     }
     state.uppy.emitOpen();
     onOpen?.();
-
-    // @ts-ignore set blur and focus body
-    document.activeElement?.blur?.();
-    const uppyRoot = state.uppy.getPlugin(uploaderDashboardId).el;
-
-    // uppyRoot?.setAttribute?.('tabIndex', '0');
-    uppyRoot?.focus?.();
-    uppyRoot?.click?.();
-
-    if (isDebug && popup) {
-      document.addEventListener('mousedown', handleFocus);
-      document.addEventListener('touchstart', handleFocus);
-    }
   }
 
   function close() {
@@ -833,11 +840,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
         state.uppy.calculateTotalProgress();
       }
     }, 500);
-
-    if (isDebug && popup) {
-      document.removeEventListener('mousedown', handleFocus);
-      document.removeEventListener('touchstart', handleFocus);
-    }
   }
 
   useImperativeHandle(

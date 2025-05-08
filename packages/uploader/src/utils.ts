@@ -1,7 +1,7 @@
 import { createAxios } from '@blocklet/js-sdk';
 import joinUrl from 'url-join';
 import mime from 'mime-types';
-
+import debounce from 'lodash/debounce';
 export const getObjectURL = (fileBlob: Blob) => {
   let url = null;
   if (!fileBlob || !isBlob(fileBlob)) {
@@ -227,6 +227,13 @@ export function initUppy(currentUppy: any) {
   currentUppy.emitUploadSuccess = (file: any, response: any) => {
     const eventKey = currentUppy.getUploadSuccessKey(file);
     currentUppy.emit(eventKey, file, response);
+  };
+
+  // ignore duplicate add files at the same time
+  const originalAddFiles = debounce(currentUppy.addFiles, 50);
+
+  currentUppy.addFiles = (files: any[]) => {
+    originalAddFiles.call(currentUppy, files);
   };
 
   // upload file
