@@ -929,6 +929,17 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
           sx={{
             position: 'relative',
             width: isMobile ? '90vw' : 720,
+            // 增加出现的动画，避免直接出现
+            animation: state.open ? 'uppy-Dashboard-fadeIn 150ms ease-in-out' : 'none',
+            '@keyframes uppy-Dashboard-fadeIn': {
+              from: {
+                opacity: 0,
+              },
+              to: {
+                opacity: 1,
+              },
+            },
+
             '.uppy-Dashboard-inner': {
               borderColor: 'divider',
             },

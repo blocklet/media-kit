@@ -1,3 +1,7 @@
+## 0.11.122 (May 09, 2025)
+
+- chore: add animation style in uploader
+
 ## 0.11.121 (May 09, 2025)
 
 - refactor: remove useless code and use Modal to render uploader
