@@ -1,3 +1,24 @@
+## 0.1.89 (May 09, 2025)
+
+- chore: add animation style in uploader
+
+## 0.1.88 (May 09, 2025)
+
+- refactor: remove useless code and use Modal to render uploader
+
+## 0.1.87 (May 08, 2025)
+
+- feat: add TrapFocus to uploader
+
+## 0.1.86 (May 08, 2025)
+
+- refactor: polish uploader auto focus logic
+
+## 0.1.85 (May 07, 2025)
+
+- chore: update deps
+- feat: support dark mode in uploader
+
 ## 0.1.84 (April 28, 2025)
 
 - chore: polish lottie json files import logic

@@ -29,13 +29,7 @@ export default function Uploader() {
 
   return (
     <UploaderTrigger>
-      <ButtonWrapper
-        key="button"
-        variant="contained"
-        color="secondary"
-        type="button"
-        className="submit"
-        style={{ marginRight: 16 }}>
+      <ButtonWrapper key="button" variant="contained" type="button" className="submit" style={{ marginRight: 16 }}>
         {isMobile ? (
           <AddCircleIcon />
         ) : (

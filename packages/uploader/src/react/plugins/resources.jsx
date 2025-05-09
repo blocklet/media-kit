@@ -2,7 +2,6 @@
 import { UIPlugin } from '@uppy/core';
 import { ProviderViews } from '@uppy/provider-views';
 import uniqBy from 'lodash/uniqBy';
-import debounce from 'lodash/debounce';
 import toUpper from 'lodash/toUpper';
 import { mediaKitApi, createImageUrl, mediaKitMountPoint } from '../../utils';
 
@@ -36,18 +35,9 @@ const buttonStyle = {
   marginTop: '8px',
   borderRadius: '4px',
   cursor: 'pointer',
-  border: '1px solid rgb(29, 193, 199)',
-  color: 'rgb(29, 193, 199)',
-  backgroundColor: 'transparent',
   fontSize: '14px',
   lineHeight: '24.5px',
   fontWeight: 'bold',
-};
-
-const activeButtonStyle = {
-  ...buttonStyle,
-  color: '#fff',
-  backgroundColor: 'rgb(29, 193, 199)',
 };
 
 /**
@@ -102,14 +92,18 @@ class Resources extends UIPlugin {
         <div
           style={{
             padding: this.apiData.components.length ? '12px' : '0',
-            backgroundColor: '#fff',
             display: 'flex',
             flexWrap: 'wrap',
             marginTop: '-8px',
           }}>
           {this.apiData.components.map((item) => (
             <button
-              style={this.apiData.componentDid === item.did ? activeButtonStyle : buttonStyle}
+              className={
+                this.apiData.componentDid === item.did
+                  ? 'button-color-style button-color-style-active'
+                  : 'button-color-style'
+              }
+              style={buttonStyle}
               id={item.componentDid}
               onClick={() => {
                 if (this.apiData.componentDid !== item.did) {

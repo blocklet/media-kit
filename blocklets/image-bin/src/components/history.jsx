@@ -96,7 +96,8 @@ function Gallery({ uploads, type }) {
           <ImageListItem
             key={x._id}
             sx={{
-              border: '1px solid rgba(0,0,0,0.1)',
+              border: '1px solid',
+              borderColor: 'grey.300',
               position: 'relative',
               borderRadius,
               'object, video': {
@@ -141,7 +142,7 @@ function Gallery({ uploads, type }) {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px',
+                  background: 'repeating-conic-gradient(#e0e0e0 0 25%,#fff 0 50%) 50%/18px 18px',
                   height,
                 }}>
                 <MediaItem {...x} type={type} />

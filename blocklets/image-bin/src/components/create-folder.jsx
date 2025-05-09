@@ -20,7 +20,6 @@ export default function CreateFolder({ children }) {
     text: t('common.add'),
     props: {
       variant: 'contained',
-      color: 'secondary',
       disabled: loading || !folder,
     },
   };

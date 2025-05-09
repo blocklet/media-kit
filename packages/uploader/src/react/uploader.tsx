@@ -5,7 +5,6 @@ import { createRoot } from 'react-dom/client';
 import { Fragment, forwardRef, useCallback, useRef, useEffect, useImperativeHandle, lazy, useMemo } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
-import Backdrop from '@mui/material/Backdrop';
 import GlobalStyles from '@mui/material/GlobalStyles';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
@@ -27,6 +26,7 @@ import localeMap from './i18n';
 import { ComponentInstaller } from '@blocklet/ui-react';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
+import Modal from '@mui/material/Modal';
 import Cookie from 'js-cookie';
 import Spinner from '@mui/material/CircularProgress';
 
@@ -69,6 +69,9 @@ const AIImageShowPanel = lazy(() => import('./plugins/ai-image/show-panel'));
 
 const target = 'uploader-container';
 const uploaderDashboardId = 'uploader-dashboard';
+const autoFocusOverlaySelector = 'div[tabindex="-1"]';
+const MAX_AUTO_FOCUS_ATTEMPTS = 50; // 最多尝试 50 次
+const AUTO_FOCUS_INTERVAL = 10; // 自动聚焦间隔时间
 
 const isDebug = localStorage.getItem('uppy_debug');
 
@@ -505,6 +508,8 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
   };
 
   const uploaderContainerRef = useRef<HTMLDivElement>(null);
+  const autoFocusIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const autoFocusAttemptsRef = useRef<number>(0);
 
   const state = useReactive({
     open: false,
@@ -514,6 +519,8 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
   });
 
   const theme = useTheme();
+
+  const mode = theme?.palette?.mode;
 
   const pluginList = getPluginList({
     ...props,
@@ -787,12 +794,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     }
   }
 
-  const handleFocus = useCallback((event: MouseEvent | TouchEvent) => {
-    if (isDebug && uploaderContainerRef.current && !uploaderContainerRef.current.contains(event.target as Node)) {
-      console.info('debug focus', uploaderContainerRef.current, event.target);
-    }
-  }, []);
-
   function open(pluginName?: string | undefined) {
     state.open = true;
 
@@ -804,25 +805,50 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     state.uppy.emitOpen();
     onOpen?.();
 
-    // @ts-ignore set blur and focus body
-    document.activeElement?.blur?.();
-    const uppyRoot = state.uppy.getPlugin(uploaderDashboardId).el;
-
-    // uppyRoot?.setAttribute?.('tabIndex', '0');
-    uppyRoot?.focus?.();
-    uppyRoot?.click?.();
-
-    if (isDebug && popup) {
-      document.addEventListener('mousedown', handleFocus);
-      document.addEventListener('touchstart', handleFocus);
+    // 清除可能存在的上一个定时器
+    if (autoFocusIntervalRef.current) {
+      clearInterval(autoFocusIntervalRef.current);
+      autoFocusIntervalRef.current = null;
     }
+
+    // 重置尝试次数
+    autoFocusAttemptsRef.current = 0;
+
+    autoFocusIntervalRef.current = setInterval(() => {
+      const autoFocusOverlay = uploaderContainerRef.current?.querySelector(autoFocusOverlaySelector);
+      autoFocusAttemptsRef.current += 1;
+
+      // 如果尝试次数超过最大值或成功聚焦，则清除定时器
+      if (
+        autoFocusAttemptsRef.current > MAX_AUTO_FOCUS_ATTEMPTS ||
+        (autoFocusOverlay && autoFocusOverlay !== document.activeElement)
+      ) {
+        if (autoFocusOverlay && autoFocusOverlay !== document.activeElement) {
+          // @ts-ignore
+          autoFocusOverlay.focus?.();
+          console.info('[Uploader] Trigger auto focus overlay success');
+        } else if (autoFocusAttemptsRef.current > MAX_AUTO_FOCUS_ATTEMPTS) {
+          console.info('[Uploader] Auto focus overlay failed after maximum attempts');
+        }
+
+        clearInterval(autoFocusIntervalRef.current!);
+        autoFocusIntervalRef.current = null;
+      }
+    }, AUTO_FOCUS_INTERVAL);
   }
 
   function close() {
+    // 清除自动聚焦定时器
+    if (autoFocusIntervalRef.current) {
+      clearInterval(autoFocusIntervalRef.current);
+      autoFocusIntervalRef.current = null;
+    }
+
     state.uppy.getPlugin(uploaderDashboardId)?.hideAllPanels();
     state.open = false;
     state.uppy.emitClose();
     onClose?.();
+
     setTimeout(() => {
       if (state.uppy.getState().totalProgress === 100) {
         // reset uploader state
@@ -831,11 +857,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
         state.uppy.calculateTotalProgress();
       }
     }, 500);
-
-    if (isDebug && popup) {
-      document.removeEventListener('mousedown', handleFocus);
-      document.removeEventListener('touchstart', handleFocus);
-    }
   }
 
   useImperativeHandle(
@@ -852,15 +873,17 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
       })
   );
 
-  const Wrapper = popup ? Backdrop : Fragment;
+  const Wrapper = popup ? Modal : Fragment;
   const wrapperProps = popup
     ? {
         sx: {
           zIndex: 99999999999,
-          background: 'rgba(0,0,0,0.5)',
           '& > *': {
             display: !state.open ? 'none' : 'block', // hide uppy when close
           },
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
           ...props?.wrapperProps?.sx,
         },
         invisible: true,
@@ -906,6 +929,23 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
           sx={{
             position: 'relative',
             width: isMobile ? '90vw' : 720,
+            // 增加出现的动画，避免直接出现
+            animation: state.open ? 'uppy-Dashboard-fadeIn 150ms ease-in-out' : 'none',
+            '@keyframes uppy-Dashboard-fadeIn': {
+              from: {
+                opacity: 0,
+              },
+              to: {
+                opacity: 1,
+              },
+            },
+
+            '.uppy-Dashboard-inner': {
+              borderColor: 'divider',
+            },
+            '.uppy-ProviderBrowserItem > *': {
+              transition: 'all 0.3s ease-in-out',
+            },
             '.uppy-ProviderBrowserItem-inner': {
               flex: 1,
               color: 'transparent',
@@ -913,17 +953,26 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
                 objectFit: 'contain !important',
               },
             },
+            '.uppy-ProviderBrowserItem-checkbox': {
+              backgroundColor: `${theme?.palette?.primary?.main} !important`,
+            },
             '.uppy-Dashboard-Item-previewInnerWrap, .uppy-ProviderBrowserItem-inner': {
-              background: 'repeating-conic-gradient(#bdbdbd33 0 25%,#fff 0 50%) 50%/16px 16px !important',
+              boxShadow: 'none !important',
+              background: 'repeating-conic-gradient(#e0e0e0 0 25%,#fff 0 50%) 50%/18px 18px !important',
+            },
+            '.uppy-ProviderBrowserItem--selected .uppy-ProviderBrowserItem-inner': {
+              boxShadow: (theme) => `0 0 0 3px ${theme.palette.primary.main} !important`,
             },
             '.uploaded-add-item': {
-              background: 'rgba(0,0,0,0.1) !important',
+              background:
+                theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.1) !important' : 'rgba(0,0,0,0.1) !important',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               transition: 'all 0.3s ease-in-out',
               '&:hover': {
-                background: 'rgba(0,0,0,0.13)',
+                background:
+                  theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.13) !important' : 'rgba(0,0,0,0.13) !important',
               },
             },
             '.uppy-StatusBar-actions, .uppy-ProviderBrowser-footer': {
@@ -941,7 +990,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               whiteSpace: 'normal',
             },
             '.uppy-ProviderBrowser-body': {
-              background: '#fff',
               height: '100%',
             },
             '.uppy-ProviderBrowser-list': {
@@ -990,13 +1038,27 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
                 filter: 'brightness(1.2)',
               },
             },
+            '& .button-color-style': {
+              border: '1px solid',
+              borderColor: 'primary.main',
+              color: 'primary.main',
+              backgroundColor: 'transparent',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                filter: 'brightness(1.2)',
+              },
+            },
+            '& .button-color-style-active': {
+              backgroundColor: 'primary.main',
+              color: 'white',
+            },
           }}>
           {popup && (
             <IconButton
               aria-label="close"
               onClick={close}
               sx={{
-                color: '#fafafa',
+                color: mode === 'dark' ? '#ddd' : '#fafafa',
                 position: 'absolute',
                 ...(isMobile
                   ? {
@@ -1061,7 +1123,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               proudlyDisplayPoweredByUppy={false}
               showProgressDetails
               disableThumbnailGenerator
-              // theme="light"
+              theme={mode === 'dark' ? 'dark' : 'light'}
               note={note}
               doneButtonHandler={close}
               {...props.dashboardProps}

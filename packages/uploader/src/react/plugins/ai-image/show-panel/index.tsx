@@ -44,14 +44,17 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
           display: 'flex',
           width: '100%',
           height: '100%',
-          bgcolor: '#fff',
+          bgcolor: 'background.default',
         }}>
         <Grid container sx={{ flexGrow: 1, height: '100%' }}>
           <Grid
             item
             xs={12}
             sm={4}
-            sx={{ borderRight: { sm: '1px solid #eee' }, display: openPrompt ? 'unset' : 'none' }}>
+            sx={{
+              borderRight: isMobile ? 'none' : (theme) => `1px solid ${theme.palette.divider}`,
+              display: openPrompt ? 'unset' : 'none',
+            }}>
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Prompt
                 onSubmit={(...props) => {

@@ -302,8 +302,9 @@ const Root = styled(Box)`
 const ResponseItemRoot = styled(Box)`
   display: flex;
   flex-direction: column;
-  background: #fbfbfb;
-  border: 1px solid #f6f6f6;
+
+  border: 1px solid;
+  border-color: ${({ theme }: { theme: any }) => theme.palette.divider};
   border-radius: 12px;
   min-height: 100%;
 

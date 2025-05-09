@@ -152,7 +152,6 @@ export default function ImageActions({ data, isResource }) {
     text: t('common.delete'),
     props: {
       variant: 'contained',
-      color: 'secondary',
       disabled: loading,
     },
   };
@@ -161,7 +160,6 @@ export default function ImageActions({ data, isResource }) {
     text: t('common.move'),
     props: {
       variant: 'contained',
-      color: 'secondary',
       disabled: loading,
     },
   };

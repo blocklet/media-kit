@@ -1,3 +1,24 @@
+## 0.11.122 (May 09, 2025)
+
+- chore: add animation style in uploader
+
+## 0.11.121 (May 09, 2025)
+
+- refactor: remove useless code and use Modal to render uploader
+
+## 0.11.120 (May 08, 2025)
+
+- feat: add TrapFocus to uploader
+
+## 0.11.119 (May 08, 2025)
+
+- refactor: polish uploader auto focus logic
+
+## 0.11.118 (May 07, 2025)
+
+- chore: update deps
+- feat: support dark mode in Media Kit
+
 ## 0.11.117 (April 29, 2025)
 
 - fix: polish hasMediaKitAccessPermission logic
