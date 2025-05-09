@@ -5,7 +5,6 @@ import { CssBaseline, CircularProgress } from '@mui/material';
 import { css, Global } from '@emotion/react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from '@arcblock/ux/lib/Toast';
-import {} from '@arcblock/ux/lib/Locale/context';
 import Center from '@arcblock/ux/lib/Center';
 import { ConfigProvider } from '@arcblock/ux/lib/Config';
 
