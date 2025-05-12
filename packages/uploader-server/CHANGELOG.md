@@ -1,3 +1,7 @@
+## 0.1.98 (May 12, 2025)
+
+- chore: update deps
+
 ## 0.1.97 (May 07, 2025)
 
 - chore: update deps
