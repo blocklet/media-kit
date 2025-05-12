@@ -1,3 +1,7 @@
+## 0.11.123 (May 12, 2025)
+
+- chore: update deps
+
 ## 0.11.122 (May 09, 2025)
 
 - chore: add animation style in uploader
