@@ -737,19 +737,37 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
 
         onSelectedFiles?.(formatFiles);
       } else {
+        const successful = [] as any;
+        const failed = [] as any;
+        const uploadID = `Mock-${Math.random().toString(36).substring(2, 15)}`;
+
         Promise.all(
           files.map(async (file: any) => {
             const result = mockUploaderFileResponse(file);
+            // 确保所有文件共享相同的 uploadID
+            if (result) {
+              result.uploadID = uploadID;
+              successful.push(result);
+            }
 
             await _onUploadFinish?.(result);
 
             // @ts-ignore custom event
             state.uppy.emitUploadSuccess(result.file, result);
           })
-        ).then(() => {
-          // auto close when selected files
-          state.uppy.close();
-        });
+        )
+          .then(() => {
+            // auto close when selected files
+            state.uppy.close();
+          })
+          .finally(() => {
+            // should emit complete event
+            state.uppy.emit('complete', {
+              failed,
+              successful,
+              uploadID,
+            });
+          });
       }
     };
 
@@ -995,6 +1013,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
             '.uppy-ProviderBrowser-list': {
               height: 'fit-content',
               maxHeight: '100%',
+              bgcolor: 'background.paper',
             },
             '.uploaded, .ai-image': {
               width: '100%',
@@ -1004,6 +1023,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               flexDirection: 'column',
               '& > div': {
                 width: '100%',
+                bgcolor: 'background.paper',
               },
               '& .uppy-ProviderBrowser-header': {
                 // hide the logout
