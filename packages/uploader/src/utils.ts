@@ -500,6 +500,7 @@ export const mockUploaderFileResponse = (file: any) => {
     }
 
     const fileId = `Uploader-${safeFile.originalname.toLowerCase().replace(/[^a-z0-9]/g, '')}-${Date.now()}`;
+    const uploadID = `Mock-${Math.random().toString(36).substring(2, 15)}`;
 
     const data = {
       url: safeFile.fileUrl,
@@ -517,58 +518,114 @@ export const mockUploaderFileResponse = (file: any) => {
       _id: safeFile._id,
     };
 
+    // 构建用于 TUS 上传协议的 URL
+    const uploadUrl = `${baseUrl}/image-bin/api/uploads/${safeFile.filename}`;
+
+    // 头信息，用于 response 和 responseResult
+    const headers = {
+      'Tus-Resumable': '1.0.0',
+      'Upload-Length': String(safeFile.size),
+      'x-uploader-file-name': safeFile.filename,
+      'x-uploader-file-id': fileId,
+      'x-uploader-file-ext': safeFile.filename.split('.').pop() || 'unknown',
+      'x-uploader-base-url': '/image-bin/api/uploads',
+      'x-uploader-endpoint-url': baseUrl + '/image-bin/api/uploads',
+      'x-uploader-metadata': JSON.stringify({
+        uploaderId: 'Uploader',
+        relativePath: safeFile.originalname,
+        name: safeFile.originalname,
+        type: safeFile.mimetype,
+      }),
+      'x-component-did': safeFile.folderId,
+      'x-uploader-file-exist': 'true',
+    };
+
+    // 文件进度信息
+    const progress = {
+      uploadStarted: Date.now(),
+      uploadComplete: true,
+      percentage: 100,
+      bytesUploaded: safeFile.size,
+      bytesTotal: safeFile.size,
+    };
+
     return {
       data,
       method: 'POST',
       url: baseUrl + '/image-bin/api/uploads',
       status: 200,
-      headers: {
-        'Tus-Resumable': '1.0.0',
-        'Upload-Length': String(safeFile.size),
-        'x-uploader-file-name': safeFile.filename,
-        'x-uploader-file-id': fileId,
-        'x-uploader-file-ext': safeFile.filename.split('.').pop() || 'unknown',
-        'x-uploader-base-url': '/image-bin/api/uploads',
-        'x-uploader-endpoint-url': baseUrl + '/image-bin/api/uploads',
-        'x-uploader-metadata': JSON.stringify({
-          uploaderId: 'Uploader',
-          relativePath: safeFile.originalname,
-          name: safeFile.originalname,
-          type: safeFile.mimetype,
-        }),
-        'x-component-did': safeFile.folderId,
-        'x-uploader-file-exist': 'true',
-      },
-      file: {
-        source: 'uploader-dashboard',
-        id: fileId,
+      headers,
+
+      source: 'uploader-dashboard',
+      id: fileId,
+      name: safeFile.originalname,
+      extension: safeFile.filename.split('.').pop() || 'unknown',
+      meta: {
+        uploaderId: 'Uploader',
+        relativePath: safeFile.originalname,
         name: safeFile.originalname,
-        extension: safeFile.filename.split('.').pop() || 'unknown',
-        meta: {
-          uploaderId: 'Uploader',
-          relativePath: safeFile.originalname,
-          name: safeFile.originalname,
-          type: safeFile.mimetype,
-        },
         type: safeFile.mimetype,
-        data,
-        progress: {
-          uploadStarted: Date.now(),
-          uploadComplete: false,
-          percentage: 0,
-          bytesUploaded: 0,
-          bytesTotal: safeFile.size,
-        },
-        size: safeFile.size,
-        isGhost: false,
-        isRemote: false,
-        remote: '',
-        preview: safeFile.previewUrl,
-        hashFileName: safeFile.filename,
-        error: null,
-        uploadID: Math.random().toString(36).substring(2, 15),
       },
-      uploadURL: safeFile.fileUrl,
+      type: safeFile.mimetype,
+      progress,
+      size: safeFile.size,
+      isGhost: false,
+      isRemote: false,
+      remote: '',
+      preview: safeFile.previewUrl,
+      hashFileName: safeFile.filename,
+      error: null,
+      uploadID,
+      tus: {
+        uploadUrl,
+      },
+      responseResult: {
+        uploadURL: uploadUrl,
+        data,
+        method: 'POST',
+        url: baseUrl + '/image-bin/api/uploads',
+        status: 200,
+        headers,
+        file: {
+          source: 'uploader-dashboard',
+          id: fileId,
+          name: safeFile.originalname,
+          extension: safeFile.filename.split('.').pop() || 'unknown',
+          meta: {
+            uploaderId: 'Uploader',
+            relativePath: safeFile.originalname,
+            name: safeFile.originalname,
+            type: safeFile.mimetype,
+          },
+          type: safeFile.mimetype,
+          data,
+          progress: {
+            uploadStarted: Date.now(),
+            uploadComplete: false,
+            percentage: 0,
+            bytesUploaded: 0,
+            bytesTotal: safeFile.size,
+          },
+          size: safeFile.size,
+          isGhost: false,
+          isRemote: false,
+          remote: '',
+          preview: safeFile.previewUrl,
+          hashFileName: safeFile.filename,
+          error: null,
+          uploadID,
+          tus: {
+            uploadUrl,
+          },
+        },
+      },
+      response: {
+        uploadURL: uploadUrl,
+        status: 200,
+        body: {},
+      },
+      uploadURL: uploadUrl,
+      isPaused: false,
     };
   } catch (error) {
     console.error('Error in mockResponse:', error);
