@@ -1,3 +1,12 @@
+## 0.1.92 (May 20, 2025)
+
+- chore: update deps
+
+## 0.1.91 (May 15, 2025)
+
+- chore: update deps
+- chore: add mock complete event in uploaded / resources plugin
+
 ## 0.1.90 (May 12, 2025)
 
 - chore: update deps
