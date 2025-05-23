@@ -549,17 +549,50 @@ export const mockUploaderFileResponse = (file: any) => {
       bytesTotal: safeFile.size,
     };
 
+    const mockFile = {
+      source: 'uploader-dashboard',
+      id: fileId,
+      name: safeFile.originalname,
+      extension: safeFile.filename.split('.').pop() || 'unknown',
+      meta: {
+        uploaderId: 'Uploader',
+        relativePath: safeFile.originalname,
+        name: safeFile.originalname,
+        type: safeFile.mimetype,
+      },
+      type: safeFile.mimetype,
+      data,
+      progress: {
+        uploadStarted: Date.now(),
+        uploadComplete: false,
+        percentage: 0,
+        bytesUploaded: 0,
+        bytesTotal: safeFile.size,
+      },
+      size: safeFile.size,
+      isGhost: false,
+      isRemote: false,
+      remote: '',
+      preview: safeFile.previewUrl,
+      hashFileName: safeFile.filename,
+      error: null,
+      uploadID,
+      tus: {
+        uploadUrl,
+      },
+    };
+
     return {
       data,
       method: 'POST',
       url: baseUrl + '/image-bin/api/uploads',
       status: 200,
       headers,
-
       source: 'uploader-dashboard',
       id: fileId,
       name: safeFile.originalname,
       extension: safeFile.filename.split('.').pop() || 'unknown',
+      file: mockFile,
       meta: {
         uploaderId: 'Uploader',
         relativePath: safeFile.originalname,
@@ -586,38 +619,7 @@ export const mockUploaderFileResponse = (file: any) => {
         url: baseUrl + '/image-bin/api/uploads',
         status: 200,
         headers,
-        file: {
-          source: 'uploader-dashboard',
-          id: fileId,
-          name: safeFile.originalname,
-          extension: safeFile.filename.split('.').pop() || 'unknown',
-          meta: {
-            uploaderId: 'Uploader',
-            relativePath: safeFile.originalname,
-            name: safeFile.originalname,
-            type: safeFile.mimetype,
-          },
-          type: safeFile.mimetype,
-          data,
-          progress: {
-            uploadStarted: Date.now(),
-            uploadComplete: false,
-            percentage: 0,
-            bytesUploaded: 0,
-            bytesTotal: safeFile.size,
-          },
-          size: safeFile.size,
-          isGhost: false,
-          isRemote: false,
-          remote: '',
-          preview: safeFile.previewUrl,
-          hashFileName: safeFile.filename,
-          error: null,
-          uploadID,
-          tus: {
-            uploadUrl,
-          },
-        },
+        file: mockFile,
       },
       response: {
         uploadURL: uploadUrl,
