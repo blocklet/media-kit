@@ -1,3 +1,7 @@
+## 0.11.126 (May 23, 2025)
+
+- fix: resolve the bug of mock response missing file
+
 ## 0.11.125 (May 20, 2025)
 
 - chore: update deps
