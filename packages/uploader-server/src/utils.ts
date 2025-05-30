@@ -138,10 +138,10 @@ export async function proxyImageDownload(req: any, res: any, next?: Function) {
       }
     } catch (err) {
       logger.error('Proxy url failed: ', err);
-      res.status(500).send('Proxy url failed');
+      res.status(400).send('Proxy url failed');
     }
   } else {
-    res.status(500).send('Parameter "url" is required');
+    res.status(400).send('Parameter "url" is required');
   }
 }
 

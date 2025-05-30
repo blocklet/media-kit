@@ -55,6 +55,27 @@ function UploaderProviderWrapper({ children }) {
       onUploadFinish={(result) => {
         prependUpload(result.data);
       }}
+      // plugins={[
+      //   {
+      //     id: 'ScopedFilePicker',
+      //     options: {
+      //       id: 'ScopedFilePicker',
+      //       title: 'Scoped File Picker',
+      //       restrictions: {
+      //         allowedFileTypes: ['.png'],
+      //       },
+      //     },
+      //     onShowPanel: (ref) => {
+      //       const uploader = ref.current.getUploader();
+
+      //       // uploader.setOptions(options);
+
+      //       setTimeout(() => {
+      //         uploader.openPlugin('MyDevice');
+      //       }, 100);
+      //     },
+      //   },
+      // ]}
       coreProps={
         {
           // following are Media Kit Preferences
@@ -82,6 +103,7 @@ function UploaderProviderWrapper({ children }) {
       //     cropWidescreenVertical: false,
       //   },
       // }}
+      dashboardProps={{}}
       apiPathProps={{
         uploader: '/api/uploads',
         companion: '/api/companion',
