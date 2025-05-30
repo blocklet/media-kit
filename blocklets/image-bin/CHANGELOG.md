@@ -1,3 +1,7 @@
+## 0.11.127 (May 30, 2025)
+
+- feat: support VirtualPlugin in uploader
+
 ## 0.11.126 (May 23, 2025)
 
 - fix: resolve the bug of mock response missing file

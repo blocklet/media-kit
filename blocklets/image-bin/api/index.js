@@ -135,6 +135,7 @@ if (isProduction) {
   app.use((req, res) => {
     res.status(404).send('404 NOT FOUND');
   });
+
   app.use((err, req, res) => {
     logger.error(err.stack);
     res.status(500).send('Something broke!');
