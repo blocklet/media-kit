@@ -61,6 +61,8 @@ import Resources from './plugins/resources';
 import PrepareUpload from './plugins/prepare-upload';
 // @ts-ignore
 import AIImage from './plugins/ai-image';
+// @ts-ignore
+import VirtualPlugin from './plugins/virtural-plugin';
 import { MEDIA_KIT_DID } from './constants';
 import cloneDeep from 'lodash/cloneDeep';
 import Typography from '@mui/material/Typography';
@@ -80,7 +82,15 @@ const getCompanionHeaders = () => {
 };
 
 const getPluginList = (props: any) => {
-  const { apiPathProps, availablePluginMap = {}, uploadedProps, resourcesProps, imageEditorProps = {}, theme } = props;
+  const {
+    apiPathProps,
+    availablePluginMap = {},
+    uploadedProps,
+    resourcesProps,
+    imageEditorProps = {},
+    theme,
+    plugins,
+  } = props;
 
   const { companionUrl } = getUploaderEndpoint(apiPathProps);
 
@@ -229,6 +239,17 @@ const getPluginList = (props: any) => {
       },
       alwayUse: true,
     },
+    ...(plugins || [])
+      .filter((item: any) => item?.id)
+      .map((item: any) => {
+        const { id, options, onShowPanel } = item;
+        return {
+          id,
+          plugin: VirtualPlugin,
+          options,
+          onShowPanel,
+        };
+      }),
   ].filter(Boolean);
 };
 
@@ -479,9 +500,9 @@ export function initUploader(props: any) {
     });
   }
 
-  plugins?.forEach((item: string) => {
-    if (item) {
-      const { plugin, options } = pluginMap[item] || {};
+  plugins?.forEach((item: string | any) => {
+    if (item?.id || item) {
+      const { plugin, options } = pluginMap[item?.id || item] || {};
       // @ts-ignore
       plugin && currentUppy.use(plugin, options);
     }
@@ -701,6 +722,9 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     state.uppy.open = open;
     state.uppy.close = close;
     state.uppy.openPlugin = openPlugin;
+    state.uppy.setRestrictions = (restrictions: any) => {
+      state.restrictions = restrictions;
+    };
 
     const onShowPanelEvent = (source: string) => {
       const { onShowPanel } = pluginMap[source];
@@ -708,7 +732,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     };
 
     state.uppy.off('dashboard:show-panel', onShowPanelEvent);
-
     state.uppy.on('dashboard:show-panel', onShowPanelEvent);
 
     // handle plugin selection event
@@ -801,8 +824,9 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
 
   function openPlugin(pluginName: string) {
     pluginName = pluginName.replace(/\s/g, '');
+    const pluginNameList = plugins.map((item: any) => item.id || item);
     // @ts-ignore if plugin exist, click the plugin Button
-    if (['MyDevice', ...plugins].map((item) => item.toLowerCase()).includes(pluginName.toLowerCase())) {
+    if (['MyDevice', ...pluginNameList].map((item) => item.toLowerCase()).includes(pluginName.toLowerCase())) {
       let selectorKey = `div[data-uppy-acquirer-id="${pluginName}"] > button`;
       document
         ?.getElementById(uploaderDashboardId)
