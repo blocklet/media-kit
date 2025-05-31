@@ -15,7 +15,18 @@ export type UploaderProps = {
   onOpen?: Function;
   onClose?: Function;
   onChange?: Function;
-  plugins?: string[];
+  plugins?:
+    | string[]
+    | {
+        id: string;
+        options: {
+          id: string;
+          title: string;
+          icon?: string | React.ReactNode;
+          autoHide?: boolean;
+        };
+        onShowPanel?: (ref: React.RefObject<any>) => void;
+      }[];
   installerProps?: {
     disabled?: boolean;
     fallback?: any;

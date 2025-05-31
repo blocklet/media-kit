@@ -62,7 +62,7 @@ import PrepareUpload from './plugins/prepare-upload';
 // @ts-ignore
 import AIImage from './plugins/ai-image';
 // @ts-ignore
-import VirtualPlugin from './plugins/virtural-plugin';
+import VirtualPlugin from './plugins/virtual-plugin';
 import { MEDIA_KIT_DID } from './constants';
 import cloneDeep from 'lodash/cloneDeep';
 import Typography from '@mui/material/Typography';
@@ -722,9 +722,6 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     state.uppy.open = open;
     state.uppy.close = close;
     state.uppy.openPlugin = openPlugin;
-    state.uppy.setRestrictions = (restrictions: any) => {
-      state.restrictions = restrictions;
-    };
 
     const onShowPanelEvent = (source: string) => {
       const { onShowPanel } = pluginMap[source];

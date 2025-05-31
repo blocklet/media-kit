@@ -1,3 +1,7 @@
+## 0.11.128 (May 31, 2025)
+
+- feat: improve virtual-plugin in uploader
+
 ## 0.11.127 (May 30, 2025)
 
 - feat: support VirtualPlugin in uploader
