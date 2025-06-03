@@ -1,3 +1,7 @@
+## 0.11.129 (June 04, 2025)
+
+- feat: support auth with access key for api
+
 ## 0.11.128 (May 31, 2025)
 
 - feat: improve virtual-plugin in uploader
