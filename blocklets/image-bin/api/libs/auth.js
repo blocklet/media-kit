@@ -21,7 +21,7 @@ const auth = (req, res, next) => {
   }
 };
 
-const user = middleware.user();
+const user = middleware.session({ accessKey: true });
 const ensureAdmin = middleware.auth({ roles: ['admin', 'owner'] });
 
 module.exports = {
