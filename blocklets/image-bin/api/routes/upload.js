@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const { randomUUID } = require('crypto');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
@@ -40,7 +39,7 @@ const ensureFolderId = () => async (req, res, next) => {
   const isDID = isValidDID(req.componentDid);
 
   if (isDID) {
-    const folder = await Folder.findOne({ where: { _id: req.componentDid } });
+    const folder = await Folder.findOne({ where: { id: req.componentDid } });
     const component = config.components.find((x) => x.did === req.componentDid);
 
     if (!component) {
@@ -50,7 +49,7 @@ const ensureFolderId = () => async (req, res, next) => {
 
     if (!folder) {
       await Folder.create({
-        _id: req.componentDid,
+        id: req.componentDid,
         name: component.title || component.name,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -137,7 +136,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
     return;
   }
 
-  const doc = await Upload.findOne({ where: { _id: req.params.id } });
+  const doc = await Upload.findOne({ where: { id: req.params.id } });
 
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -150,7 +149,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
     return;
   }
 
-  const result = await Upload.destroy({ where: { _id: req.params.id } });
+  const result = await Upload.destroy({ where: { id: req.params.id } });
 
   if (result) {
     const count = await Upload.count({ where: { filename: doc.filename } });
@@ -164,14 +163,14 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
 
 // move to folder
 router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
-  const doc = await Upload.findOne({ where: { _id: req.params.id } });
+  const doc = await Upload.findOne({ where: { id: req.params.id } });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
     return;
   }
 
-  await Upload.update(pick(req.body, ['folderId']), { where: { _id: req.params.id } });
-  const updatedDoc = await Upload.findOne({ where: { _id: req.params.id } });
+  await Upload.update(pick(req.body, ['folderId']), { where: { id: req.params.id } });
+  const updatedDoc = await Upload.findOne({ where: { id: req.params.id } });
 
   res.jsonp(updatedDoc);
 });
@@ -204,7 +203,6 @@ const localStorageServer = initLocalStorageServer({
     // if file not exist, insert it
     if (!doc) {
       doc = await Upload.create({
-        _id: randomUUID(),
         mimetype,
         originalname,
         filename,
@@ -227,9 +225,9 @@ const localStorageServer = initLocalStorageServer({
           updatedAt: new Date().toISOString(),
           updatedBy: req.user.did,
         },
-        { where: { _id: doc._id } }
+        { where: { id: doc.id } }
       );
-      doc = await Upload.findOne({ where: { _id: doc._id } });
+      doc = await Upload.findOne({ where: { id: doc.id } });
     }
 
     const resData = { url: obj.href, ...doc.toJSON() };
@@ -415,7 +413,6 @@ router.post(
     }
 
     const doc = await Upload.create({
-      _id: randomUUID(),
       ...pick(file, ['size', 'filename', 'mimetype']),
       tags: (req.body.tags || '')
         .split(',')
@@ -445,7 +442,7 @@ router.get(
 
 // remove upload for sdk
 router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (req, res) => {
-  const doc = await Upload.findOne({ where: { _id: req.params.id } });
+  const doc = await Upload.findOne({ where: { id: req.params.id } });
 
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -464,7 +461,7 @@ router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (r
     return;
   }
 
-  const result = await Upload.destroy({ where: { _id: req.params.id } });
+  const result = await Upload.destroy({ where: { id: req.params.id } });
 
   if (result) {
     const count = await Upload.count({ where: { filename: doc.filename } });
@@ -525,7 +522,6 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
   }
 
   const doc = await Folder.create({
-    _id: randomUUID(),
     name,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -588,7 +584,7 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   // can use Uploaded
-  const folder = await Folder.findOne({ _id: req.componentDid });
+  const folder = await Folder.findOne({ id: req.componentDid });
   const component = config.components.find((x) => x.did === req.componentDid);
 
   // mean this is a valid folder and upload image to this folder

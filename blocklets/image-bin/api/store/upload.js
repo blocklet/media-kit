@@ -4,10 +4,18 @@ module.exports = (sequelize) => {
   const Upload = sequelize.define(
     'Upload',
     {
-      _id: {
+      id: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      // for backward compatibility
+      _id: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return this.getDataValue('id');
+        },
       },
       user: {
         type: DataTypes.JSON,
@@ -70,6 +78,15 @@ module.exports = (sequelize) => {
         },
         {
           fields: ['mimetype'],
+        },
+        {
+          fields: ['createdBy'],
+        },
+        {
+          fields: ['createdAt'],
+        },
+        {
+          fields: ['updatedAt'],
         },
       ],
     }

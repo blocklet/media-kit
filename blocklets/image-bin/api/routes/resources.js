@@ -64,7 +64,7 @@ router.get('/resources/export', ensureAdmin, async (_req, res) => {
     order: [['updatedAt', 'DESC']],
   });
   const resources = (folders || []).map((x) => ({
-    id: x._id,
+    id: x.id,
     name: toUpper(x.name),
   }));
 

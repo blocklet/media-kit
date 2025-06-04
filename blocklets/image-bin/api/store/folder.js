@@ -4,10 +4,18 @@ module.exports = (sequelize) => {
   const Folder = sequelize.define(
     'Folder',
     {
-      _id: {
+      id: {
         type: DataTypes.STRING,
         primaryKey: true,
         allowNull: false,
+        defaultValue: DataTypes.UUIDV4,
+      },
+      // for backward compatibility
+      _id: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return this.getDataValue('id');
+        },
       },
       name: {
         type: DataTypes.STRING,
@@ -37,6 +45,15 @@ module.exports = (sequelize) => {
       indexes: [
         {
           fields: ['name'],
+        },
+        {
+          fields: ['createdBy'],
+        },
+        {
+          fields: ['createdAt'],
+        },
+        {
+          fields: ['updatedAt'],
         },
       ],
     }
