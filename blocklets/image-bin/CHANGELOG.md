@@ -1,3 +1,7 @@
+## 0.11.130 (June 04, 2025)
+
+- feat(image-bin): migrate db from nedb to sqlite + sequelize
+
 ## 0.11.129 (June 04, 2025)
 
 - feat: support auth with access key for api
