@@ -1,4 +1,4 @@
-## 0.11.130 (June 04, 2025)
+## 0.12.0 (June 04, 2025)
 
 - feat(image-bin): migrate db from nedb to sqlite + sequelize
 
