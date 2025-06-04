@@ -1,6 +1,6 @@
 const express = require('express');
 const { generateBlockletEmbed } = require('@blocklet/embed');
-const { Upload } = require('../models');
+const { Upload } = require('../store');
 
 const router = express.Router();
 

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
-const { Folder, Upload, sequelize } = require('../models');
-const FolderState = require('../states/folder');
-const UploadState = require('../states/upload');
+const { Folder, Upload, sequelize } = require('../index');
+const FolderState = require('../../states/folder');
+const UploadState = require('../../states/upload');
 
 const BATCH_SIZE = 1000;
 
@@ -14,7 +14,7 @@ async function migrateData(sourceState, targetModel, dataType, transaction) {
   const totalCount = await sourceState.count({});
 
   // eslint-disable-next-line no-constant-condition
-  while (true) {
+  while (totalCount > 0) {
     // Query nedb
     // eslint-disable-next-line no-await-in-loop
     const records = await sourceState.cursor({}).skip(skip).limit(BATCH_SIZE).exec();

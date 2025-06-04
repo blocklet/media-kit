@@ -7,7 +7,7 @@ const { initStaticResourceMiddleware } = require('@blocklet/uploader-server');
 const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/component');
 
 const env = require('../libs/env');
-const { Upload, Folder } = require('../models');
+const { Upload, Folder } = require('../store');
 const { ResourceDid, ResourceType, ExportDir } = require('../libs/constants');
 const { auth, user, ensureAdmin } = require('../libs/auth');
 

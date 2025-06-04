@@ -22,6 +22,8 @@ files:
   - screenshots
   - api/hooks/pre-start.js
   - api/hooks/pre-config.js
+  - api/store/migrate.js
+  - api/store/migrations/*.js
 interfaces:
   - type: web
     name: publicUrl

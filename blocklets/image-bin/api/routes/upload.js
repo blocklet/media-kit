@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { randomUUID } = require('crypto');
 const express = require('express');
 const joinUrl = require('url-join');
 const pick = require('lodash/pick');
@@ -22,7 +23,7 @@ const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
 const { getResourceComponents } = require('./resources');
 const env = require('../libs/env');
-const { Upload, Folder } = require('../models');
+const { Upload, Folder } = require('../store');
 
 const { user, auth, ensureAdmin } = require('../libs/auth');
 
@@ -203,6 +204,7 @@ const localStorageServer = initLocalStorageServer({
     // if file not exist, insert it
     if (!doc) {
       doc = await Upload.create({
+        _id: randomUUID(),
         mimetype,
         originalname,
         filename,
@@ -230,7 +232,7 @@ const localStorageServer = initLocalStorageServer({
       doc = await Upload.findOne({ where: { _id: doc._id } });
     }
 
-    const resData = { url: obj.href, ...doc };
+    const resData = { url: obj.href, ...doc.toJSON() };
 
     return resData;
   },
@@ -412,7 +414,8 @@ router.post(
       logger.warn('Failed to clean up temp file:', err);
     }
 
-    const doc = await Upload.insert({
+    const doc = await Upload.create({
+      _id: randomUUID(),
       ...pick(file, ['size', 'filename', 'mimetype']),
       tags: (req.body.tags || '')
         .split(',')
@@ -515,13 +518,14 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
     return;
   }
 
-  const exist = await Folder.findOne({ name });
+  const exist = await Folder.findOne({ where: { name } });
   if (exist) {
     res.json(exist);
     return;
   }
 
-  const doc = await Folder.insert({
+  const doc = await Folder.create({
+    _id: randomUUID(),
     name,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
