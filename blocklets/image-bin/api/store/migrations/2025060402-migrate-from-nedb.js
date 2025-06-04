@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
+const path = require('path');
+const fs = require('fs');
 const { Folder, Upload, sequelize } = require('../index');
-const FolderState = require('../../states/folder');
-const UploadState = require('../../states/upload');
+const env = require('../../libs/env');
 
 const BATCH_SIZE = 1000;
 
@@ -20,6 +21,12 @@ async function migrateData(sourceState, targetModel, dataType, transaction) {
     const records = await sourceState.cursor({}).skip(skip).limit(BATCH_SIZE).exec();
 
     if (records.length === 0) break;
+
+    // transform _id to id
+    records.forEach((record) => {
+      record.id = record.id || record._id;
+      delete record._id;
+    });
 
     // Batch insert into SQLite
     // eslint-disable-next-line no-await-in-loop
@@ -49,12 +56,23 @@ module.exports = {
     const transaction = await sequelize.transaction();
 
     try {
-      const folderCount = await migrateData(FolderState, Folder, 'folders', transaction);
-      const uploadCount = await migrateData(UploadState, Upload, 'uploads', transaction);
+      const folderDbPath = path.join(env.dataDir, 'db/folders.db');
+      const uploadDbPath = path.join(env.dataDir, 'db/uploads.db');
+
+      if (fs.existsSync(folderDbPath)) {
+        // eslint-disable-next-line global-require
+        const FolderState = require('../../states/folder');
+        await migrateData(FolderState, Folder, 'folders', transaction);
+      }
+
+      if (fs.existsSync(uploadDbPath)) {
+        // eslint-disable-next-line global-require
+        const UploadState = require('../../states/upload');
+        await migrateData(UploadState, Upload, 'uploads', transaction);
+      }
 
       await transaction.commit();
-
-      console.log('Data migration completed successfully!', { folderCount, uploadCount });
+      console.log('Data migration completed successfully!');
     } catch (error) {
       await transaction.rollback();
       console.error('Data migration failed, rolled back:', error);
