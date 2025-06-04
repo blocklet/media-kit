@@ -1,6 +1,6 @@
 const express = require('express');
 const { generateBlockletEmbed } = require('@blocklet/embed');
-const Upload = require('../states/upload');
+const { Upload } = require('../models');
 
 const router = express.Router();
 
@@ -18,7 +18,11 @@ router.get('/recent', async (req, res) => {
   const page = 1;
   const pageSize = 9;
 
-  const uploads = await Upload.paginate({ sort: { updatedAt: -1 }, page, size: pageSize });
+  const { rows: uploads } = await Upload.findAndCountAll({
+    order: [['updatedAt', 'DESC']],
+    offset: (page - 1) * pageSize,
+    limit: pageSize,
+  });
   res.jsonp(uploads);
 });
 

@@ -7,8 +7,7 @@ const { initStaticResourceMiddleware } = require('@blocklet/uploader-server');
 const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/component');
 
 const env = require('../libs/env');
-const Upload = require('../states/upload');
-const Folder = require('../states/folder');
+const { Upload, Folder } = require('../models');
 const { ResourceDid, ResourceType, ExportDir } = require('../libs/constants');
 const { auth, user, ensureAdmin } = require('../libs/auth');
 
@@ -61,7 +60,9 @@ const getResourceListMiddleware = () => {
 router.get('/resources', user, auth, getResourceListMiddleware());
 
 router.get('/resources/export', ensureAdmin, async (_req, res) => {
-  const folders = await Folder.cursor({}).sort({ updatedAt: -1 }).exec();
+  const folders = await Folder.findAll({
+    order: [['updatedAt', 'DESC']],
+  });
   const resources = (folders || []).map((x) => ({
     id: x._id,
     name: toUpper(x.name),
@@ -81,7 +82,15 @@ router.post('/resources/export', ensureAdmin, async (req, res) => {
 
   const dir = getExportDir(projectId, releaseId);
 
-  const uploads = flatten(await Promise.all(resources.map((folderId) => Upload.find({ folderId }))));
+  const uploads = flatten(
+    await Promise.all(
+      resources.map((folderId) =>
+        Upload.findAll({
+          where: { folderId },
+        })
+      )
+    )
+  );
 
   if (!uploads.length) {
     fs.rmSync(dir, { recursive: true, force: true });
