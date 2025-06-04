@@ -13,7 +13,7 @@ module.exports = (sequelize) => {
         type: DataTypes.JSON,
       },
       remark: {
-        type: DataTypes.TEXT,
+        type: DataTypes.STRING,
       },
       size: {
         type: DataTypes.INTEGER,
@@ -32,6 +32,7 @@ module.exports = (sequelize) => {
       mimetype: {
         type: DataTypes.STRING,
         allowNull: false,
+        index: true,
       },
       originalname: {
         type: DataTypes.STRING,
@@ -60,6 +61,17 @@ module.exports = (sequelize) => {
     {
       tableName: 'uploads',
       timestamps: false,
+      indexes: [
+        {
+          fields: ['filename'],
+        },
+        {
+          fields: ['folderId'],
+        },
+        {
+          fields: ['mimetype'],
+        },
+      ],
     }
   );
 

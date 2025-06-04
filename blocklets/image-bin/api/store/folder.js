@@ -34,6 +34,11 @@ module.exports = (sequelize) => {
     {
       tableName: 'folders',
       timestamps: false,
+      indexes: [
+        {
+          fields: ['name'],
+        },
+      ],
     }
   );
 

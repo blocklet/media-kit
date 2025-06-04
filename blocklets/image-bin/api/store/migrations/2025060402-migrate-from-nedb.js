@@ -54,8 +54,7 @@ module.exports = {
 
       await transaction.commit();
 
-      console.log('Data migration completed successfully!');
-      console.log(`Total migrated: ${folderCount} folders, ${uploadCount} uploads`);
+      console.log('Data migration completed successfully!', { folderCount, uploadCount });
     } catch (error) {
       await transaction.rollback();
       console.error('Data migration failed, rolled back:', error);
@@ -64,9 +63,7 @@ module.exports = {
   },
 
   down: async () => {
-    console.log('Cleaning up migrated data...');
     await Folder.destroy({ truncate: true });
     await Upload.destroy({ truncate: true });
-    console.log('Migrated data cleanup completed');
   },
 };
