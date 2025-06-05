@@ -31,12 +31,12 @@ module.exports = (sequelize) => {
       },
       filename: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         index: true,
       },
       folderId: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         index: true,
       },
       mimetype: {

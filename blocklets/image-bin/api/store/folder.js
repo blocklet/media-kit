@@ -19,8 +19,8 @@ module.exports = (sequelize) => {
       },
       name: {
         type: DataTypes.STRING,
-        allowNull: false,
         index: true,
+        allowNull: true,
       },
       createdAt: {
         type: DataTypes.STRING,
