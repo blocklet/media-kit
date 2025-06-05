@@ -1,3 +1,7 @@
+## 0.12.2 (June 05, 2025)
+
+- fix: compatibility with legacy data for migration
+
 ## 0.12.1 (June 05, 2025)
 
 - fix: compatibility with legacy data for migration
