@@ -1,3 +1,7 @@
+## 0.12.3 (June 06, 2025)
+
+- feat: support private blocklet preferences
+
 ## 0.12.2 (June 05, 2025)
 
 - fix: compatibility with legacy data for migration
