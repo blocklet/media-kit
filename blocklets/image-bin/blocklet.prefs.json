@@ -45,7 +45,8 @@
         "x-index": 0,
         "description": "Only input media types are allowed to be uploaded to Media Kit.\nEach extension can be split using the ',' symbols. Not allowed to contain ‘*’. If this item is empty, then .jpeg, .png, .gif, .svg, .webp, .bmp, .ico will be allowed.",
         "default": ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico",
-        "required": false
+        "required": false,
+        "shared": true
       },
       "maxUploadSize": {
         "type": "string",
@@ -59,7 +60,8 @@
         "description": "Set the max upload size limit when uploading files(should be a valid byte string, examples: 1MB, 200kb). If empty, not limit max upload size.",
         "default": "30MB",
         "x-designable-id": "hr6cdrq3k6g",
-        "x-index": 1
+        "x-index": 1,
+        "shared": true
       },
       "checkReferer": {
         "type": "boolean",
@@ -73,9 +75,10 @@
         "name": "checkReferer",
         "default": false,
         "x-designable-id": "kvlrbh8l0xj",
-        "x-index": 2
+        "x-index": 2,
+        "shared": false
       }
     },
-    "x-designable-id": "fi8g1antyk3"
+    "x-designable-id": "2yt09xcx62s"
   }
 }
