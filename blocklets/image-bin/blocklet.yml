@@ -1,5 +1,5 @@
 name: image-bin
-version: 0.11.129
+version: 0.12.0
 title: Media Kit
 description: A simple media assets upload and hosting blocklet
 keywords:
@@ -22,6 +22,8 @@ files:
   - screenshots
   - api/hooks/pre-start.js
   - api/hooks/pre-config.js
+  - api/store/migrate.js
+  - api/store/migrations/*.js
 interfaces:
   - type: web
     name: publicUrl
