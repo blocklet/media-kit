@@ -24,19 +24,19 @@ module.exports = (sequelize) => {
       },
       createdAt: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       updatedAt: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       createdBy: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       updatedBy: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
     },
     {
