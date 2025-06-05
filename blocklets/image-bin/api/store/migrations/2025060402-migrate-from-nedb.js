@@ -24,17 +24,40 @@ async function migrateData(sourceState, targetModel, dataType, transaction) {
 
     // transform _id to id
     records.forEach((record) => {
+      // fix id
       record.id = record.id || record._id;
       delete record._id;
+
+      // fix time
+      record.createdAt =
+        // eslint-disable-next-line no-nested-ternary
+        record.createdAt instanceof Date
+          ? record.createdAt.toISOString()
+          : typeof record.createdAt === 'string'
+          ? record.createdAt
+          : null;
+
+      record.updatedAt =
+        // eslint-disable-next-line no-nested-ternary
+        record.updatedAt instanceof Date
+          ? record.updatedAt.toISOString()
+          : typeof record.updatedAt === 'string'
+          ? record.updatedAt
+          : null;
     });
 
     // Batch insert into SQLite
-    // eslint-disable-next-line no-await-in-loop
-    await targetModel.bulkCreate(records, {
-      transaction,
-      validate: true,
-      ignoreDuplicates: true, // Skip duplicates in case of retry
-    });
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      await targetModel.bulkCreate(records, {
+        transaction,
+        validate: true,
+        ignoreDuplicates: true, // Skip duplicates in case of retry
+      });
+    } catch (error) {
+      console.error('bulk create failed', { records, error });
+      throw error;
+    }
 
     migratedCount += records.length;
     skip += BATCH_SIZE;

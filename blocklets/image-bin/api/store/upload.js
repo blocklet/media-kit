@@ -19,13 +19,15 @@ module.exports = (sequelize) => {
       },
       user: {
         type: DataTypes.JSON,
+        allowNull: true,
       },
       remark: {
         type: DataTypes.STRING,
+        allowNull: true,
       },
       size: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
       },
       filename: {
         type: DataTypes.STRING,
@@ -39,28 +41,28 @@ module.exports = (sequelize) => {
       },
       mimetype: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         index: true,
       },
       originalname: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       createdAt: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       updatedAt: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       createdBy: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       updatedBy: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       tags: {
         type: DataTypes.JSON,

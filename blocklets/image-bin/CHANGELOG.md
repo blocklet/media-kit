@@ -1,3 +1,7 @@
+## 0.12.1 (June 05, 2025)
+
+- fix: compatibility with legacy data for migration
+
 ## 0.12.0 (June 04, 2025)
 
 - feat(image-bin): migrate db from nedb to sqlite + sequelize
