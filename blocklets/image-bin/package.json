@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.12.3",
+  "version": "0.12.4",
   "private": true,
   "scripts": {
     "dev": "blocklet dev",
@@ -10,7 +10,7 @@
     "clean": "rm -rf .blocklet",
     "bundle": "npm run bundle:client && npm run bundle:api",
     "bundle:client": "npm run build",
-    "bundle:api": "npm run clean && blocklet bundle --compact --create-release --source-map --no-minify",
+    "bundle:api": "npm run clean && blocklet bundle --compact --create-release --external sqlite3 --source-map --no-minify",
     "deploy": "npm run bundle && blocklet deploy .blocklet/bundle",
     "upload": "npm run bundle && blocklet upload .blocklet/release/blocklet.json",
     "update:deps": "npx taze -n '/arcblock|ocap|abtnode|blocklet|did-connect|did-comment|nedb/' -w -f && pnpm i && pnpm run deduplicate",
@@ -40,14 +40,14 @@
     ]
   },
   "dependencies": {
-    "@arcblock/did": "^1.20.12",
+    "@arcblock/did": "^1.20.13",
     "@arcblock/did-connect": "^2.13.61",
     "@arcblock/ux": "^2.13.61",
-    "@blocklet/constant": "^1.16.43",
+    "@blocklet/constant": "^1.16.44",
     "@blocklet/embed": "^0.1.11",
-    "@blocklet/js-sdk": "^1.16.43",
-    "@blocklet/logger": "^1.16.43",
-    "@blocklet/sdk": "^1.16.43",
+    "@blocklet/js-sdk": "^1.16.44",
+    "@blocklet/logger": "^1.16.44",
+    "@blocklet/sdk": "^1.16.44",
     "@blocklet/uploader": "workspace:^",
     "@blocklet/uploader-server": "workspace:^",
     "@blocklet/xss": "workspace:^",

@@ -1,3 +1,7 @@
+## 0.12.4 (June 06, 2025)
+
+- chore: update deps
+
 ## 0.12.3 (June 06, 2025)
 
 - feat: support private blocklet preferences
