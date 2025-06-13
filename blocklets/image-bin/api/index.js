@@ -17,7 +17,7 @@ const { xss } = require('@blocklet/xss');
 const { csrf } = require('@blocklet/sdk/lib/middlewares');
 const initLogger = require('@blocklet/logger');
 const { setPDFDownloadHeader, checkTrustedReferer } = require('@blocklet/uploader-server');
-const Upload = require('./states/upload');
+const { Upload } = require('./store');
 const { name, version } = require('../package.json');
 const logger = require('./libs/logger');
 const env = require('./libs/env');
@@ -65,8 +65,10 @@ app.use(
     if (!path.extname(urlPath)) {
       try {
         const item = await Upload.findOne({
-          // replace / with empty string
-          filename: path.basename(urlPath),
+          where: {
+            // replace / with empty string
+            filename: path.basename(urlPath),
+          },
         });
 
         if (item?.mimetype) {

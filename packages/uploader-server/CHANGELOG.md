@@ -1,3 +1,7 @@
+## 0.1.101 (June 06, 2025)
+
+- chore: update deps
+
 ## 0.1.100 (May 30, 2025)
 
 - feat: support VirtualPlugin in uploader

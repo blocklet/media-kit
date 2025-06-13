@@ -1,3 +1,31 @@
+## 0.12.4 (June 06, 2025)
+
+- chore: update deps
+
+## 0.12.3 (June 06, 2025)
+
+- feat: support private blocklet preferences
+
+## 0.12.2 (June 05, 2025)
+
+- fix: compatibility with legacy data for migration
+
+## 0.12.1 (June 05, 2025)
+
+- fix: compatibility with legacy data for migration
+
+## 0.12.0 (June 04, 2025)
+
+- feat(image-bin): migrate db from nedb to sqlite + sequelize
+
+## 0.11.129 (June 04, 2025)
+
+- feat: support auth with access key for api
+
+## 0.11.128 (May 31, 2025)
+
+- feat: improve virtual-plugin in uploader
+
 ## 0.11.127 (May 30, 2025)
 
 - feat: support VirtualPlugin in uploader

@@ -22,8 +22,7 @@ const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
 const { getResourceComponents } = require('./resources');
 const env = require('../libs/env');
-const Upload = require('../states/upload');
-const Folder = require('../states/folder');
+const { Upload, Folder } = require('../store');
 
 const { user, auth, ensureAdmin } = require('../libs/auth');
 
@@ -40,7 +39,7 @@ const ensureFolderId = () => async (req, res, next) => {
   const isDID = isValidDID(req.componentDid);
 
   if (isDID) {
-    const folder = await Folder.findOne({ _id: req.componentDid });
+    const folder = await Folder.findOne({ where: { id: req.componentDid } });
     const component = config.components.find((x) => x.did === req.componentDid);
 
     if (!component) {
@@ -49,8 +48,8 @@ const ensureFolderId = () => async (req, res, next) => {
     }
 
     if (!folder) {
-      await Folder.insert({
-        _id: req.componentDid,
+      await Folder.create({
+        id: req.componentDid,
         name: component.title || component.name,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -105,10 +104,22 @@ const getUploadListMiddleware = ({ maxPageSize = MAX_PAGE_SIZE } = {}) => {
       condition.tags = { $in: tags };
     }
 
-    const uploads = await Upload.paginate({ condition, sort: { createdAt: -1, updatedAt: -1 }, page, size: pageSize });
-    const total = await Upload.count(condition);
+    const { count: total, rows: uploads } = await Upload.findAndCountAll({
+      where: condition,
+      order: [
+        ['createdAt', 'DESC'],
+        ['updatedAt', 'DESC'],
+      ],
+      offset: (page - 1) * pageSize,
+      limit: pageSize,
+    });
 
-    const folders = await Folder.cursor({}).sort({ createdAt: -1, updatedAt: -1 }).exec();
+    const folders = await Folder.findAll({
+      order: [
+        ['createdAt', 'DESC'],
+        ['updatedAt', 'DESC'],
+      ],
+    });
 
     res.jsonp({ uploads, folders, total, page, pageSize, pageCount: Math.ceil(total / pageSize) });
   };
@@ -125,7 +136,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
     return;
   }
 
-  const doc = await Upload.findOne({ _id: req.params.id });
+  const doc = await Upload.findOne({ where: { id: req.params.id } });
 
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -138,10 +149,10 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
     return;
   }
 
-  const result = await Upload.remove({ _id: req.params.id });
+  const result = await Upload.destroy({ where: { id: req.params.id } });
 
   if (result) {
-    const count = await Upload.count({ filename: doc.filename });
+    const count = await Upload.count({ where: { filename: doc.filename } });
     if (count === 0) {
       await localStorageServer.delete(doc.filename);
     }
@@ -152,17 +163,14 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
 
 // move to folder
 router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
-  const doc = await Upload.findOne({ _id: req.params.id });
+  const doc = await Upload.findOne({ where: { id: req.params.id } });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
     return;
   }
 
-  const [, updatedDoc] = await Upload.update(
-    { _id: req.params.id },
-    { $set: pick(req.body, ['folderId']) },
-    { returnUpdatedDocs: true }
-  );
+  await Upload.update(pick(req.body, ['folderId']), { where: { id: req.params.id } });
+  const updatedDoc = await Upload.findOne({ where: { id: req.params.id } });
 
   res.jsonp(updatedDoc);
 });
@@ -190,11 +198,11 @@ const localStorageServer = initLocalStorageServer({
       createdBy: req.user.did,
     };
 
-    let doc = await Upload.findOne(file);
+    let doc = await Upload.findOne({ where: file });
 
     // if file not exist, insert it
     if (!doc) {
-      doc = await Upload.insert({
+      doc = await Upload.create({
         mimetype,
         originalname,
         filename,
@@ -213,17 +221,16 @@ const localStorageServer = initLocalStorageServer({
     } else {
       logger.info('file already exist, update it');
       await Upload.update(
-        { _id: doc._id },
         {
-          $set: {
-            updatedAt: new Date().toISOString(),
-            updatedBy: req.user.did,
-          },
-        }
+          updatedAt: new Date().toISOString(),
+          updatedBy: req.user.did,
+        },
+        { where: { id: doc.id } }
       );
+      doc = await Upload.findOne({ where: { id: doc.id } });
     }
 
-    const resData = { url: obj.href, ...doc };
+    const resData = { url: obj.href, ...doc.toJSON() };
 
     return resData;
   },
@@ -379,7 +386,7 @@ router.post(
     };
 
     if (['false', false].includes(repeatInsert)) {
-      const existItem = await Upload.findOne(file);
+      const existItem = await Upload.findOne({ where: file });
       const existFile = await fs.existsSync(filePath);
       if (existItem && existFile) {
         const existingStats = fs.statSync(filePath);
@@ -405,7 +412,7 @@ router.post(
       logger.warn('Failed to clean up temp file:', err);
     }
 
-    const doc = await Upload.insert({
+    const doc = await Upload.create({
       ...pick(file, ['size', 'filename', 'mimetype']),
       tags: (req.body.tags || '')
         .split(',')
@@ -435,7 +442,7 @@ router.get(
 
 // remove upload for sdk
 router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (req, res) => {
-  const doc = await Upload.findOne({ _id: req.params.id });
+  const doc = await Upload.findOne({ where: { id: req.params.id } });
 
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -454,10 +461,10 @@ router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (r
     return;
   }
 
-  const result = await Upload.remove({ _id: req.params.id });
+  const result = await Upload.destroy({ where: { id: req.params.id } });
 
   if (result) {
-    const count = await Upload.count({ filename: doc.filename });
+    const count = await Upload.count({ where: { filename: doc.filename } });
     if (count === 0) {
       await localStorageServer.delete(doc.filename);
     }
@@ -482,7 +489,7 @@ router.all('/sdk/uploads/find', user, middleware.component.verifySig, async (req
     queryParams.tags = { $in: tags };
   }
 
-  const existItem = await Upload.findOne(queryParams);
+  const existItem = await Upload.findOne({ where: queryParams });
 
   if (existItem) {
     // current url
@@ -508,13 +515,13 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
     return;
   }
 
-  const exist = await Folder.findOne({ name });
+  const exist = await Folder.findOne({ where: { name } });
   if (exist) {
     res.json(exist);
     return;
   }
 
-  const doc = await Folder.insert({
+  const doc = await Folder.create({
     name,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -577,7 +584,7 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   // can use Uploaded
-  const folder = await Folder.findOne({ _id: req.componentDid });
+  const folder = await Folder.findOne({ id: req.componentDid });
   const component = config.components.find((x) => x.did === req.componentDid);
 
   // mean this is a valid folder and upload image to this folder
