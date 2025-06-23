@@ -13,7 +13,7 @@ export class SafariPastePlugin extends UIPlugin {
   }
   
   onMount() {
-    if (isSafari()) {
+    if (isSafari() && this.parent?.handlePaste && this.parent?.handlePasteOnBody) {
       this.originalHandlePasteOnBody = this.parent.handlePasteOnBody
       this.parent.handlePasteOnBody = this.parent.handlePaste
     }
