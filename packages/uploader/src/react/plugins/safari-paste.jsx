@@ -5,6 +5,7 @@ const isSafari = () => {
 };
 
 export class SafariPastePlugin extends UIPlugin {
+  originalHandlePasteOnBody = null
   constructor(uppy, opts) {
     super(uppy, opts);
     this.id = opts?.id || 'safari-paste';
@@ -13,7 +14,14 @@ export class SafariPastePlugin extends UIPlugin {
   
   onMount() {
     if (isSafari()) {
+      this.originalHandlePasteOnBody = this.parent.handlePasteOnBody
       this.parent.handlePasteOnBody = this.parent.handlePaste
+    }
+  }
+  
+  onUnmount() {
+    if (this.originalHandlePasteOnBody) {
+      this.parent.handlePasteOnBody = this.originalHandlePasteOnBody
     }
   }
 }
