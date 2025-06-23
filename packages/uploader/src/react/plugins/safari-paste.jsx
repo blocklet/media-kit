@@ -1,5 +1,9 @@
 import { UIPlugin } from '@uppy/core';
 
+const isSafari = () => {
+  return navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome');
+};
+
 export class SafariPastePlugin extends UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
@@ -8,7 +12,8 @@ export class SafariPastePlugin extends UIPlugin {
   }
   
   onMount() {
-    // if (safari) // todo
-    this.parent.handlePasteOnBody = this.parent.handlePaste
+    if (isSafari()) {
+      this.parent.handlePasteOnBody = this.parent.handlePaste
+    }
   }
 }
