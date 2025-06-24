@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import mime from 'mime-types';
 import joinUrlLib from 'url-join';
 import queue from 'p-queue';
-import { setPDFDownloadHeader, logger } from '../utils';
+import { setPDFDownloadHeader, logger, removeExifFromFile } from '../utils';
 
 const validFilePathInDirPath = (dirPath: string, filePath: string) => {
   const fileName = path.basename(filePath);
@@ -117,6 +117,13 @@ export function initLocalStorageServer({
 
     // check offset
     await rewriteMetaDataFile(uploadMetadata);
+
+    // remove EXIF from file
+    try {
+      await removeExifFromFile(uploadMetadata.runtime.absolutePath);
+    } catch (err) {
+      logger.error('failed to remove EXIF from file', err);
+    }
 
     if (_onUploadFinish) {
       try {

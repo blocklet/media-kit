@@ -584,7 +584,7 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   // can use Uploaded
-  const folder = await Folder.findOne({ id: req.componentDid });
+  const folder = await Folder.findOne({ where: { id: req.componentDid } });
   const component = config.components.find((x) => x.did === req.componentDid);
 
   // mean this is a valid folder and upload image to this folder

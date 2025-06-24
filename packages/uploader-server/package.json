@@ -68,6 +68,7 @@
     "@uppy/companion": "4.15.1",
     "axios": "^1.7.8",
     "body-parser": "^1.20.3",
+    "exif-be-gone": "^1.5.1",
     "express-session": "1.17.3",
     "glob": "^11.0.1",
     "isbot": "^5.1.17",
