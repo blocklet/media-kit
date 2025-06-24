@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader-server",
-  "version": "0.1.102",
+  "version": "0.1.103",
   "description": "blocklet upload server",
   "publishConfig": {
     "access": "public"

@@ -1,3 +1,7 @@
+## 0.1.103 (June 24, 2025)
+
+- feat: remove EXIF after upload
+
 ## 0.1.102 (June 24, 2025)
 
 - feat: remove EXIF after upload

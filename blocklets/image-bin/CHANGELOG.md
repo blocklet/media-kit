@@ -1,3 +1,7 @@
+## 0.12.7 (June 24, 2025)
+
+- feat: remove EXIF after upload
+
 ## 0.12.6 (June 24, 2025)
 
 - fix: resolve the bug of upload video error
