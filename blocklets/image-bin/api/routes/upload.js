@@ -15,7 +15,7 @@ const xbytes = require('xbytes');
 const uniq = require('lodash/uniq');
 const multer = require('multer');
 const { pipeline } = require('stream/promises');
-const { initLocalStorageServer, initCompanion, getFileHash } = require('@blocklet/uploader-server');
+const { initLocalStorageServer, initCompanion, getFileHash, removeExifFromFile } = require('@blocklet/uploader-server');
 const { checkTrustedReferer } = require('@blocklet/uploader-server');
 const { sanitizeSvg, isSvgFile } = require('@blocklet/xss');
 const logger = require('../libs/logger');
@@ -397,6 +397,13 @@ router.post(
           return;
         }
       }
+    }
+
+    // remove exif from file
+    try {
+      await removeExifFromFile(tempFilePath);
+    } catch (err) {
+      logger.error('failed to remove EXIF from file', err);
     }
 
     // Stream file to destination only if file doesn't exist or has different size
