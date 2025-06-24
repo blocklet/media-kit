@@ -8,18 +8,18 @@ export class SafariPastePlugin extends UIPlugin {
   constructor(uppy, opts) {
     super(uppy, opts);
     this.id = opts?.id || 'safari-paste';
-    this.type = 'editor';
+    this.type = 'modifier';
   }
-  
+
   onMount() {
     if (isSafari() && this.parent?.handlePaste) {
-      document.addEventListener('paste', this.parent.handlePaste)
+      document.addEventListener('paste', this.parent.handlePaste);
     }
   }
-  
+
   onUnmount() {
     if (isSafari() && this.parent?.handlePaste) {
-      document.removeEventListener('paste', this.parent.handlePaste)
+      document.removeEventListener('paste', this.parent.handlePaste);
     }
   }
 }
