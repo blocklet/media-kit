@@ -1,3 +1,7 @@
+## 0.1.97 (June 24, 2025)
+
+- fix: resolve the bug of upload video error
+
 ## 0.1.96 (June 24, 2025)
 
 fix: fix image paste upload issue in Safari

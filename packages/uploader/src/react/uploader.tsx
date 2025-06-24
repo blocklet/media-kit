@@ -256,7 +256,7 @@ const getPluginList = (props: any) => {
       id: 'safari-paste',
       plugin: SafariPastePlugin,
       alwayUse: true,
-    }
+    },
   ].filter(Boolean);
 };
 
