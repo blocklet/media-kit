@@ -12,13 +12,13 @@ export class SafariPastePlugin extends UIPlugin {
   }
   
   onMount() {
-    if (isSafari()) {
+    if (isSafari() && this.parent?.handlePaste) {
       document.addEventListener('paste', this.parent.handlePaste)
     }
   }
   
   onUnmount() {
-    if (isSafari()) {
+    if (isSafari() && this.parent?.handlePaste) {
       document.removeEventListener('paste', this.parent.handlePaste)
     }
   }
