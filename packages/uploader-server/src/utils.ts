@@ -4,7 +4,6 @@ import joinUrl from 'url-join';
 import { isbot } from 'isbot';
 import component from '@blocklet/sdk/lib/component';
 import { ImageBinDid } from './constants';
-import { createReadStream, createWriteStream } from 'fs';
 import crypto from 'crypto';
 import { getSignData } from '@blocklet/sdk/lib/util/verify-sign';
 import FormData from 'form-data';
@@ -12,7 +11,7 @@ import type { Method } from 'axios';
 import omit from 'lodash/omit';
 import ms from 'ms';
 import mime from 'mime-types';
-import { existsSync, readdirSync, renameSync, statSync } from 'fs';
+import { existsSync, readdirSync, renameSync, statSync, unlinkSync, createReadStream, createWriteStream } from 'fs';
 import { join } from 'path';
 import ExifTransformer from 'exif-be-gone';
 
@@ -430,6 +429,7 @@ export const removeExifFromFile = async (filePath: string) => {
       })
       .on('error', (err: any) => {
         logger.error('[exif-be-gone] failed', err);
+        unlinkSync(tempPath);
         reject(err);
       });
   });
