@@ -1,3 +1,7 @@
+## 0.1.96 (June 24, 2025)
+
+fix: fix image paste upload issue in Safari
+
 ## 0.1.95 (May 31, 2025)
 
 - feat: improve virtual-plugin in uploader
