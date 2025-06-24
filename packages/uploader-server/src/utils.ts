@@ -409,11 +409,11 @@ export function getFileNameFromReq(req: any) {
  * Remove EXIF from file
  */
 export const removeExifFromFile = async (filePath: string) => {
-  return new Promise<boolean>(async (resolve, reject) => {
+  return new Promise<void>(async (resolve, reject) => {
     try {
       statSync(filePath);
     } catch (e) {
-      resolve(false);
+      reject(e);
       return;
     }
 
@@ -426,11 +426,11 @@ export const removeExifFromFile = async (filePath: string) => {
       .pipe(writer)
       .on('finish', () => {
         renameSync(tempPath, filePath);
-        resolve(true);
+        resolve();
       })
       .on('error', (err: any) => {
         logger.error('[exif-be-gone] failed', err);
-        resolve(false);
+        reject(err);
       });
   });
 };
