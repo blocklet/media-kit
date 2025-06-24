@@ -63,6 +63,8 @@ import PrepareUpload from './plugins/prepare-upload';
 import AIImage from './plugins/ai-image';
 // @ts-ignore
 import VirtualPlugin from './plugins/virtual-plugin';
+// @ts-ignore
+import { SafariPastePlugin } from './plugins/safari-paste';
 import { MEDIA_KIT_DID } from './constants';
 import cloneDeep from 'lodash/cloneDeep';
 import Typography from '@mui/material/Typography';
@@ -250,6 +252,11 @@ const getPluginList = (props: any) => {
           onShowPanel,
         };
       }),
+    {
+      id: 'safari-paste',
+      plugin: SafariPastePlugin,
+      alwayUse: true,
+    }
   ].filter(Boolean);
 };
 
