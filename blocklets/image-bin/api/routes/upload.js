@@ -15,7 +15,7 @@ const xbytes = require('xbytes');
 const uniq = require('lodash/uniq');
 const multer = require('multer');
 const { pipeline } = require('stream/promises');
-const { initLocalStorageServer, initCompanion, getFileHash } = require('@blocklet/uploader-server');
+const { initLocalStorageServer, initCompanion, getFileHash, removeExifFromFile } = require('@blocklet/uploader-server');
 const { checkTrustedReferer } = require('@blocklet/uploader-server');
 const { sanitizeSvg, isSvgFile } = require('@blocklet/xss');
 const logger = require('../libs/logger');
@@ -399,6 +399,13 @@ router.post(
       }
     }
 
+    // remove exif from file
+    try {
+      await removeExifFromFile(tempFilePath);
+    } catch (err) {
+      logger.error('failed to remove EXIF from file', err);
+    }
+
     // Stream file to destination only if file doesn't exist or has different size
     await pipeline(fs.createReadStream(tempFilePath), fs.createWriteStream(filePath));
 
@@ -584,7 +591,7 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   // can use Uploaded
-  const folder = await Folder.findOne({ id: req.componentDid });
+  const folder = await Folder.findOne({ where: { id: req.componentDid } });
   const component = config.components.find((x) => x.did === req.componentDid);
 
   // mean this is a valid folder and upload image to this folder

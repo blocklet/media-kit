@@ -4,7 +4,6 @@ import joinUrl from 'url-join';
 import { isbot } from 'isbot';
 import component from '@blocklet/sdk/lib/component';
 import { ImageBinDid } from './constants';
-import { createReadStream } from 'fs';
 import crypto from 'crypto';
 import { getSignData } from '@blocklet/sdk/lib/util/verify-sign';
 import FormData from 'form-data';
@@ -12,8 +11,9 @@ import type { Method } from 'axios';
 import omit from 'lodash/omit';
 import ms from 'ms';
 import mime from 'mime-types';
-import { existsSync, readdirSync, statSync } from 'fs';
+import { existsSync, readdirSync, renameSync, statSync, unlinkSync, createReadStream, createWriteStream } from 'fs';
 import { join } from 'path';
+import ExifTransformer from 'exif-be-gone';
 
 export let logger = console;
 
@@ -403,3 +403,34 @@ export function getFileNameFromReq(req: any) {
   // 解码 URL 中的中文和特殊字符
   return path.basename(decodeURIComponent(pathname || ''));
 }
+
+/**
+ * Remove EXIF from file
+ */
+export const removeExifFromFile = async (filePath: string) => {
+  return new Promise<void>(async (resolve, reject) => {
+    try {
+      statSync(filePath);
+    } catch (e) {
+      reject(e);
+      return;
+    }
+
+    const tempPath = filePath + '.tmp';
+    const reader = createReadStream(filePath);
+    const writer = createWriteStream(tempPath);
+
+    reader
+      .pipe(new ExifTransformer())
+      .pipe(writer)
+      .on('finish', () => {
+        renameSync(tempPath, filePath);
+        resolve();
+      })
+      .on('error', (err: any) => {
+        logger.error('[exif-be-gone] failed', err);
+        unlinkSync(tempPath);
+        reject(err);
+      });
+  });
+};
