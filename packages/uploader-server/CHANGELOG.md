@@ -1,3 +1,7 @@
+## 0.1.102 (June 24, 2025)
+
+- feat: remove EXIF after upload
+
 ## 0.1.101 (June 06, 2025)
 
 - chore: update deps

@@ -1,3 +1,15 @@
+## 0.12.7 (June 24, 2025)
+
+- feat: remove EXIF after upload
+
+## 0.12.6 (June 24, 2025)
+
+- fix: resolve the bug of upload video error
+
+## 0.12.5 (June 24, 2025)
+
+fix: fix image paste upload issue in Safari
+
 ## 0.12.4 (June 06, 2025)
 
 - chore: update deps
