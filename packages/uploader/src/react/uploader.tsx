@@ -2,7 +2,7 @@ import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
 import { useReactive, useRequest } from 'ahooks';
 import { createRoot } from 'react-dom/client';
-import { Fragment, forwardRef, useCallback, useRef, useEffect, useImperativeHandle, lazy, useMemo } from 'react';
+import { Fragment, useCallback, useRef, useEffect, useImperativeHandle, lazy, useMemo } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
@@ -525,7 +525,12 @@ export function initUploader(props: any) {
   return currentUppy;
 }
 
-export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
+export default function Uploader({
+  ref = undefined,
+  ...props
+}: UploaderProps & {
+  ref?: React.RefObject<unknown>;
+}) {
   // apiPathProps default is use image-bin
   const apiPathProps = {
     uploader: '/api/uploads',
@@ -1181,6 +1186,4 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
       </ComponentInstaller>
     </Wrapper>
   );
-});
-
-export default Uploader;
+}
