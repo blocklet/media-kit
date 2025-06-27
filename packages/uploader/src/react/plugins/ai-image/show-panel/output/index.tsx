@@ -152,8 +152,6 @@ export default function Output({
         {Array.from({ length: options?.number || 1 }).map((_, index) => {
           return (
             <Grid
-              item
-              {...imageWrapperProps}
               // eslint-disable-next-line react/no-array-index-key
               key={index}>
               <Skeleton
@@ -175,7 +173,12 @@ export default function Output({
   const render = () => {
     if (error) {
       return (
-        <Box width={300} height={300} m="auto">
+        <Box
+          sx={{
+            width: 300,
+            height: 300,
+            m: 'auto',
+          }}>
           {lottieFiles.error && <Lottie key="error" src={lottieFiles.error} />}
           <Box
             sx={{
@@ -192,14 +195,20 @@ export default function Output({
     if (response && Array.isArray(response) && response.length > 0) {
       return (
         <>
-          <Box flexGrow={1} sx={{ height: 0, overflowX: 'hidden', overflowY: 'auto' }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              height: 0,
+              overflowX: 'hidden',
+              overflowY: 'auto',
+            }}>
             <ResponseItemRoot sx={isMobile ? { p: 0, border: 'none !important' } : { p: 2 }}>
               <Grid spacing={2} container className="photo-wrapper">
                 {loading && <Loading />}
 
                 {response.map((item, index) => {
                   return (
-                    <Grid item {...imageWrapperProps} key={item.src} className="photo-item">
+                    <Grid key={item.src} className="photo-item">
                       <LoadingImage
                         {...item}
                         selected={selected[item.src]}
@@ -227,7 +236,6 @@ export default function Output({
               </Grid>
             </ResponseItemRoot>
           </Box>
-
           <Box
             sx={{
               mt: 2,
@@ -262,14 +270,24 @@ export default function Output({
 
     if (options) {
       return (
-        <Box width={220} height={220} m="auto">
+        <Box
+          sx={{
+            width: 220,
+            height: 220,
+            m: 'auto',
+          }}>
           {lottieFiles.loading && <Lottie key="loading" src={lottieFiles.loading} />}
         </Box>
       );
     }
 
     return (
-      <Box width={300} height={300} m="auto">
+      <Box
+        sx={{
+          width: 300,
+          height: 300,
+          m: 'auto',
+        }}>
         {lottieFiles.welcome && <Lottie key="welcome" src={lottieFiles.welcome} />}
       </Box>
     );

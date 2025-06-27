@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/xss",
-  "version": "0.1.36",
+  "version": "0.2.0",
   "description": "blocklet prevent xss attack",
   "publishConfig": {
     "access": "public"
@@ -42,7 +42,7 @@
     "xss": "^1.0.15"
   },
   "devDependencies": {
-    "@arcblock/eslint-config-ts": "^0.2.4",
+    "@arcblock/eslint-config-ts": "^0.3.3",
     "@types/chai": "^4.3.20",
     "@types/jest": "^29.5.14",
     "@types/supertest": "^6.0.2",

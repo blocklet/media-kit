@@ -60,7 +60,6 @@ const LoadingImage = ({
           loading="eager" // must be eager to make sure the image is loaded
         />
       </Box>
-
       {state.loading && (
         <Skeleton
           className="lazy-image-skeleton"
@@ -72,11 +71,9 @@ const LoadingImage = ({
           }}
         />
       )}
-
       <StyledIconButton onClick={() => onDelete(src)} sx={{ position: 'absolute', left: 10, bottom: 10 }}>
         <DeleteIcon sx={{ fontSize: 20 }} />
       </StyledIconButton>
-
       {alt && (
         // @ts-ignore
         <StyledClickToCopy
@@ -108,7 +105,6 @@ const LoadingImage = ({
           </Typography>
         </StyledClickToCopy>
       )}
-
       <Box sx={{ position: 'absolute', right: 8, top: 8 }} onClick={rest?.onClick}>
         {selected ? (
           <CheckCircleIcon sx={{ fontSize: 30 }} />

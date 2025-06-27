@@ -143,11 +143,6 @@ UploadProvider.propTypes = {
   type: PropTypes.string,
 };
 
-UploadProvider.defaultProps = {
-  pageSize: 12,
-  type: '',
-};
-
 function useUploadContext() {
   const result = useContext(UploadContext);
   return result;

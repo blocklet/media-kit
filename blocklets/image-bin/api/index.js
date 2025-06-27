@@ -11,11 +11,15 @@ const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
 const {
   initProxyToMediaKitUploadsMiddleware,
   // initDynamicResourceMiddleware
+  // HACK: 是可以 resolve 到的，eslint 却会报错，所以暂时禁用
+  // eslint-disable-next-line import/no-unresolved
 } = require('@blocklet/uploader-server');
 const config = require('@blocklet/sdk/lib/config');
 const { xss } = require('@blocklet/xss');
 const { csrf } = require('@blocklet/sdk/lib/middlewares');
 const initLogger = require('@blocklet/logger');
+// HACK: 是可以 resolve 到的，eslint 却会报错，所以暂时禁用
+// eslint-disable-next-line import/no-unresolved
 const { setPDFDownloadHeader, checkTrustedReferer } = require('@blocklet/uploader-server');
 const { Upload } = require('./store');
 const { name, version } = require('../package.json');

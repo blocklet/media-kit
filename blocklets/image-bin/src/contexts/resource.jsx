@@ -59,8 +59,6 @@ ResourceProvider.propTypes = {
   children: PropTypes.any.isRequired,
 };
 
-ResourceProvider.defaultProps = {};
-
 function useResourceContext() {
   const result = useContext(ResourceContext);
   return result;
