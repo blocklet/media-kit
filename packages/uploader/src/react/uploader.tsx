@@ -22,8 +22,7 @@ import DropTarget from '@uppy/drop-target';
 import ImageEditor from '@uppy/image-editor';
 import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
-import localeMap from './i18n';
-import { ComponentInstaller } from '@blocklet/ui-react';
+import ComponentInstaller from '@blocklet/ui-react/lib/ComponentInstaller';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
 import Modal from '@mui/material/Modal';
@@ -39,6 +38,7 @@ import '@uppy/drag-drop/dist/style.min.css';
 import '@uppy/drop-target/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
+import localeMap from './i18n';
 import {
   mediaKitApi,
   setPrefixPath,

@@ -41,8 +41,8 @@
   },
   "dependencies": {
     "@arcblock/did": "^1.20.14",
-    "@arcblock/did-connect": "^3.0.2",
-    "@arcblock/ux": "^3.0.2",
+    "@arcblock/did-connect": "^3.0.4",
+    "@arcblock/ux": "^3.0.4",
     "@blocklet/constant": "^1.16.44",
     "@blocklet/embed": "^0.2.5",
     "@blocklet/js-sdk": "^1.16.44",
@@ -77,7 +77,7 @@
   },
   "devDependencies": {
     "@arcblock/eslint-config": "^0.3.3",
-    "@blocklet/ui-react": "^3.0.2",
+    "@blocklet/ui-react": "^3.0.4",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@vitejs/plugin-react": "^4.6.0",

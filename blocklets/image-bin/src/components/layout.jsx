@@ -40,7 +40,8 @@ export default function Layout({ title = window.blocklet.appName }) {
 
   const DashWrapper = useMemo(() => {
     return adminPermissionInSingleTenant
-      ? StyledDashboard
+      ? // eslint-disable-next-line no-use-before-define
+        StyledDashboard
       : ({ children }) => (
           <Box sx={{ height: '100vh', overflowY: 'hidden' }}>
             <Header
