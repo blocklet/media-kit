@@ -17,7 +17,7 @@ import { useUploadContext } from '../contexts/upload';
 import { useSessionContext } from '../contexts/session';
 import { hasAdminPermission, hasMediaKitAccessPermission } from '../libs/utils';
 
-export default function Layout({ title }) {
+export default function Layout({ title = window.blocklet.appName }) {
   const { tab } = useUploadContext();
   const { session } = useSessionContext();
   const navigate = useNavigate();
@@ -40,7 +40,8 @@ export default function Layout({ title }) {
 
   const DashWrapper = useMemo(() => {
     return adminPermissionInSingleTenant
-      ? StyledDashboard
+      ? // eslint-disable-next-line no-use-before-define
+        StyledDashboard
       : ({ children }) => (
           <Box sx={{ height: '100vh', overflowY: 'hidden' }}>
             <Header
@@ -79,6 +80,7 @@ export default function Layout({ title }) {
               }
         }>
         <DashWrapper
+          id="media-kit-layout"
           dense
           title={title}
           headerAddons={(exists) => {
@@ -123,7 +125,7 @@ const StyledDashboard = styled(Dashboard)`
   }
 
   .dashboard-main {
-    overflow-y: hidden;
+    overflow-y: auto;
   }
 
   .dashboard-content {
@@ -143,8 +145,4 @@ const StyledDashboard = styled(Dashboard)`
 
 Layout.propTypes = {
   title: PropTypes.string,
-};
-
-Layout.defaultProps = {
-  title: window.blocklet.appName,
 };

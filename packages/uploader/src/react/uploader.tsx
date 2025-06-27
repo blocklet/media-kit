@@ -2,7 +2,7 @@ import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
 import { useReactive, useRequest } from 'ahooks';
 import { createRoot } from 'react-dom/client';
-import { Fragment, forwardRef, useCallback, useRef, useEffect, useImperativeHandle, lazy, useMemo } from 'react';
+import { Fragment, useCallback, useRef, useEffect, useImperativeHandle, lazy, useMemo } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
@@ -22,8 +22,7 @@ import DropTarget from '@uppy/drop-target';
 import ImageEditor from '@uppy/image-editor';
 import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
-import localeMap from './i18n';
-import { ComponentInstaller } from '@blocklet/ui-react';
+import ComponentInstaller from '@blocklet/ui-react/lib/ComponentInstaller';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
 import Modal from '@mui/material/Modal';
@@ -39,6 +38,7 @@ import '@uppy/drag-drop/dist/style.min.css';
 import '@uppy/drop-target/dist/style.min.css';
 import '@uppy/status-bar/dist/style.min.css';
 
+import localeMap from './i18n';
 import {
   mediaKitApi,
   setPrefixPath,
@@ -525,7 +525,12 @@ export function initUploader(props: any) {
   return currentUppy;
 }
 
-export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
+export default function Uploader({
+  ref = undefined,
+  ...props
+}: UploaderProps & {
+  ref?: React.RefObject<unknown>;
+}) {
   // apiPathProps default is use image-bin
   const apiPathProps = {
     uploader: '/api/uploads',
@@ -544,6 +549,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
     uppy: null as any,
     availablePluginMap: {} as any,
     restrictions: cloneDeep(props?.coreProps?.restrictions) || ({} as any),
+    isError: false,
   });
 
   const theme = useTheme();
@@ -593,8 +599,10 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               restrictions = data.restrictions || {};
             }
           });
+          state.isError = false;
         } catch (error) {
           // ignore error
+          state.isError = true;
         }
       }
 
@@ -1164,7 +1172,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               // @ts-ignore
               target={`#${target}`}
               id={uploaderDashboardId}
-              disabled={withoutAnyAllowedFileTypes}
+              disabled={withoutAnyAllowedFileTypes || state.isError}
               uppy={state.uppy}
               plugins={plugins}
               fileManagerSelectionType={state.restrictions?.maxNumberOfFiles === 1 ? 'files' : 'both'}
@@ -1172,7 +1180,7 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
               showProgressDetails
               disableThumbnailGenerator
               theme={mode === 'dark' ? 'dark' : 'light'}
-              note={note}
+              note={state.isError ? get(localeMap, `${locale}.strings.error`, 'Error') : note}
               doneButtonHandler={close}
               {...props.dashboardProps}
             />
@@ -1181,6 +1189,4 @@ export const Uploader = forwardRef((props: UploaderProps, ref: any) => {
       </ComponentInstaller>
     </Wrapper>
   );
-});
-
-export default Uploader;
+}

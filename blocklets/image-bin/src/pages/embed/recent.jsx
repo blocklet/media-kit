@@ -5,7 +5,10 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { useSize } from 'ahooks';
 import { Scrollbar, Navigation, Mousewheel, FreeMode } from 'swiper';
 import Empty from '@arcblock/ux/lib/Empty';
-import { useMessage } from '@blocklet/embed/lib/message';
+// HACK: 是可以 resolve 到的，eslint 却会报错，所以暂时禁用
+// eslint-disable-next-line import/no-unresolved
+import { useMessage } from '@blocklet/embed/message';
+
 import MediaItem from '../../components/media-item';
 
 // Import Swiper styles

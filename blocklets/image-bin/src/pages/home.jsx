@@ -30,10 +30,25 @@ export default function Home() {
           borderBottom: '1px solid #eee',
         }}
       />
-      <Box mx="auto" maxWidth={800}>
+      <Box
+        sx={{
+          mx: 'auto',
+          maxWidth: 800,
+        }}>
         {blocklet && (
-          <Stack alignItems="center" gap={2}>
-            <Box component="img" src={blocklet.appLogo} alt="" width={80} />
+          <Stack
+            sx={{
+              alignItems: 'center',
+              gap: 2,
+            }}>
+            <Box
+              component="img"
+              src={blocklet.appLogo}
+              alt=""
+              sx={{
+                width: 80,
+              }}
+            />
             <Typography variant="h4">{blocklet.appName}</Typography>
             <Typography variant="caption" component="div">
               v{blocklet.version}
@@ -42,7 +57,11 @@ export default function Home() {
               {blocklet.appDescription}
             </Typography>
 
-            <Stack direction="row" gap={3}>
+            <Stack
+              direction="row"
+              sx={{
+                gap: 3,
+              }}>
               <ConnectButton
                 color="primary"
                 onClick={async () => {
@@ -59,7 +78,6 @@ export default function Home() {
           </Stack>
         )}
       </Box>
-
       <Footer
         // FIXME: remove following undefined props after issue https://github.com/ArcBlock/ux/issues/1136 solved
         meta={undefined}

@@ -6,6 +6,14 @@ import svgr from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
+  const isDevelopment = mode === 'development';
+  const alias = {};
+  if (isDevelopment) {
+    alias['@blocklet/uploader'] = join(__dirname, '../../packages/uploader/src/react.ts');
+    alias['@blocklet/uploader/middlewares'] = join(__dirname, '../../packages/uploader/src/middlewares.ts');
+    alias['@blocklet/xss'] = join(__dirname, '../../packages/xss/src/index.ts');
+  }
+
   return {
     // optimizeDeps: {
     //   force: true, // use @blocklet/uploader need it
@@ -17,23 +25,21 @@ export default defineConfig(({ mode }) => {
       },
     },
     plugins: [react(), createBlockletPlugin(), svgr()],
-    ...(mode === 'development' && {
-      resolve: {
-        alias: [
-          {
-            find: '@blocklet/uploader',
-            replacement: join(__dirname, '../../packages/uploader/src/react.ts'),
-          },
-          {
-            find: '@blocklet/uploader/middlewares',
-            replacement: join(__dirname, '../../packages/uploader/src/middlewares.ts'),
-          },
-          {
-            find: '@blocklet/xss',
-            replacement: join(__dirname, '../../packages/xss/src/index.ts'),
-          },
-        ],
-      },
-    }),
+    resolve: {
+      alias,
+      dedupe: [
+        //
+        '@blocklet/ui-react',
+        '@arcblock/ux',
+        '@arcblock/did-connect',
+        '@mui/material',
+        // '@mui/utils',
+        '@mui/icons-material',
+        'react',
+        'react-dom',
+        'lodash',
+        'bn.js',
+      ],
+    },
   };
 });

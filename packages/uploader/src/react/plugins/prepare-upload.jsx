@@ -104,6 +104,50 @@ class PrepareUpload extends UIPlugin {
         // get real time file
         const { data, name, type } = this.uppy.getFile(id);
         const fileText = await data.text();
+        // Collect all valid IDs in the SVG for internal references
+        const validIds = new Set();
+        const tempDoc = new DOMParser().parseFromString(fileText, 'image/svg+xml');
+        const allElements = tempDoc.querySelectorAll('[id]');
+        allElements.forEach((el) => validIds.add(el.id));
+
+        // Add hooks to handle SVG use elements and xlink:href
+        DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+          // Force keep <use> elements that reference internal IDs
+          if (data.tagName === 'use') {
+            const href = node.getAttribute('xlink:href') || node.getAttribute('href');
+            if (href && href.startsWith('#')) {
+              const targetId = href.substring(1);
+              if (validIds.has(targetId)) {
+                data.allowedTags.use = true;
+                data.forceKeepNode = true;
+              }
+            }
+          }
+        });
+
+        DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
+          // Handle xlink:href for internal references
+          if (data.attrName === 'xlink:href' && data.attrValue) {
+            if (data.attrValue.startsWith('#')) {
+              const targetId = data.attrValue.substring(1);
+              if (validIds.has(targetId)) {
+                data.forceKeepAttr = true;
+                return;
+              }
+            }
+            data.keepAttr = false;
+          }
+
+          // Allow percentage values and overflow style
+          if (['width', 'height'].includes(data.attrName) && data.attrValue === '100%') {
+            data.forceKeepAttr = true;
+          }
+
+          if (data.attrName === 'style' && data.attrValue === 'overflow:visible') {
+            data.forceKeepAttr = true;
+          }
+        });
+
         const cleanFile = DOMPurify.sanitize(fileText, {
           USE_PROFILES: { svg: true, svgFilters: true },
           ALLOWED_TAGS: [
@@ -148,6 +192,8 @@ class PrepareUpload extends UIPlugin {
             'stroke-width',
             'viewBox',
             'xmlns',
+            'xmlns:xlink',
+            'xml:space',
             'style',
             'id',
             'class',
@@ -158,10 +204,17 @@ class PrepareUpload extends UIPlugin {
             'mask',
             'fill-opacity',
             'stroke-opacity',
+            'gradientTransform',
+            'gradientUnits',
+            'xlink:href', // Allow it in attributes but control via hook
           ],
           FORBID_TAGS: ['a', 'script', 'iframe', 'image', 'foreignObject'],
-          FORBID_ATTR: ['href', 'xlink:href', 'onclick', 'onload', 'onerror'],
+          FORBID_ATTR: ['href', 'onclick', 'onload', 'onerror'],
         });
+
+        // Clean up the hooks after use
+        DOMPurify.removeHook('uponSanitizeElement');
+        DOMPurify.removeHook('uponSanitizeAttribute');
         if (fileText !== cleanFile) {
           // rewrite clean file
           const blob = new Blob([cleanFile], { type: type });
@@ -169,6 +222,7 @@ class PrepareUpload extends UIPlugin {
           this.uppy.setFileState(id, {
             ...this.uppy.getFile(id),
             data: blobFile,
+            preview: getObjectURL(blobFile),
           });
           console.info('clean svg file xss attack', { name, originalFile: file.data.text(), cleanFile });
         }

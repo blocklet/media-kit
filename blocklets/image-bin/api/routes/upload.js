@@ -15,7 +15,11 @@ const xbytes = require('xbytes');
 const uniq = require('lodash/uniq');
 const multer = require('multer');
 const { pipeline } = require('stream/promises');
+// HACK: 是可以 resolve 到的，eslint 却会报错，所以暂时禁用
+// eslint-disable-next-line import/no-unresolved
 const { initLocalStorageServer, initCompanion, getFileHash, removeExifFromFile } = require('@blocklet/uploader-server');
+// HACK: 是可以 resolve 到的，eslint 却会报错，所以暂时禁用
+// eslint-disable-next-line import/no-unresolved
 const { checkTrustedReferer } = require('@blocklet/uploader-server');
 const { sanitizeSvg, isSvgFile } = require('@blocklet/xss');
 const logger = require('../libs/logger');
@@ -154,6 +158,7 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
   if (result) {
     const count = await Upload.count({ where: { filename: doc.filename } });
     if (count === 0) {
+      // eslint-disable-next-line no-use-before-define
       await localStorageServer.delete(doc.filename);
     }
   }

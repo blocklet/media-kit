@@ -188,7 +188,10 @@ export default function ImageActions({ data, isResource }) {
         onCancel={onCancelDelete}
         confirmButton={deleteConfirmButton}
         cancelButton={cancelConfirmButton}>
-        <Typography textAlign="left">
+        <Typography
+          sx={{
+            textAlign: 'left',
+          }}>
           <div
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{

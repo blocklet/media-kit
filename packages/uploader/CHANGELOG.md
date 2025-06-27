@@ -1,3 +1,18 @@
+## 0.2.1 (June 27, 2025)
+
+- feat: add error tip in uploader when Media Kit is not running normally
+- fix: resolve the bug of prevent svg xss attack clean error
+
+## 0.2.0 (June 27, 2025)
+
+- chore(deps): optimize bundle size
+- fix(lint): fix lint error
+- chore(deps): mui codemod
+- chore(deps): update mui & ux
+- chore(deps): remove-forward-ref
+- chore(deps): replace-default-props
+- chore(deps): update react & vite
+
 ## 0.1.97 (June 24, 2025)
 
 - fix: resolve the bug of upload video error

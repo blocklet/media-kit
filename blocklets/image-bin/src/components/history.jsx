@@ -264,12 +264,12 @@ export default function Uploads() {
     componentDid,
     filterByComponent,
   } = resourceState;
-  const wrapperRef = useRef(null);
+
   const [showImporter, setShowImporter] = useState(false);
   const iframeRef = useRef(null);
 
   useInfiniteScroll(loadMoreUploads, {
-    target: wrapperRef,
+    target: () => document.getElementById('media-kit-layout')?.querySelector('.dashboard-main'),
     isNoMore: () => {
       return !uploadState.hasMore;
     },
@@ -311,9 +311,8 @@ export default function Uploads() {
 
   return (
     <Div
-      ref={wrapperRef}
       style={{
-        height: 'calc(100vh - 64px - 80px)',
+        height: '100%',
         overflowY: 'auto',
         padding: '24px',
       }}>

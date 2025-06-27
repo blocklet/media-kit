@@ -25,7 +25,14 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
 
   if (!getAIKitComponent()) {
     return (
-      <Box width={1} height={1} display="flex" justifyContent="center" alignItems="center">
+      <Box
+        sx={{
+          width: 1,
+          height: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
         {i18n('aiKitRequired')}
       </Box>
     );
@@ -48,12 +55,13 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
         }}>
         <Grid container sx={{ flexGrow: 1, height: '100%' }}>
           <Grid
-            item
-            xs={12}
-            sm={4}
             sx={{
               borderRight: isMobile ? 'none' : (theme) => `1px solid ${theme.palette.divider}`,
               display: openPrompt ? 'unset' : 'none',
+            }}
+            size={{
+              xs: 12,
+              sm: 4,
             }}>
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Prompt
@@ -66,14 +74,15 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
           </Grid>
 
           <Grid
-            item
-            xs={12}
-            sm={8}
             sx={{
               height: '100%',
               overflow: 'hidden',
               p: 2,
               display: openOutput ? 'unset' : 'none',
+            }}
+            size={{
+              xs: 12,
+              sm: 8,
             }}>
             <Output
               isMobile={isMobile}

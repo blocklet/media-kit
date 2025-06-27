@@ -48,9 +48,18 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
   return (
     <Root onSubmit={(e: any) => e.preventDefault()}>
       <Box sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', m: 2, mb: 0 }}>
-        <Grid container gap={2.5}>
-          <Grid item xs={12}>
-            <Typography gutterBottom className="title label" color="text.primary">
+        <Grid
+          container
+          sx={{
+            gap: 2.5,
+          }}>
+          <Grid size={12}>
+            <Typography
+              gutterBottom
+              className="title label"
+              sx={{
+                color: 'text.primary',
+              }}>
               {i18n('aiImagePrompt')}
             </Typography>
 
@@ -68,12 +77,19 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
                 e.stopPropagation();
                 values.prompt = e.target.value;
               }}
-              inputProps={{ maxLength: 1000 }}
+              slotProps={{
+                htmlInput: { maxLength: 1000 },
+              }}
             />
           </Grid>
 
-          <Grid item xs={12}>
-            <Typography gutterBottom className="title label" color="text.primary">
+          <Grid size={12}>
+            <Typography
+              gutterBottom
+              className="title label"
+              sx={{
+                color: 'text.primary',
+              }}>
               {`${i18n('aiImageModel')}`}
             </Typography>
 
@@ -99,13 +115,21 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
             </RadioGroup>
           </Grid>
 
-          <Grid item xs={12}>
-            <Typography gutterBottom className="title label" color="text.primary">
+          <Grid size={12}>
+            <Typography
+              gutterBottom
+              className="title label"
+              sx={{
+                color: 'text.primary',
+              }}>
               {`${i18n('aiImageSize')}: ${values.size}`}
             </Typography>
 
             <Grid container sx={{ gap: 2.5, pt: 1 }}>
-              <Box flex={1}>
+              <Box
+                sx={{
+                  flex: 1,
+                }}>
                 <Box {...sliderWrapperProps}>
                   <Slider
                     size="small"
@@ -123,8 +147,13 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
           </Grid>
 
           {values.model === 'dall-e-2' && (
-            <Grid item xs={12}>
-              <Typography gutterBottom className="title label" color="text.primary">
+            <Grid size={12}>
+              <Typography
+                gutterBottom
+                className="title label"
+                sx={{
+                  color: 'text.primary',
+                }}>
                 {`${i18n('aiImageNumber')}: ${values.number}`}
               </Typography>
 
@@ -148,7 +177,6 @@ export default function Prompt({ onSubmit }: { onSubmit: (value: AIImagePromptPr
           )}
         </Grid>
       </Box>
-
       <Button
         sx={{ m: 2, transition: 'all 0.3s' }}
         className={'submit-ai'}

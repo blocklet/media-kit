@@ -3,6 +3,8 @@ const path = require('path');
 const express = require('express');
 const toUpper = require('lodash/toUpper');
 const flatten = require('lodash/flatten');
+// HACK: 是可以 resolve 到的，eslint 却会报错，所以暂时禁用
+// eslint-disable-next-line import/no-unresolved
 const { initStaticResourceMiddleware } = require('@blocklet/uploader-server');
 const { getResourceExportDir, getResources } = require('@blocklet/sdk/lib/component');
 

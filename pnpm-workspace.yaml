@@ -1,3 +1,11 @@
 packages:
-  - "packages/**"
-  - "blocklets/**"
+  - packages/**
+  - blocklets/**
+
+onlyBuiltDependencies:
+  - core-js
+  - core-js-pure
+  - esbuild
+  - fast-folder-size
+  - protobufjs
+  - sqlite3
