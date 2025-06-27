@@ -1,3 +1,13 @@
+## 0.13.0 (June 27, 2025)
+
+- chore(deps): optimize bundle size
+- fix(lint): fix lint error
+- chore(deps): mui codemod
+- chore(deps): update mui & ux
+- chore(deps): remove-forward-ref
+- chore(deps): replace-default-props
+- chore(deps): update react & vite
+
 ## 0.12.7 (June 24, 2025)
 
 - feat: remove EXIF after upload
