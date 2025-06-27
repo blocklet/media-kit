@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
     "bump-version": "zx scripts/bump-version.mjs --quiet",
     "update:deps": "npx -y taze -r -w -n '/@abtnode|@aigne|@arcblock|@blocklet|@did-connect|@did-pay|@did-space|@nft-store|@nft-studio|@ocap/' && pnpm install && pnpm run deduplicate",
     "preinstall": "npx only-allow pnpm",
