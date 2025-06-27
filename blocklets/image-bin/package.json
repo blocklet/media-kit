@@ -16,7 +16,8 @@
     "update:deps": "npx taze -n '/arcblock|ocap|abtnode|blocklet|did-connect|did-comment|nedb/' -w -f && pnpm i && pnpm run deduplicate",
     "studio": "COMPONENT_STORE_URL=https://test.store.blocklet.dev blocklet dev studio",
     "remove:node_modules": "rm -rf ./node_modules ./blocklets/*/node_modules ./packages/*/node_modules ./contracts/*/node_modules",
-    "deduplicate": "pnpm dedupe"
+    "deduplicate": "pnpm dedupe",
+    "bundle:analyze": "pnpx vite-bundle-visualizer -o stats.html --open"
   },
   "lint-staged": {
     "*.{mjs,js,jsx,ts,tsx}": [

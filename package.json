@@ -5,11 +5,12 @@
   "scripts": {
     "lint": "pnpm -r lint",
     "lint:fix": "pnpm -r lint:fix",
+    "build:lib": "pnpm -r --filter @blocklet/* run build",
     "bump-version": "zx scripts/bump-version.mjs --quiet",
     "update:deps": "npx -y taze -r -w -n '/@abtnode|@aigne|@arcblock|@blocklet|@did-connect|@did-pay|@did-space|@nft-store|@nft-studio|@ocap/' && pnpm install && pnpm run deduplicate",
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",
-    "postinstall": "pnpm -r --filter @blocklet/* run build",
+    "postinstall": "pnpm build:lib",
     "deduplicate": "pnpm dedupe",
     "remove:node_modules": "npx -y rimraf ./node_modules ./**/**/node_modules"
   },
