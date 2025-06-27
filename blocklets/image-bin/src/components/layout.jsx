@@ -80,6 +80,7 @@ export default function Layout({ title = window.blocklet.appName }) {
               }
         }>
         <DashWrapper
+          id="media-kit-layout"
           dense
           title={title}
           headerAddons={(exists) => {
@@ -124,7 +125,7 @@ const StyledDashboard = styled(Dashboard)`
   }
 
   .dashboard-main {
-    overflow-y: hidden;
+    overflow-y: auto;
   }
 
   .dashboard-content {

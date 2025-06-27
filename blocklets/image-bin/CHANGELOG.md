@@ -1,3 +1,7 @@
+## 0.13.1 (June 27, 2025)
+
+- chore: polish history scroll logic
+
 ## 0.13.0 (June 27, 2025)
 
 - chore(deps): optimize bundle size

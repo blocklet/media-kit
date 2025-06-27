@@ -1,3 +1,8 @@
+## 0.2.1 (June 27, 2025)
+
+- feat: add error tip in uploader when Media Kit is not running normally
+- fix: resolve the bug of prevent svg xss attack clean error
+
 ## 0.2.0 (June 27, 2025)
 
 - chore(deps): optimize bundle size

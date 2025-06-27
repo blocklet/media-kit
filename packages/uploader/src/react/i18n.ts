@@ -40,6 +40,7 @@ export default {
         downloadRemoteFileFailure: '获取远程文件失败 ❌',
         noAllowedFileTypes: '不允许上传任何文件类型',
         allowedFileTypes: '允许上传的文件类型：',
+        error: '初始化失败，请检查相关服务（Media Kit）运行状态是否正常',
       },
     }
   ),
@@ -78,6 +79,7 @@ export default {
         downloadRemoteFileFailure: 'Failure to get remote file ❌',
         noAllowedFileTypes: 'No allowed any file types',
         allowedFileTypes: 'Allowed file types: ',
+        error: 'Failed to initialize, please check if the related service (Media Kit) is running normally',
       },
     }
   ),

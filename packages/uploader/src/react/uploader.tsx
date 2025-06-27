@@ -549,6 +549,7 @@ export default function Uploader({
     uppy: null as any,
     availablePluginMap: {} as any,
     restrictions: cloneDeep(props?.coreProps?.restrictions) || ({} as any),
+    isError: false,
   });
 
   const theme = useTheme();
@@ -598,8 +599,10 @@ export default function Uploader({
               restrictions = data.restrictions || {};
             }
           });
+          state.isError = false;
         } catch (error) {
           // ignore error
+          state.isError = true;
         }
       }
 
@@ -1169,7 +1172,7 @@ export default function Uploader({
               // @ts-ignore
               target={`#${target}`}
               id={uploaderDashboardId}
-              disabled={withoutAnyAllowedFileTypes}
+              disabled={withoutAnyAllowedFileTypes || state.isError}
               uppy={state.uppy}
               plugins={plugins}
               fileManagerSelectionType={state.restrictions?.maxNumberOfFiles === 1 ? 'files' : 'both'}
@@ -1177,7 +1180,7 @@ export default function Uploader({
               showProgressDetails
               disableThumbnailGenerator
               theme={mode === 'dark' ? 'dark' : 'light'}
-              note={note}
+              note={state.isError ? get(localeMap, `${locale}.strings.error`, 'Error') : note}
               doneButtonHandler={close}
               {...props.dashboardProps}
             />
