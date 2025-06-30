@@ -1,3 +1,8 @@
+## 0.13.2 (June 30, 2025)
+
+- fix: resolve the bug of 500 status code error
+- fix: resolve the bug of embed import error
+
 ## 0.13.1 (June 27, 2025)
 
 - chore: polish history scroll logic

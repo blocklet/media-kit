@@ -144,7 +144,7 @@ if (isProduction) {
 
   app.use((err, req, res) => {
     logger.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(400).send('Something broke!');
   });
 }
 
