@@ -1,5 +1,6 @@
 const express = require('express');
-const { generateBlockletEmbed } = require('@blocklet/embed');
+// eslint-disable-next-line import/no-unresolved
+const { generateBlockletEmbed } = require('@blocklet/embed/embed');
 const { Upload } = require('../store');
 
 const router = express.Router();
