@@ -378,7 +378,7 @@ router.post(
       size: fileSize,
       filename: fileName,
       mimetype: fileType,
-      createdBy: req.user?.did,
+      createdBy: req.user?.did || req.headers['x-user-did'] || null,
     };
 
     // current url
@@ -438,7 +438,7 @@ router.post(
       updatedBy: req.user?.did,
     });
 
-    res.json({ ...extraResult, ...doc });
+    res.json({ ...extraResult, ...doc.toJSON() });
   }
 );
 

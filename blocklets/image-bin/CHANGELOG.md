@@ -1,3 +1,7 @@
+## 0.13.3 (July 01, 2025)
+
+- fix: fix sdk upload api error
+
 ## 0.13.2 (June 30, 2025)
 
 - fix: resolve the bug of 500 status code error
