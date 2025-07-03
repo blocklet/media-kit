@@ -1,3 +1,7 @@
+## 0.2.2 (July 03, 2025)
+
+- fix: uploader missing export
+
 ## 0.2.1 (June 27, 2025)
 
 - feat: add error tip in uploader when Media Kit is not running normally
