@@ -1,3 +1,7 @@
+## 0.2.3 (July 07, 2025)
+
+- chore: update deps
+
 ## 0.2.2 (July 03, 2025)
 
 - fix: uploader missing export
