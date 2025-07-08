@@ -1,3 +1,11 @@
+## 0.2.2 (July 08, 2025)
+
+- chore: update deps
+
+## 0.2.1 (July 07, 2025)
+
+- chore: update deps
+
 ## 0.2.0 (June 27, 2025)
 
 - chore(deps): optimize bundle size

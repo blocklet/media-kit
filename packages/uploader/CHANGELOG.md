@@ -1,3 +1,15 @@
+## 0.2.4 (July 08, 2025)
+
+- chore: update deps
+
+## 0.2.3 (July 07, 2025)
+
+- chore: update deps
+
+## 0.2.2 (July 03, 2025)
+
+- fix: uploader missing export
+
 ## 0.2.1 (June 27, 2025)
 
 - feat: add error tip in uploader when Media Kit is not running normally

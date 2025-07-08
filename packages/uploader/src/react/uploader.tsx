@@ -525,7 +525,7 @@ export function initUploader(props: any) {
   return currentUppy;
 }
 
-export default function Uploader({
+export function Uploader({
   ref = undefined,
   ...props
 }: UploaderProps & {
@@ -1190,3 +1190,5 @@ export default function Uploader({
     </Wrapper>
   );
 }
+
+export default Uploader;

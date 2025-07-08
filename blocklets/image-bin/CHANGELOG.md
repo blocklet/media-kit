@@ -1,3 +1,15 @@
+## 0.13.6 (July 08, 2025)
+
+- chore: update deps
+
+## 0.13.5 (July 07, 2025)
+
+- chore: update deps
+
+## 0.13.4 (July 03, 2025)
+
+- fix: uploader missing export
+
 ## 0.13.3 (July 01, 2025)
 
 - fix: fix sdk upload api error
