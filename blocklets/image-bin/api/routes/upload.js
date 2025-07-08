@@ -43,6 +43,12 @@ const ensureFolderId = () => async (req, res, next) => {
   const isDID = isValidDID(req.componentDid);
 
   if (isDID) {
+    // Add validation to prevent undefined id in query
+    if (!req.componentDid) {
+      res.status(400).send({ error: 'Invalid component DID' });
+      return;
+    }
+
     const folder = await Folder.findOne({ where: { id: req.componentDid } });
     const component = config.components.find((x) => x.did === req.componentDid);
 
@@ -140,6 +146,12 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
     return;
   }
 
+  // Validate id parameter
+  if (!req.params.id) {
+    res.status(400).jsonp({ error: 'Upload ID is required' });
+    return;
+  }
+
   const doc = await Upload.findOne({ where: { id: req.params.id } });
 
   if (!doc) {
@@ -168,6 +180,12 @@ router.delete('/uploads/:id', user, ensureAdmin, ensureFolderId(), async (req, r
 
 // move to folder
 router.put('/uploads/:id', user, ensureAdmin, async (req, res) => {
+  // Validate id parameter
+  if (!req.params.id) {
+    res.status(400).jsonp({ error: 'Upload ID is required' });
+    return;
+  }
+
   const doc = await Upload.findOne({ where: { id: req.params.id } });
   if (!doc) {
     res.jsonp({ error: 'No such upload' });
@@ -225,6 +243,13 @@ const localStorageServer = initLocalStorageServer({
       });
     } else {
       logger.info('file already exist, update it');
+
+      // Validate doc.id before using it in query
+      if (!doc.id) {
+        logger.error('Found upload record without valid id, this should not happen', { doc });
+        return res.status(400).json({ error: 'Invalid upload record found' });
+      }
+
       await Upload.update(
         {
           updatedAt: new Date().toISOString(),
@@ -454,6 +479,12 @@ router.get(
 
 // remove upload for sdk
 router.delete('/sdk/uploads/:id', user, middleware.component.verifySig, async (req, res) => {
+  // Validate id parameter
+  if (!req.params.id) {
+    res.status(400).jsonp({ error: 'Upload ID is required' });
+    return;
+  }
+
   const doc = await Upload.findOne({ where: { id: req.params.id } });
 
   if (!doc) {
@@ -596,8 +627,14 @@ router.get('/uploader/status', async (req, res) => {
   }
 
   // can use Uploaded
-  const folder = await Folder.findOne({ where: { id: req.componentDid } });
-  const component = config.components.find((x) => x.did === req.componentDid);
+  let folder = null;
+  let component = null;
+
+  // Only query if componentDid is valid
+  if (req.componentDid && isValidDID(req.componentDid)) {
+    folder = await Folder.findOne({ where: { id: req.componentDid } });
+    component = config.components.find((x) => x.did === req.componentDid);
+  }
 
   // mean this is a valid folder and upload image to this folder
   if (folder && component) {
