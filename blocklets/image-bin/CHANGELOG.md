@@ -1,3 +1,7 @@
+## 0.13.7 (July 08, 2025)
+
+- fix: resolve the bug of req.componentDid missing bug
+
 ## 0.13.6 (July 08, 2025)
 
 - chore: update deps
