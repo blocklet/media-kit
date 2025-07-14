@@ -1,3 +1,7 @@
+## 0.13.8 (July 14, 2025)
+
+- fix: remove recent embed
+
 ## 0.13.7 (July 08, 2025)
 
 - fix: resolve the bug of req.componentDid missing error
