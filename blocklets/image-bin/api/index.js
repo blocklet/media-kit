@@ -124,7 +124,6 @@ app.use(
 );
 
 const router = express.Router();
-router.use('/api/embed', require('./routes/embed'));
 
 router.use('/api', resources.router);
 router.use('/api', require('./routes/upload'));
