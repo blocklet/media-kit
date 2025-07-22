@@ -1,3 +1,7 @@
+## 0.13.10 (July 23, 2025)
+
+- chore: update blocklet description and readme
+
 ## 0.13.9 (July 22, 2025)
 
 - chore: update blocklet description and readme
