@@ -20,7 +20,7 @@ Your media stays on YOUR servers. No vendor lock-in, no privacy concerns, no pla
 
 ### **⚡ Enterprise Performance**
 
-Global CDN support delivers your content faster than major cloud providers - without the enterprise price tag.
+Optional CDN support delivers your content faster than major cloud providers - without the enterprise price tag.
 
 ---
 
@@ -35,10 +35,10 @@ Global CDN support delivers your content faster than major cloud providers - wit
 
 ### 🌍 **Professional Delivery**
 
-- **Global CDN Ready**: Lightning-fast worldwide content delivery
 - **Smart Optimization**: Perfect quality, minimal file sizes automatically
 - **Flexible Sharing**: Public URLs, private access, or team collaboration
 - **Mobile Perfect**: Flawless experience across all devices
+- **Global CDN Ready**: Lightning-fast worldwide content delivery
 
 ### 🛡️ **Bank-Level Security**
 
@@ -74,12 +74,10 @@ Global CDN support delivers your content faster than major cloud providers - wit
 
 1. **Click "Launch"** → Instant deployment on Blocklet Platform
 2. **Upload your first file** → Drag, drop, done
-3. **Share or integrate** → Get your CDN URLs immediately
 
 ### **🎉 What You Get Instantly:**
 
 - ✅ Unlimited file storage (your infrastructure limits)
-- ✅ Global CDN-ready delivery
 - ✅ Advanced organization tools
 - ✅ Enterprise security features
 - ✅ Full API access for developers
