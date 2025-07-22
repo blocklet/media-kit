@@ -1,3 +1,7 @@
+## 0.13.9 (July 22, 2025)
+
+- chore: update blocklet description and readme
+
 ## 0.13.8 (July 14, 2025)
 
 - fix: remove recent embed
