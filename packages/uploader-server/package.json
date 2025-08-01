@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader-server",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "blocklet upload server",
   "publishConfig": {
     "access": "public"
@@ -59,10 +59,10 @@
     "axios": "^1.7.8"
   },
   "dependencies": {
-    "@abtnode/cron": "^1.16.45",
-    "@blocklet/constant": "^1.16.45",
-    "@blocklet/logger": "^1.16.45",
-    "@blocklet/sdk": "^1.16.45",
+    "@abtnode/cron": "^1.16.46",
+    "@blocklet/constant": "^1.16.46",
+    "@blocklet/logger": "^1.16.46",
+    "@blocklet/sdk": "^1.16.46",
     "@tus/file-store": "1.0.0",
     "@tus/server": "1.0.0",
     "@uppy/companion": "4.15.1",

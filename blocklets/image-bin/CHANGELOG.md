@@ -1,3 +1,7 @@
+## 0.13.11 (August 01, 2025)
+
+- chore: update deps
+
 ## 0.13.10 (July 23, 2025)
 
 - chore: update blocklet description and readme
