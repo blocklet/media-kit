@@ -1,7 +1,8 @@
 name: image-bin
-version: 0.13.7
+version: 0.13.11
 title: Media Kit
-description: A simple media assets upload and hosting blocklet
+description: Self-hosted media management that replaces expensive cloud services
+  while keeping you in complete control of your digital assets.
 keywords:
   - blocklet
   - react
@@ -41,9 +42,6 @@ interfaces:
           ignoreUrls:
             - /
             - /uploads/**
-            - /embed/recent
-            - /api/embed
-            - /api/embed/recent
             - /api/uploader/status
           profileFields:
             - fullName

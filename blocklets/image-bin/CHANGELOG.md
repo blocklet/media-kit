@@ -1,3 +1,19 @@
+## 0.13.11 (August 01, 2025)
+
+- chore: update deps
+
+## 0.13.10 (July 23, 2025)
+
+- chore: update blocklet description and readme
+
+## 0.13.9 (July 22, 2025)
+
+- chore: update blocklet description and readme
+
+## 0.13.8 (July 14, 2025)
+
+- fix: remove recent embed
+
 ## 0.13.7 (July 08, 2025)
 
 - fix: resolve the bug of req.componentDid missing error

@@ -16,7 +16,6 @@ import Layout from './components/layout';
 import { translations } from './locales/index';
 
 const ImageList = lazy(() => import('./pages/images/index'));
-const EmbedRecent = lazy(() => import('./pages/embed/recent'));
 const Home = lazy(() => import('./pages/home'));
 
 const globalStyles = css`
@@ -48,7 +47,6 @@ export default function App() {
                 </Center>
               }>
               <Routes>
-                <Route path="/embed/recent" element={<EmbedRecent />} />
                 <Route
                   path="*"
                   element={
