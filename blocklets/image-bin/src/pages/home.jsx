@@ -2,7 +2,7 @@ import Header from '@blocklet/ui-react/lib/Header';
 import Footer from '@blocklet/ui-react/lib/Footer';
 import { useNavigate } from 'react-router-dom';
 import { Box, Stack, Typography } from '@mui/material';
-import ConnectButton from '@arcblock/did-connect/lib/Button';
+import ConnectButton from '@arcblock/did-connect-react/lib/Button';
 import { useLayoutEffect } from 'react';
 import { useSessionContext } from '../contexts/session';
 
