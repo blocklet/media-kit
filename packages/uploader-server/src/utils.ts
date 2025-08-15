@@ -3,6 +3,9 @@ import path from 'path';
 import joinUrl from 'url-join';
 import { isbot } from 'isbot';
 import component from '@blocklet/sdk/lib/component';
+
+// @ts-ignore
+import Auth from '@blocklet/sdk/service/auth';
 import { ImageBinDid } from './constants';
 import crypto from 'crypto';
 import { getSignData } from '@blocklet/sdk/lib/util/verify-sign';
@@ -16,6 +19,10 @@ import { join } from 'path';
 import ExifTransformer from 'exif-be-gone';
 
 export let logger = console;
+
+const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';
+
+const client = new Auth();
 
 // it means we are running in blocklet environment, use logger from @blocklet/logger
 if (process.env.BLOCKLET_LOG_DIR) {
@@ -73,17 +80,39 @@ export async function getTrustedDomainsCache({
     }
   }
 
-  trustedDomainsCache.domains = await axios
-    .get(joinUrl(appUrl, '/.well-known/service/api/federated/getTrustedDomains'))
-    .then((res) => res.data);
-  trustedDomainsCache.timestamp = now;
+  // try to get trusted domains from sdk
+  try {
+    if (!trustedDomainsCache?.domains?.length) {
+      trustedDomainsCache.domains = await client.getTrustedDomains().then((res: any) => res.data);
+      trustedDomainsCache.timestamp = now;
+    }
+  } catch (error) {
+    // ignore error
+  }
+
+  // fallback to well-known api
+  try {
+    if (!trustedDomainsCache?.domains?.length) {
+      trustedDomainsCache.domains = await axios
+        .get(joinUrl(appUrl, '/.well-known/service/api/federated/getTrustedDomains'))
+        .then((res) => res.data);
+      trustedDomainsCache.timestamp = now;
+    }
+  } catch (error) {
+    // ignore error
+  }
 
   return trustedDomainsCache.domains;
 }
 
 export async function checkTrustedReferer(req: any, res: any, next?: Function) {
-  // Allow OpenGraph crawlers by checking user agent, and allow login user
+  // if not production, skip check
+  if (!isProduction) {
+    return next?.();
+  }
+
   if (isbot(req.get('user-agent'))) {
+    // Allow OpenGraph crawlers by checking user agent, and allow login user
     return next?.();
   }
 

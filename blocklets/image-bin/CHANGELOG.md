@@ -1,3 +1,7 @@
+## 0.13.14 (August 15, 2025)
+
+- chore: polish checkTrustedReferer logic
+
 ## 0.13.13 (August 09, 2025)
 
 - chore: bump deps to latest
