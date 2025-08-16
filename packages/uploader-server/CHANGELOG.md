@@ -1,3 +1,7 @@
+## 0.2.7 (August 16, 2025)
+
+- chore: remove useless code
+
 ## 0.2.6 (August 15, 2025)
 
 - chore: polish checkTrustedReferer logic
