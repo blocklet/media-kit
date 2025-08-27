@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { ToastProvider } from '@arcblock/ux/lib/Toast';
 import Center from '@arcblock/ux/lib/Center';
 import { ConfigProvider } from '@arcblock/ux/lib/Config';
+import withTracker from '@arcblock/ux/lib/withTracker';
 
 import theme from './libs/theme';
 import { SessionProvider } from './contexts/session';
@@ -29,10 +30,48 @@ const globalStyles = css`
   }
 `;
 
-export default function App() {
-  // While the blocklet is deploy to a sub path, this will be work properly.
-  const prefix = window?.blocklet?.prefix || '/';
+// While the blocklet is deploy to a sub path, this will be work properly.
+const prefix = window?.blocklet?.prefix || '/';
 
+function InnerApp() {
+  return (
+    <Suspense
+      fallback={
+        <Center>
+          <CircularProgress />
+        </Center>
+      }>
+      <Routes>
+        <Route
+          path="*"
+          element={
+            <SessionProvider
+              serviceHost={prefix}
+              protectedRoutes={['/admin', '/admin/*'].map((item) => joinUrl(prefix, item))}>
+              <UploadProvider>
+                <ResourceProvider>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/admin" element={<Layout />}>
+                      <Route index element={<ImageList />} />
+                      <Route path="images" element={<ImageList />} />
+                      <Route path="*" element={<Navigate to="/admin" />} />
+                    </Route>
+                  </Routes>
+                </ResourceProvider>
+              </UploadProvider>
+            </SessionProvider>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Suspense>
+  );
+}
+
+const AppWithTracker = withTracker(InnerApp);
+
+export default function App() {
   return (
     <ConfigProvider translations={translations} fallbackLocale="en" theme={theme} injectFirst>
       <Router basename={prefix}>
@@ -40,37 +79,7 @@ export default function App() {
           <CssBaseline />
           <Global styles={globalStyles} />
           <ToastProvider>
-            <Suspense
-              fallback={
-                <Center>
-                  <CircularProgress />
-                </Center>
-              }>
-              <Routes>
-                <Route
-                  path="*"
-                  element={
-                    <SessionProvider
-                      serviceHost={prefix}
-                      protectedRoutes={['/admin', '/admin/*'].map((item) => joinUrl(prefix, item))}>
-                      <UploadProvider>
-                        <ResourceProvider>
-                          <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/admin" element={<Layout />}>
-                              <Route index element={<ImageList />} />
-                              <Route path="images" element={<ImageList />} />
-                              <Route path="*" element={<Navigate to="/admin" />} />
-                            </Route>
-                          </Routes>
-                        </ResourceProvider>
-                      </UploadProvider>
-                    </SessionProvider>
-                  }
-                />
-                <Route path="*" element={<Navigate to="/" />} />
-              </Routes>
-            </Suspense>
+            <AppWithTracker />
           </ToastProvider>
         </SessionProvider>
       </Router>
