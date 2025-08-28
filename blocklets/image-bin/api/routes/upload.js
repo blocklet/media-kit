@@ -592,7 +592,7 @@ router.get('/image/models', async (req, res) => {
   const apiURL = process.env.BLOCKLET_AIGNE_API_URL || '';
 
   if (!apiURL) {
-    throw new Error('Please connect aigne hub first');
+    throw new Error('AIGNE hub API URL is not configured.');
   }
 
   const BLOCKLET_JSON_PATH = '__blocklet__.js?type=json';
@@ -608,7 +608,9 @@ router.get('/image/models', async (req, res) => {
   const blocklet = await blockletInfo.json();
   const aigneHubMount = (blocklet?.componentMountPoints || []).find((m) => m.did === AIGNE_HUB_DID);
   if (!aigneHubMount) {
-    throw new Error('Please run aigne hub first');
+    throw new Error(
+      'Aigne Hub is not running or not connected. Please ensure that the Aigne Hub service is started and properly configured. Refer to the documentation for setup instructions.'
+    );
   }
 
   const url = withQuery(joinURL(apiURL, aigneHubMount?.mountPoint || '', '/api/ai-providers/models'), {
