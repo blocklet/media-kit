@@ -1,3 +1,7 @@
+## 0.13.17 (August 28, 2025)
+
+- chore: use aigne hub image instand of call api
+
 ## 0.13.16 (August 27, 2025)
 
 - chore: update deps

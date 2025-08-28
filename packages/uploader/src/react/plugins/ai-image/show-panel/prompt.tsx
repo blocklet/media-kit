@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
+import { useMemo } from 'react';
 
 import { useAIImageContext, AIImagePromptProps } from './context';
 import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
@@ -31,7 +32,10 @@ export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImage
   };
 
   const { run } = useDebounceFn(submit, { wait: 500 });
-  const disabled = Object.values(values).every((param) => !param);
+  const disabled = useMemo(() => {
+    const submitValue = JSON.parse(JSON.stringify(values));
+    return Object.values(submitValue).some((param) => !param);
+  }, [JSON.stringify(values)]);
 
   return (
     <Root onSubmit={(e: any) => e.preventDefault()}>
