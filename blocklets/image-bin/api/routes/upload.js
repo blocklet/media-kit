@@ -22,6 +22,8 @@ const { initLocalStorageServer, initCompanion, getFileHash, removeExifFromFile }
 // eslint-disable-next-line import/no-unresolved
 const { checkTrustedReferer } = require('@blocklet/uploader-server');
 const { sanitizeSvg, isSvgFile } = require('@blocklet/xss');
+const { joinURL, withQuery } = require('ufo');
+const { AIGNEHubImageModel } = require('@aigne/aigne-hub');
 const logger = require('../libs/logger');
 const { MEDIA_KIT_DID } = require('../libs/constants');
 const { getResourceComponents } = require('./resources');
@@ -32,6 +34,7 @@ const { user, auth, ensureAdmin } = require('../libs/auth');
 
 const router = express.Router();
 
+const AIGNE_HUB_DID = 'z8ia3xzq2tMq8CRHfaXj1BTYJyYnEcHbqP8cJ';
 const statusCache = new LRUCache({
   max: 100,
   ttl: 1000 * 60 * 5, // 5min
@@ -576,18 +579,45 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
 });
 
 router.post('/image/generations', user, auth, async (req, res) => {
-  const { prompt, number = 1, size = '1024x1024', responseFormat, model = 'dall-e-2' } = req.body;
+  const { prompt, number = 1, responseFormat, model = 'dall-e-2' } = req.body;
+  const imageModel = new AIGNEHubImageModel({ model });
+  const result = await imageModel.invoke({ prompt, n: parseInt(number, 10), responseFormat });
+  res.json(result);
+});
 
-  const response = await Component.call({
-    name: 'ai-kit',
-    path: '/api/v1/sdk/image/generations',
-    method: 'POST',
-    data: { model, prompt, size, n: parseInt(number, 10), responseFormat },
-    responseType: 'stream',
+const CACHE_DURATION = 1 * 60 * 1000;
+const cache = new LRUCache({ max: 100, ttl: CACHE_DURATION });
+
+router.get('/image/models', async (req, res) => {
+  const apiURL = process.env.BLOCKLET_AIGNE_API_URL || '';
+
+  if (!apiURL) {
+    throw new Error('Please connect aigne hub first');
+  }
+
+  const BLOCKLET_JSON_PATH = '__blocklet__.js?type=json';
+  const blockletURL = joinURL(apiURL, BLOCKLET_JSON_PATH);
+
+  const cachedData = cache.get(blockletURL);
+  if (cachedData) {
+    res.json(cachedData);
+    return;
+  }
+
+  const blockletInfo = await fetch(blockletURL);
+  const blocklet = await blockletInfo.json();
+  const aigneHubMount = (blocklet?.componentMountPoints || []).find((m) => m.did === AIGNE_HUB_DID);
+  if (!aigneHubMount) {
+    throw new Error('Please run aigne hub first');
+  }
+
+  const url = withQuery(joinURL(apiURL, aigneHubMount?.mountPoint || '', '/api/ai-providers/models'), {
+    type: 'image',
   });
+  const response = await fetch(url);
+  const data = await response.json();
 
-  res.set('Content-Type', response.headers['content-type']);
-  response.data.pipe(res);
+  res.json(data);
 });
 
 router.get('/uploader/status', async (req, res) => {

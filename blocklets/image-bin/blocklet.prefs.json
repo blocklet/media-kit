@@ -77,8 +77,23 @@
         "x-designable-id": "kvlrbh8l0xj",
         "x-index": 2,
         "shared": false
+      },
+      "useAiImage": {
+        "type": "boolean",
+        "title": "Use AI Image",
+        "x-decorator": "FormItem",
+        "x-component": "Switch",
+        "x-validator": [],
+        "x-component-props": {},
+        "x-decorator-props": {},
+        "description": "The ability to generate images using AI",
+        "name": "useAiImage",
+        "default": false,
+        "x-designable-id": "qt7qq2jboh5",
+        "x-index": 3,
+        "shared": true
       }
     },
-    "x-designable-id": "2yt09xcx62s"
+    "x-designable-id": "7kzhylp6cva"
   }
 }

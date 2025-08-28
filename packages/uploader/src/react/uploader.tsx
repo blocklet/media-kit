@@ -2,7 +2,7 @@ import { UploaderProps } from '../types';
 import keyBy from 'lodash/keyBy';
 import { useReactive, useRequest } from 'ahooks';
 import { createRoot } from 'react-dom/client';
-import { Fragment, useCallback, useRef, useEffect, useImperativeHandle, lazy, useMemo } from 'react';
+import { Fragment, useRef, useEffect, useImperativeHandle, lazy, useMemo } from 'react';
 import get from 'lodash/get';
 import { useTheme } from '@mui/material/styles';
 import GlobalStyles from '@mui/material/GlobalStyles';
@@ -47,7 +47,6 @@ import {
   getExt,
   getUploaderEndpoint,
   base64ToFile,
-  getAIKitComponent,
   getUrl,
   initUppy,
   mockUploaderFileResponse,
@@ -137,8 +136,8 @@ const getPluginList = (props: any) => {
     },
     // with AI Kit
     getMediaKitComponent() &&
-      getAIKitComponent() &&
-      availablePluginMap.AIImage && {
+      // @ts-ignore
+      window?.blocklet?.preferences?.useAiImage && {
         id: 'AIImage',
         plugin: AIImage,
         options: {
