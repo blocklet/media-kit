@@ -1,18 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import { useSize } from 'ahooks';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useSize, useRequest } from 'ahooks';
 import Prompt from './prompt';
 import Output from './output';
 import { AIImageProvider, AIImagePromptProps } from './context';
-import { getAIKitComponent } from '../../../../utils';
-
+import { mediaKitApi } from '../../../../utils';
+import micromatch from 'micromatch';
 interface Props {
   onSelect: (data: any) => void;
   restrictions?: any;
   api: any;
   i18n: Function;
   theme?: any;
+}
+type ModelItem = {
+  key: string;
+  model: string;
+  provider: string;
+  [key: string]: any;
+};
+
+function filterModels(models: ModelItem[]): ModelItem[] {
+  // @ts-ignore
+  const pref = (window.blocklet?.preferences?.supportModels||'').trim();
+  if (!pref) return models;
+
+  const supportModels = pref
+    .split(',')
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+
+  if (supportModels.length === 0) return models;
+
+  return models.filter(m => {
+    const fullName = `${m.provider}/${m.model}`;
+    // 同时支持 fullName 和 model 两种匹配方式
+    return (
+      micromatch.isMatch(fullName, supportModels) ||
+      micromatch.isMatch(m.model, supportModels)
+    );
+  });
 }
 
 function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
@@ -23,20 +52,10 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
   const size = useSize(document.body);
   let isMobile = size && size.width < 768 ? true : false;
 
-  if (!getAIKitComponent()) {
-    return (
-      <Box
-        sx={{
-          width: 1,
-          height: 1,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-        {i18n('aiKitRequired')}
-      </Box>
-    );
-  }
+  const { data: models,loading } = useRequest(async () => {
+    const response = await mediaKitApi.get('/api/image/models');
+    return filterModels(response.data);
+  });
 
   // isMobile
   const openPrompt = !isMobile || (isMobile && !open);
@@ -53,7 +72,8 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
           height: '100%',
           bgcolor: 'background.default',
         }}>
-        <Grid container sx={{ flexGrow: 1, height: '100%' }}>
+        {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}><CircularProgress /></Box>}
+        {!loading && <Grid container sx={{ flexGrow: 1, height: '100%' }}>
           <Grid
             sx={{
               borderRight: isMobile ? 'none' : (theme) => `1px solid ${theme.palette.divider}`,
@@ -65,6 +85,7 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
             }}>
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <Prompt
+                models={models || []}
                 onSubmit={(...props) => {
                   setOpen(true);
                   setParameters(...props);
@@ -93,7 +114,7 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
               onClose={onCloseOutput}
             />
           </Grid>
-        </Grid>
+        </Grid>}
       </Box>
     </AIImageProvider>
   );

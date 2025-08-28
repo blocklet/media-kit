@@ -44,11 +44,6 @@ export default function Output({
   const selected = useReactive<{ [key: string]: boolean }>({});
   const selectedUrls: string[] = Object.keys(selected).filter((key) => selected[key]);
 
-  const imageWrapperProps = {
-    xs: 6,
-    sm: 6,
-  };
-
   useEffect(() => {
     if (error && !lottieFiles.error) {
       import('./lottie-error.json').then((module) => {
@@ -77,12 +72,11 @@ export default function Output({
 
     onLoading(true);
     try {
-      const res = await handleApi({ ...options, responseFormat: 'b64_json' });
-      if (res.data) {
-        const list = res.data || [];
-        const arr = list.map((item: { b64_json: string; b64Json: string }) => ({
-          src: `data:image/png;base64,${item.b64Json || item.b64_json}`, // TODO b64Json 为ai-kit新兼容字段， b64_json为老字段，一个月可移除
-          width: options.size ? Number((options.size || '').split('x')[0]) : 1024,
+      const res = await handleApi({ ...options, responseFormat: 'base64' });
+      if (res.images) {
+        const list = res.images || [];
+        const arr = list.map((item: { base64: string; url?: string }) => ({
+          src: item.url || `data:image/png;base64,${item.base64}`,
           alt: options.prompt,
         }));
 
@@ -101,7 +95,7 @@ export default function Output({
       onLoading(false);
       onFinish();
     }
-  }, [options?.number, options?.prompt, options?.size]);
+  }, [options?.number, options?.prompt]);
 
   const onSelectImage = (src: string) => {
     const selectedUrls: string[] = Object.keys(selected).filter((key) => selected[key]);
