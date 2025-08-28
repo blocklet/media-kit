@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.13.17",
+  "version": "0.13.18",
   "private": true,
   "scripts": {
     "dev": "blocklet dev",
@@ -10,7 +10,7 @@
     "clean": "rm -rf .blocklet",
     "bundle": "npm run bundle:client && npm run bundle:api",
     "bundle:client": "npm run build",
-    "bundle:api": "npm run clean && blocklet bundle --compact --create-release --external sqlite3",
+    "bundle:api": "npm run clean && blocklet bundle --compact --create-release --external sqlite3,@aigne/sqlite",
     "deploy": "npm run bundle && blocklet deploy .blocklet/bundle",
     "upload": "npm run bundle && blocklet upload .blocklet/release/blocklet.json",
     "update:deps": "npx taze -n '/arcblock|ocap|abtnode|blocklet|did-connect|did-comment|nedb/' -w -f && pnpm i && pnpm run deduplicate",
