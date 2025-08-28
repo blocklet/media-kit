@@ -92,8 +92,24 @@
         "x-designable-id": "qt7qq2jboh5",
         "x-index": 3,
         "shared": true
+      },
+      "supportModels": {
+        "type": "string",
+        "title": "Supported Models",
+        "x-decorator": "FormItem",
+        "x-component": "Input.TextArea",
+        "x-validator": [],
+        "x-component-props": {},
+        "x-decorator-props": {},
+        "name": "supportModels",
+        "x-designable-id": "cj5h1s2gx5s",
+        "x-index": 4,
+        "description": "Available AI models. You can specify multiple models separated by commas, and use wildcard patterns (e.g., dall-e-2, gpt-*).",
+        "default": "",
+        "required": false,
+        "shared": true
       }
     },
-    "x-designable-id": "7kzhylp6cva"
+    "x-designable-id": "ugccd3xkqj6"
   }
 }

@@ -7,13 +7,41 @@ import Prompt from './prompt';
 import Output from './output';
 import { AIImageProvider, AIImagePromptProps } from './context';
 import { mediaKitApi } from '../../../../utils';
-
+import micromatch from 'micromatch';
 interface Props {
   onSelect: (data: any) => void;
   restrictions?: any;
   api: any;
   i18n: Function;
   theme?: any;
+}
+type ModelItem = {
+  key: string;
+  model: string;
+  provider: string;
+  [key: string]: any;
+};
+
+function filterModels(models: ModelItem[]): ModelItem[] {
+  // @ts-ignore
+  const pref = (window.blocklet?.preferences?.supportModels||'').trim();
+  if (!pref) return models;
+
+  const supportModels = pref
+    .split(',')
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+
+  if (supportModels.length === 0) return models;
+
+  return models.filter(m => {
+    const fullName = `${m.provider}/${m.model}`;
+    // 同时支持 fullName 和 model 两种匹配方式
+    return (
+      micromatch.isMatch(fullName, supportModels) ||
+      micromatch.isMatch(m.model, supportModels)
+    );
+  });
 }
 
 function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
@@ -26,7 +54,7 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
 
   const { data: models,loading } = useRequest(async () => {
     const response = await mediaKitApi.get('/api/image/models');
-    return response.data;
+    return filterModels(response.data);
   });
 
   // isMobile
