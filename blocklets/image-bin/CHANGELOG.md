@@ -1,3 +1,7 @@
+## 0.13.19 (August 28, 2025)
+
+- chore: update pacakge
+
 ## 0.13.18 (August 28, 2025)
 
 - chore: external @aigne/sqlite for bundle
