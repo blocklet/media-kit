@@ -1039,6 +1039,9 @@ export function Uploader({
                 },
               },
             },
+            '.uppy-DashboardContent-panelBody': {
+              height:0,
+            },
             '.uppy-Dashboard-AddFiles-title': {
               whiteSpace: 'normal',
             },

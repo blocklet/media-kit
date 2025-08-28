@@ -73,11 +73,13 @@ function AIImage({ onSelect, api, restrictions, i18n, theme }: Props) {
           bgcolor: 'background.default',
         }}>
         {loading && <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}><CircularProgress /></Box>}
-        {!loading && <Grid container sx={{ flexGrow: 1, height: '100%' }}>
+        {!loading && <Grid container sx={{ flexGrow: 1, height: '100%',overflow:'hidden' }}>
           <Grid
             sx={{
               borderRight: isMobile ? 'none' : (theme) => `1px solid ${theme.palette.divider}`,
               display: openPrompt ? 'unset' : 'none',
+              overflow: 'hidden',
+              height: '100%',
             }}
             size={{
               xs: 12,
