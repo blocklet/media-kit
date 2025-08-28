@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.13.17",
+  "version": "0.13.18",
   "private": true,
   "scripts": {
     "dev": "blocklet dev",

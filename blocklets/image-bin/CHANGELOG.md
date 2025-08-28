@@ -1,3 +1,7 @@
+## 0.13.18 (August 28, 2025)
+
+- chore: external @aigne/sqlite for bundle
+
 ## 0.13.17 (August 28, 2025)
 
 - chore: use aigne hub image instead of call api
