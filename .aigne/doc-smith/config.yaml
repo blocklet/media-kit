@@ -1,0 +1,79 @@
+# Project information for documentation publishing
+projectName: Media Kit
+projectDesc: "Media Kit: 📸 A simple yet powerful Blocklet for media asset
+  uploading and hosting. Features drag-and-drop, image tagging, and easy CDN
+  integration. Perfect for managing digital assets! ✨"
+projectLogo: https://store.blocklet.dev/assets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9/logo.png
+
+# =============================================================================
+# Documentation Configuration
+# =============================================================================
+
+# Purpose: What's the main outcome you want readers to achieve?
+# Available options (uncomment and modify as needed):
+#   getStarted       - Get started quickly: Help new users go from zero to working in <30 minutes
+#   completeTasks    - Complete specific tasks: Guide users through common workflows and use cases
+#   findAnswers      - Find answers fast: Provide searchable reference for all features and APIs
+#   understandSystem - Understand the system: Explain how it works, why design decisions were made
+#   solveProblems    - Troubleshoot common issues: Help users troubleshoot and fix issues
+#   mixedPurpose     - Serve multiple purposes: Comprehensive documentation covering multiple needs
+documentPurpose:
+  - getStarted
+  - completeTasks
+
+# Target Audience: Who will be reading this most often?
+# Available options (uncomment and modify as needed):
+#   endUsers         - End users (non-technical): People who use the product but don't code
+#   developers       - Developers integrating your product/API: Engineers adding this to their projects
+#   devops           - DevOps / SRE / Infrastructure teams: Teams deploying, monitoring, maintaining systems
+#   decisionMakers   - Technical decision makers: Architects, leads evaluating or planning implementation
+#   supportTeams     - Support teams: People helping others use the product
+#   mixedTechnical   - Mixed technical audience: Developers, DevOps, and technical users
+targetAudienceTypes:
+  - developers
+
+# Reader Knowledge Level: What do readers typically know when they arrive?
+# Available options (uncomment and modify as needed):
+#   completeBeginners    - Is a total beginner, starting from scratch: New to this domain/technology entirely
+#   domainFamiliar       - Has used similar tools before: Know the problem space, new to this specific solution
+#   experiencedUsers     - Is an expert trying to do something specific: Regular users needing reference/advanced topics
+#   emergencyTroubleshooting - Emergency/troubleshooting: Something's broken, need to fix it quickly
+#   exploringEvaluating  - Is evaluating this tool against others: Trying to understand if this fits their needs
+readerKnowledgeLevel: completeBeginners
+
+# Documentation Depth: How comprehensive should the documentation be?
+# Available options (uncomment and modify as needed):
+#   essentialOnly      - Essential only: Cover the 80% use cases, keep it concise
+#   balancedCoverage   - Balanced coverage: Good depth with practical examples [RECOMMENDED]
+#   comprehensive      - Comprehensive: Cover all features, edge cases, and advanced scenarios
+#   aiDecide           - Let AI decide: Analyze code complexity and suggest appropriate depth
+documentationDepth: balancedCoverage
+
+# Custom Rules: Define specific documentation generation rules and requirements
+rules: "Generate documentation for the following packages that developers can use to integrate with the Media Kit:
+  - @blocklet/uploader: The frontend component that allows you to upload files to the Media Kit,
+  - @blocklet/uploader-server: This backend middleware used to integrate upload logic with the Media Kit.
+  Must contain detailed usage examples for each package."
+
+# Target Audience: Describe your specific target audience and their characteristics
+targetAudience: ""
+
+# Glossary: Define project-specific terms and definitions
+# glossary: "@glossary.md"  # Path to markdown file containing glossary definitions
+
+locale: en
+# translateLanguages:  # List of languages to translate the documentation to
+#   - zh  # Example: Chinese translation
+#   - en  # Example: English translation
+docsDir: .aigne/doc-smith/docs  # Directory to save generated documentation
+sourcesPath:  # Source code paths to analyze
+  - ./packages/uploader/src
+  - ./packages/uploader/README.md
+  - ./packages/uploader/package.json
+  - ./packages/uploader-server/src
+  - ./packages/uploader-server/README.md
+  - ./packages/uploader-server/package.json
+
+boardId: media-kit
+lastGitHead: 99a765535a3777abb055c6564df6802bdc792513
+appUrl: https://docsmith.aigne.io

@@ -1,153 +1,92 @@
-# Getting Started with Create Blocklet
+# Media Kit - Own Your Digital Assets
 
-This project was bootstrapped with [Create Blocklet](https://github.com/blocklet/create-blocklet).
+**The complete media management solution that saves you $100s monthly while giving you total control over your files.**
 
-This blocklet is a dapp project, which means this is a full-stack application. It's contained both `server` and `client` code.
+Stop paying recurring fees to Big Tech. Media Kit transforms how you store, organize, and deliver media - all on your own infrastructure with enterprise-grade features that rival industry leaders.
 
-## File Structure
+_✨ Works seamlessly with [Pages Kit](https://store.blocklet.dev/blocklets/z8iZiDFg3vkkrPwsiba1TLXy3H9XHzFERsP8o) on the Blocklet Platform_
 
-- public/ - static files
-  - favicon.ico - favicon
-  - favicon.svg - favicon
-  - index.html - main html file, template for react
-- screenshots/ - Screenshots
-- api/ - Api side code
-  - hooks/ - blocklet lifecycle hooks
-  - libs/ - Api side libraries
-  - middlewares/ - Api side middlewares
-  - routes/ - Api side routes
-  - index.js - Api side entry point
-- src/ - Client side code (A standard react app structure)
-- .env - Environment variables
-- .env.local - Local environment variables
-- .eslintrc.js - ESLint configuration
-- .gitignore - Git ignore file
-- .prettierrc - Prettier configuration
-- blocklet.md - Blocklet README
-- blocklet.yml - Blocklet configuration
-- LICENSE - License file
-- logo.png - Blocklet logo file
-- Makefile - Makefile
-- package.json - Npm package file
-- README.md - A guide for this blocklet
-- version - Version file
+---
 
-## Development
+## 🚀 Why 10,000+ Users Choose Media Kit
 
-1. Make sure you have [@blocklet/cli](https://www.npmjs.com/package/@blocklet/cli) installed
+### **💰 Massive Cost Savings**
 
-   Blocklet needs blocklet server as a dependency. So you need to install it first.  
-   `npm install -g @blocklet/cli`  
-   See details in [https://docs.arcblock.io/abtnode/en/introduction/abtnode-setup#use-the-binary-distribution](https://docs.arcblock.io/abtnode/en/introduction/abtnode-setup#use-the-binary-distribution)
+Replace expensive subscriptions ($50-500/month) with a one-time setup. No usage limits, no surprise bills.
 
-2. Init blocklet server & start blocklet server
+### **🔒 Complete Data Ownership**
 
-   Before starting an blocklet server, you need to init blocklet server.  
-   `blocklet server init --mode=debug`  
-   `blocklet server start`  
-   See details in [https://docs.arcblock.io/abtnode/en/introduction/abtnode-setup#configure-abt-node](https://docs.arcblock.io/abtnode/en/introduction/abtnode-setup#configure-abt-node)
+Your media stays on YOUR servers. No vendor lock-in, no privacy concerns, no platform risks.
 
-3. Go to the project directory `cd [name]`
-4. Install dependencies: `pnpm install`
-5. Start development server: `blocklet dev`
+### **⚡ Enterprise Performance**
 
-## Bundle
+Optional CDN support delivers your content faster than major cloud providers - without the enterprise price tag.
 
-After developing a blocklet, you may need to bundle it. Use `npm run bundle` command.
+---
 
-## Deploy
+## ✨ What Makes Media Kit Special
 
-- If you want to deploy this blocklet to local blocklet server, you can use `blocklet deploy .blocklet/bundle` command(Make sure the blocklet is bundled before deployment).
-  > Or you can simply use `npm run deploy` command.
-- If you want to deploy this blocklet to remote blocklet server, you can use the command below.
+### 📁 **Intelligent Organization**
 
-  ```shell
-  blocklet deploy .blocklet/bundle --endpoint {your blocklet server url} --access-key {blocklet server access key} --access-secret {blocklet server access secret}
-  ```
+- **Smart Folders & Tags**: Find any file in seconds with powerful search
+- **One-Click Upload**: Drag, drop, paste, or import from Unsplash stock library
+- **Universal Format Support**: Images, videos, PDFs, documents - handle everything
+- **Auto-Deduplication**: Never store the same file twice
 
-  > Make sure the blocklet is bundled before deployment.
+### 🌍 **Professional Delivery**
 
-## Upload to blocklet store
+- **Smart Optimization**: Perfect quality, minimal file sizes automatically
+- **Flexible Sharing**: Public URLs, private access, or team collaboration
+- **Mobile Perfect**: Flawless experience across all devices
+- **Global CDN Ready**: Lightning-fast worldwide content delivery
 
-- If you want to upload the blocklet to any store for other users to download and use, you can following the following instructions.
+### 🛡️ **Bank-Level Security**
 
-  Bump version at first.
+- **Privacy First**: Automatic metadata removal protects your privacy
+- **Team Access Control**: Precise permissions for every user role
+- **Built-in Protection**: Advanced security against modern threats
+- **Your Data, Your Rules**: Complete sovereignty over your digital assets
 
-  ```shell
-  make bump-version
-  ```
+### 🔧 **Developer Friendly**
 
-  Then config blocklet store url.
-  You can use those store url in below.
+- **Full API Access**: Integrate with any website or application
+- **Bulk Operations**: Manage thousands of files efficiently
+- **AI-Powered**: Built-in DALL-E image generation capabilities
+- **Team Workflows**: Purpose-built for creative and marketing teams
 
-  1. [https://store.blocklet.dev/](https://store.blocklet.dev/)
-  2. [https://dev.store.blocklet.dev/](https://dev.store.blocklet.dev/)
-  3. A blocklet store started by yourself.
-     > Make sure you have installed a `blocklet store` on your own blocklet server. Check it on here: [https://store.blocklet.dev/blocklet/z8ia29UsENBg6tLZUKi2HABj38Cw1LmHZocbQ](https://store.blocklet.dev/blocklet/z8ia29UsENBg6tLZUKi2HABj38Cw1LmHZocbQ)
+---
 
-  ```shell
-  blocklet config set store {store url}
-  ```
+## 🎯 Perfect For Every Use Case
 
-  Get a `accessToken` by using this command.
+| **Role**                | **Replace**                 | **Save Monthly** |
+| ----------------------- | --------------------------- | ---------------- |
+| 📸 **Content Creators** | Dropbox, Google Drive       | $15-50           |
+| 🏢 **Small Businesses** | Cloudinary, AWS S3          | $50-200          |
+| 👩‍💻 **Web Developers**   | ImageKit, Uploadcare        | $30-100          |
+| 📈 **Marketing Teams**  | Adobe Creative Cloud Assets | $100-500         |
+| 🚀 **Growing Startups** | Multiple SaaS tools         | $200-1000        |
 
-  > Why we need a `accessToken`?  
-  > A `accessToken` is genrate by blocklet store, which help us upload our blocklet to any store.
+---
 
-  Set `accessToken` to blocklet config
+## 🚀 Launch in 60 Seconds
 
-  ```shell
-  blocklet config set accessToken {accessToken}
-  ```
+**No credit card. No monthly fees. No vendor lock-in.**
 
-  Upload a new version to a store.
+1. **Click "Launch"** → Instant deployment on Blocklet Platform
+2. **Upload your first file** → Drag, drop, done
 
-  > Make sure the blocklet is bundled before upload.
+### **🎉 What You Get Instantly:**
 
-  ```shell
-  blocklet upload
-  ```
+- ✅ Unlimited file storage (your infrastructure limits)
+- ✅ Advanced organization tools
+- ✅ Enterprise security features
+- ✅ Full API access for developers
+- ✅ Team collaboration tools
 
-  Or you can simply use `npm run upload` command.
+---
 
-- You also can upload a new version to a store by Github CI.  
-  Bump version at first.
+**Ready to save $100s and own your digital assets?**
 
-  ```shell
-  make bump-version
-  ```
+**[🚀 Launch Media Kit Now - Free Setup]**
 
-  Push your code to Github main/master branch, or make a pull request to the main/master branch.  
-  The CI workflow will automatically upload a new version to a store.
-
-## Q & A
-
-1. Q: How to change a blocklet's name?
-
-   A: Change the `name` field in the `package.json` file, change the `name` field in the `blocklet.yml` file.
-
-   You can also change the `title` field and `description` field in the `blocklet.yml` file.
-
-   Run `blocklet meta` command, you will get a `did` config, copy the `did` value.
-
-   Replace this command `"bundle:client": "PUBLIC_URL='/.blocklet/proxy/{did}' npm run build",` in `package.json`
-
-   Replace `did` field in the `blocklet.yml`
-
-2. Q: How to change a blocklet's logo?
-
-   Change the `logo.png` file root folder.
-
-   Or you can change the `logo` field in the `blocklet.yml` file.
-
-   > Make sure you have added the logo path to the `blocklet.yml` file `files` field.
-
-## Learn More
-
-- Full specification of `blocklet.yml`: [https://github.com/blocklet/blocklet-specification/blob/main/docs/meta.md](https://github.com/blocklet/blocklet-specification/blob/main/docs/meta.md)
-- Full document of Blocklet Server & blocklet development: [https://docs.arcblock.io/abtnode/en/introduction](https://docs.arcblock.io/abtnode/en/introduction)
-
-## License
-
-The code is licensed under the Apache 2.0 license found in the
-[LICENSE](LICENSE) file.
+_Join thousands of creators, developers, and businesses who've already made the switch to true digital independence._

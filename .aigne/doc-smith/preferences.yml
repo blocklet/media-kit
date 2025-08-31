@@ -1,0 +1,9 @@
+rules:
+  - id: pref_470a15166dcd0b89
+    active: true
+    scope: document
+    rule: Ensure it is clear that `@blocklet/uploader` does not depend on `@blocklet/uploader-server`, and that
+      `@blocklet/server-uploader` is used for customized upload handling logic.
+    feedback: The @blocklet/uploader does not rely on @blocklet/uploader-server to work,
+      the   @blocklet/server-uploader   is used   when  user need customized upload handling logic
+    createdAt: 2025-08-31T07:50:46.297Z
