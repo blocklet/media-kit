@@ -1,3 +1,7 @@
+## 0.13.20 (September 02, 2025)
+
+- chore: update deps
+
 ## 0.13.19 (August 28, 2025)
 
 - chore: update pacakge
