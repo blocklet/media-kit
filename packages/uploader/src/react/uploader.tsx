@@ -137,7 +137,7 @@ const getPluginList = (props: any) => {
     // with AI Kit
     getMediaKitComponent() &&
       // @ts-ignore
-      window?.blocklet?.preferences?.useAiImage && {
+      (window?.blocklet?.preferences?.useAiImage || availablePluginMap.AIImage) && {
         id: 'AIImage',
         plugin: AIImage,
         options: {
