@@ -1,3 +1,39 @@
+## 0.13.20 (September 02, 2025)
+
+- chore: update deps
+
+## 0.13.19 (August 28, 2025)
+
+- chore: update pacakge
+
+## 0.13.18 (August 28, 2025)
+
+- chore: external @aigne/sqlite for bundle
+
+## 0.13.17 (August 28, 2025)
+
+- chore: use aigne hub image instead of call api
+
+## 0.13.16 (August 27, 2025)
+
+- chore: update deps
+
+## 0.13.15 (August 16, 2025)
+
+- chore: remove useless code
+
+## 0.13.14 (August 15, 2025)
+
+- chore: polish checkTrustedReferer logic
+
+## 0.13.13 (August 09, 2025)
+
+- chore: bump deps to latest
+
+## 0.13.12 (August 08, 2025)
+
+- chore: bump deps to latest
+
 ## 0.13.11 (August 01, 2025)
 
 - chore: update deps

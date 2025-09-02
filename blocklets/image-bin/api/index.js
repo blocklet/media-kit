@@ -27,6 +27,8 @@ const logger = require('./libs/logger');
 const env = require('./libs/env');
 const resources = require('./routes/resources');
 
+const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';
+
 if (fs.existsSync(env.uploadDir) === false) {
   fs.mkdirSync(env.uploadDir, { recursive: true });
 }
@@ -128,7 +130,6 @@ const router = express.Router();
 router.use('/api', resources.router);
 router.use('/api', require('./routes/upload'));
 
-const isProduction = process.env.NODE_ENV === 'production' || process.env.ABT_NODE_SERVICE_ENV === 'production';
 app.use(cors());
 app.use(router);
 

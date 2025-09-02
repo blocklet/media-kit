@@ -65,10 +65,6 @@ export function getDownloadUrl(src: string) {
   return url.href;
 }
 
-export const getAIKitComponent = () =>
-  // @ts-ignore
-  window?.blocklet?.componentMountPoints?.find((item: any) => item.did === 'z8ia3xzq2tMq8CRHfaXj1BTYJyYnEcHbqP8cJ');
-
 export const getMediaKitComponent = () =>
   // @ts-ignore
   window?.blocklet?.componentMountPoints?.find((item: any) => item.did === 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9');

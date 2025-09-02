@@ -1,3 +1,19 @@
+## 0.2.7 (August 16, 2025)
+
+- chore: remove useless code
+
+## 0.2.6 (August 15, 2025)
+
+- chore: polish checkTrustedReferer logic
+
+## 0.2.5 (August 09, 2025)
+
+- chore: bump deps to latest
+
+## 0.2.4 (August 08, 2025)
+
+- chore: bump deps to latest
+
 ## 0.2.3 (August 01, 2025)
 
 - chore: update deps

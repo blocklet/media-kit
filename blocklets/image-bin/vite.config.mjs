@@ -31,7 +31,7 @@ export default defineConfig(({ mode }) => {
         //
         '@blocklet/ui-react',
         '@arcblock/ux',
-        '@arcblock/did-connect',
+        '@arcblock/did-connect-react',
         '@mui/material',
         // '@mui/utils',
         '@mui/icons-material',

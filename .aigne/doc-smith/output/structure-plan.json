@@ -1,0 +1,248 @@
+[
+  {
+    "title": "Overview",
+    "description": "Get a high-level understanding of the uploader packages, their key features, and how they work together to provide a complete file upload solution.",
+    "path": "/overview",
+    "parentId": null,
+    "sourceIds": [
+      "packages/uploader/README.md",
+      "packages/uploader-server/README.md",
+      "packages/uploader/src/index.ts"
+    ]
+  },
+  {
+    "title": "Getting Started",
+    "description": "Follow these guides to quickly set up both the frontend uploader component and the backend server middleware in your blocklet.",
+    "path": "/getting-started",
+    "parentId": null,
+    "sourceIds": [
+      "packages/uploader/README.md",
+      "packages/uploader-server/README.md"
+    ]
+  },
+  {
+    "title": "Frontend Setup (@blocklet/uploader)",
+    "description": "A step-by-step guide to installing and rendering the basic frontend uploader component in your React application.",
+    "path": "/getting-started/frontend-setup",
+    "parentId": "/getting-started",
+    "sourceIds": [
+      "packages/uploader/README.md",
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/react/uploader-provider.tsx"
+    ]
+  },
+  {
+    "title": "Backend Setup (@blocklet/uploader-server)",
+    "description": "Learn how to install and configure the necessary backend middleware in your Express-based blocklet to handle file uploads.",
+    "path": "/getting-started/backend-setup",
+    "parentId": "/getting-started",
+    "sourceIds": [
+      "packages/uploader-server/README.md",
+      "packages/uploader-server/src/middlewares/local-storage.ts",
+      "packages/uploader-server/src/utils.ts"
+    ]
+  },
+  {
+    "title": "Guides",
+    "description": "Practical, task-oriented guides to help you implement common features and customizations for the uploader.",
+    "path": "/guides",
+    "parentId": null,
+    "sourceIds": [
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/types.ts",
+      "packages/uploader-server/README.md"
+    ]
+  },
+  {
+    "title": "Configuring Plugins",
+    "description": "Learn how to enable, disable, and pass custom options to Uppy plugins like the Image Editor, Webcam, and URL importer.",
+    "path": "/guides/configuring-plugins",
+    "parentId": "/guides",
+    "sourceIds": [
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/types.ts"
+    ]
+  },
+  {
+    "title": "Handling Uploads",
+    "description": "Implement callbacks on both the frontend and backend to process files after a successful upload and access their metadata.",
+    "path": "/guides/handling-uploads",
+    "parentId": "/guides",
+    "sourceIds": [
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/types.ts",
+      "packages/uploader-server/README.md",
+      "packages/uploader-server/src/middlewares/local-storage.ts"
+    ]
+  },
+  {
+    "title": "Integrating Remote Sources (Companion)",
+    "description": "Set up the Companion middleware on your backend to allow users to import files from remote sources like Unsplash and direct URLs.",
+    "path": "/guides/remote-sources",
+    "parentId": "/guides",
+    "sourceIds": [
+      "packages/uploader-server/README.md",
+      "packages/uploader-server/src/middlewares/companion.ts",
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/types.ts"
+    ]
+  },
+  {
+    "title": "Creating a Custom Plugin",
+    "description": "Extend the Uploader's functionality by creating your own custom plugin tab using the provided VirtualPlugin component.",
+    "path": "/guides/custom-plugin",
+    "parentId": "/guides",
+    "sourceIds": [
+      "packages/uploader/src/react/plugins/virtual-plugin.jsx",
+      "packages/uploader/src/types.ts"
+    ]
+  },
+  {
+    "title": "API Reference",
+    "description": "Detailed documentation on all available components, functions, props, and options for both frontend and backend packages.",
+    "path": "/api-reference",
+    "parentId": null,
+    "sourceIds": [
+      "packages/uploader/package.json",
+      "packages/uploader-server/package.json"
+    ]
+  },
+  {
+    "title": "Frontend: @blocklet/uploader",
+    "description": "A deep dive into the props, components, and hooks available in the frontend uploader package.",
+    "path": "/api-reference/uploader",
+    "parentId": "/api-reference",
+    "sourceIds": [
+      "packages/uploader/src/types.ts",
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/react/uploader-provider.tsx"
+    ]
+  },
+  {
+    "title": "<Uploader /> Component Props",
+    "description": "Explore the full range of props available for the Uploader component, including core settings, dashboard options, and plugin configurations.",
+    "path": "/api-reference/uploader/component-props",
+    "parentId": "/api-reference/uploader",
+    "sourceIds": [
+      "packages/uploader/src/types.ts",
+      "packages/uploader/src/react/uploader.tsx"
+    ]
+  },
+  {
+    "title": "<UploaderProvider /> and Hooks",
+    "description": "Learn how to use the UploaderProvider, UploaderTrigger, and useUploaderContext hook for programmatically controlling the uploader.",
+    "path": "/api-reference/uploader/provider-hooks",
+    "parentId": "/api-reference/uploader",
+    "sourceIds": [
+      "packages/uploader/src/react/uploader-provider.tsx"
+    ]
+  },
+  {
+    "title": "Available Plugins",
+    "description": "Reference for the custom-built plugins like AI Image generation, Uploaded files, and Resources.",
+    "path": "/api-reference/uploader/plugins",
+    "parentId": "/api-reference/uploader",
+    "sourceIds": [
+      "packages/uploader/src/react/plugins/uploaded.jsx",
+      "packages/uploader/src/react/plugins/resources.jsx",
+      "packages/uploader/src/react/plugins/ai-image/index.jsx",
+      "packages/uploader/src/react/plugins/ai-image/show-panel/index.tsx",
+      "packages/uploader/src/react/plugins/prepare-upload.jsx",
+      "packages/uploader/src/react/plugins/virtual-plugin.jsx",
+      "packages/uploader/src/react/plugins/safari-paste.jsx"
+    ]
+  },
+  {
+    "title": "Backend: @blocklet/uploader-server",
+    "description": "Reference for all server-side middleware functions used to handle file storage, remote sources, and resource serving.",
+    "path": "/api-reference/uploader-server",
+    "parentId": "/api-reference",
+    "sourceIds": [
+      "packages/uploader-server/README.md",
+      "packages/uploader-server/src/index.ts",
+      "packages/uploader-server/src/middlewares.ts"
+    ]
+  },
+  {
+    "title": "initLocalStorageServer(options)",
+    "description": "Detailed API for the local storage middleware, including all configuration options for handling direct file uploads.",
+    "path": "/api-reference/uploader-server/local-storage",
+    "parentId": "/api-reference/uploader-server",
+    "sourceIds": [
+      "packages/uploader-server/README.md",
+      "packages/uploader-server/src/middlewares/local-storage.ts",
+      "packages/uploader-server/src/utils.ts"
+    ]
+  },
+  {
+    "title": "initCompanion(options)",
+    "description": "API reference for the Companion middleware, detailing options for connecting to remote file sources.",
+    "path": "/api-reference/uploader-server/companion",
+    "parentId": "/api-reference/uploader-server",
+    "sourceIds": [
+      "packages/uploader-server/README.md",
+      "packages/uploader-server/src/middlewares/companion.ts"
+    ]
+  },
+  {
+    "title": "initStaticResourceMiddleware(options)",
+    "description": "Learn how to use this middleware to serve static assets from other installed blocklets.",
+    "path": "/api-reference/uploader-server/static-resource",
+    "parentId": "/api-reference/uploader-server",
+    "sourceIds": [
+      "packages/uploader-server/src/middlewares/static-resource.ts"
+    ]
+  },
+  {
+    "title": "initDynamicResourceMiddleware(options)",
+    "description": "API reference for serving dynamic resources from specified directories with support for real-time file watching.",
+    "path": "/api-reference/uploader-server/dynamic-resource",
+    "parentId": "/api-reference/uploader-server",
+    "sourceIds": [
+      "packages/uploader-server/src/middlewares/dynamic-resource.ts"
+    ]
+  },
+  {
+    "title": "Concepts",
+    "description": "Understand the core concepts and integrations that power the @blocklet/uploader packages.",
+    "path": "/concepts",
+    "parentId": null,
+    "sourceIds": [
+      "packages/uploader/README.md",
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/utils.ts"
+    ]
+  },
+  {
+    "title": "Integration with Uppy",
+    "description": "Learn how @blocklet/uploader is built on top of the Uppy ecosystem and where to find more advanced Uppy documentation.",
+    "path": "/concepts/uppy-integration",
+    "parentId": "/concepts",
+    "sourceIds": [
+      "packages/uploader/README.md",
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/package.json"
+    ]
+  },
+  {
+    "title": "Integration with Media Kit",
+    "description": "Understand how the uploader automatically detects and configures itself when a Media Kit blocklet is present.",
+    "path": "/concepts/media-kit-integration",
+    "parentId": "/concepts",
+    "sourceIds": [
+      "packages/uploader/src/react/uploader.tsx",
+      "packages/uploader/src/utils.ts",
+      "packages/uploader/src/react/constants.ts"
+    ]
+  },
+  {
+    "title": "Internationalization (i18n)",
+    "description": "Discover how to customize text and support multiple languages in the uploader interface using the `locale` prop.",
+    "path": "/concepts/i18n",
+    "parentId": "/concepts",
+    "sourceIds": [
+      "packages/uploader/src/react/i18n.ts",
+      "packages/uploader/src/types.ts"
+    ]
+  }
+]
