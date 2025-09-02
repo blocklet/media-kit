@@ -59,10 +59,10 @@
     "axios": "^1.7.8"
   },
   "dependencies": {
-    "@abtnode/cron": "^1.16.48",
-    "@blocklet/constant": "^1.16.48",
-    "@blocklet/logger": "^1.16.48",
-    "@blocklet/sdk": "^1.16.48",
+    "@abtnode/cron": "^1.16.50-beta-20250902-043619-201bcaed",
+    "@blocklet/constant": "^1.16.50-beta-20250902-043619-201bcaed",
+    "@blocklet/logger": "^1.16.50-beta-20250902-043619-201bcaed",
+    "@blocklet/sdk": "^1.16.50-beta-20250902-043619-201bcaed",
     "@tus/file-store": "1.0.0",
     "@tus/server": "1.0.0",
     "@uppy/companion": "4.15.1",
