@@ -1,3 +1,7 @@
+## 0.13.21 (September 02, 2025)
+
+- fix: support ai image for other blocklet
+
 ## 0.13.20 (September 02, 2025)
 
 - chore: update deps
