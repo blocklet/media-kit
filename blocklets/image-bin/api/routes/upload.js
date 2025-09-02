@@ -6,7 +6,6 @@ const pick = require('lodash/pick');
 const middleware = require('@blocklet/sdk/lib/middlewares');
 const config = require('@blocklet/sdk/lib/config');
 const mime = require('mime-types');
-const Component = require('@blocklet/sdk/lib/component');
 
 const { LRUCache } = require('lru-cache');
 const { isValid: isValidDID } = require('@arcblock/did');
