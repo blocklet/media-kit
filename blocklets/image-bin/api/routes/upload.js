@@ -642,19 +642,6 @@ router.get('/uploader/status', async (req, res) => {
     Resources: false,
   };
 
-  const AIKit = config.components?.find((item) => item.did === 'z8ia3xzq2tMq8CRHfaXj1BTYJyYnEcHbqP8cJ');
-
-  if (AIKit) {
-    // can use AIImage
-    await Component.call({ name: 'ai-kit', path: '/api/v1/sdk/status', method: 'GET', data: {} })
-      .then(({ data }) => {
-        availablePluginMap.AIImage = data.available;
-      })
-      .catch(() => {
-        // do nothing
-      });
-  }
-
   // can use Unsplash
   if (config.env.UNSPLASH_KEY && config.env.UNSPLASH_SECRET) {
     availablePluginMap.Unsplash = true;
@@ -682,7 +669,10 @@ router.get('/uploader/status', async (req, res) => {
 
   const defaultExtsInput = '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico';
 
-  const { types, maxUploadSize } = config.env.preferences || {};
+  const { types, maxUploadSize, useAiImage, supportModels } = config.env.preferences || {};
+  if (useAiImage) {
+    availablePluginMap.AIImage = true;
+  }
 
   let { extsInput } = config.env.preferences || {};
 
@@ -718,6 +708,8 @@ router.get('/uploader/status', async (req, res) => {
     preferences: {
       extsInput,
       maxUploadSize,
+      supportModels,
+      useAiImage,
     },
     restrictions,
   };
