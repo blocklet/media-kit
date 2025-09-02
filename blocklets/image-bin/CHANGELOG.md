@@ -1,3 +1,7 @@
+## 0.13.22 (September 02, 2025)
+
+- chore: update version
+
 ## 0.13.21 (September 02, 2025)
 
 - fix: support ai image for other blocklet
