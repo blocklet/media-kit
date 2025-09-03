@@ -1,6 +1,6 @@
 ## 0.2.9 (September 03, 2025)
 
-- fix: use select replace radio
+- fix: replace radio buttons with select dropdown for model selection
 
 ## 0.2.8 (September 02, 2025)
 

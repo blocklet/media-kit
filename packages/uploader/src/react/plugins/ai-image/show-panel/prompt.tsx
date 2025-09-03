@@ -39,6 +39,14 @@ const map = {
   'xai': xai,
 };
 
+const logoStyles = {
+  width: 16,
+  height: 16,
+  borderRadius: '2px',
+  objectFit: 'contain' as const,
+  backgroundColor: 'transparent'
+};
+
 export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImagePromptProps) => void, models: {model:string, provider:string}[] }) {
   const { loading, i18n } = useAIImageContext();
 
@@ -124,18 +132,12 @@ export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImage
                 
                 return (
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Box 
+                    {map[selectedModel.provider as keyof typeof map] && <Box
                       component="img"
-                      src={map[selectedModel.provider as keyof typeof map]} 
-                      alt={selectedModel.provider} 
-                      style={{ 
-                        width: 16, 
-                        height: 16, 
-                        borderRadius: '2px',
-                        objectFit: 'contain',
-                        backgroundColor: 'transparent',
-                      }} 
-                    />
+                      src={map[selectedModel.provider as keyof typeof map]}
+                      alt={selectedModel.provider}
+                      style={logoStyles}
+                    />}
                     <Typography variant="body2">
                       {selectedModel.model}
                     </Typography>
@@ -146,18 +148,12 @@ export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImage
               {models.map((item) => (
                 <MenuItem key={`${item.provider}/${item.model}`} value={`${item.provider}/${item.model}`}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
-                    <Box 
+                    {map[item.provider as keyof typeof map] && <Box
                       component="img"
-                      src={map[item.provider as keyof typeof map]} 
-                      alt={item.provider} 
-                      style={{ 
-                        width: 16, 
-                        height: 16, 
-                        borderRadius: '2px',
-                        objectFit: 'contain',
-                        backgroundColor: 'transparent',
-                      }} 
-                    />
+                      src={map[item.provider as keyof typeof map]}
+                      alt={item.provider}
+                      style={logoStyles}
+                    />}
                     <Typography variant="body2" sx={{ flex: 1 }}>
                       {item.model}
                     </Typography>
