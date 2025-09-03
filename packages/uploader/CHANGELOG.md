@@ -1,3 +1,7 @@
+## 0.2.9 (September 03, 2025)
+
+- fix: use select replace radio
+
 ## 0.2.8 (September 02, 2025)
 
 - chore: update version
