@@ -6,11 +6,38 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
 import { useMemo } from 'react';
 
 import { useAIImageContext, AIImagePromptProps } from './context';
-import { FormControlLabel, Radio, RadioGroup } from '@mui/material';
+import { Select, MenuItem, FormControl } from '@mui/material';
+
+import anthropic from '../../logo/anthropic.png?url';
+import bedrock from '../../logo/bedrock.png?url';
+import deepseek from '../../logo/deepseek.png?url';
+import doubao from '../../logo/doubao.png?url';
+import gemini from '../../logo/gemini.png?url';
+import google from '../../logo/google.png?url';
+import ideogram from '../../logo/ideogram.png?url';
+import ollama from '../../logo/ollama.png?url';
+import openai from '../../logo/openai.png?url';
+import openrouter from '../../logo/openrouter.png?url';
+import poe from '../../logo/poe.png?url';
+import xai from '../../logo/xai.png?url';
+
+const map = {
+  'anthropic': anthropic,
+  'bedrock': bedrock,
+  'deepseek': deepseek,
+  'doubao': doubao,
+  'gemini': gemini,
+  'google': google,
+  'ideogram': ideogram,
+  'ollama': ollama,
+  'openai': openai,
+  'openrouter': openrouter,
+  'poe': poe,
+  'xai': xai,
+};
 
 export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImagePromptProps) => void, models: {model:string, provider:string}[] }) {
   const { loading, i18n } = useAIImageContext();
@@ -40,7 +67,7 @@ export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImage
   return (
     <Root onSubmit={(e: any) => e.preventDefault()}>
       <Box sx={{ flex: 1, height: '100%', overflow: 'hidden', flexDirection: 'column',display:'flex', mt:2, gap:2}}>
-        <Box sx={{ mx:2 }}>
+        <Box sx={{ mx:2, display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography
             gutterBottom
             className="title label"
@@ -51,7 +78,7 @@ export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImage
           </Typography>
 
           <TextField
-            sx={{ width: 1, mt: 1 }}
+            sx={{ width: 1 }}
             size="small"
             type="text"
             required
@@ -70,7 +97,7 @@ export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImage
           />
         </Box>
 
-        <Box sx={{ px:2, overflow: 'auto' }}>
+        <Box sx={{ px:2, display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Typography
             gutterBottom
             className="title label"
@@ -80,24 +107,65 @@ export default function Prompt({ onSubmit, models }: { onSubmit: (value: AIImage
             {`${i18n('aiImageModel')}`}
           </Typography>
 
-          <RadioGroup
-            sx={{ '.MuiFormControlLabel-label': { fontSize: '12px', color: 'text.primary' } }}
-            value={values.model}
-            onChange={(e) => {
-              values.number = 1;
-              values.model = e.target.value as any;
-            }}>
-            {models.map((item) => {
-              return (
-                <FormControlLabel
-                  value={`${item.provider}/${item.model}`}
-                  control={<Radio size="small" />}
-                  key={`${item.provider}/${item.model}`}
-                  label={`${item.model}`}
-                />
-              );
-            })}
-          </RadioGroup>
+          <FormControl fullWidth size="small">
+            <Select
+              sx={{ width: 1 }}
+              value={values.model}
+              onChange={(e) => {
+                values.number = 1;
+                values.model = e.target.value;
+              }}
+              MenuProps={{
+                disablePortal: true,
+              }}
+              renderValue={(selected) => {
+                const selectedModel = models.find(item => `${item.provider}/${item.model}` === selected);
+                if (!selectedModel) return selected;
+                
+                return (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box 
+                      component="img"
+                      src={map[selectedModel.provider as keyof typeof map]} 
+                      alt={selectedModel.provider} 
+                      style={{ 
+                        width: 16, 
+                        height: 16, 
+                        borderRadius: '2px',
+                        objectFit: 'contain',
+                        backgroundColor: 'transparent',
+                      }} 
+                    />
+                    <Typography variant="body2">
+                      {selectedModel.model}
+                    </Typography>
+                  </Box>
+                );
+              }}
+            >
+              {models.map((item) => (
+                <MenuItem key={`${item.provider}/${item.model}`} value={`${item.provider}/${item.model}`}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                    <Box 
+                      component="img"
+                      src={map[item.provider as keyof typeof map]} 
+                      alt={item.provider} 
+                      style={{ 
+                        width: 16, 
+                        height: 16, 
+                        borderRadius: '2px',
+                        objectFit: 'contain',
+                        backgroundColor: 'transparent',
+                      }} 
+                    />
+                    <Typography variant="body2" sx={{ flex: 1 }}>
+                      {item.model}
+                    </Typography>
+                  </Box>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       </Box>
       <Button
