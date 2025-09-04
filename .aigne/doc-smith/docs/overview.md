@@ -1,6 +1,6 @@
 # Overview
 
-The `@blocklet/uploader` ecosystem provides a file upload solution for your blocklets, built upon the robust and popular [Uppy](https://uppy.io/) file uploader. The solution is split into two distinct packages to provide clear separation between frontend and backend concerns:
+The `@blocklet/uploader` ecosystem provides a file upload solution for your blocklets, built upon the robust and popular [Uppy](https://uppy.io/) file uploader. The solution is split into two distinct packages to provide a clear separation between frontend and backend concerns:
 
 - **`@blocklet/uploader`**: This is the core frontend package. It provides a React component that handles the entire user interface for uploads. It is designed to work standalone by connecting to any Uppy-compatible backend, such as a pre-existing Media Kit blocklet.
 - **`@blocklet/uploader-server`**: This is an **optional** backend toolkit. You only need this package if you intend to build your own custom upload server with specific file-handling logic, rather than using an existing service.
@@ -33,12 +33,16 @@ direction: down
 }
 
 uploader -> "Standard Integration (Recommended)": "Upload Request" {
-  style.animated: true
+  style {
+    animated: true
+  }
 }
 
 uploader -> "Custom Backend Integration (Optional)": "Upload Request (if needed)" {
-  style.animated: true
-  style.stroke-dash: 4
+  style {
+    animated: true
+    stroke-dash: 4
+  }
 }
 
 "Custom Backend Integration (Optional)" -> uploader: "Return result (e.g., URL)"
@@ -51,7 +55,7 @@ uploader -> "Custom Backend Integration (Optional)": "Upload Request (if needed)
     A pre-built React component that provides the complete user interface for file selection, previews, and upload progress. It's designed to connect to any Uppy-compatible backend endpoint.
   </x-card>
   <x-card data-title="@blocklet/uploader-server (Backend)" data-icon="lucide:server">
-    An **optional** set of Express middleware for building a custom backend. Use this only when you need to define your own logic for file processing, saving metadata, or integrating with remote sources.
+    An optional set of Express middleware for building a custom backend. Use this only when you need to define your own logic for file processing, saving metadata, or integrating with remote sources.
   </x-card>
 </x-cards>
 

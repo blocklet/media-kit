@@ -76,4 +76,4 @@ Now that you understand how to handle remote sources, you may want to learn how 
   <x-card data-title="initDynamicResourceMiddleware(options)" data-icon="lucide:folder-sync" data-href="/api-reference/uploader-server/dynamic-resource">
     Serve dynamic resources from specified directories with support for real-time file watching.
   </x-card>
-</x-cards>.
+</x-cards>

@@ -13,25 +13,25 @@ The core of this feature is the `onShowPanel` callback. This function is trigger
 ```d2
 direction: right
 
-User: {
+"User": {
   shape: person
 }
 
-UploaderDashboard: "<Uploader /> Dashboard" {
-  MyDevice: "My Device"
-  CustomTab: "My Custom Plugin"
+"Uploader Dashboard": {
+  "My Device": "My Device"
+  "Custom Tab": "My Custom Plugin"
 }
 
-App: "Your Application" {
-  PluginConfig: "plugins prop configuration" {
-    onShowPanel: "onShowPanel callback"
+"Your Application": {
+  "Plugin Config": "plugins prop configuration" {
+    "onShowPanel": "onShowPanel callback"
   }
-  CustomComponent: "<MyCustomPanel />"
+  "Custom Component": "<MyCustomPanel />"
 }
 
-User -> UploaderDashboard.CustomTab: Clicks
-UploaderDashboard.CustomTab -> App.PluginConfig.onShowPanel: "Triggers callback with a ref"
-App.PluginConfig.onShowPanel -> App.CustomComponent: "Renders component into the panel"
+"User" -> "Uploader Dashboard.Custom Tab": Clicks
+"Uploader Dashboard.Custom Tab" -> "Your Application.Plugin Config.onShowPanel": "Triggers callback with a ref"
+"Your Application.Plugin Config.onShowPanel" -> "Your Application.Custom Component": "Renders component into the panel"
 
 ```
 

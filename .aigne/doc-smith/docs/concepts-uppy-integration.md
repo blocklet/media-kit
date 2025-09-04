@@ -39,7 +39,8 @@ direction: down
   }
 }
 
-"Core Uppy Instance (@uppy/core)" -> "Backend Server (@blocklet/uploader-server)": "Uploads via Tus protocol"
+"Core Uppy Instance (@uppy/core)" -> "Backend Server": "Uploads via Tus protocol"
+
 ```
 
 ### Key Components

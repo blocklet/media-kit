@@ -1,8 +1,62 @@
 # Backend: @blocklet/uploader-server
 
-The `@blocklet/uploader-server` package provides a collection of Express middleware functions to handle file storage, remote source integration, and resource serving for your blocklet's backend. It is designed to work seamlessly with the frontend [`@blocklet/uploader`](./api-reference-uploader.md) component.
+The `@blocklet/uploader-server` package provides a collection of Express middleware functions to handle file storage, remote source integration, and resource serving for your blocklet's backend. It is the official server-side companion for the frontend [`@blocklet/uploader`](./api-reference-uploader.md) component.
 
-This package leverages the power and flexibility of [Uppy](https://uppy.io/), a modular open-source file uploader. It simplifies backend setup by providing pre-configured middleware for common upload and file-serving scenarios.
+This package simplifies backend setup by integrating [Uppy](https://uppy.io/)'s server-side components, Companion and Tus, providing pre-configured middleware for common upload and file-serving scenarios. While the frontend `@blocklet/uploader` can work with any compatible backend, this package offers a streamlined, ready-to-use solution for developers building on the Blocklet platform.
+
+## How It Works
+
+The following diagram illustrates the interaction between the frontend uploader, the backend middleware, and storage services.
+
+```d2
+direction: down
+
+"Client Browser": {
+  shape: rectangle
+  "@blocklet/uploader (Uppy UI)": {
+    shape: package
+  }
+}
+
+"Express Server": {
+  shape: rectangle
+  grid-columns: 1
+  
+  "@blocklet/uploader-server": {
+    shape: package
+    grid-columns: 2
+
+    "localStorageServer": {
+      label: "initLocalStorageServer"
+      shape: class
+    }
+    "companion": {
+      label: "initCompanion"
+      shape: class
+    }
+  }
+}
+
+"Storage": {
+  shape: rectangle
+  grid-columns: 2
+  "Local File System": {
+    shape: cylinder
+  }
+  "Remote Sources (e.g., Unsplash)": {
+    shape: cylinder
+  }
+}
+
+"Client Browser" -> "Express Server"."@blocklet/uploader-server".localStorageServer: "Direct Upload"
+"Express Server"."@blocklet/uploader-server".localStorageServer -> "Storage"."Local File System": "Saves File"
+
+"Client Browser" -> "Express Server"."@blocklet/uploader-server".companion: "Select Remote File"
+"Express Server"."@blocklet/uploader-server".companion -> "Storage"."Remote Sources (e.g., Unsplash)": "Fetches File"
+"Storage"."Remote Sources (e.g., Unsplash)" -> "Express Server"."@blocklet/uploader-server".companion: "File Data"
+"Express Server"."@blocklet/uploader-server".companion -> "Client Browser": "Uploads to Local Server"
+```
+
 
 ## Available Middleware
 

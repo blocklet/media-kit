@@ -80,6 +80,8 @@ router.use('/uploads', localStorageServer.handle);
 export default router;
 ```
 
+## Step 3: Integrate the Route into Your App
+
 Finally, import and use this router in your main application file (e.g., `app.js`):
 
 ```javascript
@@ -90,7 +92,7 @@ import uploadRouter from './routes/upload';
 app.use('/api', uploadRouter);
 ```
 
-## Step 3: Understand the Configuration
+## Step 4: Understand the Configuration
 
 The `initLocalStorageServer` function accepts an options object to customize its behavior. Here are the key options used in the example:
 

@@ -1,6 +1,8 @@
 # Guides
 
-This section provides practical, task-oriented guides to help you implement common features and customizations. Whether you're connecting the `@blocklet/uploader` component to an existing service like the Media Kit, or you need to build a custom upload handler using `@blocklet/uploader-server`, these step-by-step tutorials will walk you through the process.
+This section provides practical, task-oriented guides to help you implement common features and customizations. These tutorials will walk you through various scenarios, whether you are using the `@blocklet/uploader` component with an existing service like the Media Kit, or building a custom upload handler with `@blocklet/uploader-server`.
+
+It's important to note that `@blocklet/uploader` is a standalone frontend component and does not require `@blocklet/uploader-server`. The server package is intended for developers who need to implement their own backend file processing and storage logic.
 
 <x-cards data-columns="2">
   <x-card data-title="Configuring Plugins" data-icon="lucide:settings-2" data-href="/guides/configuring-plugins">

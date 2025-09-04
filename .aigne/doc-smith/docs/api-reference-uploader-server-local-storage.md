@@ -75,7 +75,7 @@ The `initLocalStorageServer` function accepts an options object with the followi
 
 This is the most important callback for processing completed uploads. It's where you'll typically save file metadata to your database and return a response to the client.
 
-**Note:** By default, the middleware automatically attempts to remove EXIF data from uploaded images for privacy and security. This happens just before the `onUploadFinish` callback is invoked. If an error occurs within your `onUploadFinish` function, the partially uploaded file will be automatically deleted to prevent orphaned files.
+**Note:** By default, the middleware automatically attempts to remove EXIF data from uploaded images for privacy and security. This happens just before the `onUploadFinish` callback is invoked. If an error occurs within your `onUploadFinish` function, the uploaded file will be automatically deleted to prevent orphaned files.
 
 The `uploadMetadata` object passed to this function contains valuable information about the file:
 

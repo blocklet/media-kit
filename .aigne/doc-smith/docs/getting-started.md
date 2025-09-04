@@ -12,30 +12,33 @@ The diagram below illustrates these two integration paths.
 ```d2
 direction: down
 
-"browser.ui": "Uploader UI\n(@blocklet/uploader)" {
+"Uploader UI": {
+  label: "Uploader UI\n(@blocklet/uploader)"
   shape: package
 }
 
-"backend.standard": "Standard Service\n(e.g., Media Kit)" {
-  shape: component
+"Standard Service": {
+  label: "Standard Service\n(e.g., Media Kit)"
+  shape: rectangle
 }
 
-"backend.custom": "Custom Backend\n(@blocklet/uploader-server)" {
+"Custom Backend": {
+  label: "Custom Backend\n(@blocklet/uploader-server)"
   shape: package
   style.stroke-dash: 3
 }
 
-"storage": "Storage" {
+"Storage": {
   shape: cylinder
 }
 
-"browser.ui" -> "backend.standard": "Default Path (Recommended)"
-"browser.ui" -> "backend.custom": "Optional Path (For custom logic)" {
+"Uploader UI" -> "Standard Service": "Default Path (Recommended)"
+"Uploader UI" -> "Custom Backend": "Optional Path (For custom logic)" {
   style.stroke-dash: 3
 }
 
-"backend.standard" -> "storage"
-"backend.custom" -> "storage"
+"Standard Service" -> "Storage"
+"Custom Backend" -> "Storage"
 ```
 
 To begin, follow the guides below. All projects should start with the frontend setup.

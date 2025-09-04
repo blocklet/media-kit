@@ -1,6 +1,6 @@
 # Integration with Media Kit
 
-The `@blocklet/uploader` package is designed for seamless, zero-configuration integration with the Media Kit blocklet. When a Media Kit is installed and running alongside your blocklet, the uploader automatically detects it to provide a centralized file management system, consistent upload policies, and access to enhanced features like AI image generation.
+The `@blocklet/uploader` package is designed for seamless, zero-configuration integration with the Media Kit blocklet. When a Media Kit is installed and running alongside your blocklet, the uploader automatically detects it to provide a centralized file management system, consistent upload policies, and access to enhanced features. This integration means that in most cases, you do not need to install or configure the `@blocklet/uploader-server` package in your own blocklet, as the Media Kit handles all backend logic.
 
 ## How It Works
 
@@ -18,23 +18,23 @@ This diagram illustrates the conditional logic:
 ```d2
 direction: down
 
-Uploader: {
+"Uploader": {
   label: "Uploader Component\n(in Your Blocklet)"
   shape: package
   "1. Initialize"
 }
 
-Check: {
+"Check": {
   label: "Media Kit Detected?"
   shape: diamond
 }
 
-LocalBackend: {
+"LocalBackend": {
   label: "Local Backend\n(@blocklet/uploader-server)"
   "Handles uploads within your blocklet"
 }
 
-MediaKit: {
+"MediaKit": {
   label: "Media Kit Blocklet"
   shape: cloud
   
@@ -43,21 +43,23 @@ MediaKit: {
   "Enhanced Plugins"
 }
 
-Uploader -> Check: "Checks environment"
+"Uploader" -> "Check": "Checks environment"
 
-Check -> LocalBackend: {
+"Check" -> "LocalBackend": {
   label: "No"
   style.stroke: "#F87171"
 }
 
-Check -> MediaKit: {
+"Check" -> "MediaKit": {
   label: "Yes"
   style.stroke: "#4ADE80"
 }
 
-Uploader -> MediaKit: {
+"Uploader" -> "MediaKit": {
   label: "Redirects uploads, fetches config & assets"
-  style.stroke-dash: 2
+  style {
+    stroke-dash: 2
+  }
 }
 ```
 
@@ -67,7 +69,7 @@ When connected to a Media Kit, the uploader's capabilities are significantly exp
 
 ### Centralized Upload Handling
 
-All file uploads are proxied to the Media Kit, which acts as a central repository. The uploader automatically determines the Media Kit's mount point and configures the Tus upload endpoint (`/api/uploads`) and Companion URL (`/api/companion`) to point to it. This means you don't need to set up `@blocklet/uploader-server` in your own blocklet if a Media Kit is available for your users.
+All file uploads are proxied to the Media Kit, which acts as a central repository. The uploader automatically determines the Media Kit's mount point and configures the Tus upload endpoint (`/api/uploads`) and Companion URL (`/api/companion`) to point to it. This means you don't need to set up `@blocklet/uploader-server` in your own blocklet if a Media Kit is available.
 
 This behavior is managed internally by functions like `getMediaKitComponent` and `getUploaderEndpoint`.
 
@@ -122,11 +124,11 @@ The integration unlocks powerful plugins that connect directly to the Media Kit'
   </x-card>
 </x-cards>
 
-These plugins are conditionally rendered based on the response from the Media Kit's status endpoint, which is checked automatically.
+These plugins are conditionally enabled based on the response from the Media Kit's status endpoint.
 
 ## Disabling the Integration
 
-In scenarios where you must handle file uploads within your own blocklet's backend, you can disable the automatic integration using `apiPathProps`.
+In scenarios where you must handle file uploads within your own blocklet's backend (using `@blocklet/uploader-server`), you can disable the automatic integration using `apiPathProps`.
 
 | Prop | Type | Description |
 |---|---|---|

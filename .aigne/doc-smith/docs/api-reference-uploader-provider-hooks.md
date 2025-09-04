@@ -38,7 +38,6 @@ Context -> "React App.UploaderProvider.MyCustomComponent": "Consumes via useUplo
 }
 ```
 
-
 ## UploaderProvider
 
 The `UploaderProvider` component is a wrapper that creates an `Uploader` instance and makes it accessible to all its descendant components via React's Context API. It is the foundation for programmatically controlling the uploader.
@@ -154,3 +153,5 @@ function App() {
 }
 ```
 This example shows how to get the `uploaderRef`, access the underlying Uppy instance, and programmatically open the modal and attach an event listener.
+
+By using `UploaderProvider`, `UploaderTrigger`, and `useUploaderContext`, you can achieve fine-grained control over the uploader's behavior, seamlessly integrating it into complex application flows. To further customize the uploader's functionality, explore the [Available Plugins](./api-reference-uploader-plugins.md) that can be configured.

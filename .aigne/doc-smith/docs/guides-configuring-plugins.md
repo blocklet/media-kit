@@ -79,7 +79,7 @@ function MyUploader() {
         onSelectedFiles: (files) => {
           console.log('User selected these files:', files);
           // 'files' is an array of selected file objects.
-          // Each object contains metadata like `fileUrl`.
+          // Each object contains metadata like `fileUrl` and the Uppy file object.
           // You can now use this data, for example, to insert an image into an editor.
         },
       }}
