@@ -1,188 +1,154 @@
 # Handling Uploads
 
-Once a file is selected and the upload process begins, you often need to perform actions on both the client and server. On the frontend, you might want to update the UI with the final URL of the uploaded file. On the backend, you'll likely need to save the file's metadata to a database. This guide covers the essential callbacks for managing the upload lifecycle.
+Once a file is successfully uploaded, you often need to perform actions on both the client and server. On the frontend, you might want to update the UI with the new file's URL. On the backend, you'll almost certainly need to save the file's metadata to a database. This guide covers how to implement these post-upload callbacks.
 
-This guide will walk you through:
+This process involves distinct steps on the frontend and backend, which work together to create a complete workflow.
 
-*   Capturing upload completion events on the frontend using `@blocklet/uploader`.
-*   Processing successfully uploaded files on the backend with `@blocklet/uploader-server`.
+```d2
+direction: down
 
-## Frontend: Reacting to Uploads
+Frontend: {
+  shape: rectangle
+  Uploader-Component: {
+    label: "<Uploader />"
+    shape: package
+  }
+}
 
-The `<Uploader />` component provides several callback props that allow you to hook into different stages of the upload process. The most important one for handling a completed upload is `onUploadFinish`.
+Backend: {
+  shape: rectangle
+  Uploader-Server: {
+    label: "@blocklet/uploader-server"
+    shape: package
+  }
+  Database: {
+    shape: cylinder
+  }
+}
 
-### `onUploadFinish`
+Frontend.Uploader-Component -> Backend.Uploader-Server: "1. File uploaded"
+Backend.Uploader-Server -> Backend.Database: "2. onUploadFinish hook saves metadata"
+Backend.Uploader-Server -> Frontend.Uploader-Component: "3. Server responds with file data"
+Frontend.Uploader-Component -> Frontend.Uploader-Component: "4. onUploadFinish prop updates UI"
 
-This function is called for each file after it has been successfully uploaded and the server has processed it. It receives the final response from the server, which is ideal for getting the permanent URL of the uploaded file.
-
-**Prop Signature**
-
-```typescript
-onUploadFinish?: (result: any) => void;
 ```
 
-The `result` object contains valuable information, including the file object and the server's response.
+## Frontend: The `onUploadFinish` Prop
 
-| Key         | Type     | Description                                                                 |
-|-------------|----------|-----------------------------------------------------------------------------|
-| `uploadURL` | `string` | The final, publicly accessible URL of the uploaded file.                    |
-| `file`      | `object` | The Uppy file object with details like name, type, and size.                |
-| `data`      | `object` | The JSON body returned by your backend's `onUploadFinish` handler.          |
-| `status`    | `number` | The HTTP status code of the final upload request (e.g., 200).                 |
-| `headers`   | `object` | The response headers from the server.                                       |
+The `<Uploader />` component provides an `onUploadFinish` prop, a callback function that fires on the client-side after each individual file upload is successfully completed. This is the ideal place to handle UI updates, such as closing the uploader modal or displaying the uploaded file's URL.
 
-**Example Usage**
+This callback receives a `result` object containing detailed information about the completed upload, including the response from the server.
 
-Here's how you can use `onUploadFinish` to capture the uploaded file's URL and store it in your component's state.
+**Example: Using `onUploadFinish` in a React Component**
 
 ```jsx
-import React, { useState } from 'react';
-import { Uploader } from '@blocklet/uploader/react';
+import React from 'react';
+import Uploader from '@blocklet/uploader/react';
 
-export default function MyComponent() {
-  const [uploadedFileUrl, setUploadedFileUrl] = useState('');
-
+function MyComponent() {
   const handleUploadFinish = (result) => {
-    console.log('File uploaded successfully:', result);
-    // The `data` field contains the JSON response from your server
-    if (result.status === 200 && result.data?.url) {
-      setUploadedFileUrl(result.data.url);
+    console.log('File upload finished!');
+    console.log('File details:', result.file);
+    console.log('Final URL:', result.uploadURL);
+    console.log('Server response:', result.data); // Data from your backend's onUploadFinish
+
+    // Example: Display an alert with the new file URL
+    if (result.data?.url) {
+      alert(`Upload successful! File available at: ${result.data.url}`);
     }
   };
 
   return (
-    <div>
-      <Uploader onUploadFinish={handleUploadFinish} popup />
-      {uploadedFileUrl && (
-        <div>
-          <p>Upload complete!</p>
-          <img src={uploadedFileUrl} alt="Uploaded content" width="200" />
-        </div>
-      )}
-    </div>
+    <Uploader
+      popup
+      onUploadFinish={handleUploadFinish}
+      // ... other props
+    />
   );
 }
+
+export default MyComponent;
 ```
 
-### `onChange`
+In this example, `handleUploadFinish` logs the file details and the server's response. The `result.data` field directly corresponds to the JSON object returned by your backend's `onUploadFinish` handler, connecting the client and server logic.
 
-If you need to react to files being added or removed *before* an upload starts, you can use the `onChange` prop.
+## Backend: The `onUploadFinish` Callback
 
-```typescript
-onChange?: (file: object, files: object[]) => void;
-```
+For persistent actions, you must use the `onUploadFinish` callback when initializing the server middleware. This function runs on the server after a file is fully received, making it the correct place to save file metadata to your database, associate the file with a user, or perform other critical backend tasks.
 
-This function is triggered whenever the list of files in Uppy changes. It receives the file that was just changed and an array of all current files.
+When you configure `initLocalStorageServer`, you pass your custom `onUploadFinish` function in its options.
 
-## Backend: Processing Uploads
-
-On the server, you process uploads by providing an `onUploadFinish` callback to the `initLocalStorageServer` function. This callback is the central point for integrating the upload process with your application's logic, such as saving file details to a database.
-
-### `onUploadFinish`
-
-This function is executed after a file has been completely received and stored in the specified directory. It's an `async` function where you can perform database operations and determine the final JSON response sent back to the client.
-
-**Callback Signature**
-
-```javascript
-onUploadFinish: async (req, res, uploadMetadata) => { /* ... */ }
-```
-
-The `uploadMetadata` object is the most important parameter, containing all the necessary details about the uploaded file.
-
-**`uploadMetadata` Object**
-
-| Key                      | Type     | Description                                                              |
-|--------------------------|----------|--------------------------------------------------------------------------|
-| `id`                     | `string` | The unique, hashed filename used for storage on the server.              |
-| `size`                   | `number` | The total size of the file in bytes.                                     |
-| `metadata`               | `object` | An object containing metadata sent from the client.                      |
-| `metadata.filename`      | `string` | The original name of the file.                                           |
-| `metadata.filetype`      | `string` | The MIME type of the file (e.g., `image/jpeg`).                            |
-| `runtime.absolutePath`   | `string` | The absolute file path on the server's disk.                             |
-
-**Example Implementation**
-
-In this example, after a file is uploaded, we construct its public URL, save its details to a database (using a fictional `Upload` model), and return the database document as the JSON response.
+**Example: Saving File Metadata to a Database**
 
 ```javascript
 import { initLocalStorageServer } from '@blocklet/uploader-server';
 import express from 'express';
-import joinUrl from 'url-join';
 
 // Assume `Upload` is your database model
-// import Upload from '../models/upload';
+import Upload from '../models/upload';
+
+const app = express();
 
 const localStorageServer = initLocalStorageServer({
-  path: env.uploadDir, // Directory to store files
+  path: env.uploadDir, // Your configured upload directory
   express,
   onUploadFinish: async (req, res, uploadMetadata) => {
     const {
-      id: filename, // The unique, stored filename
+      id: filename, // The unique filename on disk (e.g., hash + extension)
       size,
       metadata: { filename: originalname, filetype: mimetype },
     } = uploadMetadata;
 
     // Construct the public URL for the file
-    const obj = new URL(env.appUrl);
-    obj.pathname = joinUrl('/uploads', filename);
+    const fileUrl = new URL(env.appUrl);
+    fileUrl.pathname = `/uploads/${filename}`;
 
-    // Save file metadata to the database
+    // Save metadata to your database
     const doc = await Upload.insert({
       mimetype,
       originalname,
-      filename, // Stored filename
+      filename,
       size,
-      url: obj.href,
-      createdBy: req.user.did, // Assuming user is available on the request
+      folderId: req.componentDid, // Associate with the component
+      createdBy: req.user.did, // Associate with the logged-in user
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
 
-    // The returned object will be sent as the JSON response to the frontend.
-    // The frontend's onUploadFinish will receive this data.
-    const resData = { url: obj.href, ...doc };
-    return resData;
+    // This object will be sent as the JSON response to the frontend
+    const responseData = { url: fileUrl.href, ...doc };
+
+    return responseData;
   },
 });
 
-router.use('/uploads', user, auth, localStorageServer.handle);
+// Mount the middleware
+router.use('/uploads', localStorageServer.handle);
 ```
 
-## End-to-End Upload Flow
+### `uploadMetadata` Object
 
-The following diagram illustrates the complete interaction between the frontend and backend when a file is uploaded.
+The `uploadMetadata` object passed to the backend callback contains essential information about the uploaded file:
 
-```d2
-shape: sequence_diagram
-direction: right
+| Property | Type | Description |
+|---|---|---|
+| `id` | `string` | The unique, hashed filename stored on the server's file system. |
+| `size` | `number` | The total size of the file in bytes. |
+| `metadata.filename` | `string` | The original filename from the user's computer. |
+| `metadata.filetype` | `string` | The MIME type of the file (e.g., `image/jpeg`). |
+| `metadata.relativePath` | `string` | The relative path if a folder was uploaded. |
+| `runtime.absolutePath` | `string` | The absolute path to the file on the server. |
 
-User: "User"
-Uploader: "<Uploader /> Component"
-Server: "Backend Server"
-DB: "Database"
+By returning a JSON object from this function, you send that data directly back to the frontend's `onUploadFinish` prop, completing the upload cycle.
 
-User -> Uploader: "1. Selects a file"
-Uploader.t1 -> Uploader.t1: "onChange event fires"
-User -> Uploader: "2. Clicks 'Upload'"
-Uploader -> Server: "3. Uploads file via TUS protocol"
+---
 
-sub_process: "Backend Processing" {
-  Server.t1 -> Server.t1: "4. File saved to disk"
-  Server.t1 -> Server.t1: "5. Executes onUploadFinish callback"
-  Server.t1 -> DB: "6. Saves metadata (URL, size, etc.)"
-  DB -> Server.t1: "7. Returns saved document"
-  Server.t1 -> Uploader: "8. Sends JSON response (e.g., { url, ... })" {style.stroke: green}
-}
+With both frontend and backend handlers in place, you can build a robust upload workflow. To further enhance the uploader, you might want to allow users to import files from external services.
 
-Uploader.t2 -> Uploader.t2: "9. `onUploadFinish` prop is called with server response" {style.stroke: green}
-Uploader.t2 -> User: "10. UI is updated with final file URL"
+To learn how, proceed to the next guide.
 
-```
-
-By using the `onUploadFinish` hooks on both the client and server, you can create a robust and seamless upload experience that integrates fully with your application's data model.
-
-Now that you know how to handle direct uploads, you might want to enable users to import files from other services. Proceed to the next guide to learn how to set up remote sources.
-
-<x-card data-title="Integrating Remote Sources (Companion)" data-icon="lucide:external-link" data-href="/guides/remote-sources" data-cta="Read More">
-  Set up the Companion middleware to allow users to import files from remote sources like Unsplash and direct URLs.
-</x-card>
+<x-cards>
+  <x-card data-title="Integrating Remote Sources (Companion)" data-icon="lucide:link" data-href="/guides/remote-sources">
+    Set up Companion to let users import files from URLs and services like Unsplash.
+  </x-card>
+</x-cards>

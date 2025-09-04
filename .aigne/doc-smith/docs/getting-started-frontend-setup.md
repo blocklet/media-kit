@@ -1,142 +1,77 @@
 # Frontend Setup (@blocklet/uploader)
 
-This guide will walk you through installing and integrating the `@blocklet/uploader` React component into your application. This component provides a complete user interface for file uploading, built on the powerful [Uppy](https://uppy.io/docs/quick-start/) library. It is designed to work out-of-the-box with a Media Kit blocklet, meaning you can often get a fully functional uploader without writing any backend code.
+This guide provides a step-by-step walkthrough for installing and rendering the `@blocklet/uploader` component in your React application. This package provides a complete, Uppy-based UI for file uploads that integrates seamlessly with the Blocklet ecosystem.
 
----
+## 1. Install the Package
 
-## Step 1: Install the Package
-
-First, add the `@blocklet/uploader` package to your project. You can use your preferred package manager.
+First, add the `@blocklet/uploader` package to your project's dependencies. You can use pnpm, yarn, or npm.
 
 ```bash
-# Using pnpm
 pnpm add @blocklet/uploader
-
-# Using yarn
-yarn add @blocklet/uploader
-
-# Using npm
-npm install @blocklet/uploader
 ```
 
-## Step 2: Import Required Styles
+## 2. Import Uppy's CSS
 
-The uploader component relies on several CSS files from Uppy for its appearance. For the component to render correctly, you must import these styles into your main application file (e.g., `App.js` or `main.js`).
+The uploader component relies on the core stylesheets from Uppy for its appearance. You need to import them into your application's main entry point (e.g., `src/index.js` or `src/App.js`).
 
-```jsx
-// Import core styles and styles for the UI components + plugins you are using.
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
-import '@uppy/webcam/dist/style.min.css';
-import '@uppy/image-editor/dist/style.min.css';
-import '@uppy/drag-drop/dist/style.min.css';
-import '@uppy/drop-target/dist/style.min.css';
-import '@uppy/status-bar/dist/style.min.css';
-```
-
-## Step 3: Render the Uploader
-
-There are two primary ways to render the uploader: as a popup modal triggered by a button (recommended for most use cases) or as an inline component directly on the page.
-
-### Recommended: Using `UploaderProvider` for a Popup Modal
-
-For most applications, you'll want to trigger the uploader from a button, which then opens a modal. The recommended way to achieve this is by using the `UploaderProvider` and `UploaderTrigger` components. This approach decouples the uploader's state and modal from the button that triggers it.
-
-1.  **Wrap your application or component tree with `UploaderProvider`**. Configure it with the `popup` prop and an `onUploadFinish` callback to handle completed uploads.
-
-    ```jsx
-    // In your main App.js or a layout component
-    import { UploaderProvider } from '@blocklet/uploader';
-    
-    // Import Uppy CSS files here
-    import '@uppy/core/dist/style.min.css';
-    import '@uppy/dashboard/dist/style.min.css';
-
-    function App() {
-      return (
-        <UploaderProvider
-          popup // This is crucial for modal behavior
-          onUploadFinish={(result) => {
-            console.log('File uploaded:', result.uploadURL);
-            // You can now use the result object, e.g., save the URL to your state
-          }}
-          // The apiPathProps are often not needed when a Media Kit is installed
-          apiPathProps={{
-            uploader: '/api/uploads',
-            companion: '/api/companion',
-          }}
-        >
-          {/* The rest of your application, e.g., <MyPage /> */}
-          <MyPage />
-        </UploaderProvider>
-      );
-    }
-    ```
-
-2.  **Use `UploaderTrigger` anywhere inside the provider** to create an element that opens the uploader modal when clicked.
-
-    ```jsx
-    // In any child component, like MyPage.js
-    import { UploaderTrigger } from '@blocklet/uploader';
-    
-    function MyPage() {
-      return (
-        <div>
-          <p>Click the button to upload a file.</p>
-          <UploaderTrigger>
-            <button type="button">Upload File</button>
-          </UploaderTrigger>
-        </div>
-      );
-    }
-    ```
-
-### Alternative: Inline Component
-
-You can also render the uploader directly as an inline component. This is suitable for pages dedicated to file management where the uploader should always be visible.
-
-```jsx
-import { lazy } from 'react';
-
-// Import Uppy CSS files here
+```javascript
+// Import essential Uppy styles
 import '@uppy/core/dist/style.min.css';
 import '@uppy/dashboard/dist/style.min.css';
 
-// Using lazy import for the Uploader component is a good practice
-const UploaderComponent = lazy(() => import('@blocklet/uploader').then((res) => ({ default: res.Uploader })));
+// If you plan to use specific plugins, you'll need their styles too
+// import '@uppy/webcam/dist/style.min.css';
+// import '@uppy/image-editor/dist/style.min.css';
+```
 
-function UploadPage() {
+## 3. Render the Uploader
+
+The easiest way to integrate the uploader is by using the `UploaderProvider` and `UploaderTrigger` components. The `UploaderProvider` manages the uploader's state and configuration, while `UploaderTrigger` wraps the element that will open the upload modal.
+
+Here is a basic example of a button that launches the uploader popup:
+
+```jsx
+import React from 'react';
+import { UploaderProvider, UploaderTrigger } from '@blocklet/uploader';
+
+function App() {
   const handleUploadFinish = (result) => {
-    console.log('Upload complete!', result);
-    // The result object contains uploaded file data
-    // result.data: the server response
-    // result.uploadURL: the direct URL to the file
+    // The 'result' object contains the server response after a successful upload.
+    // 'result.data' holds the file's metadata.
+    console.log('File uploaded successfully:', result.data);
+    alert(`Upload complete: ${result.data.filename}`);
   };
 
   return (
-    <UploaderComponent
-      onUploadFinish={handleUploadFinish}
-      apiPathProps={{
-        uploader: '/api/uploads',
-        companion: '/api/companion',
-      }}
-    />
+    <UploaderProvider popup onUploadFinish={handleUploadFinish}>
+      <UploaderTrigger>
+        <button type="button">Upload File</button>
+      </UploaderTrigger>
+    </UploaderProvider>
   );
 }
+
+export default App;
 ```
 
-## How it Works
+In this example:
+- `UploaderProvider` wraps the part of your application that needs access to the uploader.
+- The `popup` prop configures the uploader to appear as a modal dialog.
+- `onUploadFinish` is a callback function that executes after each file is successfully uploaded, providing access to the file's final data.
+- `UploaderTrigger` makes its child element (the `<button>`) clickable to open the uploader modal.
 
-The `@blocklet/uploader` component is designed to be plug-and-play. When a Media Kit blocklet is installed and running, the uploader component automatically detects its API endpoints and sends files to it. No further configuration is typically needed.
+## How It Works
 
-The `apiPathProps` prop allows you to override these default endpoints if you are implementing a custom backend and need to direct uploads to specific URLs.
+The `@blocklet/uploader` component is designed for easy integration. It operates in two main ways:
+
+1.  **With Media Kit:** If a [Media Kit blocklet](./concepts-media-kit-integration.md) is installed in the same environment, the uploader will automatically detect it. It will then route all uploads to the Media Kit and enable additional features like AI image generation and browsing previously uploaded assets.
+
+2.  **Standalone:** The `@blocklet/uploader` component does **not** require `@blocklet/uploader-server` to function. If no Media Kit is found, it will attempt to send files to a default endpoint (`/api/uploads`). You would only need to implement this backend endpoint yourself if you are building a custom upload handler outside of the Media Kit ecosystem.
 
 ## Next Steps
 
-You have now successfully set up the frontend uploader component. If a Media Kit is present in your development or production environment, your uploader should be fully functional.
+You now have a working frontend uploader. 
 
-If you are not using a Media Kit, or if you require custom server-side logic such as adding watermarks or saving file metadata to a separate database, you will need to implement a backend handler. The following guide explains how to build one using the optional `@blocklet/uploader-server` package.
-
-<x-card data-title="Backend Setup (@blocklet/uploader-server)" data-icon="lucide:server" data-href="/getting-started/backend-setup">
-  Learn how to install and configure a custom backend middleware to handle file uploads when not using a Media Kit or when special server-side processing is required.
-</x-card>
+- If you need to build a custom backend to receive the uploaded files, proceed to the [Backend Setup (@blocklet/uploader-server)](./getting-started-backend-setup.md) guide.
+- To learn how to enable features like the image editor, webcam, or URL importing, see the [Configuring Plugins](./guides-configuring-plugins.md) guide.
+- For a complete list of all available settings, explore the [<Uploader /> Component Props](./api-reference-uploader-component-props.md) API reference.

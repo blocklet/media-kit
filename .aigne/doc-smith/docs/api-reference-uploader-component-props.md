@@ -1,105 +1,141 @@
 # <Uploader /> Component Props
 
-The `<Uploader />` component is the primary interface for adding file upload capabilities to your application. It serves as a highly configurable wrapper around the popular [Uppy.io](https://uppy.io/) library, simplifying its integration within the Blocklet ecosystem.
+The `Uploader` component is a flexible React component built on top of the powerful [Uppy](https://uppy.io/) file uploader. It provides a simplified interface for common use cases while offering deep customization through its props. This page details the full range of available props, from basic configuration to advanced Uppy-specific settings.
 
-This reference provides a comprehensive guide to all the props available for customizing the uploader's behavior, appearance, and functionality. For more advanced configurations, you may want to consult the official documentation for [Uppy Core Options](https://uppy.io/docs/uppy/#Options) and [Dashboard Options](https://uppy.io/docs/dashboard/#Options), as many of these can be passed through the `coreProps` and `dashboardProps` respectively.
+For a more hands-on approach, you might want to start with the [Frontend Setup](./getting-started-frontend-setup.md) guide.
 
-## General Props
+## Core Props
 
-These props control the fundamental behavior and appearance of the Uploader component.
+These props control the fundamental behavior, appearance, and integration of the Uploader component.
 
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | `string` | `'Uploader'` | A unique identifier for the Uppy instance. Important if you have multiple uploaders on the same page. |
-| `popup` | `boolean` | `false` | If `true`, the uploader is rendered within a modal dialog. If `false`, it's rendered as an inline component. |
-| `locale` | `string` | `'en'` | Sets the display language for the UI. See the [Internationalization (i18n)](./concepts-i18n.md) concept for more details. |
-| `initialFiles` | `Array<object>` | `[]` | An array of file objects to pre-populate the uploader with. This is useful for editing scenarios where files have already been uploaded. |
+| Prop | Type | Description | Default |
+|---|---|---|---|
+| `id` | `string` | A unique identifier for the Uppy instance. Important if you have multiple uploaders on the same page. | `'Uploader'` |
+| `popup` | `boolean` | If `true`, the uploader will render as a modal dialog. If `false`, it will be rendered inline. | `false` |
+| `locale` | `string` | Sets the display language for the UI. Supported locales include `'en'`, `'zh'`, etc. | `'en'` |
+| `initialFiles` | `any[]` | An array of file objects to pre-populate the uploader with when it initializes. | `[]` |
+| `wrapperProps` | `HTMLAttributes` | Standard HTML attributes and MUI `sx` props to apply to the main container element of the uploader. | `{}` |
+| `installerProps` | `object` | Props passed to the `@blocklet/ui-react/lib/ComponentInstaller` component, used when Media Kit is not installed. | `{}` |
+
+### Example: Basic Popup Uploader
+
+```jsx
+import { Uploader } from '@blocklet/uploader';
+
+function MyComponent() {
+  const uploaderRef = React.useRef();
+
+  return (
+    <>
+      <button onClick={() => uploaderRef.current.open()}>Open Uploader</button>
+      <Uploader ref={uploaderRef} id="my-popup-uploader" popup />
+    </>
+  );
+}
+```
 
 ## Event Handlers
 
-Use these callback props to hook into the uploader's lifecycle and respond to user actions.
+Use these callback props to hook into the uploader's lifecycle and respond to events.
 
 | Prop | Type | Description |
-| :--- | :--- | :--- |
-| `onOpen` | `() => void` | A callback function that is executed when the uploader modal is opened (only applies when `popup={true}`). |
-| `onClose` | `() => void` | A callback function that is executed when the uploader modal is closed. |
-| `onChange` | `(file: object, files: object[]) => void` | A callback function that fires whenever a file is added or removed. It receives the affected file and an array of all current files. |
-| `onUploadFinish` | `(result: object) => void` | A callback function that is executed for each file after it has been successfully uploaded. The `result` object contains the final upload URL and other metadata. |
-| `onAfterResponse` | `(response: object) => void` | A low-level callback that is executed after each HTTP response is received during the upload process (including Tus protocol requests). The `response` is the raw XHR object. |
+|---|---|---|
+| `onOpen` | `Function` | A callback function that is executed when the uploader modal is opened. |
+| `onClose` | `Function` | A callback function that is executed when the uploader modal is closed. |
+| `onChange` | `(file, files) => void` | A callback function that fires whenever a file is added or removed. It receives the affected file and the current list of all files. |
+| `onUploadFinish` | `(result) => void` | A callback function that is executed for each file after it has been successfully uploaded. The `result` object contains details about the file and the server response. |
+| `onAfterResponse` | `(response) => void` | A lower-level callback that fires after every XHR response (including Tus protocol requests) during the upload process. |
+
+### Example: Handling Upload Completion
+
+```jsx
+import { Uploader } from '@blocklet/uploader';
+
+function UploadHandler() {
+  const handleUploadFinish = (result) => {
+    console.log('File uploaded:', result.uploadURL);
+    console.log('Server response:', result.data);
+    // You can now save the uploadURL to your database
+  };
+
+  return (
+    <Uploader
+      onUploadFinish={handleUploadFinish}
+      onClose={() => console.log('Uploader closed')}
+    />
+  );
+}
+```
 
 ## Plugin & Source Configuration
 
-These props are used to configure the available upload sources and plugins.
+These props allow you to configure the available upload sources (like Webcam, URL, AI Image) and their specific options.
 
 | Prop | Type | Description |
-| :--- | :--- | :--- |
-| `plugins` | `Array<string \| object>` | Configures which Uppy plugins (upload sources) are enabled. See the [Configuring Plugins](./guides-configuring-plugins.md) guide for detailed usage. |
-| `imageEditorProps` | `ImageEditorOptions` | An object of options passed directly to the `@uppy/image-editor` plugin. Allows customization of the image editor's features, such as crop ratios. |
-| `uploadedProps` | `object` | Configures the custom 'Uploaded' plugin. Contains `params` for filtering and an `onSelectedFiles` callback to intercept file selection. |
-| `resourcesProps` | `object` | Configures the custom 'Resources' plugin. Contains `params` for filtering and an `onSelectedFiles` callback. |
-| `dropTargetProps` | `DropTargetOptions` | An object of options passed to the `@uppy/drop-target` plugin to configure the drag-and-drop behavior on the page. |
+|---|---|---|
+| `plugins` | `string[]` or `object[]` | An array of plugin IDs to enable. You can also provide an array of objects to define custom virtual plugins. See the [Creating a Custom Plugin](./guides-custom-plugin.md) guide for more details. |
+| `imageEditorProps` | `ImageEditorOptions` | An object of options passed directly to the `@uppy/image-editor` plugin. See [Uppy's documentation](https://uppy.io/docs/image-editor/#options) for available options. |
+| `uploadedProps` | `object` | Configuration for the custom 'Uploaded' plugin, which allows browsing previously uploaded files. Contains `params` for API requests and an `onSelectedFiles` callback. |
+| `resourcesProps` | `object` | Configuration for the custom 'Resources' plugin, which allows selecting files from other blocklets. Contains `params` for API requests and an `onSelectedFiles` callback. |
+| `dropTargetProps` | `object` | An object of options passed to the `@uppy/drop-target` plugin to configure the drag-and-drop behavior. |
 
-## Backend & API Configuration
-
-| Prop | Type | Default | Description |
-| :--- | :--- | :--- | :--- |
-| `apiPathProps` | `object` | `{ uploader: '/api/uploads', companion: '/api/companion' }` | An object to configure the backend endpoints for uploads and remote sources (Companion). See details below. |
-
-### `apiPathProps` Details
-
-This object configures the API endpoints that the frontend component will communicate with.
-
-- `uploader`: The endpoint for direct file uploads (handled by `initLocalStorageServer`).
-- `companion`: The endpoint for the Companion middleware, which handles remote sources like URL or Unsplash (handled by `initCompanion`).
-- `disableMediaKitPrefix`: By default, paths are prefixed based on Media Kit's mount point. Set to `true` to disable this behavior.
-- `disableAutoPrefix`: Disables all automatic prefixing.
-- `disableMediaKitStatus`: By default, the uploader checks the `/api/uploader/status` endpoint of the Media Kit to get default restrictions (like max file size). Set to `true` to disable this check.
-
-**Example:**
+### Example: Enabling Webcam and Image Editor
 
 ```jsx
-<Uploader
-  apiPathProps={{
-    uploader: '/custom-api/tus-uploads',
-    companion: '/custom-api/companion',
-    disableMediaKitPrefix: true,
-  }}
-/>
+import { Uploader } from '@blocklet/uploader';
+
+function UploaderWithPlugins() {
+  return (
+    <Uploader
+      plugins={['Webcam', 'Url', 'ImageEditor']}
+      imageEditorProps={{
+        quality: 0.8,
+        cropperOptions: {
+          viewMode: 1,
+          aspectRatio: 16 / 9,
+          background: false,
+        },
+      }}
+    />
+  );
+}
 ```
 
-## Uppy Passthrough Props
+## Backend & Advanced Configuration
 
-These props provide a direct way to pass configuration objects to the underlying Uppy instances, allowing for advanced customization.
+These props provide fine-grained control over backend endpoints and allow you to pass options directly to the underlying Uppy instances.
 
 | Prop | Type | Description |
-| :--- | :--- | :--- |
-| `coreProps` | `UppyOptions` | An object of options passed directly to the main Uppy instance. The most common use is for setting `restrictions`. See [Uppy Core Options](https://uppy.io/docs/uppy/#Options) for all possibilities. |
-| `dashboardProps` | `DashboardOptions` | An object of options passed to the `@uppy/dashboard` plugin. Use this to customize the UI, such as adding a `note` or changing the `theme`. See [Uppy Dashboard Options](https://uppy.io/docs/dashboard/#Options) for details. |
-| `tusProps` | `TusOptions` | An object of options passed to the `@uppy/tus` plugin, which handles resumable uploads. See [Uppy Tus Options](https://uppy.io/docs/tus/#Options) for advanced settings. |
+|---|---|---|
+| `apiPathProps` | `object` | An object to configure the backend endpoints for the uploader and Companion. Keys include `uploader`, `companion`, `disableMediaKitPrefix`, etc. |
+| `tusProps` | `TusOptions` | An object of options passed directly to the `@uppy/tus` plugin for resumable uploads. See the [tus-js-client documentation](https://github.com/tus/tus-js-client/blob/main/docs/api.md) for details. |
+| `coreProps` | `UppyOptions` | An object of options passed directly to the Uppy core instance. This is where you configure global settings like file restrictions (`restrictions`). See [Uppy's documentation](https://uppy.io/docs/uppy/#options) for all available options. |
+| `dashboardProps` | `DashboardOptions` | An object of options passed directly to the `@uppy/dashboard` plugin. This allows you to customize the UI, such as the `note`, `width`, or `height`. See [Uppy's documentation](https://uppy.io/docs/dashboard/#options) for all available options. |
 
-### `coreProps.restrictions` Example
-
-Setting upload restrictions is a common requirement. You can define them within the `coreProps` object.
+### Example: Setting File Restrictions and a Custom Note
 
 ```jsx
-<Uploader
-  coreProps={{
-    restrictions: {
-      maxFileSize: 5 * 1024 * 1024, // 5 MB
-      maxNumberOfFiles: 10,
-      allowedFileTypes: ['image/jpeg', 'image/png', 'video/*'], // Accepts JPG, PNG, and all video types
-    },
-  }}
-/>
+import { Uploader } from '@blocklet/uploader';
+
+function RestrictedUploader() {
+  return (
+    <Uploader
+      coreProps={{
+        restrictions: {
+          maxFileSize: 1024 * 1024, // 1 MB
+          maxNumberOfFiles: 5,
+          allowedFileTypes: ['image/jpeg', 'image/png'],
+        },
+      }}
+      dashboardProps={{
+        note: 'Please upload up to 5 JPG or PNG images, max 1MB each.',
+        width: 800,
+      }}
+    />
+  );
+}
 ```
 
-## Styling & Integration
+This comprehensive set of props allows you to tailor the `Uploader` component to fit a wide variety of use cases. For more advanced scenarios, refer to the documentation for Uppy and its various plugins.
 
-| Prop | Type | Description |
-| :--- | :--- | :--- |
-| `wrapperProps` | `HTMLAttributes<HTMLDivElement>` | Standard HTML attributes (like `className`, `style`) and an `sx` prop for MUI styling, all applied to the main container div. |
-| `installerProps` | `object` | Props passed to the `@blocklet/ui-react/lib/ComponentInstaller` component, which prompts the user to install the Media Kit if it's not detected. |
-
----
-
-Now that you understand the available props, you can explore how to control the uploader programmatically. Continue to the next section to learn about the [`<UploaderProvider />` and Hooks](./api-reference-uploader-provider-hooks.md).
+Next, you can explore the [available plugins](./api-reference-uploader-plugins.md) in more detail or learn about the [utility functions](./api-reference-uploader-utility-functions.md) that can help you manage the uploader programmatically.
