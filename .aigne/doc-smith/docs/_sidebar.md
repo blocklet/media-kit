@@ -11,6 +11,7 @@
   * [Frontend: @blocklet/uploader](/api-reference-uploader.md)
     * [<Uploader /> Component Props](/api-reference-uploader-component-props.md)
     * [<UploaderProvider /> and Hooks](/api-reference-uploader-provider-hooks.md)
+    * [Utility Functions](/api-reference-uploader-utility-functions.md)
     * [Available Plugins](/api-reference-uploader-plugins.md)
   * [Backend: @blocklet/uploader-server](/api-reference-uploader-server.md)
     * [initLocalStorageServer(options)](/api-reference-uploader-server-local-storage.md)
