@@ -40,11 +40,11 @@ This code initializes Companion and attaches it to the `/companion` route. Any r
 
 The `initCompanion` function accepts an options object with the following key properties:
 
-| Option            | Type     | Description                                                                                                                              |
-| ----------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `path`            | `string` | **Required.** The absolute path to a directory on your server where Companion can temporarily store files before they are uploaded.         |
-| `express`         | `object` | **Required.** The Express app instance.                                                                                                  |
-| `providerOptions` | `object` | An object containing the configuration for each remote provider you want to enable, such as API keys for Unsplash.                       |
+| Option            | Type       | Description                                                                                                                              |
+| ----------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `path`            | `string`   | **Required.** The absolute path to a directory on your server where Companion can temporarily store files before they are uploaded.         |
+| `express`         | `Function` | **Required.** The Express app instance.                                                                                                  |
+| `providerOptions` | `object`   | An object containing the configuration for each remote provider you want to enable, such as API keys for Unsplash.                       |
 | `uploadUrls`      | `string[]` | An array of base URLs where your uploader is running. This is a security measure to prevent misuse from other websites.                  |
 
 ### How it Works

@@ -1,27 +1,29 @@
 # API Reference
 
-This section provides a complete reference for all the modules, functions, components, and configuration options available in the `@blocklet/uploader` and `@blocklet/uploader-server` packages. Whether you are customizing the frontend UI or configuring the backend handlers, you will find the detailed information you need here.
+This section provides a complete reference for all modules, functions, components, and configuration options available in the `@blocklet/uploader` and `@blocklet/uploader-server` packages. Whether you are customizing the frontend UI or configuring the backend handlers, you will find the detailed information you need here.
 
-The API is divided into two main packages: one for the frontend client and one for the backend server. The following diagram illustrates how they interact:
+The `@blocklet/uploader` package provides the frontend React component and does not depend on the backend package. It can connect to any server that supports the Tus resumable upload protocol. The `@blocklet/uploader-server` package is an optional set of Express middleware for developers who need to implement custom upload handling logic, such as integrating directly with a storage service like the Media Kit.
+
+The following diagram illustrates how they can interact:
 
 ```d2
 direction: right
 
-"Browser": {
+"Browser" {
   "@blocklet/uploader": {
     shape: package
     label: "@blocklet/uploader\n(React Components & Hooks)"
   }
 }
 
-"Blocklet Server": {
+"Blocklet Server" {
   "@blocklet/uploader-server": {
     shape: package
-    label: "@blocklet/uploader-server\n(Express Middleware)"
+    label: "@blocklet/uploader-server\n(Optional Express Middleware)"
   }
 }
 
-"Storage": {
+"Storage" {
   shape: cylinder
   label: "File Storage\n(e.g., Media Kit)"
 }

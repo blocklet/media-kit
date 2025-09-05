@@ -9,11 +9,9 @@ direction: down
 
 "User Application": {
   shape: rectangle
-  style.fill: "#E4DBFE"
   "React UI": {
     "<Uploader />": {
       label: "@blocklet/uploader"
-      style.fill: "#C7F1FF"
     }
   }
 }
@@ -25,7 +23,6 @@ direction: down
 
 "Uppy Ecosystem": {
   shape: package
-  style.fill: "#DEE1EB"
   "Uppy Core": ""
   "Uppy Plugins": "(Dashboard, Webcam, etc.)"
 }
@@ -52,7 +49,6 @@ direction: down
 
 "Media Kit": {
   shape: package
-  style.fill: "#fce7c6"
   label: "Media Kit (Optional)"
   "Centralized Config": ""
   "Shared Storage": ""

@@ -6,7 +6,7 @@ This is particularly useful when your blocklet needs to access resources (like i
 
 ## How It Works
 
-The middleware operates in two main phases: initialization and request handling. The process is dynamic, automatically updating its file map when blocklets are added, removed, or updated.
+The middleware operates in two main phases: initialization and request handling. The process is dynamic; it listens for blocklet lifecycle events (like additions, removals, or updates) and automatically refreshes its file map to reflect the changes.
 
 ```d2
 direction: down
@@ -44,7 +44,6 @@ direction: down
 "Initialization Phase".F -> "Request Handling Phase".Lookup: "Provides map for"
 
 ```
-
 
 ## Usage
 

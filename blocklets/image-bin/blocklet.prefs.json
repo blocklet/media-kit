@@ -88,7 +88,7 @@
         "x-decorator-props": {},
         "description": "The ability to generate images using AI",
         "name": "useAiImage",
-        "default": false,
+        "default": true,
         "x-designable-id": "qt7qq2jboh5",
         "x-index": 3,
         "shared": true
@@ -110,6 +110,6 @@
         "shared": true
       }
     },
-    "x-designable-id": "ugccd3xkqj6"
+    "x-designable-id": "wx9pw6rs358"
   }
 }

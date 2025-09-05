@@ -1,3 +1,11 @@
+## 0.2.9 (September 03, 2025)
+
+- fix: replace radio buttons with select dropdown for model selection
+
+## 0.2.8 (September 02, 2025)
+
+- chore: update version
+
 ## 0.2.7 (August 09, 2025)
 
 - chore: bump deps to latest
