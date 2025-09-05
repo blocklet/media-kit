@@ -1,3 +1,7 @@
+## 0.2.10 (September 05, 2025)
+
+- chore: bump version
+
 ## 0.2.9 (September 03, 2025)
 
 - fix: replace radio buttons with select dropdown for model selection

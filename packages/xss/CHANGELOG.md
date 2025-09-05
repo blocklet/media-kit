@@ -1,3 +1,7 @@
+## 0.2.7 (September 05, 2025)
+
+- chore: bump version
+
 ## 0.2.6 (September 02, 2025)
 
 - chore: update version
