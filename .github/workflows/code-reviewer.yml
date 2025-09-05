@@ -6,10 +6,9 @@ permissions:
 
 on:
   pull_request:
+    types: [opened]
     branches:
       - master
-  pull_request_review_comment:
-    types: [created]
 
 concurrency:
   group: ${{ github.repository }}-${{ github.event.number || github.head_ref ||
@@ -21,20 +20,22 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      - uses: blocklet/aigne-code-reviewer@v0.1.14
+      - uses: aigne-io/aigne-codesmith@v0.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          DEBUG: "@aigne/*"
+          DEBUG: '@aigne/*'
         with:
           debug: true
-          language: "zh-CN"
+          language: 'zh-CN'
+          disable_review: false
           review_simple_changes: false
           review_comment_lgtm: false
-          disable_review: true
           path_filters: |
             !core/types/**
             !core/schema/lib/**
+            !core/proto/lib/**
             !**/types.js
+            !**/package.json
             !**/*.d.ts
             !**/*.lock
