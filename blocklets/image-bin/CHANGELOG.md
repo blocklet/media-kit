@@ -1,3 +1,7 @@
+## 0.13.23 (September 05, 2025)
+
+chore: bump deps to fix csrf token mismatch v2
+
 ## 0.13.22 (September 02, 2025)
 
 - chore: update version
