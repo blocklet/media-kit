@@ -1,80 +1,116 @@
 # Integration with Uppy
 
-The `@blocklet/uploader` package is built directly on top of [Uppy](https://uppy.io/), a sleek, modular open-source file uploader for web browsers. Our package acts as a convenient React wrapper around the Uppy ecosystem, pre-configured to work seamlessly within Blocklet applications.
+The `@blocklet/uploader` package is built directly on top of [Uppy](https://uppy.io/), a sleek, modular open-source file uploader for the web. By leveraging Uppy's robust core and extensive plugin ecosystem, `@blocklet/uploader` provides a powerful and familiar uploading experience while simplifying its integration into the Blocklet development environment.
 
-This approach provides a simple, out-of-the-box experience for common use cases while retaining the full power and flexibility of Uppy for advanced customizations. Understanding this relationship is key to unlocking the uploader's full potential.
+This approach means you get the best of both worlds: the battle-tested reliability of Uppy and the seamless, zero-config setup within a Blocklet. You don't need to build an uploader from scratch; instead, you interact with a high-level React component that handles all the underlying Uppy configuration for you.
 
-## The Core Architecture
+## Core Architecture
 
-When you use the `Uploader` component, it initializes and manages a core Uppy instance behind the scenes. Many of the props you pass to our component, such as `coreProps`, `dashboardProps`, and plugin configurations, are passed directly to the underlying Uppy instance and its plugins. This makes `@blocklet/uploader` a bridge between your React application and the Uppy API.
+The `Uploader` component acts as a sophisticated wrapper around a central `Uppy` instance. It abstracts away the boilerplate code required for initialization, plugin management, and UI rendering.
 
-The following diagram illustrates this layered architecture:
+Here’s a high-level look at how the pieces fit together:
 
 ```d2
 direction: down
 
-Your-React-App: {
-  label: "Your React App"
+blocklet-app: {
+  label: "Your Blocklet Application"
   shape: rectangle
 
-  Uploader-Component-Wrapper: {
-    label: "Uploader Component\n(@blocklet/uploader)"
-    shape: package
+  uploader-component: {
+    label: "Uploader Component"
+    shape: rectangle
 
-    Uppy-Core: {
-      label: "Uppy Core Instance"
+    uppy-ecosystem: {
+      label: "Uppy Ecosystem"
       shape: rectangle
 
-      Uppy-Plugins: {
-        label: "Uppy Plugins"
+      uppy-core: {
+        label: "Uppy Core Instance"
+        shape: hexagon
+      }
+
+      standard-plugins: {
+        label: "Standard Uppy Plugins"
         shape: rectangle
-        grid-columns: 3
-        Dashboard-UI: { label: "Dashboard UI" }
-        Tus-Protocol: { label: "Tus (Resumable Uploads)" }
-        Webcam: { label: "Webcam" }
-        ImageEditor: { label: "Image Editor" }
-        Url: { label: "URL Importer" }
-        and-more: { label: "... and more" }
+        Dashboard: {}
+        Tus: {}
+        Webcam: {}
+        Url: {}
+      }
+
+      custom-plugins: {
+        label: "Custom Blocklet Plugins"
+        shape: rectangle
+        AIImage: {}
+        Resources: {}
+        Uploaded: {}
       }
     }
   }
 }
 
-Blocklet-Server: {
-  label: "Blocklet Server"
-  shape: rectangle
+media-kit: {
+  label: "Media Kit Blocklet"
+  shape: cylinder
 }
 
-Your-React-App.Uploader-Component-Wrapper -> Your-React-App.Uploader-Component-Wrapper.Uppy-Core: "Configures with props"
-Your-React-App.Uploader-Component-Wrapper.Uppy-Core -> Your-React-App.Uploader-Component-Wrapper.Uppy-Core.Uppy-Plugins: "Uses"
-Your-React-App.Uploader-Component-Wrapper -> Blocklet-Server: "Uploads files via Tus"
+blocklet-app.uploader-component.uppy-ecosystem.uppy-core -> blocklet-app.uploader-component.uppy-ecosystem.standard-plugins
+blocklet-app.uploader-component.uppy-ecosystem.uppy-core -> blocklet-app.uploader-component.uppy-ecosystem.custom-plugins
+blocklet-app.uploader-component <-> media-kit: "Provides Config & Plugins"
 ```
 
-## Leveraging the Uppy Ecosystem
+Key components of this architecture include:
 
-Building on Uppy provides several key advantages:
+- **Uppy Core Instance**: At the heart of the `Uploader` is a `new Uppy()` instance. This object manages the file processing queue, state, and events.
+- **Standard Uppy Plugins**: The component automatically initializes and configures essential Uppy plugins. This includes:
+  - `@uppy/react`: For rendering the `Dashboard` UI.
+  - `@uppy/tus`: For enabling resumable uploads.
+  - Other acquirer plugins like `Webcam`, `Url`, and `Unsplash` for importing files from various sources.
+- **Custom Blocklet Plugins**: To enhance functionality within the ecosystem, `@blocklet/uploader` includes custom plugins like `AIImage`, `Resources`, and `Uploaded`, which integrate with other Blocklets such as the [Media Kit](./concepts-media-kit-integration.md).
 
-- **Modularity**: You gain access to a rich ecosystem of Uppy plugins. Whether you need to import files from a webcam, a direct URL, or even Unsplash, there's likely an existing plugin for it.
-- **Reliability**: The uploader is powered by a well-tested, widely-used, and actively maintained open-source project.
-- **Advanced Customization**: For complex requirements, you can access the Uppy instance directly using a `ref` to tap into its comprehensive API for fine-grained control over events and behavior.
-- **User Interface**: The Uppy Dashboard provides a polished, accessible, and user-friendly interface for file selection and upload progress monitoring.
+## Accessing the Uppy Instance
 
-## When to Consult the Uppy Documentation
+While the `Uploader` component handles most use cases via props, you may occasionally need to interact with the underlying Uppy instance directly to access its full API. You can do this by attaching a `ref` to the component.
 
-While our documentation covers the most common use cases and Blocklet-specific features, the official Uppy documentation is the definitive resource for more advanced topics. You should refer to it when you need to:
+The `ref` exposes a `getUploader()` method, which returns the active Uppy instance. This allows for advanced customizations, such as listening to specific Uppy events or calling its methods programmatically.
 
-- Understand all available options for a specific plugin (e.g., advanced Image Editor settings).
-- Get a complete list of Uppy's core events (`upload-success`, `file-added`, etc.).
-- Learn about the Tus resumable upload protocol.
-- Dive deep into creating your own custom Uppy plugins.
+```jsx
+import { useRef } from 'react';
+import { Uploader } from '@blocklet/uploader';
 
-<x-card data-title="Uppy Official Documentation" data-icon="lucide:book-open" data-href="https://uppy.io/docs/" data-cta="Visit Uppy Docs">
-  The official Uppy documentation is the best resource for in-depth information about its core API, plugins, and advanced configuration options.
+function MyComponent() {
+  const uploaderRef = useRef(null);
+
+  const handleLogFiles = () => {
+    if (uploaderRef.current) {
+      // Access the raw Uppy instance
+      const uppy = uploaderRef.current.getUploader();
+      console.log('Current files in Uppy:', uppy.getFiles());
+
+      // You can also add event listeners
+      uppy.on('upload-success', (file, response) => {
+        console.log(`Upload successful for ${file.name}:`, response.uploadURL);
+      });
+    }
+  };
+
+  return (
+    <div>
+      <Uploader ref={uploaderRef} popup />
+      <button onClick={() => uploaderRef.current.open()}>Open Uploader</button>
+      <button onClick={handleLogFiles}>Log Files</button>
+    </div>
+  );
+}
+```
+
+## Further Reading
+
+This documentation focuses on the features and props specific to the `@blocklet/uploader` package. For a complete understanding of all available Uppy options, plugins, and advanced configurations, we highly recommend consulting the official [Uppy Documentation](https://uppy.io/docs/).
+
+To learn more about how the uploader leverages other Blocklets, continue to the next section.
+
+<x-card data-title="Integration with Media Kit" data-icon="lucide:box" data-href="/concepts/media-kit-integration" data-cta="Read More">
+  Understand how the uploader automatically detects and configures itself when a Media Kit blocklet is present.
 </x-card>
-
-## Next Steps
-
-Now that you understand the relationship between `@blocklet/uploader` and Uppy, you are better equipped to customize the uploader to your needs. 
-
-- To see this in action, proceed to the [Configuring Plugins](./guides-configuring-plugins.md) guide.
-- To learn how the uploader integrates with other Blocklets, see [Integration with Media Kit](./concepts-media-kit-integration.md).

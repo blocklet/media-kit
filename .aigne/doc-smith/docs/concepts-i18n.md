@@ -1,129 +1,98 @@
 # Internationalization (i18n)
 
-The `@blocklet/uploader` component is designed for a global audience and includes built-in support for multiple languages. You can easily switch the display language of the Uploader interface using the `locale` prop, and you can also provide your own custom translations to override the defaults or add support for new languages.
+The `@blocklet/uploader` component is designed for a global audience and comes with built-in support for multiple languages. This allows you to provide a localized user experience by changing the text in the UI to match the user's language preference. The internationalization system is built upon Uppy's locale packs, extending them with custom strings for features unique to the Blocklet Uploader.
 
-## Supported Languages
+This guide explains how to use the built-in languages and how to customize the text or add support for a new language.
 
-Out of the box, the Uploader component includes support for the following languages:
+## Using Built-in Languages
 
--   **English (`en`)**: The default language.
--   **Chinese (`zh`)**: Simplified Chinese.
-
-## Basic Usage
-
-To change the language, pass the appropriate language code string to the `locale` prop. If the `locale` prop is not provided, the interface will default to English.
+The Uploader component includes built-in support for English (`en`) and Chinese (`zh`). You can easily switch between these languages by passing the corresponding language code to the `locale` prop.
 
 ```jsx
-import { Uploader } from '@blocklet/uploader';
+import Uploader from '@blocklet/uploader';
 
-function App() {
-  // Render the Uploader in Chinese
-  return <Uploader locale="zh" />;
-}
+// To display the Uploader in English (default)
+<Uploader locale="en" />
+
+// To display the Uploader in Chinese
+<Uploader locale="zh" />
 ```
 
-## How It Works
-
-The component's internationalization system is built upon Uppy's locale packs. For each supported language, we import the base translation from Uppy (e.g., `@uppy/locales/lib/en_US`) and then merge it with our own custom strings. This allows us to add new text for custom features (like AI Image Generation) or override existing Uppy text.
-
-Here is a simplified view of how the English (`en`) locale is constructed:
-
-```javascript
-import en_US from '@uppy/locales/lib/en_US';
-import merge from 'lodash/merge';
-
-const customStrings = {
-  strings: {
-    // Custom string for AI Image Generation feature
-    aiKitRequired: 'Install and config the AI Kit component first',
-    aiImageGenerate: 'Generate',
-
-    // Override Uppy's default string
-    dropHint: 'Drop your files here',
-
-    // Add more specific browse options
-    browse: 'browse',
-    browseFiles: 'browse files',
-    browseFolders: 'browse folders',
-  },
-};
-
-// The final locale object is a deep merge of Uppy's defaults and our customizations
-const enLocale = merge({ ...en_US }, customStrings);
-```
+When you set the `locale` prop, the component automatically loads all the necessary strings, including both standard Uppy text and custom text for plugins like AI Image Generation.
 
 ## Customizing Locales
 
-If you need to change a specific text string or add support for an unsupported language, you can pass a full locale object to the `coreProps.locale` property. This gives you complete control over the text displayed in the Uploader.
+For more advanced control, such as overriding specific text strings or adding a new language, you can provide a full locale object to the Uploader's core configuration. This is done through the `coreProps.locale` prop.
 
-### Overriding Existing Strings
+The process involves three main steps:
+1.  Import a base locale pack from Uppy.
+2.  Define your custom strings or overrides.
+3.  Merge the base pack with your custom strings and pass the result to the Uploader.
 
-In this example, we'll customize the main drop hint text in the English locale.
+Here is an example of how to customize the English locale to change the text of the AI image generation button:
 
 ```jsx
-import { Uploader } from '@blocklet/uploader';
-import uppyEn from '@uppy/locales/lib/en_US';
+import Uploader from '@blocklet/uploader';
+import en_US from '@uppy/locales/lib/en_US';
 import merge from 'lodash/merge';
 
-// Create a deep clone of the base Uppy English locale
-const myCustomEnLocale = merge({}, uppyEn);
+// 1. Create a deep clone of the base locale to avoid modifying the original
+const customLocale = { ...en_US };
 
-// Override specific strings
-myCustomEnLocale.strings.dropHint = 'Drop your awesome files here!';
-myCustomEnLocale.strings.aiImageGenerate = 'Create with AI';
+// 2. Define the custom strings you want to override
+const customStrings = {
+  strings: {
+    aiImageGenerate: 'Create with AI',
+    dropHint: 'Drop your awesome files here!',
+  },
+};
+
+// 3. Merge the base locale with your custom strings
+const finalLocale = merge(customLocale, customStrings);
 
 function MyCustomUploader() {
   return (
     <Uploader
       coreProps={{
-        locale: myCustomEnLocale,
+        locale: finalLocale,
       }}
     />
   );
 }
 ```
 
-### Adding a New Language
+By passing a complete locale object to `coreProps.locale`, you gain full control over the text displayed in the Uploader interface.
 
-You can also define a completely new language by creating a new locale object.
+## Custom Translation Keys
 
-```jsx
-import { Uploader } from '@blocklet/uploader';
+The `@blocklet/uploader` component adds several custom translation keys to support its unique features. You can override any of these in your custom locale object. Below is a reference of the available keys and their default English values.
 
-const frLocale = {
-  strings: {
-    // It's recommended to start by copying from the English locale
-    // and translating the values.
-    dropHint: 'Déposez vos fichiers ici',
-    browse: 'parcourir',
-    aiImageGenerate: 'Générer',
-    // ... add all other required strings
-  },
-};
+| Key | Default English Text |
+|---|---|
+| `aiKitRequired` | Install and config the AI Kit component first |
+| `aiImageSelectedUse` | Use selected images |
+| `aiImageSelectedTip` | Please select images |
+| `aiImagePrompt` | Prompt |
+| `aiImagePromptTip` | Please enter the prompt |
+| `aiImageSize` | Size |
+| `aiImageModel` | Model |
+| `aiImageNumber` | Number of images |
+| `aiImageGenerate` | Generate |
+| `aiImageGenerating` | Generating... |
+| `browse` | browse |
+| `browseFiles` | browse files |
+| `browseFolders` | browse folders |
+| `dropHint` | Drop your files here |
+| `dropPasteBoth` | Drop files here, paste, %{browseFiles} or %{browseFolders} |
+| `cancel` | Back |
+| `loadingStatus` | Getting status... |
+| `aspectRatioMessage` | Please edit the required ratio for image, currently the image ratio is %{imageAspectRatio}, need %{aspectRatio} |
+| `editorLoading` | Waiting for image editor... |
+| `downloadRemoteFileFailure` | Failure to get remote file ❌ |
+| `noAllowedFileTypes` | No allowed any file types |
+| `allowedFileTypes` | Allowed file types: |
+| `error` | Failed to initialize, please check if the related service (Media Kit) is running normally |
 
-function MyFrenchUploader() {
-  return (
-    <Uploader
-      coreProps={{
-        locale: frLocale,
-      }}
-    />
-  );
-}
-```
+---
 
-## Available Custom Strings
-
-Below is a sample of the custom strings added or overridden by `@blocklet/uploader` that are available for customization.
-
-| Key | English (`en`) | Chinese (`zh`) |
-|---|---|---|
-| `aiKitRequired` | Install and config the AI Kit component first | 请先安装并配置 AI Kit |
-| `aiImageGenerate` | Generate | 生成图片 |
-| `aiImageGenerating` | Generating... | 正在生成图片... |
-| `browseFolders` | browse folders | 浏览文件夹 |
-| `dropHint` | Drop your files here | 拖拽文件到这里 |
-| `error` | Failed to initialize, please check if the related service (Media Kit) is running normally | 初始化失败，请检查相关服务（Media Kit）运行状态是否正常 |
-| `downloadRemoteFileFailure` | Failure to get remote file ❌ | 获取远程文件失败 ❌ |
-
-To learn more about how `@blocklet/uploader` builds upon Uppy, see our guide on [Integration with Uppy](./concepts-uppy-integration.md).
+Now that you understand how to customize the Uploader's text and language, you may want to explore the full range of configuration options available. For a detailed list of all component props, see the [<Uploader /> Component Props](./api-reference-uploader-component-props.md) documentation.

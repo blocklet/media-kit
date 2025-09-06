@@ -1,136 +1,148 @@
 # Integrating Remote Sources (Companion)
 
-To enhance the user experience, the uploader can be configured to import files directly from remote sources like URLs or services like Unsplash. This functionality is powered by Uppy's [Companion](https://uppy.io/docs/companion/), a server-side component that handles the process of fetching files from third-party services. The `@blocklet/uploader-server` package provides a convenient wrapper, `initCompanion`, to integrate this feature into your blocklet's backend.
+To enhance the user experience, `@blocklet/uploader` can import files directly from remote sources like Unsplash or any public URL, in addition to local device uploads. This functionality is powered by [Uppy Companion](https://uppy.io/docs/companion/), a server-side component that handles the process of fetching files from third-party services.
 
-This guide will walk you through setting up the Companion middleware on your server and configuring the frontend uploader to communicate with it.
+The `@blocklet/uploader-server` package provides a convenient wrapper, `initCompanion`, to seamlessly integrate this feature into your blocklet's backend.
 
-## How It Works
+## How it Works
 
-The integration involves both the frontend and backend components working together:
+When a user selects a file from a remote source, the frontend Uploader component does not download it directly. Instead, it communicates with the Companion middleware on your backend. Companion then securely fetches the file on behalf of the user and streams it back to the frontend. Once the file is in the browser, it proceeds with the standard upload process (e.g., using the Tus protocol to the local storage server).
 
-1.  **Frontend (`@blocklet/uploader`)**: The user selects a remote source (e.g., "Import from URL") in the Uppy Dashboard.
-2.  **Request to Backend**: The uploader component sends a request to your blocklet's backend, specifically to the endpoint where the Companion middleware is running.
-3.  **Backend (`@blocklet/uploader-server`)**: The Companion middleware receives the request, connects to the remote source (e.g., fetches the file from the specified URL), and streams the file data back to the frontend.
-4.  **Upload**: The frontend uploader receives the file data and uploads it to your primary storage destination as if it were a local file.
+This flow keeps sensitive API keys and tokens on the server, ensuring they are never exposed to the client.
 
 ```d2
 direction: down
 
-User-Browser: {
-  label: "User's Browser"
+User: {
+  shape: c4-person
+}
+
+Frontend: {
+  label: "Frontend (Browser)"
   shape: rectangle
 
   Uploader-Component: {
-    label: "@blocklet/uploader Component"
-    shape: package
+    label: "Uploader Component"
+    shape: rectangle
   }
 }
 
-Blocklet-Server: {
-  label: "Your Blocklet Server"
+Backend: {
+  label: "Backend Server"
   shape: rectangle
 
-  Express-App: {
-    label: "Express App"
+  Companion-Middleware: {
+    label: "Companion Middleware\n(@blocklet/uploader-server)"
+    shape: hexagon
+  }
+
+  Local-Storage-Middleware: {
+    label: "Local Storage Middleware"
     shape: rectangle
-
-    Companion-Middleware: {
-      label: "Companion Middleware\n(initCompanion)"
-      shape: package
-    }
-
-    LocalStorage-Middleware: {
-      label: "LocalStorage Middleware\n(initLocalStorageServer)"
-      shape: package
-    }
   }
 }
 
 Remote-Source: {
-  label: "Remote Source\n(e.g., a URL, Unsplash)"
-  shape: cloud
+  label: "Remote Source\n(e.g., Unsplash, URL)"
+  shape: cylinder
 }
 
-User-Browser.Uploader-Component -> Blocklet-Server.Express-App.Companion-Middleware: "1. Request file from URL"
-Blocklet-Server.Express-App.Companion-Middleware -> Remote-Source: "2. Fetch file"
-Remote-Source -> Blocklet-Server.Express-App.Companion-Middleware: "3. Stream file data"
-Blocklet-Server.Express-App.Companion-Middleware -> User-Browser.Uploader-Component: "4. Stream file data"
-User-Browser.Uploader-Component -> Blocklet-Server.Express-App.LocalStorage-Middleware: "5. Upload file like a local one"
-
+User -> Frontend.Uploader-Component: "1. Selects file"
+Frontend.Uploader-Component -> Backend.Companion-Middleware: "2. Request file"
+Backend.Companion-Middleware -> Remote-Source: "3. Fetch file"
+Remote-Source -> Backend.Companion-Middleware: "4. Stream file data"
+Backend.Companion-Middleware -> Frontend.Uploader-Component: "5. Back to browser"
+Frontend.Uploader-Component -> Backend.Local-Storage-Middleware: "6. Upload file"
 ```
 
 ## Backend Setup
 
-First, you need to initialize and mount the Companion middleware in your Express application. This is done using the `initCompanion` function from `@blocklet/uploader-server`.
+To enable remote sources, you need to initialize and mount the `initCompanion` middleware in your Express application. This should be done alongside your existing upload middleware, such as `initLocalStorageServer`.
+
+Here is a typical setup in your blocklet's routes:
 
 ```javascript
-// In your blocklet's backend router/app setup
-import express from 'express';
 import { initCompanion } from '@blocklet/uploader-server';
 
-const router = express.Router();
+// ... other imports and router setup
 
-// Assuming 'env' contains your environment configuration
+// if you need to load file from remote
+// companion
 const companion = initCompanion({
-  path: env.uploadDir, // Temporary directory for processing files
+  path: env.uploadDir, // A temporary directory for file processing
   express,
-  // Optional: For services like Unsplash that require API keys
-  providerOptions: env.providerOptions,
-  // The public URL of your blocklet, so Companion knows where to send files back to
-  uploadUrls: [env.appUrl],
+  providerOptions: env.providerOptions, // Object containing API keys for services
+  uploadUrls: [env.appUrl], // An array of trusted frontend URLs
 });
 
-// Mount the companion middleware on a specific route
-// The user, auth, and ensureComponentDid middleware are typically needed for security
+// Mount the companion middleware on a specific path
 router.use('/companion', user, auth, ensureComponentDid, companion.handle);
 ```
 
-### Key `initCompanion` Options
+### Configuration Options
 
-| Option | Type | Description |
-|---|---|---|
-| `path` | `string` | **Required.** The server path where Companion can temporarily store files during processing. |
-| `express` | `Function` | **Required.** The Express application instance. |
-| `providerOptions` | `object` | Optional. Configuration for specific providers, such as API keys for Unsplash. |
-| `uploadUrls` | `string[]` | **Required.** An array of trusted URLs that the frontend uploader is running on. This is a security measure to prevent misuse. It should typically be your blocklet's public URL. |
+The `initCompanion` function accepts an options object with the following properties:
 
-For more details on all available options, refer to the [`initCompanion(options)`](./api-reference-uploader-server-companion.md) API reference.
+| Option            | Type       | Description                                                                                                                                                                                                                                                                  |
+|-------------------|------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `path`            | `string`   | **Required.** The absolute path to a directory on your server where Companion can temporarily store files during processing.                                                                                                                                                                |
+| `express`         | `Function` | **Required.** The Express app instance.                                                                                                                                                                                                                                                      |
+| `providerOptions` | `object`   | An object containing the configuration for various providers. For example, to enable Unsplash, you would provide your Unsplash API key here. The keys of this object correspond to the provider names (e.g., `unsplash`, `google`, `instagram`).                                                 |
+| `uploadUrls`      | `string[]` | An array of URLs representing the domains where your frontend uploader is hosted. This is a crucial security measure to prevent abuse of your Companion instance from untrusted sites. For a blocklet, this is typically your blocklet's `appUrl`.                                         |
+
+### Example: Enabling Unsplash
+
+To allow users to import images from Unsplash, you need to provide your Unsplash Access Key in the `providerOptions`. This is typically managed through environment variables.
+
+```javascript
+// In your environment configuration (e.g., .env)
+// UNSPLASH_KEY="your_unsplash_access_key"
+
+// In your backend setup code
+const companion = initCompanion({
+  path: env.uploadDir,
+  express,
+  providerOptions: {
+    unsplash: {
+      key: process.env.UNSPLASH_KEY,
+      secret: process.env.UNSPLASH_SECRET, // If required
+    },
+  },
+  uploadUrls: [env.appUrl],
+});
+
+router.use('/companion', companion.handle);
+```
 
 ## Frontend Configuration
 
-After setting up the backend, you need to configure the `<Uploader />` component to use it. This involves two steps:
+On the frontend, the `<Uploader />` component is pre-configured to work with Companion. You just need to tell it where the Companion middleware is running by using the `apiPathProps` prop.
 
-1.  **Specify the Companion Path**: Use the `apiPathProps` prop to tell the uploader where your Companion middleware is located.
-2.  **Enable Companion Plugins**: Include the desired remote source plugins (like `Url` or `Unsplash`) in the `plugins` prop.
-
-Here is an example of a frontend component configured to allow imports from a URL:
+The `Url` and `Unsplash` plugins are enabled by default if they are included in the `plugins` prop and the backend is correctly configured.
 
 ```jsx
-import React from 'react';
-import { Uploader } from '@blocklet/uploader/react';
-import '@uppy/core/dist/style.min.css';
-import '@uppy/dashboard/dist/style.min.css';
+import Uploader from '@blocklet/uploader/react';
 
-function UploaderWithRemoteSources() {
+function MyComponent() {
   return (
     <Uploader
       popup
-      // 1. Enable the 'Url' plugin to allow importing from URLs
-      plugins={['Url', 'Webcam']} 
       apiPathProps={{
-        uploader: '/api/uploads', // Your direct upload endpoint
-        // 2. Point to the backend route where Companion is mounted
-        companion: '/api/companion',
+        uploader: '/api/uploads', // Your main upload endpoint
+        companion: '/api/companion', // The endpoint where you mounted the companion middleware
       }}
+      plugins={['Url', 'Webcam', 'Unsplash']} // Ensure remote plugins are in the list
     />
   );
 }
-
-export default UploaderWithRemoteSources;
 ```
 
-With this configuration, the Uppy dashboard will now show an "Import from URL" option. When a user provides a URL, the frontend will make a request to `/api/companion` on your server, which will handle the download and prepare the file for the final upload.
+With both backend and frontend configured, the Uploader UI will automatically display the tabs for enabled remote sources, allowing users to import files seamlessly.
 
 ---
 
-Next, you might want to extend the uploader's functionality further. Learn how to create your own custom panel within the uploader interface in the [Creating a Custom Plugin](./guides-custom-plugin.md) guide.
+Now that you know how to integrate with built-in remote sources, you might want to extend the Uploader's capabilities even further. To learn how to add your own custom tabs and functionality, proceed to the next guide.
+
+<x-card data-title="Creating a Custom Plugin" data-icon="lucide:plus-circle" data-href="/guides/custom-plugin" data-cta="Read More">
+  Learn to extend the Uploader's functionality by creating your own custom plugin tab using the provided VirtualPlugin component.
+</x-card>

@@ -1,82 +1,87 @@
 # Overview
 
-The Blocklet Uploader is a set of packages designed to provide a complete file upload solution for your blocklets. It is built on top of [Uppy](https://uppy.io/docs/quick-start/), a popular and versatile open-source file uploader, offering a rich user experience and robust backend handling.
+The `@blocklet/uploader` and `@blocklet/uploader-server` packages provide a comprehensive, robust, and extensible file upload solution for Blocklet applications. Built on top of the popular [Uppy](https://uppy.io/) file uploader, this toolkit simplifies the integration of rich upload experiences, from simple file inputs to complex multi-source dashboards with image editing and resumable uploads.
 
-The solution is split into two main packages:
+This documentation will guide you through setting up both the frontend and backend components to create a seamless file management workflow.
 
--   **`@blocklet/uploader`**: A frontend React component that provides the user interface for file selection and uploading.
--   **`@blocklet/uploader-server`**: A backend middleware for Express.js that handles the server-side logic of receiving and storing files.
+## Core Packages
 
-This separation allows for flexibility, letting you use the frontend component with any backend, or the server middleware with any frontend.
+The solution is split into two primary packages: a frontend component for the user interface and a backend middleware for server-side processing.
 
-### High-Level Architecture
+<x-cards data-columns="2">
+  <x-card data-title="@blocklet/uploader" data-icon="lucide:component">
+    The frontend package. It provides a highly customizable React component that handles the entire user-facing upload experience, including file selection, progress tracking, and previews.
+  </x-card>
+  <x-card data-title="@blocklet/uploader-server" data-icon="lucide:server">
+    The backend package. It offers a set of Express middleware to handle incoming file uploads, process them, and integrate with remote sources like Unsplash or direct URLs.
+  </x-card>
+</x-cards>
 
-The following diagram illustrates how the frontend and backend packages typically interact within a blocklet:
+## How It Works
+
+At a high level, the frontend `Uploader` component captures user files and uploads them to endpoints handled by the `@blocklet/uploader-server` middleware. The backend processes these files, saves them, and returns metadata to the frontend, which then updates the UI.
 
 ```d2
 direction: down
 
-"User-Browser": {
-  label: "User's Browser"
+User: {
+  shape: c4-person
+}
+
+App: {
+  label: "Your Blocklet Application"
   shape: rectangle
 
-  "React-App": {
-    label: "Your React App"
+  Uploader-Component: {
+    label: "Uploader Component\n(@blocklet/uploader)"
+    shape: rectangle
+  }
+
+  Backend-Server: {
+    label: "Backend Server"
     shape: rectangle
 
-    "Uploader-Component": {
-      label: "@blocklet/uploader"
-      shape: package
+    Uploader-Server: {
+      label: "Uploader Middleware\n(@blocklet/uploader-server)"
+      shape: hexagon
+    }
+
+    Storage: {
+      label: "File Storage / DB"
+      shape: cylinder
     }
   }
 }
 
-"Blocklet-Server": {
-  label: "Your Blocklet Server"
-  shape: rectangle
+User -> App.Uploader-Component: "1. Selects & drops files"
+App.Uploader-Component -> App.Backend-Server.Uploader-Server: "2. Uploads file (Tus)"
+App.Backend-Server.Uploader-Server -> App.Backend-Server.Storage: "3. Saves file & metadata"
+App.Backend-Server.Uploader-Server -> App.Uploader-Component: "4. Returns upload result (URL)"
+App.Uploader-Component -> User: "5. Updates UI"
 
-  "Express-App": {
-    label: "Your Express App"
-    shape: rectangle
-
-    "Uploader-Middleware": {
-      label: "@blocklet/uploader-server"
-      shape: package
-    }
-  }
-}
-
-"File-System": {
-  label: "Storage\n(e.g., File System)"
-  shape: cylinder
-}
-
-User-Browser.React-App.Uploader-Component -> Blocklet-Server.Express-App.Uploader-Middleware: "HTTP POST Request\n(File Upload)"
-Blocklet-Server.Express-App.Uploader-Middleware -> "File-System": "Saves File"
 ```
 
-### The Packages
+## Key Features
 
-<x-cards>
-  <x-card data-title="@blocklet/uploader" data-icon="lucide:upload-cloud">
-    The frontend package provides a customizable React component for a seamless user experience. It handles file selection, previews, progress tracking, and comes with a variety of plugins.
+<x-cards data-columns="2">
+  <x-card data-title="Extensible Plugin System" data-icon="lucide:puzzle">
+    Leverage dozens of Uppy plugins like Webcam, Image Editor, and URL importing, or build your own custom plugins to meet specific needs.
   </x-card>
-  <x-card data-title="@blocklet/uploader-server" data-icon="lucide:server">
-    The backend package provides Express.js middleware to handle file uploads. It simplifies saving files to local storage and includes Companion for importing files from remote sources like URLs or Unsplash.
+  <x-card data-title="Resumable Uploads" data-icon="lucide:upload-cloud">
+    Powered by the Tus protocol, uploads can be paused and resumed, ensuring reliability even over unstable network connections.
+  </x-card>
+  <x-card data-title="Remote Source Integration" data-icon="lucide:link">
+    Easily configure the Companion middleware to allow users to import files directly from services like Unsplash, Google Drive, or any public URL.
+  </x-card>
+  <x-card data-title="Decoupled Architecture" data-icon="lucide:split">
+    The frontend `@blocklet/uploader` can be used with any Tus-compatible backend. While `@blocklet/uploader-server` is a convenient, ready-to-use solution, it is not a strict dependency.
   </x-card>
 </x-cards>
 
-### Key Features
+## Next Steps
 
--   **Decoupled by Design**: `@blocklet/uploader` does not strictly depend on `@blocklet/uploader-server`. You can use the frontend component with any custom backend that can handle multipart/form-data requests.
--   **Extensible with Plugins**: Enhance the user interface with Uppy plugins like `ImageEditor`, `Webcam`, and `Url` to allow users to edit images or import files from various sources.
--   **Server-Side Customization**: The `@blocklet/uploader-server` middleware provides an `onUploadFinish` callback, giving you full control to process file metadata and save it to a database after an upload completes.
--   **Remote File Sources**: With the `Companion` middleware, you can enable users to import files directly from URLs or cloud services, which are then processed through your server.
+Ready to get started? Follow our step-by-step guides to integrate the uploader into your Blocklet.
 
-### Next Steps
-
-To start integrating the uploader into your application, proceed to the **Getting Started** guide.
-
-<x-card data-title="Getting Started" data-icon="lucide:arrow-right" data-href="/getting-started" data-cta="Read More">
-  Follow the setup guides to install and configure both the frontend component and backend middleware in your blocklet.
+<x-card data-title="Getting Started" data-href="/getting-started" data-icon="lucide:rocket" data-cta="Start Building">
+  Jump into our guides to set up the frontend component and backend middleware in under 30 minutes.
 </x-card>
