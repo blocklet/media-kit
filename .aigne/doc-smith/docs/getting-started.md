@@ -1,55 +1,55 @@
 # Getting Started
 
-This guide provides the essential steps to integrate a file upload solution into your blocklet. The solution is composed of two primary packages, both built upon the robust and flexible [Uppy](https://uppy.io/docs/quick-start/) file uploader:
+This guide will walk you through the essential steps to integrate a powerful file uploader into your blocklet. We'll cover both the frontend UI component and the backend server logic required for a complete setup.
 
-- **`@blocklet/uploader`**: A frontend React component that provides the user interface for uploads.
-- **`@blocklet/uploader-server`**: An optional backend middleware for implementing custom file-handling logic on the server.
+The uploader functionality is split into two main packages:
 
-The `@blocklet/uploader` component is designed to work out-of-the-box and is the primary package you will need. It can be used independently and will automatically integrate with existing blocklet services (like a Media Kit) for storage. You only need to install and configure `@blocklet/uploader-server` if you need to implement custom backend logic, such as saving file metadata to a specific database or triggering custom workflows after an upload completes.
+- **`@blocklet/uploader`**: A flexible React component for the frontend.
+- **`@blocklet/uploader-server`**: A middleware for handling uploads on your Express.js backend.
 
-The diagram below illustrates these two integration paths.
+It's important to note that `@blocklet/uploader` can work independently with any compatible Uppy backend, such as the one provided by the Media Kit blocklet. You only need to use `@blocklet/uploader-server` if you want to implement your own custom file handling logic on the server.
+
+### High-Level Flow
+
+The diagram below illustrates the basic interaction between the user, the frontend component, and your backend server.
 
 ```d2
 direction: down
 
-"Uploader UI": {
-  label: "Uploader UI\n(@blocklet/uploader)"
-  shape: package
+User: {
+  shape: c4-person
 }
 
-"Standard Service": {
-  label: "Standard Service\n(e.g., Media Kit)"
+Blocklet-Application: {
+  label: "Blocklet Application"
   shape: rectangle
+
+  Uploader-Component: {
+    label: "Frontend\n(@blocklet/uploader)"
+    shape: rectangle
+  }
+
+  Uploader-Server: {
+    label: "Backend\n(@blocklet/uploader-server)"
+    shape: hexagon
+  }
 }
 
-"Custom Backend": {
-  label: "Custom Backend\n(@blocklet/uploader-server)"
-  shape: package
-  style.stroke-dash: 3
-}
-
-"Storage": {
-  shape: cylinder
-}
-
-"Uploader UI" -> "Standard Service": "Default Path (Recommended)"
-"Uploader UI" -> "Custom Backend": "Optional Path (For custom logic)" {
-  style.stroke-dash: 3
-}
-
-"Standard Service" -> "Storage"
-"Custom Backend" -> "Storage"
+User -> Blocklet-Application.Uploader-Component: "1. Upload File"
+Blocklet-Application.Uploader-Component -> Blocklet-Application.Uploader-Server: "2. HTTP Request"
+Blocklet-Application.Uploader-Server -> Blocklet-Application.Uploader-Component: "3. JSON Response"
+Blocklet-Application.Uploader-Component -> User: "4. Update UI"
 ```
 
-To begin, follow the guides below. All projects should start with the frontend setup.
+Follow these guides to set up each part of the system:
 
-<x-cards data-columns="2">
+<x-cards>
   <x-card data-title="Frontend Setup (@blocklet/uploader)" data-icon="lucide:layout-template" data-href="/getting-started/frontend-setup">
-    Learn how to install and render the uploader component in your React application. This is the starting point for any integration.
+    A step-by-step guide to installing and rendering the basic frontend uploader component in your React application.
   </x-card>
-  <x-card data-title="Backend Setup (@blocklet/uploader-server)" data-icon="lucide:server-cog" data-href="/getting-started/backend-setup">
-    Optionally, follow this guide to add custom server-side logic for processing uploads in your Express-based blocklet.
+  <x-card data-title="Backend Setup (@blocklet/uploader-server)" data-icon="lucide:server" data-href="/getting-started/backend-setup">
+    Learn how to install and configure the necessary backend middleware in your Express-based blocklet to handle file uploads.
   </x-card>
 </x-cards>
 
-By completing the frontend setup, you will have a functional file uploader. If your needs are more complex, the backend setup guide will show you how to take full control of the upload process. Once the basics are working, you can explore more advanced configurations in the [Guides](./guides.md) section.
+After completing these setup guides, you will have a fully functional file upload system. To explore more advanced features like plugin configuration and custom upload handling, please proceed to the [Guides](./guides.md) section.

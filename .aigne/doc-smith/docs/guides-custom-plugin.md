@@ -1,149 +1,233 @@
 # Creating a Custom Plugin
 
-The `@blocklet/uploader` component is built on top of Uppy, a highly modular and extensible file uploader. You can extend its functionality by creating your own custom tabs (known as "acquirers") that appear in the dashboard alongside standard options like "My Device" or "Webcam". This guide will walk you through creating a custom plugin using the provided `VirtualPlugin` interface.
+The `@blocklet/uploader` component is built to be extensible, allowing you to add custom tabs to the dashboard for specialized functionality. Whether you want to integrate an AI image generator, browse a custom asset library, or create a unique file source, you can achieve it by creating a custom plugin.
 
-This allows you to integrate unique workflows, such as selecting files from a custom media library, generating content on the fly, or connecting to a proprietary storage service.
+This guide will walk you through the process of adding your own tab to the Uploader dashboard using the provided `VirtualPlugin` interface.
 
 ## How It Works
 
-Instead of requiring you to write a full Uppy plugin from scratch, `@blocklet/uploader` exposes a simplified interface. You can define a custom plugin directly within the `plugins` prop of the `<Uploader />` component. This configuration is then used to instantiate a `VirtualPlugin` behind the scenes.
+The core of this functionality is the `VirtualPlugin`. It's a special Uppy plugin that acts as a placeholder, creating a new tab in the dashboard with a title and an icon you specify. This tab contains an empty `<div>` element.
 
-The core of this feature is the `onShowPanel` callback. This function is triggered whenever a user clicks on your custom plugin's tab. It provides a React `ref` to the panel's container element, allowing you to render any React component inside it.
+When a user clicks on your custom tab, the `onShowPanel` callback function you provide is triggered. This function receives a React `ref` pointing to the empty `<div>` container. Your task is to then render your own custom React component into this container, effectively bringing your plugin's UI to life.
 
 ```d2
-direction: right
+direction: down
 
-"User": {
-  shape: person
+User: { 
+  shape: c4-person 
 }
 
-"Uploader Dashboard": {
-  "My Device": "My Device"
-  "Custom Tab": "My Custom Plugin"
-}
+Uploader: {
+  label: "Uploader Dashboard"
+  shape: rectangle
 
-"Your Application": {
-  "Plugin Config": "plugins prop configuration" {
-    "onShowPanel": "onShowPanel callback"
+  Standard-Tabs: {
+    label: "Standard Tabs"
+    shape: rectangle
+    "My Device": {}
+    "Webcam": {}
   }
-  "Custom Component": "<MyCustomPanel />"
+
+  Custom-Tab: {
+    label: "Your Custom Tab"
+    shape: rectangle
+
+    VirtualPlugin-Container: {
+      label: "Empty <div> from VirtualPlugin"
+      shape: rectangle
+      style: {
+        stroke-dash: 2
+      }
+    }
+  }
 }
 
-"User" -> "Uploader Dashboard.Custom Tab": Clicks
-"Uploader Dashboard.Custom Tab" -> "Your Application.Plugin Config.onShowPanel": "Triggers callback with a ref"
-"Your Application.Plugin Config.onShowPanel" -> "Your Application.Custom Component": "Renders component into the panel"
+Your-App: {
+  label: "Your Application Logic"
+  shape: rectangle
+
+  onShowPanel: {
+    label: "onShowPanel Callback"
+    shape: hexagon
+  }
+
+  Custom-Component: {
+    label: "Your Custom React Component"
+    shape: rectangle
+  }
+}
+
+User -> Uploader.Custom-Tab: "1. Clicks custom tab"
+Uploader.Custom-Tab -> Your-App.onShowPanel: "2. Triggers onShowPanel with ref"
+Your-App.onShowPanel -> Your-App.Custom-Component: "3. Renders component into container"
+Your-App.Custom-Component -> Uploader.Custom-Tab.VirtualPlugin-Container: "4. UI appears in the tab"
 
 ```
 
-## Step-by-Step Implementation
+## Step 1: Configure the Plugin
 
-Let's create a simple plugin that displays a button to programmatically add a text file to the uploader.
+To add a custom plugin, you need to configure the `plugins` prop on the `<Uploader />` component. Instead of just a string array, you'll provide an array of objects, where each object defines a custom plugin.
 
-### 1. Configure the Plugin
+Here's the structure of a plugin configuration object:
 
-First, define your plugin in the `plugins` array passed to the `<Uploader />` component. This object requires a unique `id`, `options` for display (title, icon), and the `onShowPanel` callback.
+| Property      | Type                                     | Description                                                                                                                                                              |
+|---------------|------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`          | `string`                                 | A unique identifier for your plugin instance. Uppy uses this internally. Must be the same as `options.id`.                                                               |
+| `options`     | `object`                                 | An object containing configuration for the plugin's appearance and behavior.                                                                                             |
+| `options.id`  | `string`                                 | The unique ID for the plugin.                                                                                                                                            |
+| `options.title`| `string`                                | The text that will appear on the tab in the Uploader dashboard.                                                                                                          |
+| `options.icon` | `string`                                 | An SVG string to be used as the icon for the tab. It is rendered directly, so ensure it's safe.                                                                         |
+| `options.autoHide`| `boolean`                              | If `true` (default), clicking the tab will hide other Uppy panels. Set to `false` if you want your panel to appear alongside others.                                      |
+| `onShowPanel` | `(ref: React.RefObject<any>) => void` | A callback function that fires when the user clicks the plugin tab. It receives a `ref` to the container `div` where you should render your component. |
+
+### Example Configuration
+
+Let's add a plugin called "AI Image" that will allow users to generate images.
 
 ```jsx
-// Example of a custom plugin configuration
-const customPlugins = [
-  {
-    id: 'MyCustomPlugin', // A unique ID for this plugin instance
-    options: {
-      id: 'MyCustomPlugin', // This ID must match the outer ID
-      title: 'Custom Source',
-      // You can use an SVG string for the icon
-      icon: `<svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="32" height="32"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>`,
-    },
-    onShowPanel: (ref) => {
-      // We will render our React component here in the next step.
-      console.log('Custom panel is now visible. Container ref:', ref.current);
-    },
-  },
-];
+import Uploader from '@blocklet/uploader/react';
+import ReactDOM from 'react-dom';
 
-// In your component's render method
-<Uploader plugins={customPlugins} />
+// A simple SVG icon for the tab
+const AIIcon = `
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M9.5 2.5a2.5 2.5 0 0 1 5 0"/>
+  <path d="M12 6V5"/>
+  <path d="M12 11v-1"/>
+  <path d="m15 13-1-1"/>
+  <path d="m9 13 1-1"/>
+  <path d="M18 10h1"/>
+  <path d="M5 10h1"/>
+  <path d="m18 17-1-1"/>
+  <path d="m6 17 1-1"/>
+  <path d="M12 21v-1"/>
+  <path d="M12 17v-1"/>
+  <path d="M12 12a6 6 0 0 0-6 6h12a6 6 0 0 0-6-6Z"/>
+</svg>
+`;
+
+function MyUploader() {
+  // We will define this function in the next step
+  const handleShowAIPanel = (panelRef) => {
+    // ... render logic here
+  };
+
+  const customPlugins = [
+    {
+      id: 'AIImage',
+      options: {
+        id: 'AIImage',
+        title: 'AI Image',
+        icon: AIIcon,
+      },
+      onShowPanel: handleShowAIPanel,
+    },
+  ];
+
+  return <Uploader plugins={customPlugins} />;
+}
 ```
 
-### 2. Create Your Panel Component
+## Step 2: Create Your Custom Panel Component
 
-Next, create the React component that will be displayed inside the plugin's panel. You can use the `useUppy()` hook from `@uppy/react` to get access to the Uppy instance and interact with it.
+Next, create the React component that will be displayed inside your new tab. This component can contain any UI elements you need. To interact with the Uploader (e.g., to add a generated file), you can get the Uppy instance using the `useUppy` hook from `@uppy/react`.
 
 ```jsx
 import React from 'react';
 import { useUppy } from '@uppy/react';
-import { createRoot } from 'react-dom/client';
 
-// This is the component that will be rendered inside the panel
-function MyCustomPanel() {
+function AIImagePanel() {
   const uppy = useUppy();
 
-  const handleAddFile = () => {
-    if (!uppy) return;
-
-    const myBlob = new Blob(['This is a file created from a custom plugin.'], { type: 'text/plain' });
-
-    uppy.addFile({
-      name: 'custom-file.txt',
+  const handleGenerateAndAddFile = async () => {
+    // In a real application, you would call an AI service here.
+    // For this example, we'll create a dummy text file.
+    const content = 'This is a generated file.';
+    const blob = new Blob([content], { type: 'text/plain' });
+    const file = {
+      source: 'AIImagePlugin',
+      name: 'generated-image.txt',
       type: 'text/plain',
-      data: myBlob,
-      source: 'MyCustomPlugin', // Good practice to identify the source
-    });
+      data: blob,
+      size: blob.size,
+    };
+
+    // Add the file to Uppy's queue
+    try {
+      uppy.addFile(file);
+      console.log('File added successfully');
+    } catch (err) {
+      console.error('Failed to add file:', err);
+    }
   };
 
   return (
     <div style={{ padding: '20px', textAlign: 'center' }}>
-      <h3>Custom File Source</h3>
-      <p>This panel can contain any custom React content.</p>
-      <button type="button" onClick={handleAddFile}>
-        Add a Sample Text File
+      <h3>AI Image Generator</h3>
+      <p>Click the button to generate a new file and add it to the upload queue.</p>
+      <button type="button" onClick={handleGenerateAndAddFile}>
+        Generate & Add File
       </button>
     </div>
   );
 }
+
+export default AIImagePanel;
 ```
 
-### 3. Render the Component in the Panel
+## Step 3: Render Your Component
 
-Finally, update the `onShowPanel` callback to render your custom component into the provided container `ref`. It's important to handle unmounting as well to clean up when the panel is hidden.
+Finally, implement the `onShowPanel` callback to render your custom component into the provided container. The best way to do this is with `ReactDOM.createPortal`, which renders a component into a DOM node outside of its parent's DOM hierarchy.
 
 ```jsx
-// ... inside your plugins configuration
-onShowPanel: (ref) => {
-  let root;
-  if (ref.current) {
-    root = createRoot(ref.current);
-    root.render(<MyCustomPanel />);
-  }
+import Uploader from '@blocklet/uploader/react';
+import { UppyProvider } from '@uppy/react';
+import ReactDOM from 'react-dom';
+import React, { useRef } from 'react';
+import AIImagePanel from './AIImagePanel'; // Assume this is the component from Step 2
 
-  // Return a cleanup function that will be called when the panel is hidden
-  return () => {
-    if (root) {
-      setTimeout(() => root.unmount(), 0);
+// ... AIcon SVG string from Step 1
+
+function MyUploaderWithCustomPlugin() {
+  const uppyInstanceRef = useRef(null); // To pass the same Uppy instance to the provider
+
+  const handleShowAIPanel = (panelRef) => {
+    if (panelRef.current) {
+      // Use createPortal to render our component into the div provided by VirtualPlugin
+      const portal = ReactDOM.createPortal(
+        // We need to wrap our component in UppyProvider so `useUppy` works
+        <UppyProvider uppy={uppyInstanceRef.current}>
+          <AIImagePanel />
+        </UppyProvider>,
+        panelRef.current
+      );
+      // This is a simple way to render, you might want a more robust solution
+      // using state management in a real app to handle mounting/unmounting.
+      ReactDOM.render(portal, document.createElement('div')); // Temporary container for render
     }
   };
-},
+
+  const customPlugins = [
+    {
+      id: 'AIImage',
+      options: {
+        id: 'AIImage',
+        title: 'AI Image',
+        icon: AIcon,
+      },
+      onShowPanel: handleShowAIPanel,
+    },
+  ];
+
+  return (
+    <Uploader
+      onUppyReady={(uppy) => (uppyInstanceRef.current = uppy)}
+      plugins={customPlugins}
+    />
+  );
+}
 ```
 
-## Plugin Configuration Options
+With these steps, you have successfully added a new, fully functional tab to the Uploader. This powerful feature allows for deep integration and customization to fit the specific needs of your application.
 
-The plugin configuration object supports the following properties:
-
-| Property      | Type                               | Description                                                                                                                                                    |
-|---------------|------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `id`          | `string`                           | A unique identifier for the plugin instance.                                                                                                                   |
-| `options`     | `object`                           | An object containing metadata and settings for the `VirtualPlugin`.                                                                                            |
-| `onShowPanel` | `(ref) => (() => void) \| void`   | A callback function that fires when the panel is shown. It receives a React `RefObject` to the panel's container `div`. It can optionally return a cleanup function. |
-
-### `options` Object
-
-| Property   | Type                    | Description                                                                                                                   |
-|------------|-------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| `id`       | `string`                | **Required.** A unique identifier that must match the top-level `id`.                                                         |
-| `title`    | `string`                | **Required.** The text displayed on the tab in the Uppy Dashboard.                                                            |
-| `icon`     | `string \| React.ReactNode` | An SVG string or a React component to be used as the tab icon.                                                                  |
-| `autoHide` | `boolean`               | Defaults to `true`. If `true`, clicking the tab will hide other Uppy panels. Set to `false` to keep them visible simultaneously. |
-
-With this approach, you can seamlessly integrate custom views and logic directly into the uploader's user interface.
-
-For more general information on enabling or disabling standard plugins, please see the [Configuring Plugins](./guides-configuring-plugins.md) guide. For more advanced use cases, you may find the official [Uppy documentation on writing plugins](https://uppy.io/docs/plugins/#Writing-a-Plugin) helpful.
+For more configuration options, see the full list of props in the [`<Uploader />` Component Props](./api-reference-uploader-component-props.md) API reference.

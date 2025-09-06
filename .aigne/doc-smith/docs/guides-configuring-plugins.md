@@ -1,55 +1,64 @@
 # Configuring Plugins
 
-The `@blocklet/uploader` component is built on the flexible Uppy ecosystem, which uses plugins to provide various import sources and features. You have full control over which plugins are enabled and how they are configured.
+The `@blocklet/uploader` component is built on the powerful [Uppy](https://uppy.io/) file uploader, inheriting its flexible plugin system. Plugins are the key to extending the uploader's functionality, allowing you to add features like a webcam importer, image editor, connections to remote sources like Unsplash, and more.
+
+This guide will walk you through enabling, disabling, and customizing these plugins to fit your application's needs.
 
 ## Enabling and Disabling Plugins
 
-By default, the Uploader enables a standard set of plugins. To customize the user experience, you can specify exactly which plugins to display by passing an array of plugin IDs to the `plugins` prop. This allows you to remove unwanted options from the interface.
+The simplest way to control which features are available to your users is by using the `plugins` prop. This prop accepts an array of strings, where each string is the ID of a plugin you want to enable.
 
-For example, if you only want to allow uploads from the user's device, a direct URL, and the webcam, you can configure the Uploader like this:
+By default, the uploader enables a standard set of plugins. To customize this list, simply provide your own array.
 
 ```jsx
-import { Uploader } from '@blocklet/uploader';
+import Uploader from '@blocklet/uploader';
 
-function App() {
-  return <Uploader plugins={['Url', 'Webcam']} />;
+function MyComponent() {
+  return (
+    <Uploader
+      popup
+      plugins={['Webcam', 'Url', 'ImageEditor', 'Unsplash']}
+    />
+  );
 }
 ```
 
-This configuration will only show the "Link" and "Camera" options in the upload interface, in addition to the default local device source ("My Device").
+In this example, only the Webcam, URL importer, Image Editor, and Unsplash plugins will be available in the uploader's interface. The default "My Device" option is always available.
 
 ### Available Plugin IDs
 
-The following table lists the primary plugins you can enable or disable:
+Here are the primary built-in plugins you can include in the `plugins` array:
 
-| Plugin ID   | Description                                                                                       | Dependencies                                                                                                  |
-|-------------|---------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| `Webcam`    | Allows users to capture photos and record videos directly from their device's camera.             | None                                                                                                          |
-| `Url`       | Allows users to import files by providing a direct public URL.                                    | Requires a correctly configured Companion backend. See [Integrating Remote Sources](./guides-remote-sources.md).    |
-| `Unsplash`  | Enables browsing and importing images from the Unsplash library.                                  | Requires Companion and a server-side Unsplash API key.                                                        |
-| `AIImage`   | Provides an interface for generating images using AI.                                             | Requires the Media Kit blocklet with AI features enabled.                                                     |
-| `Uploaded`  | Allows users to select from files they have previously uploaded.                                  | Requires the Media Kit blocklet.                                                                              |
-| `Resources` | Allows users to select files from other installed blocklets.                                      | Requires the Media Kit blocklet.                                                                              |
-| `ImageEditor` | An image editing tool that appears before uploading an image file. It's active by default.      | None                                                                                                          |
+| Plugin ID | Description |
+|---|---|
+| `ImageEditor` | Allows users to crop, rotate, and make other adjustments to images before uploading. |
+| `Webcam` | Enables users to take photos and record videos directly from their device's camera. |
+| `Url` | Provides an interface to import files from a direct URL. |
+| `Unsplash` | Allows users to search and import images from the Unsplash library (requires configuration). |
+| `Uploaded` | A custom plugin that lets users select from files previously uploaded to the Media Kit. |
+| `Resources` | A custom plugin that allows selecting files from other installed blocklets. |
+| `AIImage` | A custom plugin for generating images using AI, available when the AI Kit is installed. |
+
+**Note:** Some core plugins like `ThumbnailGenerator` and `PrepareUpload` are always active to ensure the uploader functions correctly and are not controlled by the `plugins` prop.
 
 ## Customizing Plugin Options
 
-Several plugins can be customized by passing specific props to the `<Uploader />` component. This allows you to change their behavior and appearance.
+For more advanced control, you can pass specific options to certain plugins using dedicated props. This allows you to fine-tune their behavior.
 
-### Image Editor (`imageEditorProps`)
+### Image Editor
 
-The Image Editor is a commonly customized plugin. You can pass a configuration object to the `imageEditorProps` prop to control its settings. This object is passed directly to the `@uppy/image-editor` plugin.
+The `ImageEditor` plugin is highly configurable. Use the `imageEditorProps` prop to pass any valid options from the [Uppy ImageEditor documentation](https://uppy.io/docs/image-editor/#options).
 
-For a complete list of available options, refer to the [Uppy Image Editor documentation](https://uppy.io/docs/image-editor/#options).
-
-Here is an example that sets the output image quality and configures the cropper to use a 16:9 aspect ratio:
+For instance, you can set the output image quality and define specific cropping options:
 
 ```jsx
-import { Uploader } from '@blocklet/uploader';
+import Uploader from '@blocklet/uploader';
 
-function MyUploader() {
+function MyComponent() {
   return (
     <Uploader
+      popup
+      plugins={['ImageEditor']}
       imageEditorProps={{
         quality: 0.8, // Set image quality to 80%
         cropperOptions: {
@@ -64,38 +73,47 @@ function MyUploader() {
 }
 ```
 
-### Uploaded & Resources Plugins (`uploadedProps`, `resourcesProps`)
+### Custom Data Source Plugins (`Uploaded` & `Resources`)
 
-For the `Uploaded` and `Resources` plugins, you can provide an `onSelectedFiles` callback to intercept the file selection process. Instead of adding the selected files to the Uppy queue for upload, this function will be called with the file data. This is useful if you want to use the Uploader as a file picker for existing assets without re-uploading them.
+The `Uploaded` and `Resources` plugins provide a way to select existing assets rather than uploading new ones. You can use their respective props (`uploadedProps` and `resourcesProps`) to intercept the file selection process.
+
+This is particularly useful if you want to get the selected file data directly without having Uppy re-upload it. You can define an `onSelectedFiles` callback to handle the selection yourself.
 
 ```jsx
-import { Uploader } from '@blocklet/uploader';
+import Uploader from '@blocklet/uploader';
 
-function MyUploader() {
+function MyComponent() {
+  const handleFilesSelected = (files) => {
+    console.log('Files selected from existing resources:', files);
+    // `files` is an array of objects, each containing metadata
+    // and a `uppyFile` property to interact with the Uppy instance.
+    // The uploader will close automatically after this callback.
+  };
+
   return (
     <Uploader
+      popup
       plugins={['Uploaded']}
       uploadedProps={{
-        onSelectedFiles: (files) => {
-          console.log('User selected these files:', files);
-          // 'files' is an array of selected file objects.
-          // Each object contains metadata like `fileUrl` and the Uppy file object.
-          // You can now use this data, for example, to insert an image into an editor.
-        },
+        onSelectedFiles: handleFilesSelected,
       }}
     />
   );
 }
 ```
 
-### Companion-Based Plugins (`apiPathProps`)
+When `onSelectedFiles` is provided, the default behavior of adding the file to the Uppy queue for upload is bypassed, giving you full control over the selected assets.
 
-Plugins that rely on remote sources, such as `Url` and `Unsplash`, are configured through the `apiPathProps` prop. This prop defines the endpoints for the backend Companion service that handles the remote imports. For more details on setting this up, see the [Integrating Remote Sources](./guides-remote-sources.md) guide.
+## Automatic Plugin Integration
+
+The uploader is designed to work seamlessly with the Blocklet ecosystem. It automatically detects if the **Media Kit** blocklet is installed and enables relevant plugins like `Uploaded`, `Resources`, and `AIImage` if they are available, without requiring manual configuration in the `plugins` array. Similarly, the `Unsplash` plugin is enabled automatically if an Unsplash API key is found in the environment.
+
+This simplifies setup and provides a richer user experience out-of-the-box.
 
 ---
 
-Now that you know how to configure plugins, you can move on to managing the files once they are uploaded.
+Now that you know how to configure the built-in plugins, you might want to extend the uploader with your own custom functionality. Proceed to the next guide to learn how.
 
-<x-card data-title="Next Step: Handling Uploads" data-icon="lucide:upload-cloud" data-href="/guides/handling-uploads" data-cta="Read Guide">
-  Learn how to implement callbacks to process files and access their metadata after a successful upload.
+<x-card data-title="Creating a Custom Plugin" data-icon="lucide:puzzle-piece" data-href="/guides/custom-plugin" data-cta="Read More">
+  Learn how to build your own plugin to add a custom tab and functionality to the Uploader interface.
 </x-card>

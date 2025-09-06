@@ -1,31 +1,74 @@
 # initCompanion(options)
 
-The `initCompanion(options)` function initializes the Uppy Companion middleware, which enables your application to handle file imports from remote sources. This includes services like Google Drive, Instagram, Unsplash, and direct URLs. This function is a wrapper around the standard `@uppy/companion` library, providing a convenient setup within a blocklet environment.
+The `initCompanion` function initializes and configures the server-side middleware responsible for fetching files from remote sources like direct URLs, Unsplash, Google Drive, and others. It is a wrapper around the official [@uppy/companion](https://uppy.io/docs/companion/) package, tailored for use within Blocklets.
 
-For a complete list of available providers and their specific configuration options, please refer to the official [Uppy Companion documentation](https://uppy.io/docs/companion/).
+This middleware works by downloading a file from a remote source to a temporary directory on your server and then streaming it back to the Uppy instance in the user's browser. From there, the file is uploaded to your final destination using the primary upload middleware, such as `initLocalStorageServer`.
 
-## Parameters
+### How It Works
 
-The function accepts a single options object with the following properties:
+The following diagram illustrates the data flow when a user selects a file from a remote source:
 
-| Name            | Type             | Required | Description                                                                                                                                                           |
-| --------------- | ---------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `path`          | `string`         | Yes      | The absolute path to a directory on the server where Companion will temporarily store files downloaded from remote sources before they are processed.                       |
-| `express`       | `Function`       | Yes      | The Express application instance. Companion uses this to register its routes.                                                                                         |
-| `providerOptions` | `Object`         | No       | An object containing configuration for the remote providers you want to enable. This is where you should place API keys and secrets.                                      |
-| `uploadUrls`    | `Array<string>`  | No       | An array of trusted URLs that Companion is allowed to upload files to. This should typically include your blocklet's public URL.                                        |
-| `...restProps`  | `Object`         | No       | Any additional options will be passed directly to the `@uppy/companion` configuration object, allowing for advanced customization.                                      |
+```d2
+direction: down
 
-## Returns
+User: {
+  shape: c4-person
+}
 
-The function returns a Companion instance with two key properties:
+Frontend: {
+  label: "Frontend (Browser)"
+  shape: rectangle
 
-- **`handle`**: The Express middleware that processes all Companion-related requests. You should mount this on a specific route (e.g., `/companion`).
-- **`setProviderOptions(options)`**: A function that allows you to dynamically update the `providerOptions` after the server has started. This is useful if provider keys are fetched or changed at runtime.
+  Uploader-Component: {
+    label: "Uploader Component"
+    shape: rectangle
+  }
+}
 
-## Example Usage
+Backend: {
+  label: "Backend Server"
+  shape: rectangle
 
-Here is an example of how to initialize and mount the Companion middleware in your Express application.
+  Companion-Middleware: {
+    label: "Companion Middleware\n(@blocklet/uploader-server)"
+    shape: hexagon
+  }
+
+  Local-Storage-Middleware: {
+    label: "Local Storage Middleware"
+    shape: rectangle
+  }
+}
+
+Remote-Source: {
+  label: "Remote Source\n(e.g., Unsplash, URL)"
+  shape: cylinder
+}
+
+User -> Frontend.Uploader-Component: "1. Selects remote file"
+Frontend.Uploader-Component -> Backend.Companion-Middleware: "2. Request file download"
+Backend.Companion-Middleware -> Remote-Source: "3. Fetch file"
+Remote-Source -> Backend.Companion-Middleware: "4. Stream file data"
+Backend.Companion-Middleware -> Frontend.Uploader-Component: "5. Stream file to browser"
+Frontend.Uploader-Component -> Backend.Local-Storage-Middleware: "6. Upload file via Tus"
+```
+
+### Prerequisites
+
+Companion requires `body-parser` and `express-session` to function correctly. Ensure these are included in the same subpath as your Companion middleware.
+
+```javascript
+import bodyParser from 'body-parser';
+import session from 'express-session';
+
+// ... inside your router setup
+router.use(bodyParser.json());
+router.use(session({ secret: 'your-secret-key', resave: false, saveUninitialized: true }));
+```
+
+### Usage
+
+Here is a basic example of how to initialize and mount the Companion middleware in an Express application.
 
 ```javascript
 import express from 'express';
@@ -33,47 +76,70 @@ import { initCompanion } from '@blocklet/uploader-server';
 
 const router = express.Router();
 
-// Assume env, user, auth, and ensureComponentDid are configured
-const env = {
-  uploadDir: '/tmp/uploads',
+const companion = initCompanion({
+  path: '/path/to/your/temp/uploads',
+  express,
   providerOptions: {
-    // Add your provider keys here, e.g., Unsplash
     unsplash: {
-      key: 'YOUR_UNSPLASH_KEY',
-      secret: 'YOUR_UNSPLASH_SECRET',
+      key: process.env.UNSPLASH_KEY,
+      secret: process.env.UNSPLASH_SECRET,
     },
   },
-  appUrl: 'https://your-app.com',
-};
-
-// Initialize Companion
-const companion = initCompanion({
-  path: env.uploadDir, // A temporary directory for remote files
-  express,
-  providerOptions: env.providerOptions, // Provider keys from environment
-  uploadUrls: [env.appUrl], // Your app's public URL
+  uploadUrls: [process.env.APP_URL], // The public URL of your blocklet
 });
 
-// Mount the Companion middleware on a specific route
-// It's recommended to place it behind authentication middleware
-router.use('/companion', user, auth, ensureComponentDid, companion.handle);
+router.use('/companion', companion.handle);
 ```
 
-## Additional Notes
+### Options
 
-- **Middleware Dependencies**: `initCompanion` automatically includes the necessary `body-parser` and `express-session` middleware, so you do not need to add them separately for the Companion route.
+| Parameter         | Type       | Description                                                                                                                                                                                             |
+| ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `path`            | `string`   | **Required.** The absolute path to a temporary directory on the server where files from remote sources will be stored before being sent to the client.                                                       |
+| `express`         | `Function` | **Required.** The Express application constructor.                                                                                                                                                       |
+| `providerOptions` | `Object`   | An object containing the configuration (keys, secrets, etc.) for each remote provider you want to enable. For detailed options for each provider, refer to the [Uppy Companion documentation](https://uppy.io/docs/companion/providers/). |
+| `uploadUrls`      | `string[]` | **Required.** An array of trusted base URLs where the frontend Uploader component is running. This is a crucial security measure to prevent misuse of your Companion instance.                                 |
+| `...restProps`    | `Object`   | Any other valid options from the official Uppy Companion configuration can be passed here. This includes `server`, `filePath`, `secret`, etc.                                                              |
 
-- **Error Handling**: This middleware implementation rewrites server-side errors (HTTP 5xx) to client-side errors (HTTP 400). This behavior helps prevent leaking server implementation details and treats many provider configuration issues as client-side problems.
+### Return Value
 
----
+The `initCompanion` function returns a Companion instance with the following properties:
 
-Now that you understand how to handle remote sources, you may want to learn how to serve static or dynamic files from your blocklet.
+- **`handle`**: The Express middleware function that processes all Companion-related requests. You should mount this on a specific path (e.g., `/companion`).
+- **`setProviderOptions(options)`**: A method that allows you to dynamically update the `providerOptions` after initialization. This is useful if you need to load credentials asynchronously or change them at runtime.
+
+#### Example: Using `setProviderOptions`
+
+```javascript
+const companion = initCompanion({
+  path: env.uploadDir,
+  express,
+  uploadUrls: [env.appUrl],
+});
+
+// Later, you can dynamically set the provider options
+async function configureProviders() {
+  const credentials = await fetchCredentialsFromSomeService();
+  companion.setProviderOptions({
+    unsplash: {
+      key: credentials.unsplash.key,
+      secret: credentials.unsplash.secret,
+    },
+  });
+}
+
+configureProviders();
+
+router.use('/companion', user, auth, companion.handle);
+```
+
+### Next Steps
 
 <x-cards>
-  <x-card data-title="initStaticResourceMiddleware(options)" data-icon="lucide:folder-symlink" data-href="/api-reference/uploader-server/static-resource">
-    Learn how to serve static assets from other installed blocklets.
+  <x-card data-title="Handling Uploads" data-icon="lucide:upload-cloud" data-href="/guides/handling-uploads">
+    Learn how to process files on the backend after they are successfully uploaded.
   </x-card>
-  <x-card data-title="initDynamicResourceMiddleware(options)" data-icon="lucide:folder-sync" data-href="/api-reference/uploader-server/dynamic-resource">
-    Serve dynamic resources from specified directories with support for real-time file watching.
+  <x-card data-title="initLocalStorageServer()" data-icon="lucide:server" data-href="/api-reference/uploader-server/local-storage">
+    Explore the API for handling direct file uploads from the user's computer.
   </x-card>
 </x-cards>

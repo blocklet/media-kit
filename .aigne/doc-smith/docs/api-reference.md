@@ -1,50 +1,56 @@
 # API Reference
 
-This section provides a complete reference for all modules, functions, components, and configuration options available in the `@blocklet/uploader` and `@blocklet/uploader-server` packages. Whether you are customizing the frontend UI or configuring the backend handlers, you will find the detailed information you need here.
+Welcome to the API reference for the Blocklet Uploader packages. This section provides detailed documentation on all the available components, functions, props, and options for both the frontend and backend libraries. Whether you're customizing the user interface or implementing complex server-side upload logic, you'll find the necessary details here.
 
-The `@blocklet/uploader` package provides the frontend React component and does not depend on the backend package. It can connect to any server that supports the Tus resumable upload protocol. The `@blocklet/uploader-server` package is an optional set of Express middleware for developers who need to implement custom upload handling logic, such as integrating directly with a storage service like the Media Kit.
-
-The following diagram illustrates how they can interact:
+The uploader solution is split into two primary packages: `@blocklet/uploader` for the frontend UI and `@blocklet/uploader-server` for optional backend middleware. It's important to note that `@blocklet/uploader` can function independently, especially when used within an environment with a Media Kit blocklet, which provides the necessary upload endpoints. The `@blocklet/uploader-server` package is only required if you need to build custom upload handling, integrate remote providers like Unsplash, or serve static resources directly from your blocklet's backend.
 
 ```d2
-direction: right
+direction: down
 
-"Browser" {
-  "@blocklet/uploader": {
-    shape: package
-    label: "@blocklet/uploader\n(React Components & Hooks)"
+Developer-Application: {
+  label: "Your Blocklet"
+  shape: rectangle
+
+  Frontend: {
+    label: "Frontend"
+    shape: rectangle
+    blocklet-uploader: {
+      label: "@blocklet/uploader"
+      shape: hexagon
+    }
+  }
+
+  Backend: {
+    label: "Backend (Optional)"
+    shape: rectangle
+    style.stroke-dash: 4
+    blocklet-uploader-server: {
+      label: "@blocklet/uploader-server"
+      shape: hexagon
+    }
   }
 }
 
-"Blocklet Server" {
-  "@blocklet/uploader-server": {
-    shape: package
-    label: "@blocklet/uploader-server\n(Optional Express Middleware)"
-  }
-}
-
-"Storage" {
+Media-Kit: {
+  label: "Media Kit Blocklet\n(Handles Uploads)"
   shape: cylinder
-  label: "File Storage\n(e.g., Media Kit)"
 }
 
-"Browser" -> "Blocklet Server": "File Upload Request (Tus protocol)" {
-  style.animated: true
+Developer-Application.Frontend.blocklet-uploader -> Media-Kit: "Uploads files to"
+Developer-Application.Frontend.blocklet-uploader -> Developer-Application.Backend.blocklet-uploader-server: "Custom upload logic" {
+  style.stroke-dash: 4
 }
-"Blocklet Server" -> "Storage": "Saves file"
 ```
 
-Select a package below to dive into its specific API documentation.
+This reference is divided into two main sections, one for each package:
 
-<x-cards>
+<x-cards data-columns="2">
   <x-card data-title="Frontend: @blocklet/uploader" data-icon="lucide:component" data-href="/api-reference/uploader">
-    Explore the props for the `&lt;Uploader /&gt;` component, learn how to use the `UploaderProvider` and associated hooks for programmatic control, and see the available plugins.
+    Dive into the React components, hooks, and utility functions that power the uploader's user interface. This reference covers everything you need to render, customize, and interact with the frontend uploader.
   </x-card>
   <x-card data-title="Backend: @blocklet/uploader-server" data-icon="lucide:server" data-href="/api-reference/uploader-server">
-    Reference for all server-side middleware. Find detailed options for configuring local storage, setting up Companion for remote sources, and serving static or dynamic resources.
+    Explore the Express middleware functions for handling file storage, integrating with remote sources via Companion, and serving static or dynamic resources from your blocklet's backend.
   </x-card>
 </x-cards>
 
----
-
-If you first want to understand the underlying principles of how these packages work together, you may find the [Concepts](./concepts.md) section helpful.
+Each section provides detailed explanations, parameter tables, and practical code examples to help you integrate the uploader effectively. To begin, we recommend exploring the [Frontend: @blocklet/uploader API Reference](./api-reference-uploader.md) to understand how to render and configure the UI component.
