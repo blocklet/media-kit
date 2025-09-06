@@ -1,114 +1,105 @@
 # initStaticResourceMiddleware(options)
 
-The `initStaticResourceMiddleware` is an Express middleware designed to serve static assets from other installed blocklets. This is particularly useful when your blocklet needs to access resources like image packs, font libraries, or other shared assets provided by component blocklets without hardcoding paths. The middleware automatically discovers these resources based on predefined types, maps them, and serves them efficiently. It also listens for component lifecycle events to automatically update its resource map when blocklets are added, removed, or updated.
+The `initStaticResourceMiddleware` is an Express middleware designed to discover and serve static assets from other installed blocklets. It dynamically scans your environment for blocklets that provide specific resource types, maps their files, and makes them available through your application. This process is automatic and updates in real-time as blocklets are added, removed, or updated.
+
+This is particularly useful for creating extensible applications where plugins or other blocklets can provide their own assets (like images, fonts, or stylesheets) without requiring manual configuration in the main application.
 
 ### How It Works
 
-The middleware operates through two main processes: a background mapping process and a request handling flow.
+When your application starts, the middleware scans for other blocklets that match the `resourceTypes` you define. It builds an in-memory map of all discoverable files. When a request comes in, the middleware checks this map. If a match is found, it serves the file directly from the source blocklet's directory with appropriate cache headers.
 
 ```d2
 direction: down
 
-sub-graph-request-flow: {
-    label: "Request Flow"
-    grid-columns: 1
+your-app: {
+  label: "Your Blocklet\n(with @blocklet/uploader-server)"
+  shape: rectangle
 
-    Client: {
-        shape: person
-    }
-
-    Your-Blocklet-Server: {
-        label: "Your Blocklet (Express App)"
-        shape: package
-
-        Static-Middleware: {
-            label: "initStaticResourceMiddleware"
-            shape: hexagon
-        }
-    }
-    
-    Resource-Map: {
-        label: "In-Memory\nResource Map"
-        shape: stored_data
-    }
-    
-    Other-Blocklet-Storage: {
-        label: "Other Blocklet's\nFile System"
-        shape: cylinder
-    }
-
-    Client -> Your-Blocklet-Server.Static-Middleware: "1. GET /asset.jpg"
-    Your-Blocklet-Server.Static-Middleware -> Resource-Map: "2. Lookup asset.jpg"
-    Resource-Map -> Your-Blocklet-Server.Static-Middleware: "3. Return file path"
-    Your-Blocklet-Server.Static-Middleware -> Other-Blocklet-Storage: "4. Read file"
-    Other-Blocklet-Storage -> Your-Blocklet-Server.Static-Middleware: "5. File stream"
-    Your-Blocklet-Server.Static-Middleware -> Client: "6. Send response"
+  initStaticResourceMiddleware: {
+    label: "initStaticResourceMiddleware()"
+    shape: hexagon
+  }
 }
 
-sub-graph-mapping-process: {
-    label: "Background Mapping Process"
-    grid-columns: 1
-    
-    Blocklet-SDK-Events: {
-        label: "Blocklet SDK Events\n(e.g., component started)"
-        shape: oval
-    }
-    
-    Mapping-Function: {
-        label: "mappingResource()"
-        shape: rectangle
-    }
+other-blocklets: {
+  label: "Other Installed Blocklets"
+  shape: rectangle
+  grid-columns: 2
+  grid-gap: 50
 
-    Resource-Map-Update: {
-        label: "In-Memory\nResource Map"
-        shape: stored_data
-    }
-
-    Blocklet-SDK-Events -> Mapping-Function: "Triggers"
-    Mapping-Function -> Resource-Map-Update: "Updates"
+  blocklet-a: {
+    label: "Blocklet A\n(provides 'imgpack')"
+    shape: cylinder
+    file1: "logo.png"
+  }
+  blocklet-b: {
+    label: "Blocklet B\n(provides 'fontpack')"
+    shape: cylinder
+    file2: "roboto.woff2"
+  }
 }
+
+resourcesMap: {
+  label: "In-Memory Resource Map"
+  shape: parallelogram
+  "logo.png -> /path/to/blocklet-a/imgpack/logo.png"
+  "roboto.woff2 -> /path/to/blocklet-b/fontpack/roboto.woff2"
+}
+
+user-browser: {
+  label: "User's Browser"
+  shape: c4-person
+}
+
+your-app.initStaticResourceMiddleware -> other-blocklets: "1. Scans for resources on startup"
+other-blocklets -> resourcesMap: "2. Builds map of all available files"
+user-browser -> your-app: "3. GET /logo.png"
+your-app -> resourcesMap: "4. Looks up 'logo.png'"
+resourcesMap -> your-app: "5. Returns file path"
+your-app -> other-blocklets.blocklet-a.file1: "6. Reads file from Blocklet A"
+other-blocklets.blocklet-a.file1 -> user-browser: "7. Serves file to user"
+
 ```
-
-1.  **Background Mapping**: On server start and whenever a component's status changes, the middleware scans all installed blocklets that match the configured `resourceTypes`. It builds an in-memory map of every discoverable file, linking a simple filename to its full physical path.
-2.  **Request Handling**: When a request comes in, the middleware quickly looks up the requested filename in its map. If a match is found, it serves the file directly from the corresponding blocklet's directory. If not, it passes the request to the next middleware in the chain.
 
 ### Usage
 
-To use the middleware, import it and add it to your Express application's middleware stack.
+Here's how to configure the middleware in a standard Express application.
 
 ```javascript
-import express from 'express';
-import { initStaticResourceMiddleware } from '@blocklet/uploader-server';
+const express = require('express');
+const { initStaticResourceMiddleware } = require('@blocklet/uploader-server');
+const { ImageBinDid } = require('@blocklet/uploader-server/constants');
 
 const app = express();
 
-// Basic usage: Serve resources of type 'imgpack' from the ImageBin component
-// This is a common default for accessing images managed by a Media Kit instance.
-app.use(initStaticResourceMiddleware({
-  express,
-  resourceTypes: ['imgpack'], // 'imgpack' is a predefined type for Media Kit
-}));
-
-// Advanced usage: Define custom resource types and options
-const myResourceTypes = [
+// Define the types of resources you want to serve.
+// This example will find any blocklet with the ImageBinDid
+// and serve files from the root of its 'imgpack' directory.
+const resourceTypes = [
   {
-    type: 'my-custom-assets',
-    did: 'z8iZq...did-of-asset-provider', // Specify the component DID
-    folder: ['images', 'fonts'], // Scan multiple subdirectories
-    whitelist: ['.png', '.jpg', '.woff2'],
+    type: 'imgpack', // The resource directory suffix
+    did: ImageBinDid, // The DID of the blocklet providing the resource
+    folder: '', // Serve from the root of the 'imgpack' directory
+    whitelist: ['.png', '.jpg', '.jpeg', '.gif', '.svg'],
   },
-  'imgpack', // You can mix strings and objects
+  {
+    type: 'fontpack',
+    did: 'did:abt:z123abc...', // DID of a blocklet that provides fonts
+    folder: 'public/fonts', // Serve only from a specific sub-folder
+  }
 ];
 
-app.use('/assets', initStaticResourceMiddleware({
-  express,
-  resourceTypes: myResourceTypes,
-  skipRunningCheck: true, // Scan components even if they are not running
+app.use(initStaticResourceMiddleware({
+  express, // The express instance
+  resourceTypes,
   options: {
-    maxAge: '7d', // Set cache control for 7 days
+    maxAge: '1d', // Set Cache-Control header to 1 day
     immutable: true,
   },
+  skipRunningCheck: false, // Set to true to include resources from stopped blocklets
 }));
+
+// ... your other routes
 
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
@@ -117,37 +108,43 @@ app.listen(3000, () => {
 
 ### Parameters
 
-The `initStaticResourceMiddleware` function accepts a single options object with the following properties:
+The `initStaticResourceMiddleware` function accepts a single configuration object with the following properties:
 
-| Parameter          | Type                               | Description                                                                                                                                                             |
-| ------------------ | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `express`          | `object`                           | **Required.** The Express application instance.                                                                                                                         |
-| `resourceTypes`    | `(string \| ResourceType)[]`        | An array defining the resource types to scan for. Can be a simple string (type name) or a detailed `ResourceType` object for more control. Defaults to serving `'imgpack'` from the official ImageBin component. |
-| `options`          | `object`                           | An optional object with settings passed to the underlying file serving mechanism. See `options` table below.                                                          |
-| `skipRunningCheck` | `boolean`                          | If `true`, the middleware will scan for resources in components that are installed but not currently running. Defaults to `false`.                                        |
+| Name | Type | Description |
+|---|---|---|
+| `express` | `object` | **Required.** The Express application instance. |
+| `resourceTypes` | `ResourceType[]` | **Required.** An array of objects defining the resource types to discover and serve. See details below. |
+| `options` | `object` | Optional. An object containing cache control settings. |
+| `skipRunningCheck` | `boolean` | Optional. If `true`, the middleware will also map resources from blocklets that are not currently running. Defaults to `false`. |
 
-#### `options` Object
+### The `resourceTypes` Option
 
-| Key         | Type      | Description                                                                                              |
-| ----------- | --------- | -------------------------------------------------------------------------------------------------------- |
-| `maxAge`    | `string`  | Sets the `Cache-Control` max-age header. The format is a string like `'365d'` or `'7d'`. Defaults to `'365d'`. |
-| `immutable` | `boolean` | If `true`, adds the `immutable` directive to the `Cache-Control` header. Defaults to `true`.               |
+This is the core configuration for the middleware. It's an array where each object defines a type of resource to look for across all installed blocklets.
 
-#### `ResourceType` Object
+| Property | Type | Description |
+|---|---|---|
+| `type` | `string` | **Required.** A string that identifies the resource type. The middleware looks for a directory ending with this string in other blocklets (e.g., a `type` of `'imgpack'` will match a directory named `.../some-component/imgpack`). |
+| `did` | `string` | **Required.** The DID of the blocklet that is expected to provide this resource type. This ensures you only load resources from trusted sources. |
+| `folder` | `string \| string[]` | **Required.** The sub-folder or folders within the resource directory to serve files from. Use `''` for the root of the resource directory. |
+| `whitelist` | `string[]` | Optional. An array of file extensions to include (e.g., `['.png', '.jpg']`). If provided, only files with these extensions will be served. |
+| `blacklist` | `string[]` | Optional. An array of file extensions to exclude (e.g., `['.md', '.txt']`). |
+| `setHeaders` | `(res, path, stat) => void` | Optional. A function to set custom headers on the response. It receives the Express response object, the file path, and the file's stat object. |
+| `immutable` | `boolean` | Optional. If `true`, adds the `immutable` directive to the `Cache-Control` header. Defaults to `true`. |
+| `maxAge` | `string` | Optional. Sets the `max-age` for the `Cache-Control` header (e.g., `'365d'`, `'1h'`). Defaults to `'365d'`. |
 
-When you need more control than just specifying a type name as a string, you can use a `ResourceType` object in the `resourceTypes` array. It has the following properties:
+### Cache Control Options
 
-| Key         | Type                                    | Description                                                                                                                                                           |
-| ----------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `type`      | `string`                                | **Required.** A unique name for the resource type. This is used to match against the `type` field in a component's `blocklet.yml`.                                            |
-| `did`       | `string`                                | **Required.** The DID of the blocklet that provides this resource type.                                                                                             |
-| `folder`    | `string \| string[]`                      | The subdirectory or subdirectories within the component's path to scan for resources. An empty string `''` means the root of the component's path. Defaults to `''`. |
-| `whitelist` | `string[]`                              | An optional array of file extensions to include (e.g., `['.png', '.jpg']`). If provided, only files with these extensions will be mapped.                              |
-| `blacklist` | `string[]`                              | An optional array of file extensions to exclude (e.g., `['.md', '.txt']`).                                                                                           |
-| `setHeaders`| `(res, filePath, statObj) => void`      | An optional function to set custom headers on the response.                                                                                                         |
-| `immutable` | `boolean`                               | Overrides the top-level `immutable` option for this specific resource type.                                                                                         |
-| `maxAge`    | `string`                                | Overrides the top-level `maxAge` option for this specific resource type.                                                                                            |
+You can control browser caching by passing an `options` object. These settings are applied to all resources served by this middleware.
+
+- `options.maxAge` (string): Sets the `max-age` directive. The format is a string like `'365d'` for 365 days or `'2h'` for 2 hours. Defaults to `'365d'`.
+- `options.immutable` (boolean): If `true` (the default), the `immutable` directive is added to the `Cache-Control` header, which tells browsers the file will never change and they don't need to revalidate it.
+
+For example, `{ maxAge: '1d', immutable: true }` results in the header `Cache-Control: public, max-age=86400, immutable`.
 
 ---
 
-Next, learn how to serve files from a dynamic, watch-enabled directory using the [initDynamicResourceMiddleware(options)](./api-reference-uploader-server-dynamic-resource.md).
+Next, learn how to serve files from a directory that can change in real-time by using the dynamic resource middleware.
+
+<x-card data-title="Next: initDynamicResourceMiddleware(options)" data-icon="lucide:arrow-right-circle" data-href="/api-reference/uploader-server/dynamic-resource" data-cta="Read More">
+API reference for serving dynamic resources from specified directories with support for real-time file watching.
+</x-card>

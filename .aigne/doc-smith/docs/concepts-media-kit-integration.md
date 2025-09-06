@@ -1,144 +1,100 @@
 # Integration with Media Kit
 
-The `@blocklet/uploader` package is designed for deep, seamless integration with the Media Kit blocklet. When the Media Kit is present in the same environment, the uploader automatically enhances its functionality by centralizing configuration and enabling powerful new features. This integration provides a consistent and feature-rich file management experience across all your blocklets.
+The `@blocklet/uploader` package is designed for seamless, zero-configuration integration with the **Media Kit** blocklet. When Media Kit is installed in the same environment as your application, the Uploader component automatically detects it and enhances its functionality. This integration centralizes file storage, enforces consistent upload policies, and unlocks powerful plugins without requiring any manual setup.
 
-## Automatic Detection and Configuration
+## How It Works: The Automatic Handshake
 
-The uploader's core mechanism is its ability to automatically detect the presence of the Media Kit blocklet (identified by its DID: `z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9`). Upon detection, it establishes communication to fetch configurations and enable additional plugins.
+The integration process is fully automated. Here’s a step-by-step breakdown of what happens when the `Uploader` component initializes:
 
-This process ensures that all blocklets using the uploader adhere to the same set of rules for file uploads, which are centrally managed within the Media Kit.
+1.  **Detection**: The Uploader searches for an installed blocklet with the Media Kit's unique DID (`z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9`).
+2.  **Configuration Fetch**: If Media Kit is found, the Uploader sends an API request to its `/api/uploader/status` endpoint.
+3.  **Dynamic Setup**: Media Kit responds with a configuration object containing global upload restrictions (e.g., `maxFileSize`, `allowedFileTypes`) and a list of available plugins (`availablePluginMap`).
+4.  **Self-Configuration**: The Uploader component uses this data to configure its own restrictions and dynamically enable the plugins provided by Media Kit.
+5.  **API Routing**: All subsequent API calls, such as file uploads (via Tus) and requests for remote sources (via Companion), are automatically routed to the Media Kit's endpoints.
+
+The following diagram illustrates this interaction:
 
 ```d2
 direction: down
 
-User-App: {
-  label: "Your Blocklet"
-  shape: package
+blocklet-app: {
+  label: "Your Blocklet Application"
+  shape: rectangle
 
-  Uploader-Component: {
-    label: "<Uploader />"
+  uploader-component: {
+    label: "Uploader Component"
     shape: rectangle
   }
 }
 
-Media-Kit: {
+media-kit: {
   label: "Media Kit Blocklet"
-  shape: package
-  grid-columns: 1
-
-  Central-Config: {
-    label: "Central Configuration"
-    shape: stored_data
-    grid-columns: 2
-
-    Restrictions: {
-      label: "Upload Restrictions\n(file size, types)"
-    }
-    Available-Plugins: {
-      label: "Available Plugins\n(AI Image, Resources)"
-    }
-  }
-
-  API-Endpoints: {
-    label: "API Endpoints"
-    shape: cloud
-    grid-columns: 2
-
-    Uploader-Status: {
-      label: "/api/uploader/status"
-    }
-
-    Uploads: {
-      label: "/api/uploads"
-    }
-  }
+  shape: cylinder
 }
 
-
-User-App.Uploader-Component -> Media-Kit: "1. Detects presence via getMediaKitComponent()"
-User-App.Uploader-Component -> Media-Kit.API-Endpoints.Uploader-Status: "2. Fetches configuration"
-Media-Kit.API-Endpoints.Uploader-Status -> Media-Kit.Central-Config: "Reads config"
-Media-Kit.API-Endpoints.Uploader-Status -> User-App.Uploader-Component: "3. Returns restrictions & available plugins"
-User-App.Uploader-Component -> Media-Kit.API-Endpoints.Uploads: "4. Routes all file uploads"
-
+blocklet-app.uploader-component -> media-kit: "1. Detects presence via DID"
+blocklet-app.uploader-component -> media-kit: "2. GET /api/uploader/status"
+media-kit -> blocklet-app.uploader-component: "3. Responds with config\n(restrictions, available plugins)"
+blocklet-app.uploader-component -> media-kit: "4. Routes all subsequent uploads"
 ```
 
-## Enhanced Features
+## Key Benefits of Integration
 
-When integrated with the Media Kit, the uploader gains access to several advanced features:
+### 1. Centralized Configuration
 
-### Centralized Upload Restrictions
-Instead of configuring each uploader instance individually, you can manage upload rules like `maxFileSize` and `allowedFileTypes` directly within the Media Kit. The uploader component automatically fetches and applies these settings.
+Instead of configuring upload rules in every blocklet, Media Kit acts as a single source of truth. It provides global settings for:
 
-### Additional Plugins
-The following plugins become available automatically if they are enabled in the Media Kit:
+-   `maxFileSize`: The maximum size for a single file.
+-   `maxNumberOfFiles`: The maximum number of files that can be uploaded at once.
+-   `allowedFileTypes`: A list of allowed MIME types (e.g., `['image/jpeg', 'image/png', 'video/*']`).
 
-- **Uploaded**: Allows users to browse and select files that have already been uploaded to the Media Kit, promoting file reuse and reducing storage redundancy.
-- **Resources**: Provides access to files from other connected resource blocklets, creating a unified asset library.
-- **AI Image**: Integrates with the Media Kit's AI capabilities to generate images directly within the uploader interface.
+The `Uploader` automatically adopts these settings, ensuring a consistent user experience and security policy across your entire application ecosystem. If you provide your own `restrictions` prop to the `Uploader` component, it will take precedence over the settings from Media Kit.
 
-### Unified API Endpoints
-All API requests, including file uploads (Tus protocol) and companion requests (for URL or Unsplash imports), are automatically routed to the Media Kit's mount point. This centralizes file processing and storage logic.
+### 2. Shared Storage & Endpoints
 
-## How It Works
+By routing all uploads through Media Kit, you get a centralized repository for all your media assets. This simplifies file management, backups, and serving. The Uploader achieves this by automatically prefixing its API calls with the Media Kit's mount point, as determined by the `getUploaderEndpoint` and `setPrefixPath` utility functions.
 
-The integration is powered by a check performed during the `Uploader` component's initialization. The component uses the `getMediaKitComponent()` utility to see if the Media Kit is installed.
+### 3. Enhanced Plugin Availability
 
-If it is found, a request is made to the Media Kit's `/api/uploader/status` endpoint to retrieve the shared configuration.
+Media Kit can unlock advanced Uppy plugins for any connected `Uploader` instance. The Uploader checks the `availablePluginMap` from Media Kit's status response and enables the corresponding plugins.
 
-```typescript
-// A simplified look at the logic inside the Uploader component
+<x-cards data-columns="2">
+  <x-card data-title="AI Image" data-icon="lucide:bot">
+    Allows users to generate images using AI models if the AI Kit is configured within Media Kit.
+  </x-card>
+  <x-card data-title="Uploaded" data-icon="lucide:files">
+    Lets users browse and select from files that have already been uploaded to the Media Kit.
+  </x-card>
+  <x-card data-title="Resources" data-icon="lucide:library">
+    Enables importing files from other resource-providing blocklets that are connected to Media Kit.
+  </x-card>
+  <x-card data-title="Unsplash" data-icon="lucide:camera">
+    Provides an interface to search and import images directly from Unsplash (requires an API key configured in Media Kit).
+  </x-card>
+</x-cards>
 
-// ...
-// check if the media-kit is installed
-if (!apiPathProps.disableMediaKitStatus && getMediaKitComponent()) {
-  try {
-    // mediaKitApi is pre-configured to point to the Media Kit's mount point
-    await mediaKitApi.get('/api/uploader/status').then(({ data }: any) => {
-      // Set the available plugins based on the response
-      state.availablePluginMap = data.availablePluginMap;
+### 4. Automatic Installation Prompt
 
-      // If restrictions are not provided locally, use the ones from Media Kit
-      if (!apiPathProps.disableMediaKitPrefix && isNil(props?.coreProps?.restrictions)) {
-        restrictions = data.restrictions || {};
-      }
-    });
-    state.isError = false;
-  } catch (error) {
-    state.isError = true;
-  }
-}
-// ...
-```
+If a feature relies on Media Kit but it isn't installed, the `ComponentInstaller` wrapper can prompt the user to install it directly from the Blocklet Store, ensuring a smooth user experience.
 
 ## Disabling the Integration
 
-While the automatic integration is beneficial for most use cases, you can disable it if you need to implement custom, standalone upload logic. This is done through the `apiPathProps` prop on the `<Uploader />` component.
-
-- **`disableMediaKitStatus`**: Set to `true` to prevent the uploader from fetching configuration from the Media Kit.
-- **`disableMediaKitPrefix`**: Set to `true` to stop the uploader from routing API requests to the Media Kit's endpoints, using the local blocklet's prefix instead.
-
-**Example: Disabling Media Kit Integration**
+While the automatic integration is highly recommended, you can disable it if you need to implement custom, self-contained upload logic. This is done via the `apiPathProps` prop.
 
 ```jsx
-import Uploader from '@blocklet/uploader/react';
-
-function MyStandaloneUploader() {
-  return (
-    <Uploader
-      popup
-      apiPathProps={{
-        // Do not fetch status or config from Media Kit
-        disableMediaKitStatus: true,
-        // Do not use Media Kit's API endpoints
-        disableMediaKitPrefix: true,
-        // Define local endpoints instead
-        uploader: '/api/my-uploads',
-        companion: '/api/my-companion',
-      }}
-    />
-  );
-}
+<Uploader
+  apiPathProps={{
+    // Prevents the Uploader from fetching configuration from Media Kit.
+    disableMediaKitStatus: true,
+    // Prevents the Uploader from routing API calls through Media Kit's endpoints.
+    disableMediaKitPrefix: true,
+  }}
+/>
 ```
 
-By leveraging the automatic integration with Media Kit, you can deliver a more robust and consistent file upload experience with minimal configuration. To learn more about extending the uploader's functionality, proceed to the [Creating a Custom Plugin](./guides-custom-plugin.md) guide.
+-   `disableMediaKitStatus`: Set to `true` to prevent the Uploader from fetching its configuration from Media Kit. It will use its default settings or the props you provide.
+-   `disableMediaKitPrefix`: Set to `true` to force the Uploader to use your application's own backend endpoints for uploads instead of Media Kit's.
+
+---
+
+By leveraging the automatic integration with Media Kit, you can significantly simplify development and provide a more robust and feature-rich file upload experience. For more details on configuration options, see the [`<Uploader />` Component Props](./api-reference-uploader-component-props.md) documentation.

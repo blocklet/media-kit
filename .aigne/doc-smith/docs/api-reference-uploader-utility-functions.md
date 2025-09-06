@@ -1,211 +1,213 @@
 # Utility Functions
 
-The `@blocklet/uploader/utils` module exports a collection of helper functions designed to simplify common tasks such as file type conversion, URL generation, and advanced manipulation of the Uppy instance. These utilities are used internally by the Uploader component but are also available for use in your application.
+The `@blocklet/uploader/utils` module exports a collection of helper functions designed to simplify common tasks such as file type conversions, URL generation, and direct manipulation of the Uppy instance. These utilities provide convenient shortcuts for functionalities you might otherwise need to implement yourself.
 
----
+## File and Blob Manipulation
 
-## File Conversion and Handling
-
-These functions assist in converting between different file formats (Blob, File, Base64) and extracting file metadata.
+These functions help you convert between different file representations and extract file information.
 
 ### `getObjectURL(fileBlob)`
 
-Creates a DOMString containing a URL representing the given `Blob` object. This URL is temporary and tied to the `document` in which it was created.
+Creates a local, temporary URL for a `Blob` or `File` object. This is useful for creating client-side previews of images before they are uploaded.
 
-*   **Parameters**: `fileBlob: Blob` - The file blob to create a URL for.
-*   **Returns**: `string | null` - A URL string or null if the input is invalid.
+| Parameter | Type | Description |
+|---|---|---|
+| `fileBlob` | `Blob` | The file blob to create a URL for. |
+
+**Returns:** `string | null` - A temporary object URL, or `null` if the input is invalid.
 
 ```javascript
 import { getObjectURL } from '@blocklet/uploader/utils';
 
-const myBlob = new Blob(['Hello, world!'], { type: 'text/plain' });
-const blobUrl = getObjectURL(myBlob);
-
-if (blobUrl) {
-  console.log('Blob URL:', blobUrl);
-  // You can use this URL in an <a> tag's href or an <img> tag's src
-}
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const previewUrl = getObjectURL(file);
+    // Now you can use previewUrl in an <img> tag
+    console.log(previewUrl);
+  }
+};
 ```
 
 ### `blobToFile(blob, fileName)`
 
-Converts a `Blob` object into a `File` object.
+Converts a `Blob` object into a `File` object, which is required by Uppy for uploads.
 
-*   **Parameters**:
-    *   `blob: Blob` - The source Blob.
-    *   `fileName: string` - The name for the new File.
-*   **Returns**: `File` - The newly created File object.
+| Parameter | Type | Description |
+|---|---|---|
+| `blob` | `Blob` | The source blob. |
+| `fileName` | `string` | The desired file name for the new `File` object. |
+
+**Returns:** `File`
 
 ### `base64ToFile(base64, fileName)`
 
 Converts a Base64 encoded string into a `File` object.
 
-*   **Parameters**:
-    *   `base64: string` - The Base64 string (e.g., from a data URL).
-    *   `fileName: string` - The name for the new File.
-*   **Returns**: `File` - The newly created File object.
+| Parameter | Type | Description |
+|---|---|---|
+| `base64` | `string` | The Base64 string (e.g., from a canvas or data URL). |
+| `fileName` | `string` | The desired file name. |
 
-### `getExt(uppyFile)`
+**Returns:** `File`
 
-Determines the file extension from an Uppy file object by checking its name and MIME type.
+```javascript
+import { base64ToFile } from '@blocklet/uploader/utils';
 
-*   **Parameters**: `uppyFile: object` - The Uppy file object containing `name` and `type` properties.
-*   **Returns**: `string | false` - The file extension or `false` if it cannot be determined.
-
-### `isBlob(file)`
-
-Checks if the provided value is an instance of a `Blob`.
-
-*   **Parameters**: `file: any` - The value to check.
-*   **Returns**: `boolean` - `true` if the value is a Blob, otherwise `false`.
+const dataURL = canvas.toDataURL('image/png');
+const imageFile = base64ToFile(dataURL, 'canvas-image.png');
+// Now imageFile can be added to Uppy
+```
 
 ### `isSvgFile(file)`
 
 Asynchronously checks if a file is an SVG by inspecting its MIME type, extension, and content.
 
-*   **Parameters**: `file: object` - A file-like object with `type`, `name`, and `data` (Blob) properties.
-*   **Returns**: `Promise<boolean>` - A promise that resolves to `true` if the file is likely an SVG.
+| Parameter | Type | Description |
+|---|---|---|
+| `file` | `object` | An object with `type`, `name`, and `data` (Blob) properties. |
 
----
+**Returns:** `Promise<boolean>`
 
-## URL and Path Management
+### `getExt(uppyFile)`
 
-Functions for constructing and manipulating URLs for uploaded files and API endpoints.
-
-### `createImageUrl(filename, width, height, overwritePrefixPath)`
-
-Constructs a URL for an image file stored in the `/uploads/` directory. It can append query parameters for server-side image resizing and respects the configured CDN host.
+Determines the file extension from an Uppy file object by looking at its MIME type and name.
 
 | Parameter | Type | Description |
 |---|---|---|
-| `filename` | `string` | The name of the image file. |
+| `uppyFile` | `object` | An Uppy file object containing `type` and `name`. |
+
+**Returns:** `string | false` - The file extension or `false` if it cannot be determined.
+
+## URL Management
+
+Functions for constructing and manipulating URLs for assets and API endpoints.
+
+### `createImageUrl(filename, width, height, overwritePrefixPath)`
+
+Constructs a complete URL for an uploaded image, optionally including query parameters for server-side resizing. This function automatically uses the `CDN_HOST` if available.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `filename` | `string` | The name of the file in the uploads directory. |
 | `width` | `number` | Optional. The desired width for resizing. |
 | `height` | `number` | Optional. The desired height for resizing. |
-| `overwritePrefixPath` | `string` | Optional. A path to use instead of the default `prefixPath`. |
+| `overwritePrefixPath` | `string` | Optional. A path to use instead of the default prefix. |
 
-*   **Returns**: `string` - The complete image URL.
+**Returns:** `string` - The full image URL.
 
 ```javascript
 import { createImageUrl } from '@blocklet/uploader/utils';
 
-// Basic URL
-const url = createImageUrl('my-photo.jpg');
-// e.g., https://your-app.com/uploads/my-photo.jpg
-
-// Resized URL
-const thumbnailUrl = createImageUrl('my-photo.jpg', 200, 200);
-// e.g., https://your-app.com/uploads/my-photo.jpg?imageFilter=resize&w=200&h=200
+// Generates a URL like: https://cdn.example.com/uploads/my-image.jpg?imageFilter=resize&w=300
+const thumbnailUrl = createImageUrl('my-image.jpg', 300);
 ```
 
 ### `getDownloadUrl(src)`
 
-Removes image resizing parameters (`w`, `h`, `q`) from a given URL to create a direct download link to the original file.
+Removes image resizing parameters (`w`, `h`, `q`) from a URL to create a link to the original, full-sized asset.
 
-*   **Parameters**: `src: string` - The source image URL.
-*   **Returns**: `string` - The cleaned download URL.
+| Parameter | Type | Description |
+|---|---|---|
+| `src` | `string` | The source image URL. |
+
+**Returns:** `string` - A clean URL for downloading the original file.
 
 ### `getUploaderEndpoint(apiPathProps)`
 
-Generates the final URLs for the Uppy uploader endpoint and the Companion endpoint, taking into account the Media Kit mount point and other configuration.
+Constructs the `uploaderUrl` (for Tus uploads) and `companionUrl` (for remote sources) based on the component's props and the environment (e.g., whether Media Kit is present).
 
-*   **Parameters**: `apiPathProps: object` - An object containing `uploader` and `companion` path properties.
-*   **Returns**: `object` - An object with `uploaderUrl` and `companionUrl` properties.
+| Parameter | Type | Description |
+|---|---|---|
+| `apiPathProps` | `object` | An object containing paths like `uploader` and `companion`. |
 
-### `getUrl(...args)`
+**Returns:** `object` - An object with `uploaderUrl` and `companionUrl` properties.
 
-Joins multiple URL or path segments into a single, clean URL.
+## Uppy Instance Helpers
 
-*   **Parameters**: `...args: string[]` - A sequence of path segments.
-*   **Returns**: `string` - The combined URL.
-
-### `setPrefixPath(apiPathProps)`
-
-Dynamically sets the base path used for API requests, correctly resolving whether to use the application's prefix or the Media Kit's mount point.
-
-*   **Parameters**: `apiPathProps: object` - An object with a `disableMediaKitPrefix` boolean property.
-
----
-
-## Uppy Instance Enhancement
+These functions are used to interact with or enhance the Uppy instance.
 
 ### `initUppy(currentUppy)`
 
-This is a powerful function that enhances a standard Uppy instance with custom methods and improved behaviors tailored for the Blocklet environment. It adds robust event handling, programmatic controls, and more reliable progress calculation.
+This is a powerful function that enhances a standard Uppy instance with custom methods and event listeners. The `<Uploader />` component calls this internally, but you can use it if you are managing your own Uppy instance.
 
-*   **Parameters**: `currentUppy: Uppy` - The Uppy instance to enhance.
-*   **Returns**: `Uppy` - The enhanced Uppy instance.
+**Added Methods & Features:**
 
-**Added Methods and Features:**
-
-*   **Custom Upload Success Events**: A dedicated event bus for upload success.
-    *   `onUploadSuccess(file, callback)`: Listens for successful uploads, either for all files or a specific file.
-    *   `onceUploadSuccess(file, callback)`: Same as `onUploadSuccess` but only triggers once.
-    *   `emitUploadSuccess(file, response)`: Manually triggers the success event.
-
-*   **Programmatic Upload**: A simplified method to upload a file blob directly.
-    *   `uploadFile(blobFile: Blob): Promise<object>`: Adds a blob to the queue, uploads it, and returns a promise that resolves with the result upon completion.
-
-*   **Programmatic Modal Control**:
-    *   `onOpen(callback)` / `emitOpen()`: Handle opening the Uploader modal.
-    *   `onClose(callback)` / `emitClose()`: Handle closing the Uploader modal.
-
-*   **Improved Logic**:
-    *   **Debounced `addFiles`**: Prevents issues from adding many files in rapid succession.
-    *   **Rewritten `removeFiles`**: Ensures correct state updates and emits a `file-removed-success` event.
-    *   **Enhanced `calculateTotalProgress`**: Provides a more accurate total progress percentage, even with files of unknown size.
+*   **Event Handling:** Adds robust `onUploadSuccess`, `onceUploadSuccess`, and `offUploadSuccess` methods for easier handling of successful uploads.
+*   **Programmatic Uploads:** Adds an `async uploadFile(blobFile)` method that allows you to upload a file programmatically and get a promise that resolves with the result.
+*   **Dashboard Events:** Adds `onOpen()` and `onClose()` helpers to listen for the Uploader's modal opening and closing.
+*   **Improved Logic:** Overwrites internal methods like `removeFiles` and `calculateTotalProgress` for better integration.
 
 ```javascript
 import Uppy from '@uppy/core';
 import { initUppy } from '@blocklet/uploader/utils';
 
+// 1. Create a standard Uppy instance
 let uppy = new Uppy();
+
+// 2. Enhance it with custom methods
 uppy = initUppy(uppy);
 
-// Listen for any successful upload
+// 3. Now you can use the added methods
 uppy.onUploadSuccess(({ file, response }) => {
-  console.log(`${file.name} uploaded successfully! URL: ${response.uploadURL}`);
+  console.log('File uploaded:', response.body.fileUrl);
 });
 
-// Programmatically upload a file
-async function uploadMyFile() {
-  const myBlob = new Blob(['test content'], { type: 'text/plain' });
-  myBlob.name = 'test.txt';
-  try {
-    const result = await uppy.uploadFile(myBlob);
-    console.log('Upload finished:', result);
-  } catch (error) {
-    console.error('Upload failed:', error);
-  }
+async function uploadFromCanvas(canvasElement) {
+  canvasElement.toBlob(async (blob) => {
+    if (blob) {
+      try {
+        const result = await uppy.uploadFile(blob);
+        console.log('Upload successful from function call', result);
+      } catch (error) {
+        console.error('Upload failed', error);
+      }
+    }
+  }, 'image/png');
 }
 ```
 
----
-
-## API and Network
-
-Pre-configured Axios instances for making HTTP requests.
-
-*   `api`: An Axios instance configured for general API requests within the blocklet. It automatically uses the correct `baseURL` based on `prefixPath`.
-*   `mediaKitApi`: An Axios instance specifically for communicating with the Media Kit blocklet. It sets the `baseURL` to the Media Kit's mount point and includes the `x-component-did` header required for folder-specific operations.
-
----
-
-## Mocking and Testing
-
 ### `mockUploaderFileResponse(file)`
 
-Generates a complete, mock Uppy file object and response structure from a simple file data object. This is useful for populating the uploader with pre-existing files or for testing purposes without performing an actual upload.
+Creates a mock Uppy file response object. This is extremely useful for adding pre-existing files (e.g., files already uploaded and stored in a database) to the Uploader's UI, making them appear as if they were just successfully uploaded.
 
-*   **Parameters**: `file: object` - An object containing file details like `fileUrl`, `originalname`, `size`, etc.
-*   **Returns**: `object | null` - A comprehensive mock object that mimics the result of a successful TUS upload, or `null` if the input is invalid.
+| Parameter | Type | Description |
+|---|---|---|
+| `file` | `object` | An object containing details of the existing file, such as `fileUrl`, `originalname`, `size`, `mimetype`, etc. |
 
----
+**Returns:** `object | null` - A complete Uppy file object that can be passed to `uppy.addFile()` and used to emit a mock success event.
+
+```javascript
+import { mockUploaderFileResponse } from '@blocklet/uploader/utils';
+
+// An existing file from your database
+const existingFile = {
+  fileUrl: 'https://example.com/uploads/existing.jpg',
+  originalname: 'existing.jpg',
+  size: 123456,
+  mimetype: 'image/jpeg',
+  _id: 'file123',
+};
+
+// Create the mock response
+const mockResponse = mockUploaderFileResponse(existingFile);
+
+if (mockResponse) {
+  // Add the file to Uppy's state and UI
+  uppy.addFile(mockResponse.file);
+  // Manually emit the success event so it appears in the 'Uploaded' list
+  uppy.emitUploadSuccess(mockResponse.file, mockResponse.responseResult);
+}
+```
 
 ## Miscellaneous
 
 ### `parseStringToDot(str)`
 
-Truncates a long string, inserting an ellipsis (...) in the middle to keep the beginning and end visible. Useful for displaying long filenames or IDs in a constrained space.
+Truncates a long string with an ellipsis in the middle, preserving the beginning and end. This is useful for displaying long file names or hashes in a compact UI.
 
-*   **Parameters**: `str: string` - The string to truncate.
-*   **Returns**: `string` - The formatted string (e.g., `longstring...part.txt`).
+| Parameter | Type | Description |
+|---|---|---|
+| `str` | `string` | The input string. |
+
+**Returns:** `string` - The truncated string (e.g., `long-fil...me.txt`).
