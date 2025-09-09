@@ -1,64 +1,14 @@
 # initLocalStorageServer(options)
 
-The `initLocalStorageServer` function is the core middleware for handling direct file uploads from the `@blocklet/uploader` frontend component to your blocklet's local storage. It leverages the robust [tus protocol](https://tus.io/) for resumable file uploads, ensuring reliability even over unstable network connections.
+The `initLocalStorageServer` function is the core middleware for handling direct file uploads from a user's device to your blocklet's local storage. It leverages the robust [Tus resumable upload protocol](https://tus.io/), ensuring that uploads are reliable and can be resumed after network interruptions.
 
-This middleware is responsible for receiving file chunks, assembling them into a complete file in a specified directory, and triggering callbacks upon completion.
+This middleware is responsible for receiving file chunks, assembling them into a complete file on the server, and triggering callbacks for you to process the file metadata after the upload is complete.
 
-## Basic Usage
+### How It Works
 
-To get started, initialize the middleware in your Express application and attach it to a route. You'll need to provide a storage path and the Express instance.
+The following diagram illustrates the typical data flow when a user uploads a file using the `Uploader` component connected to a backend with `initLocalStorageServer`.
 
-```javascript
-// routes/upload.js
-import express from 'express';
-import { initLocalStorageServer } from '@blocklet/uploader-server';
-import env from '../libs/env';
-
-const router = express.Router();
-
-// Initialize the uploader server
-const localStorageServer = initLocalStorageServer({
-  path: env.uploadDir, // The directory to store uploaded files
-  express,
-  // Callback triggered after a file is successfully uploaded
-  onUploadFinish: async (req, res, uploadMetadata) => {
-    const {
-      id: filename, // The unique, randomized filename on the server
-      size,
-      metadata: { filename: originalname, filetype: mimetype }, // Original file metadata
-    } = uploadMetadata;
-
-    // Construct the public URL for the uploaded file
-    const fileUrl = new URL(env.appUrl);
-    fileUrl.pathname = `/uploads/${filename}`;
-
-    // Here, you would typically save the file information to your database
-    // For example: await Upload.insert({ ... });
-
-    const responseData = { 
-      url: fileUrl.href, 
-      filename, 
-      originalname, 
-      size, 
-      mimetype 
-    };
-
-    // The returned object will be sent as a JSON response to the frontend
-    return responseData;
-  },
-});
-
-// Attach the middleware to handle all requests on the '/uploads' path
-router.use('/uploads', localStorageServer.handle);
-
-export default router;
-```
-
-## How It Works
-
-The following diagram illustrates the complete upload flow from the user's action in the browser to the final response from the server.
-
-```d2
+```d2 Upload Flow Diagram
 direction: down
 
 User: { 
@@ -70,7 +20,7 @@ App: {
   shape: rectangle
 
   Uploader-Component: {
-    label: "Uploader Component"
+    label: "<Uploader /> Component"
     shape: rectangle
   }
 
@@ -79,8 +29,7 @@ App: {
     shape: rectangle
 
     Uploader-Server: {
-      label: "@blocklet/uploader-server"
-      shape: hexagon
+      label: "initLocalStorageServer"
     }
 
     DB: {
@@ -91,86 +40,137 @@ App: {
 }
 
 User -> App.Uploader-Component: "1. Drop file"
-App.Uploader-Component -> App.Backend-Server.Uploader-Server: "2. Upload file (Tus)"
-App.Backend-Server.Uploader-Server -> App.Backend-Server.Uploader-Server: "3. Backend onUploadFinish"
-App.Backend-Server.Uploader-Server -> App.Backend-Server.DB: "4. Save metadata"
+App.Uploader-Component -> App.Backend-Server.Uploader-Server: "2. Upload file chunks (Tus)"
+App.Backend-Server.Uploader-Server -> App.Backend-Server.Uploader-Server: "3. Trigger onUploadFinish hook"
+App.Backend-Server.Uploader-Server -> App.Backend-Server.DB: "4. Save file metadata"
 App.Backend-Server.DB -> App.Backend-Server.Uploader-Server: "5. Return DB record"
 App.Backend-Server.Uploader-Server -> App.Uploader-Component: "6. Send JSON response"
-App.Uploader-Component -> App.Uploader-Component: "7. Frontend onUploadFinish"
-App.Uploader-Component -> User: "8. Update UI"
+App.Uploader-Component -> App.Uploader-Component: "7. Trigger frontend onUploadFinish"
+App.Uploader-Component -> User: "8. Update UI with file URL"
+
 ```
 
-## Configuration Options
+### Basic Usage
 
-The `initLocalStorageServer` function accepts an options object with the following properties. It also passes any unrecognized properties directly to the underlying `@tus/server` constructor.
+To get started, initialize the middleware in your Express application and mount it on a specific route. The most critical option is `onUploadFinish`, which is where you'll define what happens after a file is successfully saved.
 
-| Option | Type | Required | Description |
-|---|---|---|---|
-| `path` | `string` | Yes | The absolute path to the directory where uploaded files will be stored. |
-| `express` | `Function` | Yes | The Express application instance. |
-| `onUploadFinish` | `(req, res, uploadMetadata) => Promise<any>` | No | An async function that is called after an upload is successfully completed. The return value is sent as the JSON response to the frontend. |
-| `onUploadCreate` | `(req, res, uploadMetadata) => Promise<any>` | No | An async function that is called when an upload is first initiated (before any data is transferred). Can be used for validation. |
-| `expiredUploadTime` | `number` | No | The time in milliseconds after which expired or incomplete uploads are eligible for cleanup. Defaults to 3 days (`1000 * 60 * 60 * 24 * 3`). |
+```javascript Basic Backend Setup icon=logos:express
+import express from 'express';
+import { initLocalStorageServer } from '@blocklet/uploader-server';
+import Upload from '../models/upload'; // Your database model
+
+const router = express.Router();
+
+// Initialize the uploader server middleware
+const localStorageServer = initLocalStorageServer({
+  // The directory where uploaded files will be stored
+  path: process.env.UPLOAD_DIR,
+  express,
+
+  // This callback executes after a file is successfully uploaded
+  onUploadFinish: async (req, res, uploadMetadata) => {
+    const {
+      id: filename, // The unique, randomized filename on disk
+      size,
+      metadata: { filename: originalname, filetype: mimetype },
+    } = uploadMetadata;
+
+    // Construct the public URL for the uploaded file
+    const fileUrl = new URL(process.env.APP_URL);
+    fileUrl.pathname = `/uploads/${filename}`;
+
+    // Save file information to your database
+    const doc = await Upload.insert({
+      mimetype,
+      originalname,
+      filename,
+      size,
+      url: fileUrl.href,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      createdBy: req.user.did,
+    });
+
+    // Return the database document as a JSON response
+    // This data will be passed to the frontend's onUploadFinish callback
+    return doc;
+  },
+});
+
+// Mount the middleware on the '/uploads' route
+// Ensure any necessary authentication/authorization middleware runs before it
+router.use('/uploads', yourAuthMiddleware, localStorageServer.handle);
+
+export default router;
+```
+
+### Configuration Options
+
+The `initLocalStorageServer` function accepts an options object with the following properties:
+
+| Option                | Type       | Required | Description                                                                                                                                                                                          |
+| --------------------- | ---------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `path`                | `string`   | Yes      | The absolute path to the directory where uploaded files will be stored.                                                                                                                              |
+| `express`             | `Function` | Yes      | The Express application instance.                                                                                                                                                                    |
+| `onUploadFinish`      | `Function` | No       | An `async` callback function that runs after a file upload is complete. It receives `(req, res, uploadMetadata)`. The return value is sent as a JSON response to the frontend.                   |
+| `onUploadCreate`      | `Function` | No       | An `async` callback function that runs when a new upload is initiated but before any data is transferred. Useful for validation or authorization checks. It receives `(req, res, uploadMetadata)`. |
+| `expiredUploadTime`   | `Number`   | No       | The time in milliseconds after which incomplete uploads are considered expired and will be cleaned up by a background job. **Default:** `1000 * 60 * 60 * 24 * 3` (3 days).                 |
+| `...restProps`        | `object`   | No       | Any other valid options for the underlying `@tus/server` package will be passed through.                                                                                                             |
 
 ### Callbacks in Detail
 
 #### `onUploadFinish(req, res, uploadMetadata)`
 
-This is the most important callback for processing completed uploads. It runs after the last byte of the file has been saved to disk.
+This is the primary callback for processing completed uploads. It's the ideal place to save file metadata to your database, trigger webhooks, or perform other post-upload actions.
 
--   `req`: The Express request object.
--   `res`: The Express response object.
--   `uploadMetadata`: An object containing detailed information about the uploaded file.
+**`uploadMetadata` Object**
 
-**`uploadMetadata` Object Structure:**
+The `uploadMetadata` object passed to the callback contains detailed information about the uploaded file:
 
-```json
-{
-  "id": "e8b5a5f76326e7b1e4e1e0b5a5f76326", // Unique filename on disk
-  "size": 123456,
-  "offset": 123456,
-  "metadata": {
-    "filename": "original-document.pdf",
-    "filetype": "application/pdf",
-    "relativePath": "documents/original-document.pdf",
-    // ... other metadata from frontend
-  },
-  "runtime": {
-    "absolutePath": "/path/to/your/uploads/e8b5a5f76326",
-    "hashFileName": "e8b5a5f76326",
-    "originFileName": "original-document.pdf",
-    // ... other runtime details
+| Property           | Type     | Description                                                                 |
+| ------------------ | -------- | --------------------------------------------------------------------------- |
+| `id`               | `string` | The unique, randomly generated filename on the server's disk.               |
+| `size`             | `number` | The total size of the file in bytes.                                        |
+| `offset`           | `number` | The current number of bytes uploaded. Should equal `size` in this callback. |
+| `metadata`         | `object` | An object containing metadata provided by the client.                       |
+| `metadata.filename`| `string` | The original filename from the user's computer.                             |
+| `metadata.filetype`| `string` | The MIME type of the file (e.g., `image/jpeg`).                             |
+| `runtime`          | `object` | An object with runtime information about the file's location.               |
+| `runtime.absolutePath` | `string` | The full path to the file on the server's filesystem.                 |
+
+**Return Value**
+
+The value you return from `onUploadFinish` will be serialized into JSON and sent back to the frontend `Uploader` component. This allows you to pass back the database record ID, the public URL, or any other relevant data.
+
+### Automatic Cleanup
+
+The middleware automatically sets up a background cron job (`auto-cleanup-expired-uploads`) that runs hourly. This job safely removes any partial or expired uploads from the storage directory that have exceeded the `expiredUploadTime`, preventing your server from filling up with incomplete files.
+
+### Advanced Features
+
+#### EXIF Data Removal
+For privacy and security, the middleware automatically attempts to strip EXIF (Exchangeable image file format) metadata from uploaded images (`.jpeg`, `.tiff`, etc.) after the upload is complete.
+
+#### Manual File Deletion
+The returned server instance includes a `delete` method you can use to programmatically remove an uploaded file and its associated metadata file.
+
+```javascript Manually Deleting a File icon=mdi:code-block-tags
+import { localStorageServer } from './setup'; // Assuming you exported the instance
+
+async function deleteFile(filename) {
+  try {
+    await localStorageServer.delete(filename);
+    console.log(`Successfully deleted ${filename}`);
+  } catch (error) {
+    console.error(`Failed to delete ${filename}:`, error);
   }
 }
 ```
 
-#### `onUploadCreate(req, res, uploadMetadata)`
-
-This callback is triggered at the beginning of the upload process. It's useful for performing preliminary checks, such as validating authentication tokens or checking if the user has enough quota before allowing the upload to proceed.
-
-## Automatic Cleanup
-
-The middleware automatically sets up a daily cron job (`auto-cleanup-expired-uploads`) that removes incomplete upload files older than the specified `expiredUploadTime`. This prevents your server's storage from filling up with orphaned file chunks.
-
-## Serving Uploaded Files
-
-After uploading files, you'll need a way to serve them. The package exports a `getLocalStorageFile` helper to easily create a route for this purpose.
-
-**Example:**
-
-```javascript
-// routes/upload.js (continued)
-import { getLocalStorageFile } from '@blocklet/uploader-server';
-
-// ... (localStorageServer initialization)
-
-// Add a route to serve the uploaded files
-// The server object is available on the initialized middleware
-router.get('/uploads/:fileName', getLocalStorageFile({ server: localStorageServer }));
-```
-
-This will create an endpoint like `GET /uploads/e8b5a5f76326` that serves the corresponding file from your `uploadDir` with the correct `Content-Type` headers.
-
 ---
 
-Now that you know how to handle direct uploads, you might want to enable uploads from remote sources. Continue to the [initCompanion(options)](./api-reference-uploader-server-companion.md) documentation to learn how.
+Now that you know how to handle direct uploads, you might want to enable users to import files from external services. Proceed to the next section to learn about `initCompanion`.
+
+<x-card data-title="Next: initCompanion(options)" data-icon="lucide:link" data-href="/api-reference/uploader-server/companion">
+  Learn how to set up the Companion middleware to allow users to import files from remote sources like Unsplash and direct URLs.
+</x-card>

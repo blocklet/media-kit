@@ -1,168 +1,218 @@
 # <UploaderProvider /> and Hooks
 
-To offer greater flexibility in triggering the Uploader from anywhere in your application, the `@blocklet/uploader` package provides a set of tools based on React Context. This allows you to decouple the trigger element (like a button) from the Uploader UI itself, which is especially useful for opening the Uploader from a header, a menu, or a dynamically generated list item.
+For more advanced use cases, you might need to trigger the Uploader from a different part of your application, or programmatically control its behavior. The `UploaderProvider` component and its associated hooks provide a flexible way to decouple the Uploader's UI from its trigger, using React's Context API.
 
-The system consists of three main parts:
+This pattern is ideal when you want to open the Uploader modal from a button in a header, a link in a menu, or any element that isn't a direct child of the Uploader itself.
 
--   `UploaderProvider`: A wrapper component that initializes the Uploader and makes its instance available to all descendant components.
--   `UploaderTrigger`: A simple component that creates a clickable area to open the Uploader modal.
--   `useUploaderContext`: A hook for more advanced, custom logic that gives you direct access to the Uploader's instance.
+This approach involves three main parts:
+
+<x-cards data-columns="3">
+  <x-card data-title="UploaderProvider" data-icon="lucide:box">
+    A wrapper component that instantiates the Uploader and provides its instance via context.
+  </x-card>
+  <x-card data-title="UploaderTrigger" data-icon="lucide:mouse-pointer-click">
+    A simple component that creates a clickable area to open the Uploader modal.
+  </x-card>
+  <x-card data-title="useUploaderContext" data-icon="lucide:webhook">
+    A hook to get direct access to the Uploader instance for custom logic.
+  </x-card>
+</x-cards>
+
+### How It Works
+
+The `UploaderProvider` renders the `<Uploader />` component (often in a portal attached to the document body) and holds a reference (`ref`) to its instance. Any child component within the provider's tree can then access this `ref` using the `useUploaderContext` hook. The `UploaderTrigger` is a pre-built component that uses this hook to call the `open()` method on the Uploader instance.
 
 ```d2
 direction: down
 
-app-root: {
-  label: "Application Root"
+app-ui: {
+  label: "Your Application UI"
   shape: rectangle
 
   uploader-provider: {
     label: "UploaderProvider"
     shape: rectangle
-    style.fill: "#e6f7ff"
-    "Wraps components that need uploader access"
+    style.fill: "#f0f9ff"
 
-    some-component: {
-        label: "Any Descendant Component"
+    header: {
+      label: "Header"
+      shape: rectangle
+
+      upload-button: {
+        label: "<UploaderTrigger>"
         shape: rectangle
+      }
+    }
 
-        uploader-trigger: {
-            label: "UploaderTrigger or\ncomponent with useUploaderContext"
-        }
+    main-content: {
+      label: "Main Content"
+      shape: rectangle
     }
   }
 }
 
-portal-target: {
-  label: "document.body"
+uploader-instance: {
+  label: "<Uploader /> Instance\n(in React Portal)"
   shape: rectangle
-  style.stroke-dash: 4
-
-  uploader-modal: {
-    label: "Uploader Modal"
-    shape: rectangle
-  }
+  style.stroke-dash: 2
 }
 
-app-root.uploader-provider.some-component.uploader-trigger -> portal-target.uploader-modal: "1. User clicks, calls open()"
-portal-target.uploader-modal -> portal-target.uploader-modal: "2. User interacts with UI"
-portal-target.uploader-modal -> app-root.uploader-provider.some-component.uploader-trigger: "3. Fires onChange on success"
+app-ui.uploader-provider.header.upload-button -> uploader-instance: "3. Calls open() via context ref"
+
+context: {
+  label: "UploaderContext"
+  shape: cylinder
+}
+
+app-ui.uploader-provider -> context: "1. Provides uploader ref"
+context -> app-ui.uploader-provider.header.upload-button: "2. Consumes ref"
+
 ```
 
-## UploaderProvider
+---
 
-This is the top-level component that must wrap any part of your application that needs to trigger the uploader. It is responsible for creating and holding the Uploader instance.
+## `UploaderProvider`
 
-**Props**
+This component is the foundation of the pattern. It must wrap any components that need to interact with the Uploader, including any `UploaderTrigger` or custom components using the `useUploaderContext` hook.
+
+It accepts all the same props as the `<Uploader />` component, allowing you to configure the Uploader's behavior, plugins, and appearance. For this pattern, you will almost always want to set `popup={true}`.
+
+### Props
 
 | Prop | Type | Description |
-| --- | --- | --- |
-| `children` | `ReactNode` | Your application components that need access to the uploader. |
-| `popup` | `boolean` | If `true`, the Uploader UI is rendered in a portal at the bottom of `document.body`, making it behave like a modal. This is the most common use case. If `false`, it's rendered inline. |
-| `...restProps` | `UploaderProps` | All other props are passed directly to the underlying `<Uploader />` component. See the [<Uploader /> Component Props](./api-reference-uploader-component-props.md) for a full list. |
+|---|---|---|
+| `children` | `ReactNode` | The child components that will have access to the Uploader context. |
+| `popup` | `boolean` | When `true`, the Uploader is rendered in a modal using a React Portal. When `false`, it's rendered inline. Defaults to `true`. |
+| `...restProps` | `UploaderProps` | All other props are passed directly to the underlying `<Uploader />` component. See the [Uploader Component Props](./api-reference-uploader-component-props.md) for a full list. |
 
-**Usage**
+### Usage
 
-Typically, you'll wrap your main application layout or a specific page with `UploaderProvider`.
+Wrap a section of your application, or your entire application, with `UploaderProvider`.
 
-```jsx
-import { UploaderProvider } from '@blocklet/uploader/react';
+```javascript MyUploader.jsx icon=logos:react
+import React from 'react';
+import { UploaderProvider, UploaderTrigger } from '@blocklet/uploader/react';
+import Button from '@mui/material/Button';
 
-function App() {
+export default function MyUploader() {
+  const handleUploadSuccess = (result) => {
+    console.log('Files uploaded: ', result);
+    // result contains { successful, failed } arrays of file objects
+  };
+
   return (
-    <UploaderProvider popup endpoint="/api/upload">
-      {/* The rest of your application */}
-      <MyPage />
+    <UploaderProvider endpoint="/api/upload" popup={true}>
+      <UploaderTrigger onChange={handleUploadSuccess}>
+        <Button variant="contained">Upload File</Button>
+      </UploaderTrigger>
+
+      {/* Other components in your app can also be here */}
     </UploaderProvider>
   );
 }
 ```
 
-## UploaderTrigger
+---
 
-The `UploaderTrigger` is a convenient wrapper component. Any children passed to it will become a clickable area that opens the Uploader UI.
+## `UploaderTrigger`
 
-**Props**
+The `UploaderTrigger` component is a convenient wrapper that makes its children clickable, triggering the Uploader modal to open.
+
+### Props
 
 | Prop | Type | Description |
-| --- | --- | --- |
-| `children` | `ReactNode` | The element(s) to be rendered as the trigger, e.g., `<Button>Upload File</Button>`. |
-| `onChange` | `(result) => void` | An optional one-time callback function that fires after a successful upload. It receives the upload result as its argument. |
-| `...restProps` | `BoxProps` | Any other props are passed to the underlying MUI `<Box>` component for styling. |
+|---|---|---|
+| `children` | `ReactNode` | The React element(s) to use as the trigger, such as a `<Button>` or an `<a>` tag. |
+| `onChange` | `Function` | An optional callback function that is triggered only once after a successful upload. It receives the result object from Uppy. |
+| `...restProps` | `object` | Any additional props are passed to the underlying Material-UI `<Box>` component. |
 
+### Usage
 
-## useUploaderContext
+Place any clickable component inside `UploaderTrigger`. The `onChange` prop provides a simple way to handle the result of the upload.
 
-For more advanced control, the `useUploaderContext` hook provides direct access to the Uploader's internal `ref`. This allows you to call methods on the Uppy instance programmatically.
+```javascript icon=logos:react
+<UploaderTrigger onChange={(result) => alert(`Uploaded ${result.successful.length} files!`)}>
+  <Button>Click me to Upload</Button>
+</UploaderTrigger>
+```
 
-It's important to note that this hook **must** be used within a component that is a descendant of `UploaderProvider`.
+---
 
-**Return Value**
+## `useUploaderContext`
 
-The hook returns a React `ref` object. The Uppy instance can be accessed via `ref.current.getUploader()`.
+For the most control, the `useUploaderContext` hook gives you direct access to the Uploader's instance ref. This allows you to call any method on the Uploader or its underlying Uppy instance programmatically.
 
-**Usage**
+### Return Value
 
-Here's how you can build a custom button to open the uploader.
+| Value | Type | Description |
+|---|---|---|
+| `uploaderRef` | `React.RefObject` | A React ref object. The Uploader instance is at `uploaderRef.current`. To access the Uppy instance, use `uploaderRef.current.getUploader()`. |
 
-```jsx
+> **Note:** The hook will throw an error if it's used in a component that is not a descendant of `UploaderProvider`.
+
+### Usage
+
+Here's an example of a custom component that uses the hook to open the Uploader and also log the number of currently selected files.
+
+```javascript CustomControls.jsx icon=logos:react
+import React from 'react';
 import { useUploaderContext } from '@blocklet/uploader/react';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
-function CustomUploadButton() {
+export default function CustomControls() {
   const uploaderRef = useUploaderContext();
 
-  const handleOpen = () => {
-    // Access the underlying Uppy instance and call its open() method
+  const handleOpenUploader = () => {
     const uploader = uploaderRef?.current?.getUploader();
     uploader?.open();
   };
 
-  return (
-    <Button variant="contained" onClick={handleOpen}>
-      Open Uploader
-    </Button>
-  );
-}
-```
-
-## Putting It All Together
-
-Here is a complete example demonstrating how to use `UploaderProvider` with `UploaderTrigger` to open a modal and handle the successful upload.
-
-```jsx
-import { UploaderProvider, UploaderTrigger } from '@blocklet/uploader/react';
-import { Button, Box } from '@mui/material';
-
-export default function UploaderExample() {
-  const handleUploadSuccess = (result) => {
-    console.log('Files uploaded successfully:', result);
-    // You can now use the file URLs from the result
-    // e.g., update state, send to server, etc.
-    alert(`Upload complete! File URL: ${result.successful[0]?.uploadURL}`);
+  const handleLogFiles = () => {
+    const uploader = uploaderRef?.current?.getUploader();
+    const files = uploader?.getFiles();
+    console.log('Current files in Uppy:', files);
+    alert(`There are ${files.length} files selected.`);
   };
 
   return (
-    <UploaderProvider
-      popup
-      endpoint="/api/upload" // Your backend upload endpoint
-      // ... other Uploader props
-    >
-      <Box sx={{ padding: 4, textAlign: 'center' }}>
-        <h1>My Application</h1>
-        <p>Click the button below to upload a file.</p>
+    <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+      <Button variant="outlined" onClick={handleOpenUploader}>
+        Open Uploader Manually
+      </Button>
+      <Button variant="outlined" color="secondary" onClick={handleLogFiles}>
+        Log Current Files
+      </Button>
+    </Box>
+  );
+}
+```
 
-        <UploaderTrigger onChange={handleUploadSuccess}>
-          <Button variant="contained">Upload a File</Button>
-        </UploaderTrigger>
-      </Box>
+To use this `CustomControls` component, you would place it inside the `UploaderProvider` like so:
+
+```javascript App.jsx icon=logos:react
+// ... imports
+import CustomControls from './CustomControls';
+
+export default function App() {
+  return (
+    <UploaderProvider endpoint="/api/upload">
+      {/* You can still have a primary trigger */}
+      <UploaderTrigger>
+        <Button>Upload</Button>
+      </UploaderTrigger>
+
+      {/* And also use your custom component for more control */}
+      <CustomControls />
     </UploaderProvider>
   );
 }
-
 ```
 
-This setup provides a robust and flexible way to integrate the uploader into complex application layouts. Next, you can explore some of the helper functions that come with the package.
+This pattern provides a high degree of flexibility, allowing you to integrate the uploader seamlessly into complex application layouts and workflows.
 
-<x-card data-title="Next: Utility Functions" data-icon="lucide:function-square" data-href="/api-reference/uploader/utility-functions" data-cta="Read More">
-  Reference for exported helper functions for tasks like file conversion, URL generation, and Uppy instance manipulation.
+Next, you might want to explore some of the helper functions that can simplify common tasks.
+
+<x-card data-title="Utility Functions" data-icon="lucide:wrench" data-href="/api-reference/uploader/utility-functions" data-cta="View Utilities">
+  Learn about helper functions for tasks like file conversion and URL generation.
 </x-card>

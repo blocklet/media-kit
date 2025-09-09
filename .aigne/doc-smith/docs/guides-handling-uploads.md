@@ -1,8 +1,12 @@
 # Handling Uploads
 
-Once a file is successfully uploaded, you often need to perform actions on both the server and the client. On the backend, you might save file metadata to a database. On the frontend, you'll want to update the UI with the new file's URL. This guide explains how to use the `onUploadFinish` callbacks in both `@blocklet/uploader-server` and `@blocklet/uploader` to manage the post-upload process.
+After a file is successfully uploaded, you often need to perform actions on both the client and server. This guide explains how to use the `onUploadFinish` callback in both the `@blocklet/uploader` frontend component and the `@blocklet/uploader-server` middleware to process files and their metadata.
 
-The entire process involves a coordinated effort between the frontend component and the backend middleware. Here's a high-level overview of the data flow:
+The frontend callback is ideal for updating the UI, while the backend callback is used for server-side tasks like saving file information to a database.
+
+### The Upload Flow
+
+The following diagram illustrates the complete process, from a user dropping a file to the final UI update, showing how the frontend and backend callbacks work together.
 
 ```d2
 direction: down
@@ -26,7 +30,6 @@ App: {
 
     Uploader-Server: {
       label: "@blocklet/uploader-server"
-      shape: hexagon
     }
 
     DB: {
@@ -37,40 +40,130 @@ App: {
 }
 
 User -> App.Uploader-Component: "1. Drop file"
-App.Uploader-Component -> App.Backend-Server.Uploader-Server: "2. Upload file"
-App.Backend-Server.Uploader-Server -> App.Backend-Server.Uploader-Server: "3. Backend onUploadFinish"
+App.Uploader-Component -> App.Backend-Server.Uploader-Server: "2. Upload file (Tus)"
+App.Backend-Server.Uploader-Server -> App.Backend-Server.Uploader-Server: "3. Trigger backend onUploadFinish"
 App.Backend-Server.Uploader-Server -> App.Backend-Server.DB: "4. Save metadata"
 App.Backend-Server.DB -> App.Backend-Server.Uploader-Server: "5. Return DB record"
 App.Backend-Server.Uploader-Server -> App.Uploader-Component: "6. Send JSON response"
-App.Uploader-Component -> App.Uploader-Component: "7. Frontend onUploadFinish"
-App.Uploader-Component -> User: "8. Update UI"
+App.Uploader-Component -> App.Uploader-Component: "7. Trigger frontend onUploadFinish"
+App.Uploader-Component -> User: "8. Update UI with file URL"
 ```
 
-## Backend: Processing the File with `onUploadFinish`
+---
 
-The `onUploadFinish` callback in the `initLocalStorageServer` configuration is the primary hook for server-side processing. It runs immediately after a file has been fully received and stored in your designated upload directory.
+## Frontend: `onUploadFinish` Prop
 
-This is the ideal place to:
-- Validate the file.
-- Save metadata (like filename, size, mimetype) to your database.
-- Associate the file with the current user or component.
-- Return a JSON response to the frontend with the file's public URL and any other relevant data.
+The `Uploader` component accepts an `onUploadFinish` prop, which is a function that executes after each file upload is complete. This callback receives the JSON response sent from your backend's `onUploadFinish` handler.
 
-### Implementation
+This is the perfect place to update your application's state, display the uploaded image, or store the returned file URL.
 
-When initializing your middleware, provide an async function to the `onUploadFinish` option.
+**Prop Definition**
 
-```javascript
-// In your routes/index.js or equivalent backend setup file
+| Prop | Type | Description |
+|---|---|---|
+| `onUploadFinish` | `(result: any) => void` | A callback function that receives the final upload result object after the backend has processed the file. |
 
+**Example Usage**
+
+In this example, we use the `onUploadFinish` callback to receive the file URL from the backend and store it in the component's state.
+
+```javascript Uploader Component icon=logos:react
+import { Uploader } from '@blocklet/uploader/react';
+import { useState } from 'react';
+
+export default function MyComponent() {
+  const [fileUrl, setFileUrl] = useState('');
+
+  const handleUploadFinish = (result) => {
+    // The 'result' object is the JSON response from your backend
+    console.log('Upload finished:', result);
+
+    // 'result.data' contains the body returned by the server
+    if (result.data && result.data.url) {
+      setFileUrl(result.data.url);
+    }
+  };
+
+  return (
+    <div>
+      <Uploader onUploadFinish={handleUploadFinish} />
+      {fileUrl && (
+        <div>
+          <p>Upload successful!</p>
+          <img src={fileUrl} alt="Uploaded content" width="200" />
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+The `result` object passed to the frontend callback contains detailed information about the upload, including the response from the server.
+
+**Example `result` Object**
+
+```json
+{
+  "uploadURL": "http://localhost:3030/api/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+  "data": {
+    "url": "http://localhost:3030/api/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+    "_id": "z2k...",
+    "mimetype": "image/png",
+    "originalname": "screenshot.png",
+    "filename": "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+    "size": 123456,
+    "folderId": "component_did",
+    "createdBy": "user_did",
+    "updatedBy": "user_did",
+    "createdAt": "2023-10-27T10:00:00.000Z",
+    "updatedAt": "2023-10-27T10:00:00.000Z"
+  },
+  "method": "POST",
+  "url": "http://localhost:3030/api/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+  "status": 200,
+  "headers": { ... },
+  "file": { ... } // Uppy file object
+}
+```
+
+---
+
+## Backend: `onUploadFinish` Option
+
+On the server, you provide an `onUploadFinish` function when initializing the `initLocalStorageServer`. This function is triggered after a file has been fully received and stored on the server's local disk, but before a final response is sent to the client.
+
+This is where you should handle your core business logic, such as:
+- Validating the uploaded file.
+- Saving file metadata to a database.
+- Associating the file with the current user.
+- Returning a custom JSON object to the frontend.
+
+**Function Signature**
+
+```typescript
+(req: Request, res: Response, uploadMetadata: object) => Promise<any>
+```
+
+- `req`: The Express request object, containing headers and user information.
+- `res`: The Express response object.
+- `uploadMetadata`: An object containing details about the uploaded file.
+
+**Example Usage**
+
+This example demonstrates how to save file metadata to a database (using a fictional `Upload` model) and return the created record to the frontend.
+
+```javascript Backend Server Setup icon=logos:nodejs
 import { initLocalStorageServer } from '@blocklet/uploader-server';
+import express from 'express';
 import { joinUrl } from 'url-join';
 
-// Assuming 'Upload' is your database model
+// Assume 'Upload' is your database model
 import Upload from '../models/upload';
 
+const app = express();
+
 const localStorageServer = initLocalStorageServer({
-  path: env.uploadDir, // The directory where files are stored
+  path: process.env.UPLOAD_DIR,
   express,
   onUploadFinish: async (req, res, uploadMetadata) => {
     const {
@@ -80,116 +173,64 @@ const localStorageServer = initLocalStorageServer({
     } = uploadMetadata;
 
     // Construct the public URL for the file
-    const fileUrl = new URL(env.appUrl);
-    fileUrl.pathname = joinUrl(req.headers['x-path-prefix'] || '/', '/uploads', filename);
+    const fileUrl = joinUrl(process.env.APP_URL, '/api/uploads', filename);
 
-    // Save file information to the database
+    // Save file metadata to your database
     const doc = await Upload.insert({
       mimetype,
       originalname,
-      filename,
+      filename, // Hashed filename
       size,
-      url: fileUrl.href,
-      folderId: req.componentDid, // Associate with the component
-      createdBy: req.user.did,     // Associate with the user
+      folderId: req.componentDid, // DID of the component where the upload happened
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      createdBy: req.user.did, // Assumes user authentication middleware
+      updatedBy: req.user.did,
     });
 
-    // The returned object will be sent as the JSON response to the frontend.
-    return doc;
+    // The returned object will be sent as the JSON response to the frontend
+    const responseData = { url: fileUrl, ...doc };
+
+    return responseData;
   },
 });
 
-router.use('/uploads', user, auth, ensureComponentDid, localStorageServer.handle);
+// Mount the uploader middleware
+app.use('/api/uploads', localStorageServer.handle);
 ```
 
-### The `uploadMetadata` Object
+**`uploadMetadata` Object Details**
 
-The `uploadMetadata` object passed to the callback contains crucial information about the completed upload:
+The `uploadMetadata` object provides crucial information about the file:
 
-| Key | Type | Description |
-|---|---|---|
-| `id` | `string` | The unique filename generated by the server (e.g., `a1b2c3d4.png`). This is the actual name of the file on the disk. |
-| `size` | `number` | The total size of the file in bytes. |
-| `metadata` | `object` | An object containing metadata provided by the client. |
-| `metadata.filename`| `string` | The original name of the file (e.g., `my-vacation-photo.png`). |
-| `metadata.filetype`| `string` | The MIME type of the file (e.g., `image/png`). |
-| `runtime.absolutePath` | `string` | The full path to the uploaded file on the server's filesystem. |
-
-## Frontend: Receiving the Result with `onUploadFinish`
-
-The `onUploadFinish` prop on the `<Uploader />` component is a callback function that fires for each successfully uploaded file. It receives the result object, which includes the JSON data returned by your backend handler.
-
-This is the ideal place to:
-- Get the final URL of the uploaded file.
-- Update your application's state.
-- Display the uploaded image or a link to the file.
-- Close the uploader modal.
-
-### Implementation
-
-Pass a function to the `onUploadFinish` prop of your `Uploader` component.
-
-```jsx
-import { useState } from 'react';
-import Uploader from '@blocklet/uploader';
-
-function MyComponent() {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-
-  const handleUploadFinish = (result) => {
-    console.log('File uploaded successfully:', result);
-
-    // The `data` property contains the JSON returned from the backend
-    const newFile = result.data;
-
-    if (newFile && newFile.url) {
-      // Add the new file to our state to display it in the UI
-      setUploadedFiles(prevFiles => [...prevFiles, newFile]);
-    }
-  };
-
-  return (
-    <div>
-      <Uploader
-        onUploadFinish={handleUploadFinish}
-        // ... other props
-      />
-      <div>
-        <h3>Uploaded Files:</h3>
-        <ul>
-          {uploadedFiles.map(file => (
-            <li key={file.filename}>
-              <a href={file.url} target="_blank" rel="noopener noreferrer">
-                {file.originalname}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  );
+```json
+{
+  "id": "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+  "size": 123456,
+  "offset": 123456,
+  "is_final": true,
+  "metadata": {
+    "relativePath": null,
+    "name": "screenshot.png",
+    "filename": "screenshot.png",
+    "type": "image/png",
+    "filetype": "image/png",
+    "uploaderId": "Uploader"
+  },
+  "runtime": {
+    "relativePath": null,
+    "absolutePath": "/path/to/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+    "size": 123456,
+    "hashFileName": "f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+    "originFileName": "screenshot.png",
+    "type": "image/png",
+    "fileType": "image/png"
+  }
 }
 ```
 
-### The `result` Object
+By implementing both callbacks, you create a robust upload pipeline that seamlessly connects user actions in the browser with your server-side business logic. To learn how to handle files from external sources like Unsplash, proceed to the next guide.
 
-The `result` object passed to the frontend callback provides context about the upload:
-
-| Key | Type | Description |
-|---|---|---|
-| `data` | `object` | **Most importantly**, this is the JSON object returned by your backend's `onUploadFinish` function. |
-| `uploadURL` | `string` | The final URL of the uploaded file, as constructed by the client. |
-| `file` | `object` | The Uppy file object, containing details like `name`, `size`, `type`, and progress. |
-| `status` | `number` | The HTTP status code of the final upload request (e.g., `200`). |
-
-By coordinating these two `onUploadFinish` callbacks, you can create a robust and seamless file handling workflow from client to server and back again.
-
----
-
-Next, learn how to allow users to import files from external services like Unsplash by setting up the Companion middleware.
-
-<x-card data-title="Integrating Remote Sources (Companion)" data-icon="lucide:link" data-href="/guides/remote-sources" data-cta="Read More">
-  Set up the Companion middleware to allow users to import files from remote sources like Unsplash and direct URLs.
+<x-card data-title="Integrating Remote Sources (Companion)" data-icon="lucide:link" data-href="/guides/remote-sources">
+  Learn how to set up the Companion middleware to allow users to import files from direct URLs and other services.
 </x-card>

@@ -1,8 +1,10 @@
 # Concepts
 
-To effectively use and customize `@blocklet/uploader`, it's helpful to understand the core concepts and integrations that power it. This section provides a high-level overview of the key architectural principles behind the package, explaining how it leverages the Uppy ecosystem and seamlessly integrates with the Media Kit blocklet.
+The `@blocklet/uploader` packages are designed to be both powerful and easy to integrate. To get the most out of them, it's helpful to understand the core concepts and key integrations that power their functionality. This section explores the foundational technologies and design principles behind the uploader.
 
-```d2
+At its core, `@blocklet/uploader` is built upon a solid foundation of proven open-source technology, enhanced with seamless integrations into the Blocklet ecosystem. The following concepts are key to understanding how it all works together.
+
+```d2 High-Level Architecture
 direction: down
 
 blocklet-app: {
@@ -10,17 +12,15 @@ blocklet-app: {
   shape: rectangle
 
   uploader-component: {
-    label: "Uploader Component"
+    label: "Uploader Component\n(@blocklet/uploader)"
     shape: rectangle
 
     uppy-ecosystem: {
       label: "Uppy Ecosystem"
       shape: rectangle
-      grid-columns: 2
 
       uppy-core: {
         label: "Uppy Core Instance"
-        shape: hexagon
       }
 
       standard-plugins: {
@@ -53,27 +53,16 @@ blocklet-app.uploader-component.uppy-ecosystem.uppy-core -> blocklet-app.uploade
 blocklet-app.uploader-component <-> media-kit: "Provides Config & Plugins"
 ```
 
-<x-cards>
+<x-cards data-columns="3">
   <x-card data-title="Integration with Uppy" data-icon="lucide:puzzle" data-href="/concepts/uppy-integration">
-    @blocklet/uploader is built upon the robust and extensible Uppy file uploader. It acts as a sophisticated wrapper, providing a seamless React component while unlocking Uppy's powerful plugin ecosystem.
+    Learn how @blocklet/uploader leverages the powerful, modular Uppy library for its core upload functionality, including its plugin architecture and resumable uploads.
   </x-card>
-  <x-card data-title="Integration with Media Kit" data-icon="lucide:package-check" data-href="/concepts/media-kit-integration">
-    The uploader features a zero-configuration integration with the Media Kit blocklet. When detected, it automatically inherits settings like file restrictions and enables advanced plugins like AI Image Generation.
+  <x-card data-title="Integration with Media Kit" data-icon="lucide:cloud" data-href="/concepts/media-kit-integration">
+    Discover the 'zero-config' experience. When a Media Kit blocklet is present, the uploader automatically configures itself and gains powerful new plugins.
   </x-card>
   <x-card data-title="Internationalization (i18n)" data-icon="lucide:languages" data-href="/concepts/i18n">
-    Customize the uploader's interface for a global audience. The component includes built-in support for multiple languages, easily configured via the `locale` prop.
+    Understand how to customize the uploader's interface for different languages and regions using the built-in localization support.
   </x-card>
 </x-cards>
 
-### Next Steps
-
-With a solid grasp of these foundational concepts, you are well-equipped to tackle more advanced tasks. Explore our practical guides to see these concepts in action or dive into the API reference for detailed prop and function documentation.
-
-<x-cards>
-  <x-card data-title="Guides" data-icon="lucide:book-open" data-href="/guides">
-    Follow step-by-step guides to implement common features and customizations.
-  </x-card>
-  <x-card data-title="API Reference" data-icon="lucide:code" data-href="/api-reference">
-    Explore the full range of available props, components, and utility functions.
-  </x-card>
-</x-cards>
+Understanding these concepts will help you customize and extend the uploader to fit your specific needs. To dive deeper, start by exploring the [Integration with Uppy](./concepts-uppy-integration.md).
