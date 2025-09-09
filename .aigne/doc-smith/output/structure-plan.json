@@ -7,7 +7,8 @@
     "sourceIds": [
       "packages/uploader/README.md",
       "packages/uploader-server/README.md",
-      "packages/uploader/src/index.ts"
+      "packages/uploader/src/index.ts",
+      "packages/uploader-server/src/index.ts"
     ]
   },
   {
@@ -28,7 +29,9 @@
     "sourceIds": [
       "packages/uploader/README.md",
       "packages/uploader/src/react/uploader.tsx",
-      "packages/uploader/src/react/uploader-provider.tsx"
+      "packages/uploader/src/react/uploader-provider.tsx",
+      "packages/uploader/src/types.ts",
+      "packages/uploader/src/utils.ts"
     ]
   },
   {
@@ -60,7 +63,8 @@
     "parentId": "/guides",
     "sourceIds": [
       "packages/uploader/src/react/uploader.tsx",
-      "packages/uploader/src/types.ts"
+      "packages/uploader/src/types.ts",
+      "packages/uploader/src/utils.ts"
     ]
   },
   {
@@ -115,7 +119,8 @@
     "sourceIds": [
       "packages/uploader/src/types.ts",
       "packages/uploader/src/react/uploader.tsx",
-      "packages/uploader/src/react/uploader-provider.tsx"
+      "packages/uploader/src/react/uploader-provider.tsx",
+      "packages/uploader/src/utils.ts"
     ]
   },
   {
@@ -135,6 +140,15 @@
     "parentId": "/api-reference/uploader",
     "sourceIds": [
       "packages/uploader/src/react/uploader-provider.tsx"
+    ]
+  },
+  {
+    "title": "Utility Functions",
+    "description": "Reference for exported helper functions from `@blocklet/uploader/utils` for tasks like file conversion, URL generation, and Uppy instance manipulation.",
+    "path": "/api-reference/uploader/utility-functions",
+    "parentId": "/api-reference/uploader",
+    "sourceIds": [
+      "packages/uploader/src/utils.ts"
     ]
   },
   {

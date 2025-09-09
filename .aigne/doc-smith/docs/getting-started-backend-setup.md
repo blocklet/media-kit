@@ -1,143 +1,192 @@
 # Backend Setup (@blocklet/uploader-server)
 
-While the `@blocklet/uploader` frontend component works seamlessly with a Media Kit blocklet for automatic upload handling, you'll use `@blocklet/uploader-server` when you need to implement custom server-side logic. This package gives you full control over the upload process, allowing you to save file metadata to a database, trigger custom workflows, or apply unique validation rules.
+This guide will walk you through setting up the `@blocklet/uploader-server` package in your Express.js-based blocklet. This package provides the necessary server-side middleware to handle file uploads initiated by the `@blocklet/uploader` frontend component.
 
-This guide will walk you through setting up a custom local file upload endpoint.
+While the frontend `@blocklet/uploader` can be used with any custom backend that supports the Tus resumable upload protocol, `@blocklet/uploader-server` offers a ready-to-use, integrated solution that handles local file storage, metadata processing, and cleanup of expired uploads.
 
-## Step 1: Install the Package
+## Upload Flow Overview
 
-First, add the `@blocklet/uploader-server` package to your blocklet's dependencies.
+The following diagram illustrates the typical data flow when a user uploads a file using the frontend component and the backend server middleware.
+
+```d2
+direction: down
+
+User: {
+  shape: c4-person
+}
+
+App: {
+  label: "Your Blocklet Application"
+  shape: rectangle
+
+  Uploader-Component: {
+    label: "Uploader Component\n(Frontend)"
+    shape: rectangle
+  }
+
+  Backend-Server: {
+    label: "Backend Server (Express)"
+    shape: rectangle
+
+    Uploader-Middleware: {
+      label: "@blocklet/uploader-server\n(initLocalStorageServer)"
+    }
+
+    File-System: {
+      label: "Upload Directory"
+      shape: cylinder
+    }
+
+    Database: {
+      label: "Database"
+      shape: cylinder
+    }
+  }
+}
+
+User -> App.Uploader-Component: "1. Selects & drops file"
+App.Uploader-Component -> App.Backend-Server.Uploader-Middleware: "2. Uploads file chunks (Tus protocol)"
+App.Backend-Server.Uploader-Middleware -> App.File-System: "3. Saves file to disk"
+App.Backend-Server.Uploader-Middleware -> App.Backend-Server.Uploader-Middleware: "4. Triggers onUploadFinish callback"
+App.Backend-Server.Uploader-Middleware -> App.Database: "5. Save file metadata"
+App.Database -> App.Backend-Server.Uploader-Middleware: "6. Return saved record"
+App.Backend-Server.Uploader-Middleware -> App.Uploader-Component: "7. Send JSON response with file URL"
+App.Uploader-Component -> User: "8. Update UI with final file"
+```
+
+## Step 1: Installation
+
+First, add the package to your blocklet's dependencies.
 
 ```bash
-# Using pnpm (recommended), npm, or yarn
 pnpm add @blocklet/uploader-server
 ```
 
-## Step 2: Configure the Upload Middleware
+## Step 2: Basic Configuration
 
-The primary function for handling direct file uploads is `initLocalStorageServer`. This function creates an Express middleware that manages the entire upload process using the [tus resumable upload protocol](https://tus.io/).
+The primary export from this package is `initLocalStorageServer`. This function creates an Express middleware that handles file uploads and stores them on the local filesystem.
 
-Create a new route file in your blocklet (e.g., `routes/upload.js`) and add the following configuration:
+Create a new route file in your blocklet (e.g., `routes/uploads.js`) and add the following basic configuration:
 
-```javascript
-import { Router } from 'express';
+```javascript Basic upload endpoint icon=logos:javascript
+import express from 'express';
 import { initLocalStorageServer } from '@blocklet/uploader-server';
+
+const router = express.Router();
+
+// Initialize the uploader server middleware
+const localStorageServer = initLocalStorageServer({
+  path: process.env.UPLOAD_DIR, // A directory to store uploaded files
+  express,
+});
+
+// Mount the uploader middleware to handle all requests to this route
+router.use('/', localStorageServer.handle);
+
+export default router;
+```
+
+In this minimal setup:
+- We import `initLocalStorageServer`.
+- We call it with a `path` option, which specifies the directory on the server where files will be stored. This should be an absolute path.
+- We pass the `express` object itself to the middleware.
+- Finally, we mount the returned handler on our router.
+
+Now, you can mount this router in your main `app.js` file:
+
+```javascript app.js icon=logos:javascript
+// ... other imports
+import uploadRouter from './routes/uploads';
+
+// ... app setup
+app.use('/api/uploads', uploadRouter);
+```
+
+With this in place, your backend is now ready to receive file uploads at the `/api/uploads` endpoint.
+
+## Step 3: Handling Upload Completion
+
+Simply saving a file isn't enough; you typically need to save its metadata to a database and return a publicly accessible URL to the frontend. This is done using the `onUploadFinish` callback.
+
+The `onUploadFinish` function is executed after a file has been successfully and completely uploaded to the server.
+
+Here is a more complete example demonstrating how to use it:
+
+```javascript Full backend example icon=logos:javascript
+import { initLocalStorageServer } from '@blocklet/uploader-server';
+import express from 'express';
+import url from 'url';
+import path from 'path';
 
 // Assume you have a database model for uploads
 // import Upload from '../models/upload';
 
-const router = Router();
+const router = express.Router();
 
-// Initialize the uploader server middleware
 const localStorageServer = initLocalStorageServer({
-  // The directory where uploaded files will be stored
-  path: process.env.UPLOAD_DIR || '/tmp/uploads',
-  // Pass the Express Router constructor to the middleware
-  express: Router,
-  // A callback function that runs after each upload is complete
+  path: process.env.UPLOAD_DIR,
+  express,
   onUploadFinish: async (req, res, uploadMetadata) => {
+    // 1. Destructure the metadata from the completed upload
     const {
-      id: filename,
+      id: filename, // The unique, randomized filename on disk
       size,
       metadata: { filename: originalname, filetype: mimetype },
     } = uploadMetadata;
 
-    console.log(`File uploaded: ${originalname} (${size} bytes) -> ${filename}`);
+    // 2. Construct the public URL for the file
+    const publicUrl = new URL(process.env.APP_URL);
+    publicUrl.pathname = path.join('/api/uploads', filename);
 
-    // Construct the public URL for the uploaded file
-    const fileUrl = new URL(process.env.APP_URL || '');
-    // This example assumes files are served from a /uploads/ path
-    fileUrl.pathname = `/uploads/${filename}`;
-
-    // Here you can implement your custom logic, like saving to a database.
+    // 3. (Optional but recommended) Save the file metadata to your database
     /*
     const doc = await Upload.insert({
       mimetype,
       originalname,
       filename,
       size,
-      url: fileUrl.href,
-      // ... other fields like createdBy, tags, etc.
+      url: publicUrl.href,
+      createdAt: new Date().toISOString(),
+      createdBy: req.user.did,
     });
     */
 
-    // The data returned here will be sent to the frontend client.
+    // 4. Return a JSON object to the frontend. This object will be available
+    // in the frontend's onUploadSuccess callback.
     const responseData = {
-      url: fileUrl.href,
-      filename,
-      originalname,
-      mimetype,
-      size,
+      url: publicUrl.href,
+      // ...doc, // Include the database record if you created one
     };
 
     return responseData;
   },
 });
 
-// Mount the middleware to handle requests on the /uploads path
-router.use('/uploads', localStorageServer.handle);
+// Mount the handler. Any middleware for authentication (like `user`, `auth`)
+// should be placed before the handler.
+router.use('/', localStorageServer.handle);
 
 export default router;
 ```
 
-## Step 3: Integrate the Route into Your App
+### Key Points:
 
-Finally, import and use this router in your main application file (e.g., `app.js`):
+- **`uploadMetadata`**: This object contains all the information about the uploaded file, including its unique ID (which is also its filename on disk), size, and original metadata sent from the client (like `originalname` and `mimetype`).
+- **Database Integration**: The callback is the perfect place to create a record in your database that links the uploaded file to a user or other resources in your application.
+- **Return Value**: The object returned by `onUploadFinish` is serialized to JSON and sent as the response to the frontend. The frontend's `onUploadSuccess` callback will receive this object, which is how it learns the final URL of the uploaded file.
 
-```javascript
-// In your app.js or equivalent
-import uploadRouter from './routes/upload';
+## Next Steps
 
-// ... other middleware
-app.use('/api', uploadRouter);
-```
-
-## Step 4: Understand the Configuration
-
-The `initLocalStorageServer` function accepts an options object to customize its behavior. Here are the key options used in the example:
-
-| Option | Type | Description |
-|---|---|---|
-| `path` | `string` | **Required.** The absolute path to the directory where files will be stored. Ensure your blocklet has write permissions to this directory. |
-| `express` | `Function` | **Required.** The Express `Router` constructor. The middleware uses this to create its internal routes. |
-| `onUploadFinish` | `(req, res, uploadMetadata) => Promise<any>` | An optional async function called after a file is successfully saved. It receives the request, response, and `uploadMetadata` objects. This is the ideal place to save file info to a database and return a JSON response to the client. |
-| `onUploadCreate` | `(req, res, uploadMetadata) => Promise<any>` | An optional async function called when an upload is initiated (before any chunks are sent). It can be used for validation or setting initial metadata. |
-
-### The `uploadMetadata` Object
-
-The `onUploadFinish` callback receives a detailed `uploadMetadata` object containing valuable information about the completed upload:
-
-```json
-{
-  "id": "f8c9b9e0a8d7b6c5a4b3c2d1e0f9a8b7",
-  "size": 102400,
-  "offset": 102400,
-  "metadata": {
-    "filename": "example.jpg",
-    "filetype": "image/jpeg",
-    "relativePath": null
-  },
-  "runtime": {
-    "absolutePath": "/tmp/uploads/f8c9b9e0a8d7b6c5a4b3c2d1e0f9a8b7",
-    "originFileName": "example.jpg"
-  }
-}
-```
-
-You can use this data to link the uploaded file to other resources in your application.
-
-## What's Next?
-
-With these steps, your backend is now configured to accept and store file uploads with custom server-side logic. You can further enhance the process by exploring more advanced features.
+With your backend configured, you are ready to explore more advanced features and customizations.
 
 <x-cards>
-  <x-card data-title="Handling Uploads" data-icon="lucide:settings-2" data-href="/guides/handling-uploads">
-    Dive deeper into the `onUploadFinish` and `onUploadCreate` callbacks to add custom logic and validation.
+  <x-card data-title="Handling Uploads" data-icon="lucide:upload-cloud" data-href="/guides/handling-uploads">
+    Dive deeper into the `onUploadFinish` callback and learn how to process file metadata on both the client and server.
   </x-card>
-  <x-card data-title="Integrating Remote Sources" data-icon="lucide:cloud" data-href="/guides/remote-sources">
-    Learn how to enable uploads from external services like Unsplash or direct URLs using the Companion middleware.
+  <x-card data-title="Integrating Remote Sources" data-icon="lucide:link" data-href="/guides/remote-sources">
+    Learn how to set up the Companion middleware to allow users to import files from URLs, Unsplash, and more.
   </x-card>
-  <x-card data-title="Local Storage API Reference" data-icon="lucide:book-marked" data-href="/api-reference/uploader-server/local-storage">
-    Explore the full list of configuration options available for `initLocalStorageServer` for fine-grained control.
+  <x-card data-title="initLocalStorageServer() API" data-icon="lucide:book-open" data-href="/api-reference/uploader-server/local-storage">
+    Explore the full API reference for all available options to customize the local storage middleware.
   </x-card>
 </x-cards>
