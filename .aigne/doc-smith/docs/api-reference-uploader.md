@@ -1,75 +1,113 @@
 # Frontend: @blocklet/uploader
 
-The `@blocklet/uploader` package provides a flexible and feature-rich file uploading component for React applications. Built on the robust [Uppy](https://uppy.io/) file uploader, it offers a seamless user experience, integration with Blocklet services like the Media Kit, and a highly customizable plugin architecture.
+The `@blocklet/uploader` package provides a powerful and highly customizable React component for handling file uploads within the Blocklet ecosystem. It is built on top of [Uppy](https://uppy.io/), a sleek, modular open-source file uploader, ensuring a robust and user-friendly experience.
 
-This package is designed to be easy to integrate, whether you need a simple inline uploader or a globally accessible modal that can be triggered from anywhere in your application. It comes pre-configured with essential plugins like drag-and-drop, webcam access, URL importing, and an image editor. While it can be used with any backend that supports Tus resumable uploads, it is optimized to work with the optional `@blocklet/uploader-server` package for a complete, integrated solution.
+This package is designed to work seamlessly as a standalone component in any React application. However, its full potential is unlocked when used in conjunction with a [Media Kit blocklet](./concepts-media-kit-integration.md), which provides centralized file management, advanced features like AI image generation, and pre-configured settings.
 
-### Component Architecture
+### Architecture Overview
 
-The package offers two primary ways to integrate the uploader, providing flexibility for different use cases. You can either use the `<Uploader />` component directly or leverage the `<UploaderProvider />` for global state management.
+The `Uploader` component acts as an orchestrator for an Uppy instance. It combines Uppy's core logic with a suite of standard plugins (like Webcam and URL import) and custom plugins tailored for the Blocklet environment (like AI Image and Resources). This modular architecture allows for great flexibility and feature richness.
 
-```d2
+```d2 Component Architecture icon=mdi:sitemap
 direction: down
 
-"@blocklet/uploader": {
-  shape: package
-  grid-columns: 1
+blocklet-app: {
+  label: "Your Blocklet Application"
+  shape: rectangle
 
-  "Integration Patterns": {
+  uploader-component: {
+    label: "Uploader Component"
     shape: rectangle
-    grid-columns: 2
 
-    "Direct Usage": {
+    uppy-ecosystem: {
+      label: "Uppy Ecosystem"
       shape: rectangle
-      "<Uploader />": "Standalone or popup component controlled by props and refs."
-    }
 
-    "Context-based Usage": {
-      shape: rectangle
-      "<UploaderProvider />": "Wraps your app to provide global uploader context."
-      "useUploaderContext()": "Hook to access the uploader instance."
-      "<UploaderTrigger />": "Component to open the global uploader."
+      uppy-core: {
+        label: "Uppy Core Instance"
+      }
 
-      "<UploaderProvider />" -> "useUploaderContext()"
-      "<UploaderProvider />" -> "<UploaderTrigger />"
-    }
-  }
+      standard-plugins: {
+        label: "Standard Uppy Plugins"
+        shape: rectangle
+        Dashboard: {}
+        Tus: {}
+        Webcam: {}
+        Url: {}
+      }
 
-  "Core Component": {
-    shape: rectangle
-    "Uploader Component": {
-      shape: package
-      "Dashboard UI": "(@uppy/react)"
-      "Core Logic": "(@uppy/core)"
-      "Plugins": {
-        grid-columns: 2
-        "Webcam": ""
-        "Image Editor": ""
-        "AI Image": ""
-        "URL Import": ""
+      custom-plugins: {
+        label: "Custom Blocklet Plugins"
+        shape: rectangle
+        AIImage: {}
+        Resources: {}
+        Uploaded: {}
       }
     }
   }
-
-  "Integration Patterns" -> "Core Component": "Uses"
 }
 
+media-kit: {
+  label: "Media Kit Blocklet"
+  shape: cylinder
+}
+
+blocklet-app.uploader-component.uppy-ecosystem.uppy-core -> blocklet-app.uploader-component.uppy-ecosystem.standard-plugins
+blocklet-app.uploader-component.uppy-ecosystem.uppy-core -> blocklet-app.uploader-component.uppy-ecosystem.custom-plugins
+blocklet-app.uploader-component <-> media-kit: "Provides Config & Plugins"
 ```
 
-This section of the API reference provides a deep dive into the components, props, and hooks available in the package. Choose a topic below to get started.
+### Core Concepts
 
-<x-cards data-columns="3">
+The package exposes two primary ways to integrate the uploader:
+
+1.  **Direct Component:** The `<Uploader />` component can be rendered directly in your application. It can be configured to appear inline or as a modal dialog.
+2.  **Provider Pattern:** For more complex use cases, the `<UploaderProvider />` and `<UploaderTrigger />` components allow you to programmatically open the uploader from any part of your application, such as a button click.
+
+### Basic Usage
+
+Here is a minimal example of how to render the Uploader as a popup modal. A ref is used to gain access to its `open` and `close` methods.
+
+```javascript Basic Uploader Example icon=logos:react
+import { useRef } from 'react';
+import Uploader from '@blocklet/uploader';
+import Button from '@mui/material/Button';
+
+export default function MyComponent() {
+  const uploaderRef = useRef(null);
+
+  const handleOpen = () => {
+    uploaderRef.current?.open();
+  };
+
+  return (
+    <div>
+      <Button onClick={handleOpen}>Open Uploader</Button>
+      <Uploader ref={uploaderRef} popup={true} />
+    </div>
+  );
+}
+```
+
+This simple setup will render a button that, when clicked, opens the fully-featured Uploader modal.
+
+### API Reference Deep Dive
+
+To fully leverage the capabilities of `@blocklet/uploader`, explore the detailed API documentation for its components, hooks, and utilities.
+
+<x-cards data-columns="2">
   <x-card data-title="<Uploader /> Component Props" data-icon="lucide:component" data-href="/api-reference/uploader/component-props">
-    Explore the full range of props available for the main Uploader component, including core settings, dashboard options, and plugin configurations.
+    Explore the full range of props for the Uploader component, including core settings, dashboard options, and plugin configurations.
   </x-card>
   <x-card data-title="<UploaderProvider /> and Hooks" data-icon="lucide:workflow" data-href="/api-reference/uploader/provider-hooks">
-    Learn how to use the UploaderProvider, UploaderTrigger, and useUploaderContext hook for programmatically controlling the uploader globally.
+    Learn how to use the UploaderProvider and hooks for programmatically controlling the uploader from anywhere in your app.
   </x-card>
-  <x-card data-title="Available Plugins" data-icon="lucide:plug" data-href="/api-reference/uploader/plugins">
-    A detailed reference for the custom-built plugins like AI Image generation, Uploaded files, and Resources.
+  <x-card data-title="Available Plugins" data-icon="lucide:puzzle" data-href="/api-reference/uploader/plugins">
+    Discover the custom-built plugins like AI Image generation, Uploaded files, and Resources that enhance the uploader's functionality.
+  </x-card>
+  <x-card data-title="Utility Functions" data-icon="lucide:wrench" data-href="/api-reference/uploader/utility-functions">
+    Reference for helper functions for tasks like file conversion, URL generation, and Uppy instance manipulation.
   </x-card>
 </x-cards>
 
----
-
-After reviewing the frontend components, you may want to explore the server-side setup required to handle the uploads. For more information, see the [Backend: @blocklet/uploader-server](./api-reference-uploader-server.md) documentation.
+By understanding these building blocks, you can tailor the uploader to perfectly fit your application's needs. For a complete file upload solution, remember to also set up the corresponding backend service as described in the [@blocklet/uploader-server](./api-reference-uploader-server.md) documentation.

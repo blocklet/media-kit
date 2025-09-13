@@ -1,159 +1,134 @@
 # Available Plugins
 
-The `@blocklet/uploader` component extends the core Uppy library with several custom plugins designed for seamless integration within the Blocklet and Media Kit ecosystem. These plugins provide functionalities ranging from browsing existing assets to generating new ones with AI.
+`@blocklet/uploader` extends the core Uppy library with several powerful, custom-built plugins. These plugins integrate seamlessly with the Blocklet ecosystem, particularly the Media Kit, to provide features like AI image generation, browsing previously uploaded files, and accessing shared resources. Most of these plugins are enabled automatically when you use the `<Uploader />` component and a properly configured backend is available.
 
-This document provides a reference for the custom-built plugins available out-of-the-box.
+This document provides a reference for the custom plugins included in the package.
 
----
+## Acquirer Plugins (UI Tabs)
 
-## Uploaded
+These plugins appear as tabs in the Uploader dashboard, providing different ways for users to select or create files.
 
-The `Uploaded` plugin provides a tab in the Uploader interface that allows users to browse and select files they have previously uploaded to the Media Kit.
+### Uploaded
 
-<x-cards>
-<x-card data-title="Key Features">
-- **Infinite Scrolling**: Automatically loads more files as the user scrolls down.
-- **File Previews**: Renders appropriate previews for images, videos, and PDFs.
-- **Quick Upload**: Includes a dedicated button to switch to the 'My Device' tab for new uploads.
-- **File Selection**: Allows users to select one or more existing files to use.
-</x-card>
-<x-card data-title="How it Works">
-The plugin fetches a paginated list of files from the `/api/uploads` endpoint provided by the Media Kit. It's enabled by default when a Media Kit blocklet is detected.
-</x-card>
-</x-cards>
+The `Uploaded` plugin provides a tab where users can browse, search, and select from files that have been previously uploaded to the Media Kit. It's an essential tool for reusing existing assets without needing to re-upload them.
 
-### Configuration
+**Key Features:**
 
-While enabled by default, you can pass custom parameters to the API request. This is useful for filtering the initial list of files shown to the user.
+- **Infinite Scrolling:** Lazily loads files from the server as the user scrolls, ensuring efficient performance even with large libraries.
+- **Rich Previews:** Renders previews for images, videos, and PDFs directly in the grid view.
+- **Quick Upload:** Includes a dedicated "add" button to quickly switch back to the "My Device" tab for new uploads.
 
-| Option | Type | Description |
-|---|---|---|
-| `params` | `object` | An object of query parameters to be sent with the API request to `/api/uploads`. |
+**Usage**
 
-**Example: Filtering uploaded files by a custom parameter**
+This plugin is enabled by default when the Uploader detects an active Media Kit. You can customize its title or pass additional parameters to the backend API via `uploaderOptions`.
 
-```jsx
-import Uploader from '@blocklet/uploader';
-
-function MyComponent() {
-  return (
-    <Uploader
-      plugins={[
-        ['@blocklet/uploader/Uploaded', {
-          title: 'My Images', // Optional: Rename the tab
-          params: { category: 'avatars' } // Custom filter
-        }],
-        // ... other plugins
-      ]}
-    />
-  );
-}
+```javascript uploaderOptions.js icon=logos:javascript
+<Uploader
+  uploaderOptions={{
+    plugins: {
+      Uploaded: {
+        title: 'My Media Library', // Change the tab title
+        params: { customParam: 'value' } // Pass custom query params to the API
+      }
+    }
+  }}
+/>
 ```
 
----
+### Resources
 
-## Resources
+The `Resources` plugin allows users to select from a curated list of static assets. These assets can be provided by other blocklets or defined by your application's backend, making it easy to share common files like logos, icons, or document templates.
 
-The `Resources` plugin allows users to select from a collection of static assets provided by other installed blocklets, which are served via the Media Kit's resources endpoint.
+**Key Features:**
 
-### Key Features
+- **Component Filtering:** If multiple resource sources (components) are available, they are displayed as filter buttons, allowing users to switch between different asset collections.
+- **Grid View:** Presents resources in a clean, easy-to-navigate grid.
 
-- **Component Filtering**: Displays filter buttons to view resources from different source components (blocklets).
-- **Grid View**: Shows a clean, grid-based layout of available resource files.
-- **Seamless Selection**: Integrates directly into the Uploader's selection workflow.
+**Usage**
 
-### Configuration
+This plugin becomes active when the backend is configured to serve resources. You can customize its title in the Uploader options.
 
-This plugin is also enabled by default when a Media Kit is detected. It fetches data from the `/api/resources` endpoint.
-
-**Example: Enabling the Resources plugin**
-
-```jsx
-import Uploader from '@blocklet/uploader';
-
-function MyComponent() {
-  return (
-    <Uploader
-      plugins={[
-        '@blocklet/uploader/MyDevice',
-        '@blocklet/uploader/Uploaded',
-        '@blocklet/uploader/Resources', // Enabled by default if Media Kit is present
-      ]}
-    />
-  );
-}
+```javascript uploaderOptions.js icon=logos:javascript
+<Uploader
+  uploaderOptions={{
+    plugins: {
+      Resources: {
+        title: 'Shared Assets' // Change the tab title
+      }
+    }
+  }}
+/>
 ```
 
----
+### AI Image
 
-## AI Image
+Integrate generative AI directly into your upload workflow. The `AI Image` plugin provides a dedicated interface for users to generate images from text prompts using various AI models configured on the backend.
 
-The `AIImage` plugin adds a powerful AI image generation tool directly into the Uploader. Users can enter text prompts to create and select unique images.
+**Key Features:**
 
-### Key Features
+- **Prompt Interface:** A user-friendly panel for writing prompts and selecting models.
+- **Model Filtering:** Automatically filters the available AI models based on the `window.blocklet.preferences.supportModels` setting, ensuring users only see relevant options.
+- **Image Gallery:** Displays generated images for selection and import into the Uploader.
 
-- **Prompt Interface**: A dedicated panel for writing prompts and configuring generation parameters.
-- **Model Selection**: Automatically fetches and lists available AI models from the backend (`/api/image/models`).
-- **Image Output Gallery**: Displays generated images for review and selection.
-- **Responsive Design**: Adapts to both desktop and mobile views.
+**Usage**
 
-### Configuration
+This plugin is available when the Media Kit is configured with AI image generation capabilities.
 
-To use this plugin, you must add it to the `plugins` array. Advanced filtering of which AI models are presented to the user can be configured via Blocklet preferences (`supportModels`).
-
-**Example: Adding the AI Image plugin**
-
-```jsx
-import Uploader from '@blocklet/uploader';
-
-function MyComponent() {
-  return (
-    <Uploader
-      plugins={[
-        '@blocklet/uploader/MyDevice',
-        '@blocklet/uploader/Uploaded',
-        '@blocklet/uploader/AIImage',
-      ]}
-    />
-  );
-}
+```javascript uploaderOptions.js icon=logos:javascript
+<Uploader
+  uploaderOptions={{
+    plugins: {
+      AIImage: {
+        title: 'Create with AI' // Change the tab title
+      }
+    }
+  }}
+/>
 ```
 
----
+## Utility and Background Plugins
 
-## VirtualPlugin
+These plugins operate in the background to enhance functionality, security, and reliability. They do not have a visible UI tab in the dashboard.
 
-The `VirtualPlugin` is not a feature-rich plugin itself, but a powerful base class for developers to create their own custom plugins that appear as a source tab in the Uploader dashboard.
+### PrepareUpload (Internal Plugin)
 
-It provides the basic structure to register a new tab, allowing you to trigger custom logic or render a completely custom UI when the tab is selected. For a complete walkthrough, see the [Creating a Custom Plugin](./guides-custom-plugin.md) guide.
+This is a crucial background plugin that runs automatically for every file added to the Uploader. It performs essential pre-processing tasks before the upload begins to ensure files are safe, correctly formatted, and optimized.
 
-<x-card data-title="Guide: Creating a Custom Plugin" data-icon="lucide:wand-2" data-href="/guides/custom-plugin" data-cta="Read The Guide">
-  Learn how to extend the Uploader's functionality by creating your own plugin tab using the `VirtualPlugin` component.
-</x-card>
+| Feature | Description |
+|---|---|
+| **XSS Prevention** | Sanitizes SVG files and filenames to remove potentially malicious scripts, protecting your application from cross-site scripting attacks. |
+| **Zip Bomb Prevention** | Inspects compressed files (`.zip`, `.gz`) to ensure they don't contain decompression bombs that could exhaust server resources. |
+| **Image Orientation** | Automatically corrects the orientation of images based on EXIF metadata, preventing sideways or upside-down photos. |
+| **Remote File Handling** | Downloads files from remote sources (like Unsplash or a URL via Companion) into the browser so they can be processed and uploaded like local files. |
+| **Hash Filename** | Generates a unique filename based on a hash of the file's content, which helps with caching and preventing naming conflicts. |
+| **Image Validation** | Can be configured to enforce aspect ratios, automatically opening the Image Editor if a file doesn't match the required dimensions. |
 
-### Options
+**Usage**
 
-| Option | Type | Description |
-|---|---|---|
-| `id` | `string` | **Required.** A unique identifier for your plugin. |
-| `title` | `string` | The text displayed on the plugin's tab. |
-| `icon` | `string` | An SVG string to use as the icon for the tab. |
-| `autoHide` | `boolean` | If `true` (default), the Uploader panel will hide when this tab is selected, giving you a blank canvas to render your own UI. |
+The `PrepareUpload` plugin is enabled by default. While it typically doesn't need to be configured, you can pass options to it, such as `cropperOptions`, to enforce a specific aspect ratio for all uploaded images.
 
----
-
-## Internal & Utility Plugins
-
-These plugins operate in the background to provide security, file processing, and browser compatibility. They are enabled automatically and do not require any configuration.
-
-### PrepareUpload
-
-This is a pre-processor plugin that runs on every file before the upload begins. Its tasks include:
-
-- **Security Hardening**: Sanitizes SVG files to prevent XSS attacks and inspects compressed files to detect and prevent zip bomb attacks.
-- **File Normalization**: Downloads files from remote sources (like URL or Unsplash), corrects image orientation based on EXIF data, and generates a unique, content-based hash for the filename.
-- **Image Validation**: If `cropperOptions.aspectRatio` is set on the `<Uploader />` component, this plugin ensures that images conform to the specified aspect ratio, opening the image editor if they do not.
+```javascript uploaderOptions.js icon=logos:javascript
+<Uploader
+  uploaderOptions={{
+    plugins: {
+      PrepareUpload: {
+        cropperOptions: {
+          aspectRatio: 16 / 9
+        }
+      }
+    }
+  }}
+/>
+```
 
 ### SafariPastePlugin
 
-This is a small modifier plugin that addresses a browser-specific issue. It ensures that the paste-to-upload functionality works correctly in the Safari browser by adding a dedicated event listener.
+This is a small utility plugin that addresses a specific browser compatibility issue. It ensures that pasting files into the Uploader dashboard works correctly in Safari, which handles paste events differently from other browsers. The plugin is enabled by default and requires no configuration.
+
+### VirtualPlugin
+
+`VirtualPlugin` is not a feature plugin but a base class for developers. It simplifies the process of creating your own custom acquirer (a new tab in the dashboard) without needing to write a full Uppy UI plugin from scratch.
+
+<x-card data-title="Creating a Custom Plugin" data-icon="lucide:puzzle" data-href="/guides/custom-plugin" data-cta="View Guide">
+  For detailed instructions on how to build your own tab, please refer to our dedicated guide.
+</x-card>

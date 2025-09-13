@@ -1,8 +1,8 @@
 # Guides
 
-This section provides practical, task-oriented guides to help you implement common features and customizations. These tutorials will walk you through various scenarios, whether you are using the `@blocklet/uploader` component with an existing service like the Media Kit, or building a custom upload handler with `@blocklet/uploader-server`.
+Welcome to the Guides section. Here you'll find practical, task-oriented walkthroughs to help you implement common features and customizations for the uploader. These guides build on the concepts introduced in the [Getting Started](./getting-started.md) section, providing step-by-step instructions for real-world scenarios.
 
-It's important to note that `@blocklet/uploader` is a standalone frontend component and does not require `@blocklet/uploader-server`. The server package is intended for developers who need to implement their own backend file processing and storage logic.
+These guides cover both the frontend `@blocklet/uploader` component and optional backend customizations with `@blocklet/uploader-server`. Remember, the frontend component can work independently, while the backend package is used for adding custom server-side upload handling and enabling remote sources.
 
 <x-cards data-columns="2">
   <x-card data-title="Configuring Plugins" data-icon="lucide:settings-2" data-href="/guides/configuring-plugins">
@@ -11,7 +11,7 @@ It's important to note that `@blocklet/uploader` is a standalone frontend compon
   <x-card data-title="Handling Uploads" data-icon="lucide:upload-cloud" data-href="/guides/handling-uploads">
     Implement callbacks on both the frontend and backend to process files after a successful upload and access their metadata.
   </x-card>
-  <x-card data-title="Integrating Remote Sources (Companion)" data-icon="lucide:link" data-href="/guides/remote-sources">
+  <x-card data-title="Integrating Remote Sources" data-icon="lucide:link" data-href="/guides/remote-sources">
     Set up the Companion middleware on your backend to allow users to import files from remote sources like Unsplash and direct URLs.
   </x-card>
   <x-card data-title="Creating a Custom Plugin" data-icon="lucide:puzzle" data-href="/guides/custom-plugin">
@@ -19,4 +19,4 @@ It's important to note that `@blocklet/uploader` is a standalone frontend compon
   </x-card>
 </x-cards>
 
-After exploring these guides, you might want to dive deeper into the available options and configurations. For detailed information on all components, props, and functions, please refer to our complete [API Reference](./api-reference.md).
+After working through these guides, you'll have a solid understanding of how to tailor the uploader to your specific needs. For more in-depth information, you can dive into the [API Reference](./api-reference.md).

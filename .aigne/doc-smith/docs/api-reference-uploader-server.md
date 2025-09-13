@@ -1,97 +1,73 @@
 # Backend: @blocklet/uploader-server
 
-The `@blocklet/uploader-server` package provides a collection of Express middleware functions to handle file storage, remote source integration, and resource serving for your blocklet's backend. It is the official server-side companion for the frontend [`@blocklet/uploader`](./api-reference-uploader.md) component.
+The `@blocklet/uploader-server` package provides a suite of Express.js middleware designed to handle various file handling tasks on the backend of your blocklet. It serves as the server-side counterpart to the `@blocklet/uploader` frontend component, enabling features like direct file uploads, integration with remote sources, and resource serving.
 
-This package simplifies backend setup by integrating [Uppy](https://uppy.io/)'s server-side components, Companion and Tus, providing pre-configured middleware for common upload and file-serving scenarios. While the frontend `@blocklet/uploader` can work with any compatible backend, this package offers a streamlined, ready-to-use solution for developers building on the Blocklet platform.
+While designed to work seamlessly with its frontend partner, it can also be used as a standalone solution for customized file upload logic. The package exports several modular middleware initializers that you can easily integrate into your Express application.
 
-## How It Works
+### Core Middleware Interaction
 
-The following diagram illustrates the interaction between the frontend uploader, the backend middleware, and storage services.
+The following diagram illustrates how the primary middleware components interact with the frontend and external services during an upload process.
 
 ```d2
 direction: down
 
-"Client Browser": {
+Frontend-Uploader: {
+  label: "@blocklet/uploader"
+}
+
+Backend-Server: {
+  label: "Express Server"
   shape: rectangle
-  "@blocklet/uploader (Uppy UI)": {
-    shape: package
+
+  uploader-server-middleware: {
+    label: "@blocklet/uploader-server"
+
+    initLocalStorageServer
+    initCompanion
   }
 }
 
-"Express Server": {
-  shape: rectangle
-  grid-columns: 1
-  
-  "@blocklet/uploader-server": {
-    shape: package
-    grid-columns: 2
-
-    "localStorageServer": {
-      label: "initLocalStorageServer"
-      shape: class
-    }
-    "companion": {
-      label: "initCompanion"
-      shape: class
-    }
-  }
+Remote-Sources: {
+  label: "Remote Sources\n(e.g., Unsplash)"
+  shape: cylinder
 }
 
-"Storage": {
-  shape: rectangle
-  grid-columns: 2
-  "Local File System": {
-    shape: cylinder
-  }
-  "Remote Sources (e.g., Unsplash)": {
-    shape: cylinder
-  }
+File-Storage: {
+  label: "Server File System"
+  shape: cylinder
 }
 
-"Client Browser" -> "Express Server"."@blocklet/uploader-server".localStorageServer: "Direct Upload"
-"Express Server"."@blocklet/uploader-server".localStorageServer -> "Storage"."Local File System": "Saves File"
+Frontend-Uploader -> Backend-Server.uploader-server-middleware.initLocalStorageServer: "Direct Upload"
+Frontend-Uploader -> Backend-Server.uploader-server-middleware.initCompanion: "Remote Upload Request"
+Backend-Server.uploader-server-middleware.initCompanion -> Remote-Sources: "Fetch File"
+Backend-Server.uploader-server-middleware.initLocalStorageServer -> File-Storage: "Store File"
 
-"Client Browser" -> "Express Server"."@blocklet/uploader-server".companion: "Select Remote File"
-"Express Server"."@blocklet/uploader-server".companion -> "Storage"."Remote Sources (e.g., Unsplash)": "Fetches File"
-"Storage"."Remote Sources (e.g., Unsplash)" -> "Express Server"."@blocklet/uploader-server".companion: "File Data"
-"Express Server"."@blocklet/uploader-server".companion -> "Client Browser": "Uploads to Local Server"
 ```
 
+## Installation
 
-## Available Middleware
+To get started, add the package to your blocklet's dependencies.
 
-The package exports several middleware initializers, each serving a distinct purpose. You can use them individually or combine them to build a complete file management solution.
+```bash Installation icon=mdi:language-bash
+pnpm add @blocklet/uploader-server
+```
 
-<x-cards data-columns="2">
-  <x-card data-title="initLocalStorageServer" data-icon="lucide:save" data-href="/api-reference/uploader-server/local-storage">
-    Handles direct file uploads from the client and saves them to the server's local filesystem. This is the core middleware for handling uploads.
-  </x-card>
-  <x-card data-title="initCompanion" data-icon="lucide:link" data-href="/api-reference/uploader-server/companion">
-    Integrates Uppy's Companion to allow users to import files from remote sources like URLs and cloud services.
-  </x-card>
-  <x-card data-title="initStaticResourceMiddleware" data-icon="lucide:folder-static" data-href="/api-reference/uploader-server/static-resource">
-    Serves static assets from other installed blocklets, which is useful for creating a unified resource endpoint.
-  </x-card>
-  <x-card data-title="initDynamicResourceMiddleware" data-icon="lucide:folder-sync" data-href="/api-reference/uploader-server/dynamic-resource">
-    Serves files from a specified directory and watches for real-time changes, making it ideal for development environments.
-  </x-card>
-</x-cards>
+## General Usage
 
-## Basic Setup Example
+Here is a typical example of how to integrate the upload and companion middleware into your Express application's router. You can initialize the required middleware and then mount their handlers onto specific routes.
 
-Here is an example of how to integrate the local storage and Companion middleware into your Express application router.
-
-```javascript
+```javascript Express Router Example icon=logos:javascript
 import { initLocalStorageServer, initCompanion } from '@blocklet/uploader-server';
 import express from 'express';
 
+// Assume `env`, `user`, `auth`, `ensureComponentDid`, and `Upload` model are defined elsewhere
 const router = express.Router();
 
 // 1. Initialize the local storage server for direct uploads
 const localStorageServer = initLocalStorageServer({
-  path: env.uploadDir, // Directory to save uploaded files
+  path: env.uploadDir, // Directory to save uploads
   express,
-  // Optional: A callback to execute after an upload is finished
+  // Optional: Callback executed after a file is successfully uploaded
   onUploadFinish: async (req, res, uploadMetadata) => {
     const {
       id: filename,
@@ -104,37 +80,57 @@ const localStorageServer = initLocalStorageServer({
     obj.protocol = req.get('x-forwarded-proto') || req.protocol;
     obj.pathname = `/uploads/${filename}`;
 
-    // Here you would typically save file metadata to your database
-    // const doc = await Upload.insert({ ... }); 
+    // Save file metadata to the database
+    const doc = await Upload.insert({
+      mimetype,
+      originalname,
+      filename,
+      size,
+      // ... other metadata from the request
+    });
 
-    const resData = { url: obj.href, /* ...doc */ };
-
-    return resData; // This data is sent back to the client
+    // Return a JSON response to the frontend
+    const resData = { url: obj.href, ...doc };
+    return resData;
   },
 });
 
-// Mount the local storage handler on the '/uploads' route
-router.use('/uploads', localStorageServer.handle);
+// Mount the upload handler on a specific route
+router.use('/uploads', user, auth, ensureComponentDid, localStorageServer.handle);
 
-// 2. Initialize Companion for remote sources
+// 2. Initialize Companion for remote sources (e.g., URL, Unsplash)
 const companion = initCompanion({
-  path: env.uploadDir, // A temporary directory for downloaded files
+  path: env.uploadDir,
   express,
-  providerOptions: env.providerOptions, // Configuration for providers like Unsplash, Google Drive etc.
-  uploadUrls: [env.appUrl], // Your server's public URL
+  providerOptions: env.providerOptions, // Your provider keys (e.g., Unsplash)
+  uploadUrls: [env.appUrl], // The URL of your app
 });
 
-// Mount the Companion handler on the '/companion' route
-router.use('/companion', companion.handle);
+// Mount the companion handler on its route
+router.use('/companion', user, auth, ensureComponentDid, companion.handle);
 ```
 
-This example demonstrates a standard setup where direct uploads are handled by `initLocalStorageServer` and remote file imports are managed by `initCompanion`. The `onUploadFinish` callback is used to process file metadata and construct a public URL after a file is successfully saved.
+## Available Middleware
+
+The package exports several middleware initializers for different functionalities. Click on a card to view its detailed API reference and configuration options.
+
+<x-cards data-columns="2">
+  <x-card data-title="initLocalStorageServer" data-icon="lucide:hard-drive-upload" data-href="/api-reference/uploader-server/local-storage">
+    Handles direct file uploads from the user's computer, saving them to the server's local storage.
+  </x-card>
+  <x-card data-title="initCompanion" data-icon="lucide:link" data-href="/api-reference/uploader-server/companion">
+    Integrates with Uppy Companion to allow users to import files from remote sources like direct URLs and Unsplash.
+  </x-card>
+  <x-card data-title="initStaticResourceMiddleware" data-icon="lucide:folder-static" data-href="/api-reference/uploader-server/static-resource">
+    Serves static assets (e.g., images, CSS) from other installed blocklets, enabling resource sharing.
+  </x-card>
+  <x-card data-title="initDynamicResourceMiddleware" data-icon="lucide:folder-sync" data-href="/api-reference/uploader-server/dynamic-resource">
+    Serves resources from a specified directory and can watch for file changes in real-time, useful for development.
+  </x-card>
+</x-cards>
 
 ## Next Steps
 
-For detailed configuration options and advanced usage for each middleware, explore their individual API reference pages:
+The `@blocklet/uploader-server` package provides the essential server-side building blocks for a robust file handling system in your blocklet. By combining these middleware functions, you can create a feature-rich upload experience for your users.
 
-- **[initLocalStorageServer(options)](./api-reference-uploader-server-local-storage.md)**
-- **[initCompanion(options)](./api-reference-uploader-server-companion.md)**
-- **[initStaticResourceMiddleware(options)](./api-reference-uploader-server-static-resource.md)**
-- **[initDynamicResourceMiddleware(options)](./api-reference-uploader-server-dynamic-resource.md)**
+To get started, we recommend exploring the [initLocalStorageServer](./api-reference-uploader-server-local-storage.md) documentation to set up the core direct upload functionality.

@@ -1,50 +1,58 @@
 # API Reference
 
-This section provides a complete reference for all modules, functions, components, and configuration options available in the `@blocklet/uploader` and `@blocklet/uploader-server` packages. Whether you are customizing the frontend UI or configuring the backend handlers, you will find the detailed information you need here.
+Welcome to the API reference for the Blocklet Uploader packages. This section provides comprehensive details on all exported components, functions, props, and configuration options for both the frontend and backend libraries. This is your go-to resource for in-depth technical information.
 
-The `@blocklet/uploader` package provides the frontend React component and does not depend on the backend package. It can connect to any server that supports the Tus resumable upload protocol. The `@blocklet/uploader-server` package is an optional set of Express middleware for developers who need to implement custom upload handling logic, such as integrating directly with a storage service like the Media Kit.
+The uploader is split into two main packages:
 
-The following diagram illustrates how they can interact:
+- **`@blocklet/uploader`**: A flexible React component for your application's frontend.
+- **`@blocklet/uploader-server`**: A set of Express middleware for handling file uploads on your backend.
+
+While they are designed to work together seamlessly, it's important to note that `@blocklet/uploader` can be used with any backend that supports the Tus resumable upload protocol. `@blocklet/uploader-server` provides a powerful, pre-configured solution for handling upload logic within your Blocklet, but its use is optional.
 
 ```d2
-direction: right
+direction: down
 
-"Browser" {
-  "@blocklet/uploader": {
-    shape: package
-    label: "@blocklet/uploader\n(React Components & Hooks)"
+your-blocklet-app: {
+  label: "Your Blocklet Application"
+  shape: rectangle
+
+  frontend: {
+    label: "Frontend (React)"
+    shape: rectangle
+  }
+
+  backend: {
+    label: "Backend (Express)"
+    shape: rectangle
   }
 }
 
-"Blocklet Server" {
-  "@blocklet/uploader-server": {
-    shape: package
-    label: "@blocklet/uploader-server\n(Optional Express Middleware)"
-  }
+uploader: {
+  label: "@blocklet/uploader"
+  shape: rectangle
+  style.fill: "#E6F7FF"
 }
 
-"Storage" {
-  shape: cylinder
-  label: "File Storage\n(e.g., Media Kit)"
+uploader-server: {
+  label: "@blocklet/uploader-server"
+  shape: rectangle
+  style.fill: "#F6FFED"
 }
 
-"Browser" -> "Blocklet Server": "File Upload Request (Tus protocol)" {
-  style.animated: true
-}
-"Blocklet Server" -> "Storage": "Saves file"
+your-blocklet-app.frontend -> uploader: "Imports <Uploader /> component"
+your-blocklet-app.backend -> uploader-server: "Uses upload middleware"
+
 ```
 
-Select a package below to dive into its specific API documentation.
+Select a package below to dive into its detailed API documentation.
 
-<x-cards>
+<x-cards data-columns="2">
   <x-card data-title="Frontend: @blocklet/uploader" data-icon="lucide:component" data-href="/api-reference/uploader">
-    Explore the props for the `&lt;Uploader /&gt;` component, learn how to use the `UploaderProvider` and associated hooks for programmatic control, and see the available plugins.
+    Explore the props, components, hooks, and utility functions available in the frontend React package for creating a rich file upload experience.
   </x-card>
   <x-card data-title="Backend: @blocklet/uploader-server" data-icon="lucide:server" data-href="/api-reference/uploader-server">
-    Reference for all server-side middleware. Find detailed options for configuring local storage, setting up Companion for remote sources, and serving static or dynamic resources.
+    A detailed reference for all server-side middleware functions used for handling file storage, remote sources via Companion, and serving static or dynamic resources.
   </x-card>
 </x-cards>
 
----
-
-If you first want to understand the underlying principles of how these packages work together, you may find the [Concepts](./concepts.md) section helpful.
+If you need a higher-level understanding of how these packages are built and how they integrate with other systems, please see our [Concepts](./concepts.md) section.

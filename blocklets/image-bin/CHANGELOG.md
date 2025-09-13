@@ -1,3 +1,7 @@
+## 0.13.25 (September 13, 2025)
+
+- chore: upgrade @aigne/aigne-hub dependency
+
 ## 0.13.24 (September 05, 2025)
 
 - chore: bump version

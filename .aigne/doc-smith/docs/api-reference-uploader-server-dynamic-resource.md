@@ -1,198 +1,219 @@
 # initDynamicResourceMiddleware(options)
 
-The `initDynamicResourceMiddleware` function creates an Express middleware designed to serve files from specified directories. Unlike static middleware, it actively watches these directories for file system changes, such as additions, updates, or deletions, and updates its internal resource map in real-time. This makes it ideal for serving assets that may change without a server restart, such as user-uploaded content, themes, or plugins.
+The `initDynamicResourceMiddleware` is a powerful Express middleware designed to serve files from one or more specified directories dynamically. Unlike `initStaticResourceMiddleware`, it actively watches for file system changes (additions, deletions, modifications) in real-time, making it ideal for serving content that can change during runtime, such as user-uploaded files, themes, or plugins.
 
-Its key features include support for glob patterns in paths, configurable file watching, caching headers, and strategies for resolving file name conflicts.
+It builds an in-memory map of resources for fast lookups and handles caching, file filtering, and conflict resolution gracefully.
+
+## How It Works
+
+The middleware follows a clear lifecycle: initialization, scanning, watching, and serving. When a request comes in, it performs a quick lookup in its internal map. If a file is added or removed from a watched directory, the map is updated automatically.
 
 ```d2
 direction: down
 
-"Server Startup": {
-  "initDynamicResourceMiddleware()": {
-    "1. Scan Directories (glob support)": {
-      style: {
-        fill: "#f0f9ff"
-      }
-    }
-    "2. Watch Directories for Changes": {
-      style: {
-        fill: "#f0f9ff"
-      }
-    }
-    "3. Build In-Memory Resource Map": {
-      shape: cylinder
-      style: {
-        fill: "#ecfdf5"
-      }
-    }
-    "4. Return Middleware & cleanup()": {
-      style: {
-        fill: "#fefce8"
-      }
-    }
+App-Startup: {
+  label: "Application Startup"
+  shape: oval
+}
 
-    "1. Scan Directories (glob support)" -> "3. Build In-Memory Resource Map"
-    "2. Watch Directories for Changes" -> "3. Build In-Memory Resource Map": "Update Map"
+Middleware: {
+  label: "Dynamic Resource Middleware"
+  shape: rectangle
+
+  scan: {
+    label: "1. Scan Directories"
+    shape: rectangle
+  }
+
+  map: {
+    label: "2. Build Resource Map"
+    shape: cylinder
+  }
+
+  watch: {
+    label: "3. Watch for Changes"
   }
 }
 
-"HTTP Request Handling": {
-  "Incoming Request (e.g., /assets/logo.png)": {
-    style: {
-      fill: "#faf5ff"
-    }
-  }
-  "Middleware Execution": {
-    "Lookup in Resource Map": {
-      shape: diamond
-      style: {
-        fill: "#fff1f2"
-      }
-    }
-  }
-  "Serve File": {
-    style: {
-      fill: "#ecfdf5"
-    }
-  }
-  "next()": {
-    style: {
-      fill: "#fef9c3"
-    }
+Request-Handling: {
+  label: "Request Handling"
+  shape: rectangle
+
+  Request: {
+    label: "Incoming Request\n(e.g., GET /my-asset.png)"
+    shape: rectangle
   }
 
-  "Incoming Request (e.g., /assets/logo.png)" -> "Middleware Execution"
-  "Middleware Execution" -> "Lookup in Resource Map"
-  "Lookup in Resource Map" -> "Serve File": "Found"
-  "Lookup in Resource Map" -> "next()": "Not Found"
+  Lookup: {
+    label: "4. Lookup in Map"
+  }
+
+  Serve: {
+    label: "5a. Serve Resource"
+    shape: rectangle
+  }
+
+  Next: {
+    label: "5b. Not Found, call next()"
+    shape: rectangle
+  }
 }
 
-"Server Startup" -> "HTTP Request Handling": { style.animated: true }
+File-System: {
+  label: "File System Event\n(e.g., file added)"
+  shape: rectangle
+}
+
+App-Startup -> Middleware.scan: "initDynamicResourceMiddleware(options)"
+Middleware.scan -> Middleware.map
+Middleware.scan -> Middleware.watch
+
+Request-Handling.Request -> Request-Handling.Lookup
+Request-Handling.Lookup -> Middleware.map: "Read"
+Middleware.map -> Request-Handling.Lookup
+Request-Handling.Lookup -> Request-Handling.Serve: "Found"
+Request-Handling.Lookup -> Request-Handling.Next: "Not Found"
+
+File-System -> Middleware.watch: "Triggers Event"
+Middleware.watch -> Middleware.map: "Update Map"
 ```
 
 ## Basic Usage
 
-Here is a minimal example of how to set up the middleware to serve images from a dynamic `uploads` directory.
+Here's how to configure the middleware to serve images from a dynamic `uploads` directory.
 
-```javascript
+```javascript Server Setup icon=mdi:code
 import express from 'express';
 import { initDynamicResourceMiddleware } from '@blocklet/uploader-server';
 import path from 'path';
 
 const app = express();
 
-// Initialize the middleware to watch the 'public/uploads' directory
 const dynamicResourceMiddleware = initDynamicResourceMiddleware({
   resourcePaths: [
     {
-      path: path.join(__dirname, 'public/uploads'),
-      whitelist: ['.jpg', '.png', '.gif'], // Only serve these file types
+      path: path.join(__dirname, 'uploads/images'),
+      whitelist: ['.jpg', '.jpeg', '.png', '.gif'],
     },
   ],
+  onReady: (count) => {
+    console.log(`${count} dynamic resources are ready to be served.`);
+  },
+  onFileChange: (filePath, event) => {
+    console.log(`File ${filePath} was ${event}.`);
+  },
 });
 
-// Mount the middleware on a specific route
-app.use('/uploads', dynamicResourceMiddleware);
+// Mount the middleware
+app.use('/uploads/images', dynamicResourceMiddleware);
 
-const server = app.listen(3000, () => {
-  console.log('Server running on port 3000');
+// On server shutdown, clean up watchers
+process.on('SIGINT', () => {
+  if (dynamicResourceMiddleware.cleanup) {
+    dynamicResourceMiddleware.cleanup();
+  }
+  process.exit();
 });
 
-// Ensure cleanup is called on server shutdown to stop file watchers
-process.on('SIGTERM', () => {
-  console.log('Cleaning up resources...');
-  dynamicResourceMiddleware.cleanup();
-  server.close();
+app.listen(3000, () => {
+  console.log('Server is running on port 3000');
 });
 ```
 
-## Options
+## Configuration Options
 
-The `initDynamicResourceMiddleware` function accepts a single configuration object with the following properties:
+The `initDynamicResourceMiddleware` function accepts a single options object with the following properties:
 
 | Option | Type | Description |
-|---|---|---|
-| `resourcePaths` | `DynamicResourcePath[]` | **Required.** An array of objects defining the directories to scan and watch. See details below. |
+| --- | --- | --- |
 | `componentDid` | `string` | Optional. If provided, the middleware will only activate if the current component's DID matches this value. |
-| `watchOptions` | `object` | Optional. Configuration for the file system watcher. See details below. |
-| `cacheOptions` | `object` | Optional. Configuration for HTTP caching headers. See details below. |
-| `onFileChange` | `(filePath: string, event: string) => void` | Optional. A callback function that is triggered when a file is changed, added, or deleted. The `event` can be `'change'`, `'rename'`, or `'delete'`. |
-| `onReady` | `(resourceCount: number) => void` | Optional. A callback function that is triggered after the initial scan is complete, providing the total count of resources found. |
-| `setHeaders` | `(res: any, filePath: string, stat: any) => void` | Optional. A function to set custom headers on the response before a file is served. |
-| `conflictResolution` | `'first-match' \| 'last-match' \| 'error'` | Optional. Defines the strategy for handling files with the same name found in multiple `resourcePaths`. Defaults to `'first-match'`. |
+| `resourcePaths` | `DynamicResourcePath[]` | **Required.** An array of objects defining the directories to watch and serve. See details below. |
+| `watchOptions` | `object` | Optional. Configuration for the file system watcher. |
+| `cacheOptions` | `object` | Optional. Configuration for HTTP caching headers. |
+| `onFileChange` | `(filePath: string, event: string) => void` | Optional. A callback function that triggers when a file is changed, added, or deleted. The `event` can be `'change'`, `'rename'`, or `'delete'`. |
+| `onReady` | `(resourceCount: number) => void` | Optional. A callback that runs after the initial scan is complete and when the resource map changes, providing the total count of available resources. |
+| `setHeaders` | `(res, filePath, stat) => void` | Optional. A function to set custom headers on the response before serving a file. |
+| `conflictResolution` | `'first-match'` \| `'last-match'` \| `'error'` | Optional. Strategy to handle filename collisions when multiple directories contain a file with the same name. Defaults to `'first-match'`. |
 
-### `resourcePaths`
+### `DynamicResourcePath` Object
 
-This is an array of `DynamicResourcePath` objects, each defining a location to source files from.
+Each object in the `resourcePaths` array defines a source for dynamic assets.
 
-| Key | Type | Description |
-|---|---|---|
-| `path` | `string` | The absolute path to the directory. It supports glob patterns (e.g., `/path/to/themes/*/assets`) to scan multiple matching directories. |
-| `whitelist` | `string[]` | Optional. An array of file extensions (e.g., `['.css', '.js']`). If provided, only files with these extensions will be served. |
-| `blacklist` | `string[]` | Optional. An array of file extensions to exclude. This is ignored if `whitelist` is present. |
+| Property | Type | Description |
+| --- | --- | --- |
+| `path` | `string` | **Required.** The absolute path to the directory. It supports glob patterns (e.g., `/path/to/plugins/*/assets`) to watch multiple matching directories. |
+| `whitelist` | `string[]` | Optional. An array of file extensions (e.g., `['.png', '.svg']`) to include. If specified, only files with these extensions will be served. |
+| `blacklist` | `string[]` | Optional. An array of file extensions to exclude. |
 
-### `watchOptions`
+### `watchOptions` Object
 
-These options control the behavior of the underlying file watcher.
+| Property | Type | Description |
+| --- | --- | --- |
+| `ignorePatterns` | `string[]` | An array of string patterns or regular expressions to ignore during watching. |
+| `persistent` | `boolean` | If `true`, the process will continue running as long as files are being watched. Defaults to `true`. |
+| `usePolling` | `boolean` | Whether to use polling for watching files. Can be necessary for certain network file systems. |
+| `depth` | `number` | The depth of subdirectories to watch. If `undefined`, it watches recursively. |
 
-| Key | Type | Description | Default |
-|---|---|---|---|
-| `ignorePatterns` | `string[]` | An array of string patterns or regular expressions to ignore file change events for. | `undefined` |
-| `persistent` | `boolean` | If `true`, the Node.js process will continue running as long as files are being watched. | `true` |
-| `usePolling` | `boolean` | Whether to use file system polling, which can be necessary for some network file systems. | `undefined` |
-| `depth` | `number` | The depth of subdirectories to watch. If `undefined`, it watches recursively. | `undefined` |
+### `cacheOptions` Object
 
-### `cacheOptions`
-
-These options configure the `Cache-Control` and other caching-related headers.
-
-| Key | Type | Description | Default |
-|---|---|---|---|
-| `maxAge` | `string \| number` | The value for the `max-age` directive in the `Cache-Control` header. Can be a number in milliseconds or a string like `'365d'`. | `'365d'` |
-| `immutable` | `boolean` | If `true`, adds the `immutable` directive to the `Cache-Control` header, indicating the resource will never change. | `true` |
-| `etag` | `boolean` | Whether to generate and use ETag headers for cache validation. | `true` (implicitly enabled) |
-| `lastModified` | `boolean` | Whether to use the `Last-Modified` header for cache validation. | `true` (implicitly enabled) |
+| Property | Type | Description |
+| --- | --- | --- |
+| `maxAge` | `string` \| `number` | Sets the `Cache-Control` max-age header. Can be a number in milliseconds or a string like `'365d'`. Defaults to `'365d'`. |
+| `immutable` | `boolean` | If `true`, adds the `immutable` directive to the `Cache-Control` header. Defaults to `true`. |
+| `etag` | `boolean` | Whether to enable ETag generation. |
+| `lastModified` | `boolean` | Whether to enable the `Last-Modified` header. |
 
 ## Advanced Usage
 
-### Conflict Resolution
+### Using Glob Patterns
 
-If two different directories in `resourcePaths` contain a file with the same name (e.g., `logo.png`), the `conflictResolution` strategy determines which one is served.
+To serve assets from multiple plugin directories, you can use a glob pattern. The middleware will find all matching directories and watch them for changes.
 
-- **`first-match` (Default):** The file from the directory that appears first in the `resourcePaths` array is used. Any subsequent files with the same name are ignored.
-- **`last-match`:** The file from the directory that appears last in the `resourcePaths` array is used, overwriting any previously found versions.
-- **`error`:** An error is logged to the console during the scanning phase if a conflict is detected. The behavior will be the same as `first-match`.
-
-```javascript
-// Example: /data/theme1/logo.png and /data/theme2/logo.png both exist.
+```javascript Glob Pattern Example icon=mdi:folder-search-outline
 const middleware = initDynamicResourceMiddleware({
   resourcePaths: [
-    { path: '/data/theme1' },
-    { path: '/data/theme2' },
+    {
+      // Watch the 'assets' folder inside every directory under 'plugins'
+      path: path.join(__dirname, 'plugins', '*', 'assets'),
+      whitelist: ['.css', '.js', '.png'],
+    },
   ],
-  conflictResolution: 'last-match', // A request for /logo.png will serve from theme2
 });
 ```
 
-### Using Hooks
+### Conflict Resolution
 
-You can use `onFileChange` and `onReady` to monitor the middleware's state.
+If two watched directories contain a file named `logo.png`, the `conflictResolution` strategy determines which one is served:
 
-```javascript
-const middleware = initDynamicResourceMiddleware({
-  resourcePaths: [{ path: '/path/to/assets' }],
-  onReady: (count) => {
-    console.log(`Dynamic resource middleware is ready. Found ${count} files.`);
-  },
-  onFileChange: (filePath, event) => {
-    console.log(`File ${event}: ${filePath}`);
-  },
-});
-```
+-   `'first-match'` (default): The first one found during the initial scan is used. Subsequent finds are ignored.
+-   `'last-match'`: The last one found will overwrite any previous entry. This is useful if you have an override mechanism.
+-   `'error'`: Logs an error to the console indicating a conflict, and typically the first-match behavior is used.
 
 ## Return Value
 
-The function returns an Express middleware function that has an additional method attached:
+The `initDynamicResourceMiddleware` function returns an Express middleware function. This returned function also has a `cleanup` method attached to it.
 
-- **Middleware Function:** The function to be used with `app.use()`.
-- **`cleanup()`:** A method that stops all file watchers and clears the internal resource map. It is crucial to call this method during a graceful server shutdown to prevent memory leaks and dangling file system watchers, especially in development environments with hot-reloading.
+### `cleanup()`
+
+This method should be called during a graceful server shutdown. It stops all file system watchers and clears the internal resource maps to prevent memory leaks and release file handles.
+
+```javascript Cleanup Example icon=mdi:power-plug-off
+const server = app.listen(3000);
+const dynamicMiddleware = initDynamicResourceMiddleware(/* ...options */);
+
+// ...
+
+function gracefulShutdown() {
+  console.log('Shutting down server...');
+  if (dynamicMiddleware.cleanup) {
+    dynamicMiddleware.cleanup();
+  }
+  server.close(() => {
+    console.log('Server closed.');
+    process.exit(0);
+  });
+}
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
+```
