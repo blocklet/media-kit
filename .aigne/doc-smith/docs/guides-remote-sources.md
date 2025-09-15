@@ -82,12 +82,10 @@ router.use('/companion', companion.handle);
 
 ### `initCompanion` Options
 
-| Option | Type | Description |
-| :--- | :--- | :--- |
-| `path` | `string` | **Required.** The directory on your server where Companion will temporarily store files during transfer. |
-| `express` | `Function` | **Required.** The Express app instance. |
-| `providerOptions` | `Object` | Optional. Configuration for remote providers. To enable Unsplash, for instance, you would provide your API key and secret. For a complete list of providers and their options, refer to the [official Uppy Companion documentation](https://uppy.io/docs/companion/providers/). |
-| `uploadUrls` | `string[]` | Optional but highly recommended for security. An array of URLs where your frontend uploader is running. This prevents others from using your Companion instance. |
+<x-field data-name="path" data-type="string" data-required="true" data-desc="The directory on your server where Companion will temporarily store files during transfer."></x-field>
+<x-field data-name="express" data-type="Function" data-required="true" data-desc="The Express app instance."></x-field>
+<x-field data-name="providerOptions" data-type="Object" data-required="false" data-desc="Configuration for remote providers. To enable Unsplash, for instance, you would provide your API key and secret. For a complete list of providers and their options, refer to the [official Uppy Companion documentation](https://uppy.io/docs/companion/providers/)."></x-field>
+<x-field data-name="uploadUrls" data-type="string[]" data-required="false" data-desc="Optional but highly recommended for security. An array of URLs where your frontend uploader is running. This prevents others from using your Companion instance."></x-field>
 
 ## Step 2: Configure the Frontend Component
 
