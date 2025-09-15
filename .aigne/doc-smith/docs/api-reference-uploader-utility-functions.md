@@ -60,7 +60,7 @@ const sizedImageUrl = createImageUrl('photo.jpg', 400, 300);
 
 ### `initUppy(uppyInstance)`
 
-This is a powerful function that enhances a standard Uppy core instance with custom methods, event handlers, and improved logic tailored for the Blocklet environment. It's automatically used by the `<Uploader />` component but can be used manually if you are creating your own Uppy instance.
+This function enhances a standard Uppy core instance with custom methods, event handlers, and improved logic tailored for the Blocklet environment. It's automatically used by the `<Uploader />` component but can be used manually if you are creating your own Uppy instance.
 
 **Key Enhancements:**
 
@@ -134,3 +134,9 @@ if (mockResponse) {
   uppy.emit('upload-success', mockResponse.file, mockResponse.responseResult);
 }
 ```
+
+## Miscellaneous Helpers
+
+| Function | Description |
+| --- | --- |
+| `parseStringToDot(str)` | Truncates a string that is longer than 12 characters with an ellipsis in the middle (e.g., `longstringname.txt` becomes `longst...e.txt`). Useful for display purposes. |

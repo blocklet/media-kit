@@ -2,7 +2,7 @@
 
 To allow users to import files from external sources like direct URLs or services like Unsplash, you need to set up Uppy's Companion service on your backend. The `@blocklet/uploader-server` package provides a convenient `initCompanion` function that simplifies this process.
 
-Companion acts as a server-side proxy. It fetches files from remote providers on behalf of the user and then streams them to the frontend uploader component, which then proceeds with the normal upload process. While basic file uploads can be handled without a custom backend, enabling remote sources requires setting up the `@blocklet/uploader-server` package.
+Companion acts as a server-side proxy. It fetches files from remote providers on behalf of the user and then streams them to the frontend uploader component, which then proceeds with the normal upload process. While the basic `@blocklet/uploader` can handle direct uploads without a custom backend, enabling remote sources requires setting up the `@blocklet/uploader-server` package.
 
 ### How It Works
 
@@ -91,7 +91,7 @@ router.use('/companion', companion.handle);
 
 ## Step 2: Configure the Frontend Component
 
-After setting up the backend, you need to configure the frontend `<Uploader />` component to communicate with your Companion instance. You do this by specifying the route in the `apiPathProps` prop and enabling the desired plugins.
+After setting up the backend, you need to configure the frontend `Uploader` component to communicate with your Companion instance. You do this by specifying the route in the `apiPathProps` prop and enabling the desired plugins.
 
 ```jsx Uploader Component with Companion icon=logos:react
 import { Uploader } from '@blocklet/uploader';

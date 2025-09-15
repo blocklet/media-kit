@@ -1,6 +1,6 @@
 # Configuring Plugins
 
-The `@blocklet/uploader` component is built on the flexible and powerful [Uppy](https://uppy.io/) file uploader. This architecture allows for extensive customization through a plugin-based system. The Uploader comes with several essential plugins pre-configured out-of-the-box, as well as special plugins designed to integrate with the Blocklet ecosystem.
+The `@blocklet/uploader` component is built on the flexible and powerful [Uppy](https://uppy.io/) file uploader. This architecture allows for extensive customization through a plugin-based system. The Uploader comes with several essential plugins pre-configured out-of-the-box, as well as special plugins designed to integrate with the Blocklet ecosystem, such as the Media Kit.
 
 This guide will walk you through how to enable, disable, and customize the behavior of these plugins to tailor the uploader to your specific needs.
 
@@ -16,11 +16,10 @@ Here are the IDs for the main acquirer plugins you can control:
 |---|---|
 | `Webcam` | Allows users to take photos and record videos with their device's camera. |
 | `Url` | Enables importing files from a direct URL. |
-| `Unsplash` | Allows users to browse and import images from Unsplash (requires configuration). |
+| `Unsplash` | Allows users to browse and import images from Unsplash (requires configuration via Media Kit). |
 | `AIImage` | A custom plugin that enables AI image generation (requires Media Kit). |
 | `Uploaded` | A custom plugin to browse and reuse files already uploaded to the Media Kit. |
 | `Resources` | A custom plugin to select files from other resource-providing Blocklets. |
-
 
 ### Example: Enabling Only Webcam and URL
 
@@ -79,7 +78,7 @@ In this example, we've set the image compression quality to 80% and configured t
 
 ### Configuring Custom Plugins
 
-Our custom plugins, `Uploaded` and `Resources`, also accept configuration through their respective props: `uploadedProps` and `resourcesProps`. A common use case is to provide a callback function for when a user selects files from these sources, allowing you to handle the selection directly instead of having the Uploader add them to its queue.
+Our custom plugins, `Uploaded` and `Resources`, also accept configuration through their respective props: `uploadedProps` and `resourcesProps`. A common use case is to provide a callback function for when a user selects files from these sources. This allows you to handle the selection directly instead of having the Uploader add them to its queue for uploading.
 
 ```jsx Handling selection from Resources plugin icon=logos:react
 import Uploader from '@blocklet/uploader';
@@ -104,6 +103,8 @@ function MyResourceSelector() {
   );
 }
 ```
+
+When `onSelectedFiles` is provided, the selected files are passed to your callback and are not added to the uploader. If the callback is omitted, the component mocks a successful upload response for the selected file and triggers the standard `onUploadFinish` event.
 
 ## Creating Your Own Plugin
 

@@ -28,18 +28,19 @@ A locale object consists of a `strings` key, which contains all the text used in
 
 You can easily change any text to better match your application's tone or terminology. For example, let's change the main drop hint.
 
-First, import one of the base locale objects provided by the package, then merge your changes.
+First, import the built-in locales provided by the package, create a deep copy, and then merge your changes.
 
 ```javascript Customizing the drop hint text icon=logos:javascript
 import { Uploader } from '@blocklet/uploader/react';
-import { locales } from '@blocklet/uploader/i18n';
+import uploaderLocales from '@blocklet/uploader/i18n';
 import merge from 'lodash/merge';
 
-// Create a deep copy of the default English locale
-const customEnglishLocale = merge({}, locales.en);
-
-// Override the specific string you want to change
-customEnglishLocale.strings.dropHint = 'Drop your awesome files here!';
+// Create a deep copy of the default English locale and merge changes
+const customEnglishLocale = merge({}, uploaderLocales.en, {
+  strings: {
+    dropHint: 'Drop your awesome files here!',
+  },
+});
 
 function MyComponent() {
   return (
@@ -105,11 +106,16 @@ While `@blocklet/uploader` inherits most of its strings from the Uppy ecosystem,
 | `aiImageNumber` | Label for the number of images to generate. |
 | `aiImageGenerate` | Button text to start image generation. |
 | `aiImageGenerating` | Text displayed while images are being generated. |
+| `browse` | The short text for a generic browse link. |
+| `browseFiles` | Text for the 'browse files' link. |
 | `browseFolders` | Text for the 'browse folders' link. |
 | `dropHint` | The main text displayed in the drop area. |
 | `dropPasteBoth` | Drop area text when both files and folders can be browsed. |
 | `dropPasteFiles` | Drop area text when only files can be browsed. |
 | `dropPasteFolders` | Drop area text when only folders can be browsed. |
+| `dropPasteImportBoth` | Drop area text with import options when both files and folders can be browsed. |
+| `dropPasteImportFiles` | Drop area text with import options when only files can be browsed. |
+| `dropPasteImportFolders` | Drop area text with import options when only folders can be browsed. |
 | `cancel` | Text for the 'Back' or 'Cancel' button. |
 | `loadingStatus` | Text shown when checking the Media Kit status. |
 | `aspectRatioMessage` | Warning message for images that don't meet the required aspect ratio. |
@@ -117,10 +123,10 @@ While `@blocklet/uploader` inherits most of its strings from the Uppy ecosystem,
 | `downloadRemoteFileFailure` | Error message when a remote file (e.g., from a URL) fails to download. |
 | `noAllowedFileTypes` | Message shown when `allowedFileTypes` is an empty array. |
 | `allowedFileTypes` | Prefix for the list of allowed file types. |
-| `error` | General initialization error message. |
+| `error` | General initialization error message, e.g., when Media Kit is not running. |
 
-For a complete list of all strings available for translation, please refer to the official Uppy locale documentation.
+For a complete list of all strings available for translation, you can refer to the official Uppy locale documentation.
 
 ---
 
-By leveraging this flexible i18n system, you can ensure your application's file uploader is accessible and intuitive for all users. For more details on Uppy's configuration, see the [Integration with Uppy](./concepts-uppy-integration.md) guide.
+By leveraging this flexible i18n system, you can ensure your application's file uploader is accessible and intuitive for all users. For more details on Uppy's configuration and a full list of translatable strings, see the [Integration with Uppy](./concepts-uppy-integration.md) guide.

@@ -91,27 +91,23 @@ In this example, if another installed blocklet has a `blocklet.yml` entry for a 
 
 The `initStaticResourceMiddleware` function accepts a configuration object with the following properties:
 
-| Option | Type | Description |
-| --- | --- | --- |
-| `express` | `object` | **Required.** The Express application instance. |
-| `resourceTypes` | `(string \| ResourceType)[]` | **Required.** An array defining the resource types to scan. See the `ResourceType` object details below. |
-| `options` | `object` | Optional. A configuration object passed to the underlying `serve-static` handler. Common properties include `maxAge` (e.g., '365d') and `immutable` (e.g., `true`) to control cache headers. |
-| `skipRunningCheck` | `boolean` | Optional. If `true`, the middleware will scan blocklets that are installed but not currently running. Defaults to `false`. |
+<x-field data-name="express" data-type="object" data-required="true" data-desc="The Express application instance."></x-field>
+<x-field data-name="resourceTypes" data-type="(string | ResourceType)[]" data-required="true" data-desc="An array defining the resource types to scan. This can be an array of simple strings or more detailed ResourceType objects."></x-field>
+<x-field data-name="options" data-type="object" data-required="false" data-desc="Optional. A configuration object passed to the underlying `serve-static` handler. Common properties include `maxAge` (e.g., '365d') and `immutable` (e.g., `true`) to control cache headers."></x-field>
+<x-field data-name="skipRunningCheck" data-type="boolean" data-default="false" data-required="false" data-desc="If `true`, the middleware will scan blocklets that are installed but not currently running."></x-field>
 
 ### The `ResourceType` Object
 
 For more granular control, you can provide an array of objects to the `resourceTypes` option instead of simple strings. Each object can have the following properties:
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `type` | `string` | **Required.** The name of the resource type, which should match the type defined in a dependent blocklet's `blocklet.yml`. |
-| `did` | `string` | **Required.** The DID of the blocklet component that provides the resource. You can use `ImageBinDid` for the standard Media Kit. |
-| `folder` | `string \| string[]` | Optional. A specific sub-folder or an array of sub-folders within the resource directory to scan. Defaults to the root (`''`) of the resource directory. |
-| `whitelist` | `string[]` | Optional. An array of file extensions to include (e.g., `['.png', '.jpg']`). If provided, only files with these extensions will be served. |
-| `blacklist` | `string[]` | Optional. An array of file extensions to exclude (e.g., `['.md', '.txt']`). |
-| `setHeaders` | `(res, path, stat) => void` | Optional. A function to set custom response headers for a served file. |
-| `immutable` | `boolean` | Optional. Overrides the top-level `options.immutable` for this specific resource type to control the `Cache-Control` header. |
-| `maxAge` | `string` | Optional. Overrides the top-level `options.maxAge` for this specific resource type. |
+<x-field data-name="type" data-type="string" data-required="true" data-desc="The name of the resource type, which should match the type defined in a dependent blocklet's `blocklet.yml`."></x-field>
+<x-field data-name="did" data-type="string" data-required="true" data-desc="The DID of the blocklet component that provides the resource. You can use `ImageBinDid` for the standard Media Kit."></x-field>
+<x-field data-name="folder" data-type="string | string[]" data-default="''" data-required="false" data-desc="A specific sub-folder or an array of sub-folders within the resource directory to scan. Defaults to the root of the resource directory."></x-field>
+<x-field data-name="whitelist" data-type="string[]" data-required="false" data-desc="An array of file extensions to include (e.g., `['.png', '.jpg']`). If provided, only files with these extensions will be served."></x-field>
+<x-field data-name="blacklist" data-type="string[]" data-required="false" data-desc="An array of file extensions to exclude (e.g., `['.md', '.txt']`)."></x-field>
+<x-field data-name="setHeaders" data-type="(res, path, stat) => void" data-required="false" data-desc="A function to set custom response headers for a served file."></x-field>
+<x-field data-name="immutable" data-type="boolean" data-required="false" data-desc="Overrides the top-level `options.immutable` for this specific resource type to control the `Cache-Control` header."></x-field>
+<x-field data-name="maxAge" data-type="string" data-required="false" data-desc="Overrides the top-level `options.maxAge` for this specific resource type."></x-field>
 
 ### Advanced Example
 
@@ -153,7 +149,7 @@ app.listen(3000);
 
 This configuration does the following:
 1.  Scans for `imgpack` resources provided by the Media Kit (`ImageBinDid`), but only within the `public/images` sub-folder, and only serves `.png`, `.jpg`, and `.gif` files.
-2.  Scans for `theme-assets` resources from a blocklet with a specific DID, looking in both the `css` and `fonts` sub-folders, and ignores any source map (`.map`) files.
+2.  Scans for `theme-assets` resources from a blocklet with a specific DID, looking in both the `css` and `fonts` sub-folders, while ignoring any source map (`.map`) files.
 3.  Sets a default `Cache-Control` max-age of 7 days for all matched files.
 
 ### Automatic Updates

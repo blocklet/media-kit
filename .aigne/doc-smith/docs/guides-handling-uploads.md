@@ -59,9 +59,7 @@ This is the perfect place to update your application's state, display the upload
 
 **Prop Definition**
 
-| Prop | Type | Description |
-|---|---|---|
-| `onUploadFinish` | `(result: any) => void` | A callback function that receives the final upload result object after the backend has processed the file. |
+<x-field data-name="onUploadFinish" data-type="(result: any) => void" data-desc="A callback function that receives the final upload result object after the backend has processed the file."></x-field>
 
 **Example Usage**
 
@@ -75,7 +73,7 @@ export default function MyComponent() {
   const [fileUrl, setFileUrl] = useState('');
 
   const handleUploadFinish = (result) => {
-    // The 'result' object is the JSON response from your backend
+    // The 'result' object contains the JSON response from your backend
     console.log('Upload finished:', result);
 
     // 'result.data' contains the body returned by the server
@@ -106,7 +104,7 @@ The `result` object passed to the frontend callback contains detailed informatio
 {
   "uploadURL": "http://localhost:3030/api/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
   "data": {
-    "url": "http://localhost:3030/api/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
+    "url": "http://localhost:3030/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
     "_id": "z2k...",
     "mimetype": "image/png",
     "originalname": "screenshot.png",
@@ -121,8 +119,12 @@ The `result` object passed to the frontend callback contains detailed informatio
   "method": "POST",
   "url": "http://localhost:3030/api/uploads/f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6.png",
   "status": 200,
-  "headers": { ... },
-  "file": { ... } // Uppy file object
+  "headers": {},
+  "file": { 
+    "id": "uppy-screenshot-1N/png-1-1672531200000",
+    "name": "screenshot.png",
+    "size": 123456
+   }
 }
 ```
 
@@ -158,7 +160,7 @@ import express from 'express';
 import { joinUrl } from 'url-join';
 
 // Assume 'Upload' is your database model
-import Upload from '../models/upload';
+// import Upload from '../models/upload';
 
 const app = express();
 
@@ -173,10 +175,11 @@ const localStorageServer = initLocalStorageServer({
     } = uploadMetadata;
 
     // Construct the public URL for the file
-    const fileUrl = joinUrl(process.env.APP_URL, '/api/uploads', filename);
+    const fileUrl = new URL(process.env.APP_URL);
+    fileUrl.pathname = joinUrl('/api/uploads', filename);
 
     // Save file metadata to your database
-    const doc = await Upload.insert({
+    const doc = {
       mimetype,
       originalname,
       filename, // Hashed filename
@@ -186,10 +189,11 @@ const localStorageServer = initLocalStorageServer({
       updatedAt: new Date().toISOString(),
       createdBy: req.user.did, // Assumes user authentication middleware
       updatedBy: req.user.did,
-    });
+    };
+    // await Upload.insert(doc);
 
     // The returned object will be sent as the JSON response to the frontend
-    const responseData = { url: fileUrl, ...doc };
+    const responseData = { url: fileUrl.href, ...doc };
 
     return responseData;
   },
@@ -229,8 +233,8 @@ The `uploadMetadata` object provides crucial information about the file:
 }
 ```
 
-By implementing both callbacks, you create a robust upload pipeline that seamlessly connects user actions in the browser with your server-side business logic. To learn how to handle files from external sources like Unsplash, proceed to the next guide.
+By implementing both callbacks, you create a robust upload pipeline that seamlessly connects user actions in the browser with your server-side business logic.
 
 <x-card data-title="Integrating Remote Sources (Companion)" data-icon="lucide:link" data-href="/guides/remote-sources">
-  Learn how to set up the Companion middleware to allow users to import files from direct URLs and other services.
+Learn how to set up the Companion middleware to allow users to import files from direct URLs and other services.
 </x-card>

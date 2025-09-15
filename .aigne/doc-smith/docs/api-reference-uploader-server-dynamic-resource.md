@@ -115,7 +115,7 @@ process.on('SIGINT', () => {
   process.exit();
 });
 
-app.listen(3000, () => {
+const server = app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
 ```
@@ -124,44 +124,36 @@ app.listen(3000, () => {
 
 The `initDynamicResourceMiddleware` function accepts a single options object with the following properties:
 
-| Option | Type | Description |
-| --- | --- | --- |
-| `componentDid` | `string` | Optional. If provided, the middleware will only activate if the current component's DID matches this value. |
-| `resourcePaths` | `DynamicResourcePath[]` | **Required.** An array of objects defining the directories to watch and serve. See details below. |
-| `watchOptions` | `object` | Optional. Configuration for the file system watcher. |
-| `cacheOptions` | `object` | Optional. Configuration for HTTP caching headers. |
-| `onFileChange` | `(filePath: string, event: string) => void` | Optional. A callback function that triggers when a file is changed, added, or deleted. The `event` can be `'change'`, `'rename'`, or `'delete'`. |
-| `onReady` | `(resourceCount: number) => void` | Optional. A callback that runs after the initial scan is complete and when the resource map changes, providing the total count of available resources. |
-| `setHeaders` | `(res, filePath, stat) => void` | Optional. A function to set custom headers on the response before serving a file. |
-| `conflictResolution` | `'first-match'` \| `'last-match'` \| `'error'` | Optional. Strategy to handle filename collisions when multiple directories contain a file with the same name. Defaults to `'first-match'`. |
+<x-field data-name="componentDid" data-type="string" data-required="false" data-desc="If provided, the middleware will only activate if the current component's DID matches this value."></x-field>
+<x-field data-name="resourcePaths" data-type="DynamicResourcePath[]" data-required="true" data-desc="An array of objects defining the directories to watch and serve."></x-field>
+<x-field data-name="watchOptions" data-type="object" data-required="false" data-desc="Configuration for the file system watcher."></x-field>
+<x-field data-name="cacheOptions" data-type="object" data-required="false" data-desc="Configuration for HTTP caching headers."></x-field>
+<x-field data-name="onFileChange" data-type="(filePath: string, event: string) => void" data-required="false" data-desc="A callback function that triggers when a file is changed, added, or deleted. The `event` can be 'change', 'rename', or 'delete'."></x-field>
+<x-field data-name="onReady" data-type="(resourceCount: number) => void" data-required="false" data-desc="A callback that runs after the initial scan is complete and when the resource map changes, providing the total count of available resources."></x-field>
+<x-field data-name="setHeaders" data-type="(res, filePath, stat) => void" data-required="false" data-desc="A function to set custom headers on the response before serving a file."></x-field>
+<x-field data-name="conflictResolution" data-type="'first-match' | 'last-match' | 'error'" data-default="'first-match'" data-required="false" data-desc="Strategy to handle filename collisions when multiple directories contain a file with the same name."></x-field>
 
 ### `DynamicResourcePath` Object
 
 Each object in the `resourcePaths` array defines a source for dynamic assets.
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `path` | `string` | **Required.** The absolute path to the directory. It supports glob patterns (e.g., `/path/to/plugins/*/assets`) to watch multiple matching directories. |
-| `whitelist` | `string[]` | Optional. An array of file extensions (e.g., `['.png', '.svg']`) to include. If specified, only files with these extensions will be served. |
-| `blacklist` | `string[]` | Optional. An array of file extensions to exclude. |
+<x-field data-name="path" data-type="string" data-required="true" data-desc="The absolute path to the directory. It supports glob patterns (e.g., `/path/to/plugins/*/assets`) to watch multiple matching directories."></x-field>
+<x-field data-name="whitelist" data-type="string[]" data-required="false" data-desc="An array of file extensions (e.g., `['.png', '.svg']`) to include. If specified, only files with these extensions will be served."></x-field>
+<x-field data-name="blacklist" data-type="string[]" data-required="false" data-desc="An array of file extensions to exclude."></x-field>
 
 ### `watchOptions` Object
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `ignorePatterns` | `string[]` | An array of string patterns or regular expressions to ignore during watching. |
-| `persistent` | `boolean` | If `true`, the process will continue running as long as files are being watched. Defaults to `true`. |
-| `usePolling` | `boolean` | Whether to use polling for watching files. Can be necessary for certain network file systems. |
-| `depth` | `number` | The depth of subdirectories to watch. If `undefined`, it watches recursively. |
+<x-field data-name="ignorePatterns" data-type="string[]" data-required="false" data-desc="An array of string patterns or regular expressions to ignore during watching."></x-field>
+<x-field data-name="persistent" data-type="boolean" data-default="true" data-required="false" data-desc="If `true`, the process will continue running as long as files are being watched."></x-field>
+<x-field data-name="usePolling" data-type="boolean" data-required="false" data-desc="Whether to use polling for watching files. Can be necessary for certain network file systems."></x-field>
+<x-field data-name="depth" data-type="number" data-required="false" data-desc="The depth of subdirectories to watch. If `undefined`, it watches recursively."></x-field>
 
 ### `cacheOptions` Object
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `maxAge` | `string` \| `number` | Sets the `Cache-Control` max-age header. Can be a number in milliseconds or a string like `'365d'`. Defaults to `'365d'`. |
-| `immutable` | `boolean` | If `true`, adds the `immutable` directive to the `Cache-Control` header. Defaults to `true`. |
-| `etag` | `boolean` | Whether to enable ETag generation. |
-| `lastModified` | `boolean` | Whether to enable the `Last-Modified` header. |
+<x-field data-name="maxAge" data-type="string | number" data-default="'365d'" data-required="false" data-desc="Sets the `Cache-Control` max-age header. Can be a number in milliseconds or a string like `'365d'`."></x-field>
+<x-field data-name="immutable" data-type="boolean" data-default="true" data-required="false" data-desc="If `true`, adds the `immutable` directive to the `Cache-Control` header."></x-field>
+<x-field data-name="etag" data-type="boolean" data-required="false" data-desc="Whether to enable ETag generation."></x-field>
+<x-field data-name="lastModified" data-type="boolean" data-required="false" data-desc="Whether to enable the `Last-Modified` header."></x-field>
 
 ## Advanced Usage
 
@@ -187,7 +179,7 @@ If two watched directories contain a file named `logo.png`, the `conflictResolut
 
 -   `'first-match'` (default): The first one found during the initial scan is used. Subsequent finds are ignored.
 -   `'last-match'`: The last one found will overwrite any previous entry. This is useful if you have an override mechanism.
--   `'error'`: Logs an error to the console indicating a conflict, and typically the first-match behavior is used.
+-   `'error'`: Logs an error to the console indicating a conflict, and the first-match behavior is typically used.
 
 ## Return Value
 

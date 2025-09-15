@@ -50,7 +50,6 @@ Backend.Companion-Middleware -> Remote-Source: "3. Fetch file"
 Remote-Source -> Backend.Companion-Middleware: "4. Stream file data"
 Backend.Companion-Middleware -> Frontend.Uploader-Component: "5. Stream back to browser"
 Frontend.Uploader-Component -> Backend.Local-Storage-Middleware: "6. Upload file (Tus)"
-
 ```
 
 ### Usage
@@ -86,23 +85,25 @@ router.use('/companion', companion.handle);
 
 ### Parameters
 
-The `initCompanion` function accepts a single options object with the following properties:
+The `initCompanion` function accepts a single options object.
 
-| Name              | Type       | Description                                                                                                                                                                                          |
-| ----------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `path`            | `string`   | **Required.** The absolute path to a temporary directory on the server where files will be stored during processing. This corresponds to the `filePath` option in Uppy Companion.                        |
-| `express`         | `Function` | **Required.** The Express application instance. This is used to create the necessary sub-app and middleware stack for Companion.                                                                        |
-| `providerOptions` | `object`   | Optional. An object containing the configuration for each remote provider you want to enable. Each key is the provider name (e.g., `unsplash`), and the value is its configuration, like API keys and secrets. |
-| `...restProps`    | `any`      | Any other valid option from the official [Uppy Companion options](https://uppy.io/docs/companion/options/) can be passed here. For example, `uploadUrls` is a common and often required option.          |
+<x-field data-name="path" data-type="string" data-required="true" data-desc="The absolute path to a temporary directory on the server where files will be stored during processing. This corresponds to the filePath option in Uppy Companion."></x-field>
+
+<x-field data-name="express" data-type="Function" data-required="true" data-desc="The Express application instance. This is used to create the necessary sub-app and middleware stack for Companion."></x-field>
+
+<x-field data-name="providerOptions" data-type="object" data-required="false" data-desc="An object containing the configuration for each remote provider you want to enable. Each key is the provider name (e.g., `unsplash`), and the value is its configuration, like API keys and secrets."></x-field>
+
+<x-field data-name="...restProps" data-type="any" data-required="false" data-desc="Any other valid option from the official Uppy Companion options can be passed here. For example, `uploadUrls` is a common and often required option."></x-field>
+
 
 ### Return Value
 
 The function returns a `companion` instance with the following key properties:
 
-| Property            | Type       | Description                                                                                                                                                                                                                              |
-| ------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `handle`            | `Function` | An Express middleware that you must mount on a route (e.g., `/companion`). This handle contains all the logic for processing remote file requests.                                                                                |
-| `setProviderOptions`| `(options: object) => void` | A method that allows you to dynamically update the `providerOptions` after initialization. This is useful if you need to load API keys from a database or change configurations without restarting the server. |
+<x-field data-name="handle" data-type="Function" data-desc="An Express middleware that you must mount on a route (e.g., `/companion`). This handle contains all the logic for processing remote file requests."></x-field>
+
+<x-field data-name="setProviderOptions" data-type="(options: object) => void" data-desc="A method that allows you to dynamically update the `providerOptions` after initialization. This is useful if you need to load API keys from a database or change configurations without restarting the server."></x-field>
+
 
 #### Example: Dynamic Provider Options
 
