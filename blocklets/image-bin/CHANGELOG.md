@@ -1,3 +1,7 @@
+## 0.13.27 (September 16, 2025)
+
+- chore: update deps
+
 ## 0.13.26 (September 13, 2025)
 
 - chore: rebump version
