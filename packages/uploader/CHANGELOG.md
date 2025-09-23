@@ -1,3 +1,8 @@
+## 0.2.12 (September 23, 2025)
+
+- fix(i18n): add support for japanese and traditional chinese
+- chore: update deps
+
 ## 0.2.11 (September 16, 2025)
 
 - chore: update deps
