@@ -73,7 +73,7 @@ export default function Output({
 
     onLoading(true);
     try {
-      const res = await handleApi({ ...options, outputType: 'file' });
+      const res = await handleApi({ ...options, outputFileType: 'file' });
       if (res.images) {
         const list: FileContent[] = res.images || [];
         const arr = list.map((item) => ({
