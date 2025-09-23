@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { createBlockletPlugin } from 'vite-plugin-blocklet';
+import { codeInspectorPlugin } from 'code-inspector-plugin'
+
 import { join } from 'path';
 import svgr from 'vite-plugin-svgr';
 
@@ -17,14 +19,17 @@ export default defineConfig(({ mode }) => {
   return {
     // optimizeDeps: {
     //   force: true, // use @blocklet/uploader need it
-    // },
+    // },`
     server: {
       fs: {
         strict: false, // monorepo and pnpm required
         allow: ['../../'], // monorepo and pnpm required
       },
     },
-    plugins: [react(), createBlockletPlugin(), svgr()],
+    plugins: [react(), createBlockletPlugin(), svgr(), isDevelopment &&
+      codeInspectorPlugin({
+        bundler: 'vite',
+      })],
     resolve: {
       alias,
       dedupe: [
