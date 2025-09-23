@@ -19,17 +19,19 @@ export default defineConfig(({ mode }) => {
   return {
     // optimizeDeps: {
     //   force: true, // use @blocklet/uploader need it
-    // },`
+    // },
     server: {
       fs: {
         strict: false, // monorepo and pnpm required
         allow: ['../../'], // monorepo and pnpm required
       },
     },
-    plugins: [react(), createBlockletPlugin(), svgr(), isDevelopment &&
-      codeInspectorPlugin({
-        bundler: 'vite',
-      })],
+    plugins: [
+      react(),
+      createBlockletPlugin(),
+      svgr(),
+      isDevelopment && codeInspectorPlugin({ bundler: 'vite' })
+    ],
     resolve: {
       alias,
       dedupe: [
