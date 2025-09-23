@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.13.28",
+  "version": "0.13.29",
   "private": true,
   "scripts": {
     "dev": "blocklet dev",
@@ -41,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "@aigne/aigne-hub": "^0.9.6",
+    "@aigne/aigne-hub": "^0.10.0-beta.2",
     "@arcblock/did": "^1.25.3",
     "@arcblock/did-connect-react": "^3.1.41",
     "@arcblock/ux": "^3.1.41",
