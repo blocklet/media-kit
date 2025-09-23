@@ -41,8 +41,8 @@
     ]
   },
   "dependencies": {
-    "@aigne/aigne-hub": "^0.9.4",
-    "@arcblock/did": "^1.24.9",
+    "@aigne/aigne-hub": "^0.9.6",
+    "@arcblock/did": "^1.25.3",
     "@arcblock/did-connect-react": "^3.1.41",
     "@arcblock/ux": "^3.1.41",
     "@blocklet/constant": "^1.16.51",
