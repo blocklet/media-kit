@@ -77,3 +77,7 @@ sourcesPath:  # Source code paths to analyze
 boardId: media-kit
 lastGitHead: f7cf5c4399315aac6aad242b873379ecd97ebfe7
 appUrl: https://docsmith.aigne.io
+translateLanguages:
+  - zh
+  - zh-TW
+  - ja
