@@ -1,3 +1,7 @@
+## 0.2.8 (September 29, 2025)
+
+- feat: add preserveCase option for SVG sanitization to maintain original tag and attribute casing
+
 ## 0.2.7 (September 05, 2025)
 
 - chore: bump version
