@@ -1,6 +1,6 @@
 ## 0.2.8 (September 29, 2025)
 
-- feat: add preserveCase option for SVG sanitization to maintain original tag and attribute casing
+- fix: preserve SVG tag and attribute case sensitivity
 
 ## 0.2.7 (September 05, 2025)
 

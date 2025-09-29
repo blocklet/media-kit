@@ -1,3 +1,7 @@
+## 0.13.30 (September 29, 2025)
+
+- chore: @blocklet/xss 0.2.8
+
 ## 0.13.29 (September 23, 2025)
 
 - feat: support latest image model of AIGNE Framework
