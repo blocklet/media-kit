@@ -104,7 +104,7 @@ export const initSanitize = (_options: SanitizeOptions = {}): any => {
  * @param content - The HTML/SVG content processed by XSS library (with lowercase tag names)
  * @returns The content with original tag name casing restored
  */
-function preserveTagCase(content: string): string {
+function preserveTagCase(content: string) {
   // Create mapping from lowercase to correct case tag names
   const tagCaseMapping: Record<string, string> = {};
 
