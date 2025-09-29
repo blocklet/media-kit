@@ -6,7 +6,7 @@ import request from 'supertest';
 import express from 'express';
 import bodyParser from 'body-parser';
 
-import { xss, initSanitize } from '../src';
+import { xss, initSanitize, sanitizeSvg } from '../src';
 
 const sanitize = initSanitize({
   allowedKeys: ['allowedKeys'],
@@ -1378,6 +1378,38 @@ describe('Express xss Sanitize', function () {
         });
         done();
       });
+    });
+  });
+
+  describe('SVG attribute case preservation', function () {
+    it('should preserve tag name case in SVG tags.', function (done) {
+      const svgInput = [
+        '<svg viewBox="0 0 10 10">',
+        '<linearGradient id="lg1" gradientUnits="objectBoundingBox"><stop stop-color="#000"/></linearGradient>',
+        '<linearGradient id="lg2"/>', // no whitespace before closing slash
+        '<clipPath id="clip"><rect width="10" height="10"/></clipPath>',
+        '<radialGradient id="rg1" />',
+        '<mask id="mask1"><rect width="10" height="10"/></mask>',
+        '</svg>',
+      ].join('');
+      const result = sanitizeSvg(svgInput, { preserveCase: true });
+
+      // Test that tag names preserve their original case
+      expect(result).toContain('<linearGradient');
+      expect(result).toContain('clipPath');
+      expect(result).toContain('</clipPath>');
+      expect(result).toContain('<radialGradient'); // not radialgradient
+      expect(result).toContain('gradientUnits'); // attribute case should also be preserved
+      expect(result).toContain('mask'); // no change
+      expect(result).toContain('stop-color'); // no change
+
+      expect(result).not.toContain('lineargradient');
+      expect(result).not.toContain('clippath');
+      expect(result).not.toContain('</clippath>');
+      expect(result).not.toContain('<radialgradient');
+      expect(result).not.toContain('gradientunits');
+
+      done();
     });
   });
 });
