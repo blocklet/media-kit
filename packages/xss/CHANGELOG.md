@@ -1,3 +1,7 @@
+## 0.2.9 (September 30, 2025)
+
+- fix: xss bug
+
 ## 0.2.8 (September 29, 2025)
 
 - fix: preserve SVG tag and attribute case sensitivity
