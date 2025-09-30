@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/xss",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "blocklet prevent xss attack",
   "publishConfig": {
     "access": "public"
@@ -22,7 +22,7 @@
     "*.d.ts"
   ],
   "scripts": {
-    "coverage": "pnpm test -- --coverage",
+    "coverage": "npm run test -- --coverage",
     "build": "unbuild",
     "build:watch": "npx nodemon --ext 'ts,tsx,json,js,jsx' --exec 'pnpm run build' --ignore 'lib/*' --ignore 'es/*' ",
     "dev": "pnpm run build:watch",
