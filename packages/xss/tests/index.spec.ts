@@ -43,7 +43,26 @@ describe('Express xss Sanitize', function () {
         expect(sanitize('<&gagaga')).toEqual('<&gagaga');
         expect(sanitize('`我饿了` 你呢')).toEqual('`我饿了` 你呢');
         expect(sanitize('<快乐的一天> 3412312 <222')).toEqual('<快乐的一天> 3412312 <222');
+        expect(sanitize('<div>这是可以的</div>')).toEqual('<div>这是可以的</div>');
+        expect(
+          sanitize('<script<script></script script>>alert(document.cookie)</script<script></script script>></>')
+        ).toEqual('</>');
         done();
+      });
+
+      it('should sanitize wallet backup string.', () => {
+        expect(sanitize('<!BACKUP V2.0.0>Backup content</!BACKUP>')).toEqual(
+          '<!BACKUP V2.0.0>Backup content</!BACKUP>'
+        );
+        // filter normal malicious script tags
+        expect(sanitize('<script>alert("xss")</script>Test content')).toEqual('Test content');
+
+        // correctly handle mixed content and preserve exact !BACKUP V2.0.0 section
+        expect(
+          sanitize(
+            '<div>Normal content</div><script>alert("xss")</script><!BACKUP V2.0.0>Backup content<script>alert("xss")</script></!BACKUP>'
+          )
+        ).toEqual('<div>Normal content</div><!BACKUP V2.0.0>Backup content</!BACKUP>');
       });
 
       it('should sanitize backup object.', function (done) {
@@ -150,6 +169,7 @@ describe('Express xss Sanitize', function () {
             z: false,
             w: 'bla bla',
             a: '<p>Test</p>',
+            b: '<script<script></script script>>alert(document.cookie)</script<script></script script>></>',
           })
           .expect(
             200,
@@ -159,6 +179,7 @@ describe('Express xss Sanitize', function () {
                 z: false,
                 w: 'bla bla',
                 a: '<p>Test</p>',
+                b: '</>',
               },
             },
             done
@@ -190,7 +211,9 @@ describe('Express xss Sanitize', function () {
 
       it('should sanitize clean query.', function (done) {
         request(app)
-          .get('/query?y=4&z=false&w=bla bla&a=<p>Test</p>')
+          .get(
+            '/query?y=4&z=false&w=bla bla&a=<p>Test</p>&assetId=<script<script></script%20script>>alert(document.cookie)</script<script></script%20script>></>'
+          )
           .expect(
             200,
             {
@@ -199,6 +222,7 @@ describe('Express xss Sanitize', function () {
                 z: 'false',
                 w: 'bla bla',
                 a: '<p>Test</p>',
+                assetId: '</>',
               },
             },
             done
@@ -1307,6 +1331,7 @@ describe('Express xss Sanitize', function () {
                   i: ["<h3 onclick='function x(e) {console.log(e); return;}'>H3 Test</h3>", 'bla bla', false, 5],
                   j: '<a href="/" onclick="return 0;">Link</a>',
                 },
+                '<script<script></script script>>alert(document.cookie)</script<script></script script>></>',
               ],
               obj: {
                 e: '<script>while (true){alert("Test To OO")}</script>',
@@ -1328,6 +1353,7 @@ describe('Express xss Sanitize', function () {
               i: ['<h3>H3 Test</h3>', 'bla bla', false, 5],
               j: '<a href="/">Link</a>',
             },
+            '</>',
           ],
           obj: {
             e: '',

@@ -1,4 +1,5 @@
 import * as xss from 'xss';
+import { filterXSS } from 'xss';
 import omit from 'lodash/omit';
 import { SanitizeOptions } from './types';
 import path from 'path';
@@ -44,8 +45,22 @@ let defaultOptions = {
       return '';
     }
   },
+  onTagAttr: (tag, html) => {
+    // @note 兼容钱包备份应用列表的功能
+    if (tag === '!BACKUP') {
+      return html;
+    }
+  },
   stripIgnoreTagBody: ['script'],
 } as SanitizeOptions;
+
+function advanceProcess(html: string, options: xss.IFilterXSSOptions) {
+  // note: 某些情况下，可能存在复杂的结构，一次处理是不够的，see: https://community.arcblock.io/discussions/32c85bfc-230e-49b2-a2e7-0d4f668699bc
+  while (html !== filterXSS(html, options)) {
+    html = filterXSS(html, options);
+  }
+  return html;
+}
 
 export const initSanitize = (_options: SanitizeOptions = {}): any => {
   const options = {
@@ -53,17 +68,15 @@ export const initSanitize = (_options: SanitizeOptions = {}): any => {
     ..._options,
   };
 
-  const xssInstance = new xss.FilterXSS(options);
-
   const sanitize = (data: any): any => {
     if (typeof data === 'string') {
-      return xssInstance.process(data);
+      return advanceProcess(data, options);
     }
 
     if (Array.isArray(data)) {
       return data.map((item) => {
         if (typeof item === 'string') {
-          return xssInstance.process(item);
+          return advanceProcess(item, options);
         }
         if (Array.isArray(item) || typeof item === 'object') {
           return sanitize(item);
@@ -79,7 +92,7 @@ export const initSanitize = (_options: SanitizeOptions = {}): any => {
         const item = data[key];
 
         if (typeof item === 'string') {
-          data[key] = xssInstance.process(item);
+          data[key] = advanceProcess(item, options);
         } else if (Array.isArray(item) || typeof item === 'object') {
           data[key] = sanitize(item);
         }
@@ -227,8 +240,7 @@ export const sanitizeSvg = (
     filterOptions.onTagAttr = preserveAttrCase;
   }
 
-  const xssInstance = new xss.FilterXSS(filterOptions);
-  const processedContent = xssInstance.process(svgContent);
+  const processedContent = advanceProcess(svgContent, filterOptions);
 
   // Post-process: restore original tag name casing because XSS library converts all tags to lowercase
   return options?.preserveCase ? preserveTagCase(processedContent) : processedContent;
