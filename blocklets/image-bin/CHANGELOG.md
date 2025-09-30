@@ -1,3 +1,7 @@
+## 0.13.31 (September 30, 2025)
+
+fix: enhance XSS filtering with recursive sanitization
+
 ## 0.13.30 (September 29, 2025)
 
 - chore: @blocklet/xss 0.2.8

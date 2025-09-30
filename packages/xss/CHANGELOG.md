@@ -1,6 +1,6 @@
 ## 0.2.9 (September 30, 2025)
 
-- fix: xss bug
+- fix: enhance XSS filtering with recursive sanitization
 
 ## 0.2.8 (September 29, 2025)
 
