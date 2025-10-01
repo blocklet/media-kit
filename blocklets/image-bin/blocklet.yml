@@ -90,10 +90,10 @@ capabilities:
   component: true
   navigation: true
 screenshots:
-  - 2799c67ab5f052e985593d6b96a24496.png
-  - 247a6ac7d7bec943e74986bcaac651bd.png
-  - 59f13e4e6619cff2d177ce0f7fa09fd3.png
-  - 823a17847b574e2bdafb1e442726946e.png
+  - media-gallery-grid-view.png
+  - upload-dialog-import-options.png
+  - ai-image-generator-dialog.png
+  - unsplash-search-integration.png
 components: []
 navigation:
   - title:
