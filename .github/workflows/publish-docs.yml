@@ -1,12 +1,13 @@
 name: publish docs
 
 env:
-  GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+  AIGNE_HUB_API_KEY: ${{ secrets.AIGNE_HUB_API_KEY }}
 
 permissions:
   contents: write
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -37,7 +38,7 @@ jobs:
 
       - name: Install @aigne/cli
         run: |
-          bun install -g @aigne/cli
+          bun install -g @aigne/cli@beta
 
       - name: Publish docs to arcblock.io
         env:
@@ -62,6 +63,7 @@ jobs:
             git add -A
             git commit -m "chore(docs): push doc smith cache [skip ci]"
             BRANCH="${{ github.head_ref || github.ref_name }}"
+            git pull origin "${BRANCH}"
             git push origin HEAD:refs/heads/"${BRANCH}"
           else
             echo "No changes to commit."
