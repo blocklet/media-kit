@@ -1,3 +1,24 @@
+## 0.13.32 (October 09, 2025)
+
+- feat: support dynamic asset cdn host
+
+## 0.13.31 (September 30, 2025)
+
+fix: enhance XSS filtering with recursive sanitization
+
+## 0.13.30 (September 29, 2025)
+
+- chore: @blocklet/xss 0.2.8
+
+## 0.13.29 (September 23, 2025)
+
+- feat: support latest image model of AIGNE Framework
+
+## 0.13.28 (September 23, 2025)
+
+- fix(i18n): add support for japanese and traditional chinese
+- chore: update deps
+
 ## 0.13.27 (September 16, 2025)
 
 - chore: update deps

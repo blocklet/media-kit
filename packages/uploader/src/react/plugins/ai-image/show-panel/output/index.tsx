@@ -1,3 +1,4 @@
+import { FileContent } from '@aigne/core';
 import styled from '@emotion/styled';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -24,13 +25,13 @@ export default function Output({
 }: {
   options?: AIImagePromptProps;
   handleApi: (data: any) => any;
-  onSelect: (data?: { src: string; width: number; alt: string }[]) => void;
+  onSelect: (data?: { src: string; width?: number; alt: string }[]) => void;
   onFinish: () => void;
   onClose?: Function | boolean;
   isMobile?: boolean;
 }) {
   const { loading, onLoading, restrictions, i18n } = useAIImageContext();
-  const [response, setResponse] = useState<{ src: string; width: number; alt: string }[]>([]);
+  const [response, setResponse] = useState<{ src: string; width?: number; alt: string }[]>([]);
   const [error, setError] = useState<Error>();
   const theme = useTheme();
   const maxNumberOfFiles = restrictions?.maxNumberOfFiles;
@@ -72,11 +73,11 @@ export default function Output({
 
     onLoading(true);
     try {
-      const res = await handleApi({ ...options, responseFormat: 'base64' });
+      const res = await handleApi({ ...options, outputFileType: 'file' });
       if (res.images) {
-        const list = res.images || [];
-        const arr = list.map((item: { base64: string; url?: string }) => ({
-          src: item.url || `data:image/png;base64,${item.base64}`,
+        const list: FileContent[] = res.images || [];
+        const arr = list.map((item) => ({
+          src: `data:image/png;base64,${item.data}`,
           alt: options.prompt,
         }));
 

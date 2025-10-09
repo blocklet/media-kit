@@ -1,3 +1,15 @@
+## 0.2.10 (October 09, 2025)
+
+- chore: update deps
+
+## 0.2.9 (September 30, 2025)
+
+- fix: enhance XSS filtering with recursive sanitization
+
+## 0.2.8 (September 29, 2025)
+
+- fix: preserve SVG tag and attribute case sensitivity
+
 ## 0.2.7 (September 05, 2025)
 
 - chore: bump version

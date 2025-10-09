@@ -1,6 +1,8 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import { createBlockletPlugin } from 'vite-plugin-blocklet';
+import { codeInspectorPlugin } from 'code-inspector-plugin';
+
 import { join } from 'path';
 import svgr from 'vite-plugin-svgr';
 
@@ -24,7 +26,12 @@ export default defineConfig(({ mode }) => {
         allow: ['../../'], // monorepo and pnpm required
       },
     },
-    plugins: [react(), createBlockletPlugin(), svgr()],
+    plugins: [
+      react(),
+      createBlockletPlugin({ disableDynamicAssetHost: false }),
+      svgr(),
+      isDevelopment && codeInspectorPlugin({ bundler: 'vite' }),
+    ],
     resolve: {
       alias,
       dedupe: [
@@ -40,6 +47,9 @@ export default defineConfig(({ mode }) => {
         'lodash',
         'bn.js',
       ],
+    },
+    build: {
+      modulePreload: false,
     },
   };
 });

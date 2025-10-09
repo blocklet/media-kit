@@ -578,9 +578,9 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
 });
 
 router.post('/image/generations', user, auth, async (req, res) => {
-  const { prompt, number = 1, responseFormat, model = 'dall-e-2' } = req.body;
+  const { prompt, number = 1, model = 'dall-e-2', ...rest } = req.body;
   const imageModel = new AIGNEHubImageModel({ model });
-  const result = await imageModel.invoke({ prompt, n: parseInt(number, 10), responseFormat });
+  const result = await imageModel.invoke({ ...rest, prompt, n: parseInt(number, 10) });
   res.json(result);
 });
 
