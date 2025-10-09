@@ -1,3 +1,7 @@
+## 0.2.10 (October 09, 2025)
+
+- chore: update deps
+
 ## 0.2.9 (September 30, 2025)
 
 - fix: enhance XSS filtering with recursive sanitization

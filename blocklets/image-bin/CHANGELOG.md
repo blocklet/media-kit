@@ -1,3 +1,7 @@
+## 0.13.32 (October 09, 2025)
+
+- feat: support dynamic asset cdn host
+
 ## 0.13.31 (September 30, 2025)
 
 fix: enhance XSS filtering with recursive sanitization
