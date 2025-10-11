@@ -1,6 +1,7 @@
-## 0.13.33 (October 11, 2025)
+## 0.13.34 (October 11, 2025)
 
-- chore: update deps
+- chore: update blocklet sdk to latest
+- Revert "chore: update deps (#459)"
 
 ## 0.13.32 (October 09, 2025)
 
