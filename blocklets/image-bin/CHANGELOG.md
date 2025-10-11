@@ -1,7 +1,3 @@
-## 0.13.33 (October 11, 2025)
-
-- chore: update deps
-
 ## 0.13.32 (October 09, 2025)
 
 - feat: support dynamic asset cdn host
