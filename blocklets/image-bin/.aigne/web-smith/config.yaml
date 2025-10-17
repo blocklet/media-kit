@@ -1,0 +1,71 @@
+# Project information for page publishing
+projectName: Media Kit
+projectDesc: "Media Kit: 📸 A simple yet powerful Blocklet for media asset
+  uploading and hosting. Features drag-and-drop, image tagging, and easy CDN
+  integration. Perfect for managing digital assets! ✨"
+projectLogo: https://store.blocklet.dev/assets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9/logo.png
+projectId: 59270d9d-7119-43a1-bdfb-578ccc851416
+projectSlug: media-kit
+
+# =============================================================================
+# Website Configuration
+# =============================================================================
+
+# Purpose: What's the main outcome you want readers to achieve?
+# Available options (uncomment and modify as needed):
+#   landingPage      - Landing page / Homepage: Convert visitors into users or customers
+#   ecommerce        - E-commerce / Online store: Sell products or services online
+#   portfolio        - Portfolio / Showcase: Display creative work, projects, or achievements
+#   corporate        - Corporate / Business: Professional business website with company information
+#   blog             - Blog / Content site: Share articles, news, and regular content updates
+#   saas             - SaaS / Software product: Promote and onboard users to software services
+#   nonprofit        - Non-profit / Community: Promote causes, accept donations, engage volunteers
+#   education        - Educational / Learning: Provide courses, tutorials, or educational content
+#   mixedPurpose     - Multi-purpose website: Comprehensive website covering multiple needs
+pagePurpose:
+  - landingPage
+
+# Target Audience: Who will be reading this most often?
+# Available options (uncomment and modify as needed):
+#   customers        - Customers / End users: People who buy or use your products/services
+#   businessOwners   - Business owners / Entrepreneurs: People running businesses looking for solutions
+#   marketers        - Marketing teams: People promoting products or managing campaigns
+#   designers        - Designers / Creative professionals: People focused on visual design and user experience
+#   developers       - Developers / Technical users: People building or integrating technical solutions
+#   investors        - Investors / Stakeholders: People evaluating business potential and growth
+#   jobSeekers       - Job seekers / Potential employees: People looking for career opportunities
+#   students         - Students / Learners: People seeking educational content or resources
+#   generalPublic    - General public / Mixed audience: Broad audience with varied interests and backgrounds
+targetAudienceTypes:
+  - customers
+
+# Website Scale: How many pages should your website have?
+# Available options (uncomment and modify as needed):
+#   singlePage         - Single Page (only 1 page): All content consolidated into 1 page
+#   minimal            - Minimal (2-6 pages): Core pages only - quick to launch
+#   standard           - Standard (7-12 pages): Complete website with main sections [RECOMMENDED]
+#   comprehensive      - Comprehensive (12+ pages): Full-featured website with detailed sections
+#   aiDecide           - Let AI decide: Analyze project complexity and suggest appropriate scale
+websiteScale: singlePage
+
+# Custom Rules: Define specific page generation rules and requirements
+rules: The product name is Media Kit, not Image Bin or image-bin
+
+# Glossary: Define project-specific terms and definitions
+# glossary: "@glossary.md"  # Path to markdown file containing glossary definitions
+
+locale: en
+# translateLanguages:  # List of languages to translate the pages to
+#   - zh  # Example: Chinese translation
+#   - en  # Example: English translation
+pagesDir: .aigne/web-smith/pages  # Directory to save generated pages
+sourcesPath:  # Source code paths to analyze
+  - README.md
+  - CHANGELOG.md
+  - blocklet.yml
+  - screenshots/*
+lastGitHead: 5aab6de97851d8562fd2fcaa39c5454f4f32bd3b
+# Checkout ID for website deployment service
+checkoutId: ""
+appUrl: https://websmith.aigne.io
+projectCover: .aigne/web-smith/cover.png
