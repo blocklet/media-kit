@@ -1,3 +1,7 @@
+## 0.2.9 (October 21, 2025)
+
+- feat: make sign async
+
 ## 0.2.8 (September 29, 2025)
 
 - fix: preserve SVG tag and attribute case sensitivity

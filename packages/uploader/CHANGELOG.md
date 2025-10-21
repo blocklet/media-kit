@@ -1,3 +1,7 @@
+## 0.2.13 (October 21, 2025)
+
+- feat: make sign async
+
 ## 0.2.12 (September 23, 2025)
 
 - fix(i18n): add support for japanese and traditional chinese

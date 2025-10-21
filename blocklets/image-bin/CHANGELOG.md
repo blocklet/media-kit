@@ -1,3 +1,7 @@
+## 0.13.31 (October 21, 2025)
+
+- feat: make sign async
+
 ## 0.13.30 (September 29, 2025)
 
 - chore: @blocklet/xss 0.2.8
