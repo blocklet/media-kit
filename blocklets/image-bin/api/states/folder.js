@@ -1,4 +1,4 @@
-const Database = require('@blocklet/sdk/lib/database');
+const { Database } = require('@blocklet/sdk/lib/database');
 
 /**
  * Data structure
