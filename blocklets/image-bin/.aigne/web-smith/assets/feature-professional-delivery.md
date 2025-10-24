@@ -1,0 +1,1 @@
+This image will be used in the 'Professional Delivery' feature section. It needs to visually convey speed, global reach, and efficiency, reinforcing the benefit of using Media Kit for content delivery.

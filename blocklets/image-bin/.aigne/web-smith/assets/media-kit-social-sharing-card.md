@@ -1,0 +1,1 @@
+This is the main social sharing image for the Media Kit landing page. It needs to visually communicate the core concepts of owning and managing digital assets in a secure, interconnected way, making it feel both professional and exciting.

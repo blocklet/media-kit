@@ -1,0 +1,1 @@
+This image supports the 'Bank-Level Security & Developer Friendly' feature section. It must communicate the dual benefits of security and developer integration, appealing to both business users concerned with safety and technical users looking for flexibility.
