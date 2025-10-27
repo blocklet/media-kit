@@ -1,6 +1,15 @@
-## 0.2.9 (October 21, 2025)
+## 0.2.12 (October 11, 2025)
 
-- feat: make sign async
+- chore: update blocklet sdk to latest
+- Revert "chore: update deps (#459)"
+
+## 0.2.10 (October 09, 2025)
+
+- chore: update deps
+
+## 0.2.9 (September 30, 2025)
+
+- fix: enhance XSS filtering with recursive sanitization
 
 ## 0.2.8 (September 29, 2025)
 

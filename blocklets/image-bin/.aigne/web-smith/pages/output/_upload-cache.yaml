@@ -1,0 +1,24 @@
+e398c1fd58d5eccc7fdf963438cfbd09e87e3e478c9ff15e3784860d13f89f10:
+  local_path: screenshots/media-gallery-grid-view.png
+  sites:
+    https://websmith.aigne.io:
+      url: https://websmith.aigne.io/image-bin/uploads/e398c1fd58d5eccc.png
+      upload_time: 2025-10-17T00:39:11.883Z
+79a0b9d6b3a0622d588257829ebd8d5aa611d72b42f76fc83d2949a5c5001c37:
+  local_path: screenshots/upload-dialog-import-options.png
+  sites:
+    https://websmith.aigne.io:
+      url: https://websmith.aigne.io/image-bin/uploads/79a0b9d6b3a0622d.png
+      upload_time: 2025-10-17T00:39:11.932Z
+81fe104929485d6d0d17cf4821da68d3303d56a3d53ab4fcf4ed532ee6a22c39:
+  local_path: screenshots/ai-image-generator-dialog.png
+  sites:
+    https://websmith.aigne.io:
+      url: https://websmith.aigne.io/image-bin/uploads/81fe104929485d6d.png
+      upload_time: 2025-10-17T00:39:12.077Z
+329585481823d1e068ed0785ca54e1be7409ee9a367c6eb82648e7df2e923b8e:
+  local_path: screenshots/unsplash-search-integration.png
+  sites:
+    https://websmith.aigne.io:
+      url: https://websmith.aigne.io/image-bin/uploads/329585481823d1e0.png
+      upload_time: 2025-10-17T00:39:13.059Z

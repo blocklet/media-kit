@@ -1,6 +1,15 @@
-## 0.13.31 (October 21, 2025)
+## 0.13.34 (October 11, 2025)
 
-- feat: make sign async
+- chore: update blocklet sdk to latest
+- Revert "chore: update deps (#459)"
+
+## 0.13.32 (October 09, 2025)
+
+- feat: support dynamic asset cdn host
+
+## 0.13.31 (September 30, 2025)
+
+fix: enhance XSS filtering with recursive sanitization
 
 ## 0.13.30 (September 29, 2025)
 

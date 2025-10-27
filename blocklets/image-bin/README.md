@@ -29,7 +29,7 @@ Optional CDN support delivers your content faster than major cloud providers - w
 ### 📁 **Intelligent Organization**
 
 - **Smart Folders & Tags**: Find any file in seconds with powerful search
-- **One-Click Upload**: Drag, drop, paste, or import from Unsplash stock library
+- **Multiple Import Options**: Drag & drop, paste, Unsplash stock library, or AI generation
 - **Universal Format Support**: Images, videos, PDFs, documents - handle everything
 - **Auto-Deduplication**: Never store the same file twice
 
@@ -51,8 +51,14 @@ Optional CDN support delivers your content faster than major cloud providers - w
 
 - **Full API Access**: Integrate with any website or application
 - **Bulk Operations**: Manage thousands of files efficiently
-- **AI-Powered**: Built-in DALL-E image generation capabilities
 - **Team Workflows**: Purpose-built for creative and marketing teams
+
+### 🤖 **AI-Powered Creation**
+
+- **Built-in AI Image Generation**: Generate images directly from text prompts using DALL-E and other AI models
+- **Multi-Model Support**: Configure and switch between different AI image generation models
+- **Seamless Integration**: AI-generated images automatically saved to your media library
+- **No External API Keys Required**: Powered by integrated AIGNE Hub framework
 
 ---
 
@@ -78,10 +84,12 @@ Optional CDN support delivers your content faster than major cloud providers - w
 ### **🎉 What You Get Instantly:**
 
 - ✅ Unlimited file storage (your infrastructure limits)
-- ✅ Advanced organization tools
+- ✅ AI-powered image generation (DALL-E and more)
+- ✅ Advanced organization tools with smart folders
 - ✅ Enterprise security features
 - ✅ Full API access for developers
 - ✅ Team collaboration tools
+- ✅ Unsplash stock photo integration
 
 ---
 
