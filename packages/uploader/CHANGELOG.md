@@ -1,3 +1,7 @@
+## 0.3.0 (October 27, 2025)
+
+- feat: use a more secure signature mechanism
+
 ## 0.2.15 (October 11, 2025)
 
 - chore: update blocklet sdk to latest
