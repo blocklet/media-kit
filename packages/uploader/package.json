@@ -1,6 +1,6 @@
 {
   "name": "@blocklet/uploader",
-  "version": "0.2.15",
+  "version": "0.3.0",
   "description": "blocklet upload component",
   "publishConfig": {
     "access": "public"
@@ -57,7 +57,7 @@
   "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
   "license": "ISC",
   "dependencies": {
-    "@blocklet/ui-react": "^3.1.46",
+    "@blocklet/ui-react": "^3.1.52",
     "@lottiefiles/react-lottie-player": "^3.5.4",
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
