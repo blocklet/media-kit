@@ -74,8 +74,5 @@
     "p-queue": "6.6.2",
     "p-retry": "4.6.1",
     "preact": "10.20.1"
-  },
-  "dependencies": {
-    "@ocap/client": "link:../../../Library/pnpm/global/5/node_modules/@ocap/client"
   }
 }

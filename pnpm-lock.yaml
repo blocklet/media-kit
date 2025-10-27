@@ -55,10 +55,6 @@ overrides:
 importers:
 
   .:
-    dependencies:
-      '@ocap/client':
-        specifier: ^1.26.3
-        version: 1.26.3(encoding@0.1.13)
     devDependencies:
       '@arcblock/eslint-config':
         specifier: 0.3.3
