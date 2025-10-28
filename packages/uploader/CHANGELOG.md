@@ -1,3 +1,7 @@
+## 0.3.1 (October 28, 2025)
+
+- chore: bump version
+
 ## 0.3.0 (October 27, 2025)
 
 - feat: use a more secure signature mechanism
