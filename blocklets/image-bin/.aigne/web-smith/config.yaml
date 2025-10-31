@@ -64,8 +64,12 @@ sourcesPath:  # Source code paths to analyze
   - CHANGELOG.md
   - blocklet.yml
   - screenshots/*
-lastGitHead: 5aab6de97851d8562fd2fcaa39c5454f4f32bd3b
+lastGitHead: 3760f243f13abda0699dea9e7ac3f6865972a23b
 # Checkout ID for website deployment service
 checkoutId: ""
 appUrl: https://websmith.aigne.io
 projectCover: .aigne/web-smith/cover.png
+# Navigation type for website
+navigationType: ""
+# Should sync all for website
+shouldSyncAll: ""

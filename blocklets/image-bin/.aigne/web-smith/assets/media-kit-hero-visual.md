@@ -1,0 +1,1 @@
+This abstract image is the main visual for the hero section of the Media Kit landing page. It powerfully conveys the core concepts of asset organization, security, and ownership in a visually engaging and modern style, setting a professional and tech-forward tone for the entire page.

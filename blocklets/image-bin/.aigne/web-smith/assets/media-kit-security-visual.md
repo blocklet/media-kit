@@ -1,0 +1,1 @@
+This image serves as a visual anchor for the 'Bank-Level Security' feature section. Its design, featuring a prominent shield, abstractly communicates concepts of data protection, privacy, and robust security, reinforcing the copy's message of safety and user control.

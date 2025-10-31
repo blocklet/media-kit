@@ -37,4 +37,15 @@ descriptions:
       its filename and a "Copy URL" button. This UI demonstrates a system for
       managing and displaying diverse media content.
     generatedAt: 2025-10-12T11:55:28.495Z
-lastUpdated: 2025-10-12T11:55:28.496Z
+  a97094cb48e6d99f97f1659cf9f156f5da29d0c787d86f105a8aa62b22c3910d:
+    path: ../../../screenshots/media-kit-preferences.png
+    description: This image displays the "Preferences for Media Kit" modal dialog
+      within the ArcBlock web application, overlaid on a dashboard showing a
+      list of "Blocklets." The modal presents configuration options such as
+      supported media type extensions, maximum file upload size (set to 100MB),
+      a toggle for "Hotlink Protection (Beta)," and an active toggle for "Use AI
+      Image" along with a field for supported models. This screenshot highlights
+      the administrative settings for managing media assets and integrating AI
+      image generation capabilities within the platform.
+    generatedAt: 2025-10-30T12:17:49.572Z
+lastUpdated: 2025-10-30T12:17:49.575Z

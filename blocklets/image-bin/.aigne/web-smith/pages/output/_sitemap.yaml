@@ -4,11 +4,10 @@ sitemap:
     locales:
       en:
         title: "Media Kit: Own Your Digital Assets & Save Hundreds Monthly"
-        description: Media Kit is the self-hosted media management solution that
-          replaces expensive cloud services. Get AI image generation, smart
-          organization, and full data ownership. Launch in 60 seconds and stop
-          paying monthly fees!
-        image: mediakit://media-gallery-grid-view.png
+        description: Stop paying recurring fees! Media Kit is the self-hosted media
+          management solution that gives you total control, enterprise features,
+          and saves you $100s monthly. Own your digital assets, forever.
+        image: mediakit://media-kit-hero-visual.png
         style:
           maxWidth: custom:1440px
           paddingY: normal
@@ -19,26 +18,26 @@ sitemap:
     meta:
       file: home.yaml
       id: 616571b7c79a8472
-      createdAt: 2025-10-17T00:39:00.975Z
-      updatedAt: 2025-10-17T00:39:00.975Z
-      publishedAt: 2025-10-17T00:39:00.975Z
+      createdAt: 2025-10-30T23:13:23.196Z
+      updatedAt: 2025-10-30T23:13:23.196Z
+      publishedAt: 2025-10-30T23:13:23.196Z
       isPublic: true
 navigations:
   - id: 106a6c241b8797f5
     section: header
     visible: true
     title:
-      en: Media Kit
+      en: Home
     link:
       en: /
     description:
-      en: Explore features and launch.
+      en: Discover the self-hosted media solution.
   - id: f5c5d15c42b3cf01
     section: footer
     visible: true
     title:
-      en: Media Kit
+      en: Home
     link:
       en: /
     description:
-      en: Explore features and launch.
+      en: Discover the self-hosted media solution.

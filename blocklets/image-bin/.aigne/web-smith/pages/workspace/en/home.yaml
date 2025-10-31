@@ -1,301 +1,386 @@
-"meta":
-  "title": "Media Kit: Own Your Digital Assets & Save Hundreds Monthly"
-  "description": "Media Kit is the self-hosted media management solution that replaces expensive cloud services. Get AI image generation, smart organization, and full data ownership. Launch in 60 seconds and stop paying monthly fees!"
-  "image": "mediakit://media-gallery-grid-view.png"
-"sections":
-  - "sectionName": "hero"
-    "sectionSummary": "A powerful hero section to grab attention with a clear value proposition—owning assets and saving money—paired with a direct call-to-action and a product visual to establish immediate credibility."
-    "splitHeroTitle": "Own Your Digital Assets. Save Hundreds Monthly."
-    "splitHeroDescription": "Stop paying recurring fees for cloud storage. Media Kit is the self-hosted media management solution that gives you total control, enterprise-grade features, and massive savings."
-    "splitHeroActions":
-      - "text": "Launch Media Kit Now"
-        "link": "https://store.blocklet.dev/blocklets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9"
-      - "text": ""
-        "link": ""
-    "splitHeroRightImage": "mediakit://media-gallery-grid-view.png"
-  - "sectionName": "whyChooseUs"
-    "sectionSummary": "This section quickly highlights the three core benefits (Cost, Ownership, Performance) in a scannable, three-column grid. It's designed to convince visitors of the product's value at a glance."
-    "threeColumnGridTitle": "Why 10,000+ Users Choose Media Kit"
-    "list":
-      - "sectionName": "costSavingsCard"
-        "sectionSummary": "Highlights the significant cost savings by replacing subscription models."
-        "iconName": "lucide:piggy-bank"
-        "cardTitle": "Massive Cost Savings"
-        "cardDescription": "Replace expensive subscriptions ($50-500/month) with a one-time setup. No usage limits, no surprise bills. Ever."
-      - "sectionName": "dataOwnershipCard"
-        "sectionSummary": "Emphasizes the security and freedom of complete data ownership."
-        "iconName": "lucide:lock"
-        "cardTitle": "Complete Data Ownership"
-        "cardDescription": "Your media stays on YOUR servers. No vendor lock-in, no privacy concerns. You are in complete control of your assets."
-      - "sectionName": "performanceCard"
-        "sectionSummary": "Showcases the enterprise-level performance and speed of the platform."
-        "iconName": "lucide:rocket"
-        "cardTitle": "Enterprise Performance"
-        "cardDescription": "Optional CDN support delivers your content with lightning-fast speed, rivaling major cloud providers without the enterprise price tag."
-  - "sectionName": "featuresShowcase"
-    "sectionSummary": "A detailed breakdown of key features, using an alternating layout to maintain visual interest. Each feature is presented with a clear title, a benefit-oriented description, and a relevant screenshot as proof."
-    "oneColumnGridTitle": "What Makes Media Kit Special"
-    "list":
-      - "sectionName": "intelligentOrganizationFeature"
-        "sectionSummary": "Describes the smart organizational capabilities of Media Kit, supported by a visual of the versatile import dialog."
-        "contentCardTitle": "Intelligent Organization, Effortless Discovery"
-        "contentCardDescription": "Find any file in seconds! With smart folders, powerful tags, and auto-deduplication, your library stays clean and searchable. Import via drag & drop, Unsplash, or even AI generation."
-        "contentCardRightImage": "mediakit://upload-dialog-import-options.png"
-      - "sectionName": "aiCreationFeature"
-        "sectionSummary": "Highlights the built-in AI image generation feature, showing users how they can create content directly within the platform."
-        "contentCardTitle": "Create Stunning Visuals with Built-in AI"
-        "contentCardDescription": "Unleash your creativity! Generate unique images directly from text prompts using integrated DALL-E models. Your AI creations are saved directly to your library, ready to use."
-        "contentCardLeftImage": "mediakit://ai-image-generator-dialog.png"
-      - "sectionName": "professionalDeliveryFeature"
-        "sectionSummary": "Covers the professional-grade delivery and security features, assuring users of reliability and protection."
-        "contentCardTitle": "Professional Delivery, Bank-Level Security"
-        "contentCardDescription": "Deliver perfectly optimized media at global scale with optional CDN support. Your assets are protected with automatic metadata removal, team access controls, and complete data sovereignty."
-        "contentCardRightImage": "mediakit://unsplash-search-integration.png"
-  - "sectionName": "useCases"
-    "sectionSummary": "This comparison table clearly demonstrates the value proposition for different user roles by showing what expensive tools Media Kit replaces and the tangible monthly savings, making the benefits concrete and relatable."
-    "comparisonTableTitle": "Perfect For Every Role"
-    "featureTitle": "Role"
-    "f":
-      - "l": "Replaces"
-        "t": ""
-        "i": ""
-      - "l": "Save Monthly"
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-      - "l": ""
-        "t": ""
-        "i": ""
-    "e":
-      - "l": "Content Creators"
-        "s": "📸"
-        "d": ""
-        "i": ""
-        "h": ""
-        "al": ""
-        "au": ""
-        "at": ""
-      - "l": "Small Businesses"
-        "s": "🏢"
-        "d": ""
-        "i": ""
-        "h": ""
-        "al": ""
-        "au": ""
-        "at": ""
-      - "l": "Web Developers"
-        "s": "👩‍💻"
-        "d": ""
-        "i": ""
-        "h": ""
-        "al": ""
-        "au": ""
-        "at": ""
-      - "l": "Marketing Teams"
-        "s": "📈"
-        "d": ""
-        "i": ""
-        "h": ""
-        "al": ""
-        "au": ""
-        "at": ""
-    "m":
-      "f0":
-        "e0":
-          "v": "Dropbox, Google Drive"
-          "t": ""
-          "h": ""
-        "e1":
-          "v": "Cloudinary, AWS S3"
-          "t": ""
-          "h": ""
-        "e2":
-          "v": "ImageKit, Uploadcare"
-          "t": ""
-          "h": ""
-        "e3":
-          "v": "Adobe Creative Cloud"
-          "t": ""
-          "h": ""
-      "f1":
-        "e0":
-          "v": "$15-50"
-          "t": ""
-          "h": ""
-        "e1":
-          "v": "$50-200"
-          "t": ""
-          "h": ""
-        "e2":
-          "v": "$30-100"
-          "t": ""
-          "h": ""
-        "e3":
-          "v": "$100-500"
-          "t": ""
-          "h": ""
-      "f2":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-      "f3":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-      "f4":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-      "f5":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-      "f6":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-      "f7":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-      "f8":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-      "f9":
-        "e0":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e1":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e2":
-          "v": ""
-          "t": ""
-          "h": ""
-        "e3":
-          "v": ""
-          "t": ""
-          "h": ""
-  - "sectionName": "finalCta"
-    "sectionSummary": "A final, high-energy call-to-action designed to convert visitors. It removes friction by stating 'No credit card' and reinforces the key benefits (instant access, AI, unlimited storage) to drive immediate action."
-    "ctaTitle": "Launch in 60 Seconds!"
-    "ctaDescription": "No credit card. No monthly fees. No vendor lock-in. Get instant access to unlimited storage, AI image generation, and enterprise-grade tools right now."
-    "cta":
-      - "text": "Launch Media Kit Now - Free Setup"
-        "link": "https://store.blocklet.dev/blocklets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9"
-      - "text": ""
-        "link": ""
+meta:
+  title: "Media Kit: Own Your Digital Assets & Save Hundreds Monthly"
+  description: "Stop paying recurring fees! Media Kit is the self-hosted media management
+    solution that gives you total control, enterprise features, and saves you
+    $100s monthly. Own your digital assets, forever."
+  image: "mediakit://media-kit-hero-visual.png"
+sections:
+  - sectionName: "hero"
+    sectionSummary: "A high-impact hero section designed to grab attention with a
+      powerful value proposition and clear call-to-action, encouraging immediate
+      engagement."
+    splitHeroBigTitle: "Own Your Digital Assets"
+    splitHeroSubTitle: "Save hundreds monthly with the complete media management solution."
+    splitHeroDescription: "Stop paying recurring fees to Big Tech. Media Kit transforms
+      how you store, organize, and deliver media—all on your own infrastructure
+      with enterprise-grade features that rival industry leaders."
+    splitHeroActions:
+      - text: "Launch Media Kit Now"
+        link: "https://store.blocklet.dev/blocklets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9"
+      - text: "Learn More"
+        link: "#features"
+    splitHeroImage: "mediakit://media-kit-hero-visual.png"
+  - sectionName: "whyChooseUs"
+    sectionSummary: "This section quickly communicates the three core pillars of Media
+      Kit's value proposition—cost, ownership, and performance—to build immediate
+      trust and highlight key differentiators."
+    threeColumnGridTitle: "Why 10,000+ Users Choose Media Kit"
+    list:
+      - sectionName: "massiveCostSavings"
+        sectionSummary: "Highlights the significant financial benefits of switching to
+          Media Kit."
+        iconName: "lucide:dollar-sign"
+        cardTitle: "Massive Cost Savings"
+        cardDescription: "Replace expensive subscriptions ($50-500/month) with a
+          one-time setup. No usage limits, no surprise bills."
+      - sectionName: "completeDataOwnership"
+        sectionSummary: "Emphasizes the security and freedom that comes with data
+          sovereignty."
+        iconName: "lucide:lock"
+        cardTitle: "Complete Data Ownership"
+        cardDescription: "Your media stays on YOUR servers. No vendor lock-in, no
+          privacy concerns, no platform risks."
+      - sectionName: "enterprisePerformance"
+        sectionSummary: "Showcases the product's high-level performance capabilities
+          without the high cost."
+        iconName: "lucide:rocket"
+        cardTitle: "Enterprise Performance"
+        cardDescription: "Optional CDN support delivers your content faster than
+          major cloud providers—without the enterprise price tag."
+  - sectionName: "features"
+    sectionSummary: "A detailed dive into the key features of Media Kit, using a mix
+      of text and visuals to demonstrate the product's power and versatility in
+      an engaging, easy-to-digest format."
+    oneColumnGridTitle: "What Makes Media Kit Special"
+    list:
+      - sectionName: "intelligentOrganization"
+        sectionSummary: "Showcases the advanced organizational features with a real
+          screenshot of the import dialog, making the capabilities feel tangible
+          and easy to use."
+        contentCardTitle: "Intelligent Organization"
+        contentCardDescription: "Find any file in seconds with Smart Folders & Tags.
+          Import from your device, clipboard, URLs, webcam, Unsplash, or even
+          generate images with AI. We support all formats and handle
+          auto-deduplication so you never store the same file twice!"
+        contentCardRightScreenShot: "mediakit://upload-dialog-import-options.png"
+        screenShotBackground: "linear-gradient(120deg, rgba(96,89,171,1) 0%, rgba(130,125,190,1)
+          100%);"
+        contentCardTitle.actionTitle: ""
+        contentCardTitle.actionLink: ""
+      - sectionName: "aiPoweredCreation"
+        sectionSummary: "Highlights the cutting-edge AI image generation feature, using
+          a screenshot of the AI dialog to visually confirm how simple and
+          integrated the process is."
+        contentCardTitle: "AI-Powered Creation"
+        contentCardDescription: "Unleash your creativity! Generate stunning images
+          directly from text prompts using built-in DALL-E and other AI models.
+          No external API keys needed—it all happens right within your media
+          library, powered by the integrated AIGNE Hub framework."
+        contentCardLeftScreenShot: "mediakit://ai-image-generator-dialog.png"
+        screenShotBackground: "linear-gradient(120deg, rgba(95,116,118,1) 0%, rgba(131,158,153,1)
+          100%);"
+        contentCardTitle.actionTitle: ""
+        contentCardTitle.actionLink: ""
+      - sectionName: "professionalDelivery"
+        sectionSummary: "Focuses on the seamless and professional output, ensuring users
+          understand that their media will look great and load fast everywhere."
+        contentCardTitle: "Professional Delivery"
+        contentCardDescription: "Get perfect quality with minimal file sizes automatically.
+          Share your assets via public URLs or with private team access. Every
+          file is optimized for a flawless experience on all devices, and our
+          Global CDN readiness ensures lightning-fast delivery worldwide."
+        contentCardRightImage: "mediakit://unsplash-search-integration.png"
+        contentCardTitle.actionTitle: ""
+        contentCardTitle.actionLink: ""
+      - sectionName: "bankLevelSecurity"
+        sectionSummary: "Builds trust by detailing the robust security measures, paired
+          with a strong visual that reinforces the feeling of safety and
+          protection."
+        contentCardTitle: "Bank-Level Security"
+        contentCardDescription: "Your data, your rules. We prioritize your privacy
+          by automatically removing metadata. With precise team access
+          controls and advanced protection against modern threats, you get
+          complete sovereignty over your digital assets."
+        contentCardLeftImage: "mediakit://media-kit-security-visual.png"
+        contentCardTitle.actionTitle: ""
+        contentCardTitle.actionLink: ""
+  - sectionName: "ecosystemIntegration"
+    sectionSummary: "This section showcases Media Kit's powerful integration capabilities
+      within the Blocklet ecosystem, demonstrating how it acts as a central hub
+      to supercharge other tools."
+    threeColumnGridTitle: "Powerful Blocklet Ecosystem Integration"
+    list:
+      - sectionName: "pagesKitIntegration"
+        sectionSummary: "Highlights seamless website building with Media Kit."
+        iconName: "lucide:layout-template"
+        cardTitle: "Pages Kit Integration"
+        cardDescription: "Build stunning websites and landing pages. Instantly
+          access your Media Kit library to drag, drop, and insert images
+          directly into your designs."
+      - sectionName: "discussKitIntegration"
+        sectionSummary: "Shows how Media Kit enhances community engagement."
+        iconName: "lucide:messages-square"
+        cardTitle: "Discuss Kit Integration"
+        cardDescription: "Enrich community discussions and blog posts. Add images,
+          videos, and documents directly from Media Kit while writing."
+      - sectionName: "paymentKitIntegration"
+        sectionSummary: "Explains how Media Kit improves e-commerce experiences."
+        iconName: "lucide:credit-card"
+        cardTitle: "Payment Kit Integration"
+        cardDescription: "Create professional e-commerce experiences. Showcase
+          products with high-quality images and maintain brand consistency
+          across all payment pages."
+  - sectionName: "perfectFor"
+    sectionSummary: "This section uses a comparison table to clearly communicate the value
+      proposition for different user segments, making it easy for visitors to
+      see themselves and the direct monthly savings."
+    comparisonTableTitle: "Perfect For Every Use Case"
+    featureTitle: "Use Case"
+    e:
+      - h: "false"
+        l: "Content Creators"
+        s: "Replace Dropbox, Google Drive"
+        d: ""
+        i: "lucide:camera"
+        al: ""
+        au: ""
+        at: ""
+      - h: "false"
+        l: "Small Businesses"
+        s: "Replace Cloudinary, AWS S3"
+        d: ""
+        i: "lucide:building"
+        al: ""
+        au: ""
+        at: ""
+      - h: "true"
+        l: "Web Developers"
+        s: "Replace ImageKit, Uploadcare"
+        d: ""
+        i: "lucide:code"
+        al: ""
+        au: ""
+        at: ""
+      - h: "false"
+        l: "Marketing Teams"
+        s: "Replace Adobe Creative Cloud"
+        d: ""
+        i: "lucide:siren"
+        al: ""
+        au: ""
+        at: ""
+    f:
+      - l: "Monthly Savings"
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+      - l: ""
+        t: ""
+        i: ""
+    m:
+      f0:
+        e0:
+          v: "$15-50"
+          t: ""
+          h: "false"
+        e1:
+          v: "$50-200"
+          t: ""
+          h: "false"
+        e2:
+          v: "$30-100"
+          t: ""
+          h: "true"
+        e3:
+          v: "$100-500"
+          t: ""
+          h: "false"
+      f1:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f2:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f3:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f4:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f5:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f6:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f7:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f8:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+      f9:
+        e0:
+          v: ""
+          t: ""
+          h: ""
+        e1:
+          v: ""
+          t: ""
+          h: ""
+        e2:
+          v: ""
+          t: ""
+          h: ""
+        e3:
+          v: ""
+          t: ""
+          h: ""
+  - sectionName: "finalCta"
+    sectionSummary: "A high-energy, low-friction call-to-action that closes the page
+      by summarizing the key benefits and making it incredibly easy for the user
+      to get started instantly."
+    ctaTitle: "Launch in 60 Seconds"
+    ctaDescription: "No credit card. No monthly fees. No vendor lock-in. Get
+      unlimited file storage, AI image generation, advanced organization,
+      enterprise security, and full API access, instantly."
+    cta:
+      - text: "Launch Media Kit Now - Free Setup"
+        link: "https://store.blocklet.dev/blocklets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9"
+      - text: ""
+        link: ""

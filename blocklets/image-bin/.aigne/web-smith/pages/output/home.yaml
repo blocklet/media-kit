@@ -1,7 +1,7 @@
 id: 616571b7c79a8472
-createdAt: 2025-10-17T00:39:00.975Z
-updatedAt: 2025-10-17T00:39:00.975Z
-publishedAt: 2025-10-17T00:39:00.975Z
+createdAt: 2025-10-30T23:13:23.196Z
+updatedAt: 2025-10-30T23:13:23.196Z
+publishedAt: 2025-10-30T23:13:23.196Z
 isPublic: true
 locales:
   en:
@@ -11,128 +11,115 @@ locales:
       paddingY: normal
       paddingX: normal
     title: "Media Kit: Own Your Digital Assets & Save Hundreds Monthly"
-    description: Media Kit is the self-hosted media management solution that
-      replaces expensive cloud services. Get AI image generation, smart
-      organization, and full data ownership. Launch in 60 seconds and stop
-      paying monthly fees!
-    image: mediakit://media-gallery-grid-view.png
+    description: Stop paying recurring fees! Media Kit is the self-hosted media
+      management solution that gives you total control, enterprise features, and
+      saves you $100s monthly. Own your digital assets, forever.
+    image: mediakit://media-kit-hero-visual.png
     header:
       sticky: true
 sections:
-  e1c97b3710d489a2:
-    id: e1c97b3710d489a2
-    name: Feature Grid_left
+  fccd2eef046cc699:
+    id: fccd2eef046cc699
+    name: Split Hero
     component: layout-block
     sections:
-      78e3421030dcbdd5:
-        id: 78e3421030dcbdd5
-        name: Content
+      1d65557cb91421e6:
+        id: 1d65557cb91421e6
+        name: Text
         component: layout-block
         sections:
-          2595d95961e10014:
-            id: 2595d95961e10014
-            name: CTA
-            component: layout-block
-            sections:
-              087e8576fefadf0f:
-                id: 087e8576fefadf0f
-                name: Description
-                component: custom-component
-                config:
-                  useCache: true
-                  componentId: xoHu0J44322kDYc-
-                sectionIds: []
-              5455a7046747c6d7:
-                id: 5455a7046747c6d7
-                name: Action
-                component: custom-component
-                config:
-                  useCache: true
-                  componentId: a44r0SiGV9AFn2Fj
-                sectionIds: []
-            sectionIds:
-              - 087e8576fefadf0f
-              - 5455a7046747c6d7
+          7b1376699bbeab12:
+            id: 7b1376699bbeab12
+            name: Title
+            component: custom-component
             config:
-              gridSettings:
-                desktop:
-                  087e8576fefadf0f:
-                    x: 0
-                    y: 0
-                    w: 12
-                    h: 1
-                  5455a7046747c6d7:
-                    x: 0
-                    y: 1
-                    w: 12
-                    h: 1
-              paddingY: normal
-              gap: normal
-              maxWidth: full
-              paddingX: none
-          ccdf0179b25ef747:
-            id: ccdf0179b25ef747
-            name: Image
-            component: layout-block
-            sections:
-              f98b98ffd13b8a1d:
-                id: f98b98ffd13b8a1d
-                name: Media
-                component: custom-component
-                config:
-                  useCache: true
-                  componentId: xoHu0JPjPs122kaaa-
-                sectionIds: []
-            sectionIds:
-              - f98b98ffd13b8a1d
+              useCache: true
+              componentId: xoHu0J44322kDYc-
+            sectionIds: []
+          b1727de5312cd351:
+            id: b1727de5312cd351
+            name: Description
+            component: custom-component
             config:
-              borderRadius: small
-              gridSettings:
-                desktop:
-                  f98b98ffd13b8a1d:
-                    x: 0
-                    y: 0
-                    w: 12
-                    h: 1
-              background: background.paper
-              paddingX: small
-              paddingY: small
+              useCache: true
+              componentId: xoHu0J44322kDYc-
+            sectionIds: []
+          fcb1cc05e11b014c:
+            id: fcb1cc05e11b014c
+            name: Action
+            component: custom-component
+            config:
+              useCache: true
+              componentId: a44r0SiGV9AFn2Fj
+            sectionIds: []
         sectionIds:
-          - 2595d95961e10014
-          - ccdf0179b25ef747
+          - 7b1376699bbeab12
+          - b1727de5312cd351
+          - fcb1cc05e11b014c
         config:
-          borderRadius: small
-          paddingX: none
-          paddingY: normal
-          maxWidth: full
+          gap: small
           gridSettings:
             desktop:
-              2595d95961e10014:
+              7b1376699bbeab12:
                 x: 0
                 y: 0
-                w: 5
+                w: 12
                 h: 1
-              ccdf0179b25ef747:
-                x: 6
+              b1727de5312cd351:
+                x: 0
+                y: 1
+                w: 12
+                h: 1
+              fcb1cc05e11b014c:
+                x: 0
+                y: 2
+                w: 12
+                h: 1
+      a8212db5d3655549:
+        id: a8212db5d3655549
+        name: Image
+        component: layout-block
+        sections:
+          04e6e387749aad19:
+            id: 04e6e387749aad19
+            name: Media
+            component: custom-component
+            config:
+              useCache: true
+              componentId: xoHu0JPjPs122kaaa-
+            sectionIds: []
+        sectionIds:
+          - 04e6e387749aad19
+        config:
+          borderRadius: small
+          gridSettings:
+            desktop:
+              04e6e387749aad19:
+                x: 0
                 y: 0
-                w: 6
+                w: 12
                 h: 1
-          gap: normal
     sectionIds:
-      - 78e3421030dcbdd5
+      - 1d65557cb91421e6
+      - a8212db5d3655549
     config:
+      background: auto
+      paddingX: normal
+      paddingY: custom:80px
+      gap: normal
       gridSettings:
         desktop:
-          78e3421030dcbdd5:
+          1d65557cb91421e6:
             x: 0
             y: 0
-            w: 12
+            w: 7
             h: 1
-      gap: normal
-      paddingY: normal
-      background: transparent
-      border: none
-      paddingX: none
+          a8212db5d3655549:
+            x: 7
+            y: 0
+            w: 5
+            h: 1
+      backgroundFullWidth: true
   671827b9508f92f3:
     id: 671827b9508f92f3
     name: Testimonials/Reviews
@@ -492,42 +479,94 @@ sections:
         name: Cards
         component: layout-block
         sections:
-          "5164097510530111":
-            id: "5164097510530111"
+          ad36e7d8c63269cc:
+            id: ad36e7d8c63269cc
             name: Cards-1
             component: layout-block
             sections:
-              8b2f99e2d9684e40:
-                id: 8b2f99e2d9684e40
-                name: RichText
-                component: custom-component
+              4b4c735aa35fdad1:
+                id: 4b4c735aa35fdad1
+                name: Content
+                component: layout-block
+                sections:
+                  f1ac3a899bebd3e7:
+                    id: f1ac3a899bebd3e7
+                    name: RichText
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: xoHu0J44322kDYc-
+                    sectionIds: []
+                sectionIds:
+                  - f1ac3a899bebd3e7
                 config:
-                  useCache: true
-                  componentId: xoHu0J44322kDYc-
-                sectionIds: []
-              4ef5a8f1e8f87f5f:
-                id: 4ef5a8f1e8f87f5f
-                name: Media
-                component: custom-component
+                  gridSettings:
+                    desktop:
+                      f1ac3a899bebd3e7:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+              59cb76e46478b4b5:
+                id: 59cb76e46478b4b5
+                name: Section Layout
+                component: layout-block
+                sections:
+                  4ace9e8d5ea77cd6:
+                    id: 4ace9e8d5ea77cd6
+                    name: Section Layout
+                    component: layout-block
+                    sections:
+                      af23c5c3552418e5:
+                        id: af23c5c3552418e5
+                        name: Media
+                        component: custom-component
+                        config:
+                          useCache: true
+                          componentId: xoHu0JPjPs122kaaa-
+                        sectionIds: []
+                    sectionIds:
+                      - af23c5c3552418e5
+                    config:
+                      borderRadius: small
+                      border: shadow-lg
+                      gridSettings:
+                        desktop:
+                          af23c5c3552418e5:
+                            x: 0
+                            y: 0
+                            w: 12
+                            h: 1
+                sectionIds:
+                  - 4ace9e8d5ea77cd6
                 config:
-                  useCache: true
-                  componentId: xoHu0JPjPs122kaaa-
-                sectionIds: []
+                  paddingX: 'custom:{"xs": "32px", "md": "64px"}'
+                  paddingY: 'custom:{"xs": "24px", "md": "48px"}'
+                  background: linear-gradient(120deg, rgba(96,89,171,1) 0%, rgba(130,125,190,1)
+                    100%);
+                  gridSettings:
+                    desktop:
+                      4ace9e8d5ea77cd6:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+                  borderRadius: small
             sectionIds:
-              - 8b2f99e2d9684e40
-              - 4ef5a8f1e8f87f5f
+              - 4b4c735aa35fdad1
+              - 59cb76e46478b4b5
             config:
               gridSettings:
                 desktop:
-                  8b2f99e2d9684e40:
-                    x: 0
-                    y: 0
-                    w: 4
-                    h: 1
-                  4ef5a8f1e8f87f5f:
+                  59cb76e46478b4b5:
                     x: 4
                     y: 0
                     w: 8
+                    h: 1
+                  4b4c735aa35fdad1:
+                    x: 0
+                    y: 0
+                    w: 4
                     h: 1
               paddingX: custom:32px
               gap: normal
@@ -536,42 +575,94 @@ sections:
               border: solid
               borderRadius: small
               alignContent: center
-          86655f8104493cd6:
-            id: 86655f8104493cd6
+          620aa118cba6bec6:
+            id: 620aa118cba6bec6
             name: Cards-2
             component: layout-block
             sections:
-              95f080b03630f07b:
-                id: 95f080b03630f07b
-                name: RichText
-                component: custom-component
+              24d1262cddb24b95:
+                id: 24d1262cddb24b95
+                name: Content
+                component: layout-block
+                sections:
+                  fc5315d7abc56328:
+                    id: fc5315d7abc56328
+                    name: RichText
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: xoHu0J44322kDYc-
+                    sectionIds: []
+                sectionIds:
+                  - fc5315d7abc56328
                 config:
-                  useCache: true
-                  componentId: xoHu0J44322kDYc-
-                sectionIds: []
-              40692db2b79d3348:
-                id: 40692db2b79d3348
-                name: Media
-                component: custom-component
+                  gridSettings:
+                    desktop:
+                      fc5315d7abc56328:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+              a850e427d53bb266:
+                id: a850e427d53bb266
+                name: Section Layout
+                component: layout-block
+                sections:
+                  e1ca4df9128de60c:
+                    id: e1ca4df9128de60c
+                    name: Section Layout
+                    component: layout-block
+                    sections:
+                      4619faa923121b10:
+                        id: 4619faa923121b10
+                        name: Media
+                        component: custom-component
+                        config:
+                          useCache: true
+                          componentId: xoHu0JPjPs122kaaa-
+                        sectionIds: []
+                    sectionIds:
+                      - 4619faa923121b10
+                    config:
+                      gridSettings:
+                        desktop:
+                          4619faa923121b10:
+                            x: 0
+                            y: 0
+                            w: 12
+                            h: 1
+                      border: shadow-lg
+                      borderRadius: small
+                sectionIds:
+                  - e1ca4df9128de60c
                 config:
-                  useCache: true
-                  componentId: xoHu0JPjPs122kaaa-
-                sectionIds: []
+                  gridSettings:
+                    desktop:
+                      e1ca4df9128de60c:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+                  background: linear-gradient(120deg, rgba(95,116,118,1) 0%, rgba(131,158,153,1)
+                    100%);
+                  paddingX: 'custom:{"xs": "32px", "md": "64px"}'
+                  paddingY: 'custom:{"xs": "24px", "md": "48px"}'
+                  borderRadius: small
             sectionIds:
-              - 95f080b03630f07b
-              - 40692db2b79d3348
+              - 24d1262cddb24b95
+              - a850e427d53bb266
             config:
               gridSettings:
                 desktop:
-                  95f080b03630f07b:
-                    x: 8
-                    y: 0
-                    w: 4
-                    h: 1
-                  40692db2b79d3348:
+                  a850e427d53bb266:
                     x: 0
                     y: 0
                     w: 8
+                    h: 1
+                  24d1262cddb24b95:
+                    x: 8
+                    y: 0
+                    w: 4
                     h: 1
               paddingX: custom:32px
               gap: normal
@@ -585,14 +676,29 @@ sections:
             name: Cards-3
             component: layout-block
             sections:
-              68b65ddda964c9b7:
-                id: 68b65ddda964c9b7
-                name: RichText
-                component: custom-component
+              f526fa7abd489ad6:
+                id: f526fa7abd489ad6
+                name: Content
+                component: layout-block
+                sections:
+                  55864b4cc5a7303a:
+                    id: 55864b4cc5a7303a
+                    name: RichText
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: xoHu0J44322kDYc-
+                    sectionIds: []
+                sectionIds:
+                  - 55864b4cc5a7303a
                 config:
-                  useCache: true
-                  componentId: xoHu0J44322kDYc-
-                sectionIds: []
+                  gridSettings:
+                    desktop:
+                      55864b4cc5a7303a:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
               274d9e0248315cf3:
                 id: 274d9e0248315cf3
                 name: Media
@@ -602,20 +708,79 @@ sections:
                   componentId: xoHu0JPjPs122kaaa-
                 sectionIds: []
             sectionIds:
-              - 68b65ddda964c9b7
+              - f526fa7abd489ad6
               - 274d9e0248315cf3
             config:
               gridSettings:
                 desktop:
-                  68b65ddda964c9b7:
-                    x: 0
-                    y: 0
-                    w: 4
-                    h: 1
                   274d9e0248315cf3:
                     x: 4
                     y: 0
                     w: 8
+                    h: 1
+                  f526fa7abd489ad6:
+                    x: 0
+                    y: 0
+                    w: 4
+                    h: 1
+              paddingX: custom:32px
+              gap: normal
+              paddingY: custom:32px
+              background: background.paper
+              border: solid
+              borderRadius: small
+              alignContent: center
+          ba0dc85a99daa9da:
+            id: ba0dc85a99daa9da
+            name: Cards-4
+            component: layout-block
+            sections:
+              2bf5960ba81d0bff:
+                id: 2bf5960ba81d0bff
+                name: Content
+                component: layout-block
+                sections:
+                  9f9a37c7be3f4851:
+                    id: 9f9a37c7be3f4851
+                    name: RichText
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: xoHu0J44322kDYc-
+                    sectionIds: []
+                sectionIds:
+                  - 9f9a37c7be3f4851
+                config:
+                  gridSettings:
+                    desktop:
+                      9f9a37c7be3f4851:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+              fb611cb8f15e1bb3:
+                id: fb611cb8f15e1bb3
+                name: Media
+                component: custom-component
+                config:
+                  useCache: true
+                  componentId: xoHu0JPjPs122kaaa-
+                sectionIds: []
+            sectionIds:
+              - 2bf5960ba81d0bff
+              - fb611cb8f15e1bb3
+            config:
+              gridSettings:
+                desktop:
+                  fb611cb8f15e1bb3:
+                    x: 0
+                    y: 0
+                    w: 8
+                    h: 1
+                  2bf5960ba81d0bff:
+                    x: 8
+                    y: 0
+                    w: 4
                     h: 1
               paddingX: custom:32px
               gap: normal
@@ -625,18 +790,19 @@ sections:
               borderRadius: small
               alignContent: center
         sectionIds:
-          - "5164097510530111"
-          - 86655f8104493cd6
+          - ad36e7d8c63269cc
+          - 620aa118cba6bec6
           - 04fe785cbdf80e9e
+          - ba0dc85a99daa9da
         config:
           gridSettings:
             desktop:
-              "5164097510530111":
+              ad36e7d8c63269cc:
                 x: 0
                 y: 0
                 w: 12
                 h: 1
-              86655f8104493cd6:
+              620aa118cba6bec6:
                 x: 0
                 y: 1
                 w: 12
@@ -646,13 +812,18 @@ sections:
                 y: 2
                 w: 12
                 h: 1
+              ba0dc85a99daa9da:
+                x: 0
+                y: 3
+                w: 12
+                h: 1
             mobile:
-              "5164097510530111":
+              ad36e7d8c63269cc:
                 x: 0
                 y: 0
                 w: 12
                 h: 1
-              86655f8104493cd6:
+              620aa118cba6bec6:
                 x: 0
                 y: 1
                 w: 12
@@ -683,26 +854,346 @@ sections:
       gap: normal
       paddingY: none
       paddingX: none
-  12ac5a7c0c929953:
-    id: 12ac5a7c0c929953
+  1b88992adea4de75:
+    id: 1b88992adea4de75
+    name: Testimonials/Reviews
+    component: layout-block
+    sections:
+      8a7dde777cbf6cbe:
+        id: 8a7dde777cbf6cbe
+        name: Title
+        component: layout-block
+        sections:
+          fc8aca2223685a5f:
+            id: fc8aca2223685a5f
+            name: LayoutTitle
+            component: custom-component
+            config:
+              useCache: true
+              componentId: xoHu0J44322kDYc-
+            sectionIds: []
+        sectionIds:
+          - fc8aca2223685a5f
+        config:
+          gap: small
+          paddingX: none
+          alignContent: start
+          gridSettings:
+            desktop:
+              fc8aca2223685a5f:
+                x: 0
+                y: 0
+                w: 12
+                h: 1
+            mobile:
+              fc8aca2223685a5f:
+                id: fc8aca2223685a5f
+      3eceea61e0feb3a0:
+        id: 3eceea61e0feb3a0
+        name: Cards
+        component: layout-block
+        sections:
+          48373436f58174ce:
+            id: 48373436f58174ce
+            name: Cards-1
+            component: layout-block
+            sections:
+              188bf83f2774511b:
+                id: 188bf83f2774511b
+                name: Title
+                component: custom-component
+                config:
+                  useCache: true
+                  componentId: xoHu0J44322kDYc-
+                sectionIds: []
+              217c8a0c162c7e73:
+                id: 217c8a0c162c7e73
+                name: Icon
+                component: layout-block
+                sections:
+                  9a4665f91027d3f7:
+                    id: 9a4665f91027d3f7
+                    name: Icon
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: YwuDiIbyyF5vfGpt
+                    sectionIds: []
+                sectionIds:
+                  - 9a4665f91027d3f7
+                config:
+                  gridSettings:
+                    desktop:
+                      9a4665f91027d3f7:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+                  background: transparent
+                  height: 100%
+                  borderRadius: custom:0px
+                  alignContent: start
+            sectionIds:
+              - 188bf83f2774511b
+              - 217c8a0c162c7e73
+            config:
+              gridSettings:
+                desktop:
+                  188bf83f2774511b:
+                    x: 0
+                    y: 1
+                    w: 12
+                    h: 1
+                  217c8a0c162c7e73:
+                    x: 0
+                    y: 0
+                    w: 6
+                    h: 1
+                mobile:
+                  188bf83f2774511b:
+                    x: 0
+                    y: 1
+                    w: 12
+                    h: 1
+                  217c8a0c162c7e73:
+                    x: 0
+                    y: 0
+                    w: 12
+                    h: 1
+              background: background.paper
+              paddingX: custom:32px
+              paddingY: custom:32px
+              borderRadius: small
+              gap: normal
+              border: solid
+              alignContent: start
+          2700bbe606496b87:
+            id: 2700bbe606496b87
+            name: Cards-2
+            component: layout-block
+            sections:
+              3d914af2157737bc:
+                id: 3d914af2157737bc
+                name: Title
+                component: custom-component
+                config:
+                  useCache: true
+                  componentId: xoHu0J44322kDYc-
+                sectionIds: []
+              82fbb288a071de99:
+                id: 82fbb288a071de99
+                name: Icon
+                component: layout-block
+                sections:
+                  834e8f1413211851:
+                    id: 834e8f1413211851
+                    name: Icon
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: YwuDiIbyyF5vfGpt
+                    sectionIds: []
+                sectionIds:
+                  - 834e8f1413211851
+                config:
+                  gridSettings:
+                    desktop:
+                      834e8f1413211851:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+                  background: transparent
+                  height: 100%
+                  borderRadius: custom:0px
+                  alignContent: start
+            sectionIds:
+              - 3d914af2157737bc
+              - 82fbb288a071de99
+            config:
+              gridSettings:
+                desktop:
+                  3d914af2157737bc:
+                    x: 0
+                    y: 1
+                    w: 12
+                    h: 1
+                  82fbb288a071de99:
+                    x: 0
+                    y: 0
+                    w: 6
+                    h: 1
+                mobile:
+                  3d914af2157737bc:
+                    x: 0
+                    y: 1
+                    w: 12
+                    h: 1
+                  82fbb288a071de99:
+                    x: 0
+                    y: 0
+                    w: 12
+                    h: 1
+              background: background.paper
+              paddingX: custom:32px
+              paddingY: custom:32px
+              borderRadius: small
+              gap: normal
+              border: solid
+              alignContent: start
+          ade1629eb50bfd78:
+            id: ade1629eb50bfd78
+            name: Cards-3
+            component: layout-block
+            sections:
+              824549dfc765923c:
+                id: 824549dfc765923c
+                name: Title
+                component: custom-component
+                config:
+                  useCache: true
+                  componentId: xoHu0J44322kDYc-
+                sectionIds: []
+              e9c33c64b8c6f7e4:
+                id: e9c33c64b8c6f7e4
+                name: Icon
+                component: layout-block
+                sections:
+                  75224870c5e4c765:
+                    id: 75224870c5e4c765
+                    name: Icon
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: YwuDiIbyyF5vfGpt
+                    sectionIds: []
+                sectionIds:
+                  - 75224870c5e4c765
+                config:
+                  gridSettings:
+                    desktop:
+                      75224870c5e4c765:
+                        x: 0
+                        y: 0
+                        w: 12
+                        h: 1
+                  background: transparent
+                  height: 100%
+                  borderRadius: custom:0px
+                  alignContent: start
+            sectionIds:
+              - 824549dfc765923c
+              - e9c33c64b8c6f7e4
+            config:
+              gridSettings:
+                desktop:
+                  824549dfc765923c:
+                    x: 0
+                    y: 1
+                    w: 12
+                    h: 1
+                  e9c33c64b8c6f7e4:
+                    x: 0
+                    y: 0
+                    w: 6
+                    h: 1
+                mobile:
+                  824549dfc765923c:
+                    x: 0
+                    y: 1
+                    w: 12
+                    h: 1
+                  e9c33c64b8c6f7e4:
+                    x: 0
+                    y: 0
+                    w: 12
+                    h: 1
+              background: background.paper
+              paddingX: custom:32px
+              paddingY: custom:32px
+              borderRadius: small
+              gap: normal
+              border: solid
+              alignContent: start
+        sectionIds:
+          - 48373436f58174ce
+          - 2700bbe606496b87
+          - ade1629eb50bfd78
+        config:
+          gridSettings:
+            desktop:
+              48373436f58174ce:
+                x: 0
+                y: 0
+                w: 4
+                h: 1
+              2700bbe606496b87:
+                x: 4
+                y: 0
+                w: 4
+                h: 1
+              ade1629eb50bfd78:
+                x: 8
+                y: 0
+                w: 4
+                h: 1
+            mobile:
+              48373436f58174ce:
+                x: 0
+                y: 0
+                w: 12
+                h: 1
+              2700bbe606496b87:
+                x: 0
+                y: 1
+                w: 12
+                h: 1
+              ade1629eb50bfd78:
+                x: 0
+                y: 2
+                w: 12
+                h: 1
+          gap: small
+          paddingX: none
+    sectionIds:
+      - 8a7dde777cbf6cbe
+      - 3eceea61e0feb3a0
+    config:
+      gridSettings:
+        desktop:
+          3eceea61e0feb3a0:
+            x: 0
+            y: 1
+            w: 12
+            h: 1
+          8a7dde777cbf6cbe:
+            x: 0
+            y: 0
+            w: 12
+            h: 1
+      gap: normal
+      paddingY: none
+      paddingX: none
+  9d8bb9fedaca06a2:
+    id: 9d8bb9fedaca06a2
     name: Section Layout
     component: layout-block
     sections:
-      c78c8aa47ecbddbc:
-        id: c78c8aa47ecbddbc
+      3d2ab48fa9c55c40:
+        id: 3d2ab48fa9c55c40
         name: RichText
         component: custom-component
         config:
           useCache: true
           componentId: xoHu0J44322kDYc-
         sectionIds: []
-      7180746a8aa3b39b:
-        id: 7180746a8aa3b39b
+      d1fa402770094990:
+        id: d1fa402770094990
         name: Section Layout
         component: layout-block
         sections:
-          992eafb979c842a8:
-            id: 992eafb979c842a8
+          7cd7bc8241b8ad67:
+            id: 7cd7bc8241b8ad67
             name: ComparisonTable
             component: custom-component
             config:
@@ -710,28 +1201,28 @@ sections:
               componentId: -b71JoAi_lXSY8MP
             sectionIds: []
         sectionIds:
-          - 992eafb979c842a8
+          - 7cd7bc8241b8ad67
         config:
           gridSettings:
             desktop:
-              992eafb979c842a8:
+              7cd7bc8241b8ad67:
                 x: 0
                 y: 0
                 w: 12
                 h: 1
           borderRadius: small
     sectionIds:
-      - c78c8aa47ecbddbc
-      - 7180746a8aa3b39b
+      - 3d2ab48fa9c55c40
+      - d1fa402770094990
     config:
       gridSettings:
         desktop:
-          c78c8aa47ecbddbc:
+          3d2ab48fa9c55c40:
             x: 0
             y: 0
             w: 12
             h: 1
-          7180746a8aa3b39b:
+          d1fa402770094990:
             x: 0
             y: 1
             w: 12
@@ -739,26 +1230,26 @@ sections:
       gap: normal
       paddingY: none
       textAlign: left
-  d56d9e831889abb5:
-    id: d56d9e831889abb5
+  6edec3e84b5a8e8d:
+    id: 6edec3e84b5a8e8d
     name: Full Background Hero
     component: layout-block
     sections:
-      d66823edd1527d2e:
-        id: d66823edd1527d2e
+      b3de0f85ffafc96e:
+        id: b3de0f85ffafc96e
         name: CTA
         component: layout-block
         sections:
-          db2d6e57316f086b:
-            id: db2d6e57316f086b
+          b2fd4755c489229c:
+            id: b2fd4755c489229c
             name: Description
             component: custom-component
             config:
               useCache: true
               componentId: xoHu0J44322kDYc-
             sectionIds: []
-          06080d017bac5b6d:
-            id: 06080d017bac5b6d
+          508276fbeb60a116:
+            id: 508276fbeb60a116
             name: Action
             component: custom-component
             config:
@@ -766,17 +1257,17 @@ sections:
               componentId: a44r0SiGV9AFn2Fj
             sectionIds: []
         sectionIds:
-          - db2d6e57316f086b
-          - 06080d017bac5b6d
+          - b2fd4755c489229c
+          - 508276fbeb60a116
         config:
           gridSettings:
             desktop:
-              db2d6e57316f086b:
+              b2fd4755c489229c:
                 x: 2
                 y: 0
                 w: 8
                 h: 1
-              06080d017bac5b6d:
+              508276fbeb60a116:
                 x: 0
                 y: 1
                 w: 12
@@ -784,15 +1275,15 @@ sections:
           paddingY: large
           gap: large
           maxWidth: full
-          paddingX: none
+          paddingX: normal
           background: background.paper
           borderRadius: small
     sectionIds:
-      - d66823edd1527d2e
+      - b3de0f85ffafc96e
     config:
       gridSettings:
         desktop:
-          d66823edd1527d2e:
+          b3de0f85ffafc96e:
             x: 0
             y: 0
             w: 12
@@ -802,39 +1293,58 @@ sections:
       backgroundFullWidth: false
       paddingX: none
 sectionIds:
-  - e1c97b3710d489a2
+  - fccd2eef046cc699
   - 671827b9508f92f3
   - 0bd9c287b4dac2cd
-  - 12ac5a7c0c929953
-  - d56d9e831889abb5
+  - 1b88992adea4de75
+  - 9d8bb9fedaca06a2
+  - 6edec3e84b5a8e8d
 dataSource:
-  087e8576fefadf0f:
+  7b1376699bbeab12:
     en:
       properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        kyg0hdy5uqq4gc1o:
+          value: flex-start
+        gs1rn5jmxfvpxptx:
+          value:
+            text: Own Your Digital Assets
+            style:
+              fontSize: '{"md":48}'
+              variant: h1
+  b1727de5312cd351:
+    en:
+      properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        kyg0hdy5uqq4gc1o:
+          value: flex-start
         9ajrz12ik7esfk1z:
           value:
             list:
-              - id: item-1759121327460-gc8w9kaxt
+              - id: item-1759472738716-8jpjkgjdk
                 type: text
-                text: Stop paying recurring fees for cloud storage. Media Kit is the self-hosted
-                  media management solution that gives you total control,
-                  enterprise-grade features, and massive savings.
+                text: Stop paying recurring fees to Big Tech. Media Kit transforms how you
+                  store, organize, and deliver media—all on your own
+                  infrastructure with enterprise-grade features that rival
+                  industry leaders.
                 style:
                   color: ""
                   fontSize: 16px
                   variant: body1
         gs1rn5jmxfvpxptx:
           value:
-            text: Own Your Digital Assets. Save Hundreds Monthly.
+            text: Save hundreds monthly with the complete media management solution.
             style:
-              variant: h1
-        v5utpm7bu9yvdpnq:
-          value: flex-start
-        kyg0hdy5uqq4gc1o:
-          value: flex-start
-  5455a7046747c6d7:
+              variant: h3
+  fcb1cc05e11b014c:
     en:
       properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        v9979xeclpsbvn0n:
+          value: flex-start
         b8x4m3n9kp7qtw5r:
           value:
             - id: btn-default-1
@@ -843,31 +1353,32 @@ dataSource:
               url: https://store.blocklet.dev/blocklets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9
               variant: contained
               size: large
-              target: _self
+              target: auto
               needLogin: false
-            - id: btn-1759121436561-6r9xmg35x
-              text: ""
+            - type: link
+              text: Learn More
+              url: "#features"
+              color: ""
+              borderColor: ""
               variant: outlined
-              borderColor: primary.main
               size: large
-              url: ""
-        r8t5y6u7i1o2p3a4:
-          value: 16
-        v5utpm7bu9yvdpnq:
-          value: flex-start
-        v9979xeclpsbvn0n:
-          value: flex-start
-  f98b98ffd13b8a1d:
+              target: auto
+              startIcon: ""
+              endIcon: ""
+              needLogin: false
+              imageUrl: ""
+              imageUrlDark: ""
+              imageHoverAnimation: true
+              id: btn-1759473759606-h7czb7h4e
+  04e6e387749aad19:
     en:
       properties:
         7m5pz8nefl5j9hqq:
           value:
-            url: mediakit://media-gallery-grid-view.png
-            mediaKitUrl: mediakit://media-gallery-grid-view.png
-            width: 2445
-            height: 1394
-        jjv0hvr8wrixt1f3:
-          value: 1
+            url: mediakit://media-kit-hero-visual.png
+            mediaKitUrl: mediakit://media-kit-hero-visual.png
+            width: 2048
+            height: 1536
   d79cdf28faac3108:
     en:
       properties:
@@ -879,7 +1390,7 @@ dataSource:
           value:
             text: Why 10,000+ Users Choose Media Kit
             style:
-              variant: h2
+              variant: h1
   8a0319c7be20285c:
     en:
       properties:
@@ -898,7 +1409,7 @@ dataSource:
               - id: item-1759143324880-zr95ywd04
                 type: text
                 text: Replace expensive subscriptions ($50-500/month) with a one-time setup. No
-                  usage limits, no surprise bills. Ever.
+                  usage limits, no surprise bills.
                 style:
                   color: ""
                   fontSize: 16px
@@ -907,7 +1418,7 @@ dataSource:
     en:
       properties:
         5ek4m0kw9cu0ndns:
-          value: lucide:piggy-bank
+          value: lucide:dollar-sign
         gugqsxx3xyveuu8n:
           value: primary.main
         529qbwiam7oypw8e:
@@ -929,8 +1440,8 @@ dataSource:
             list:
               - id: item-1759143324880-zr95ywd04
                 type: text
-                text: Your media stays on YOUR servers. No vendor lock-in, no privacy concerns.
-                  You are in complete control of your assets.
+                text: Your media stays on YOUR servers. No vendor lock-in, no privacy concerns,
+                  no platform risks.
                 style:
                   color: ""
                   fontSize: 16px
@@ -961,9 +1472,8 @@ dataSource:
             list:
               - id: item-1759143324880-zr95ywd04
                 type: text
-                text: Optional CDN support delivers your content with lightning-fast speed,
-                  rivaling major cloud providers without the enterprise price
-                  tag.
+                text: Optional CDN support delivers your content faster than major cloud
+                  providers—without the enterprise price tag.
                 style:
                   color: ""
                   fontSize: 16px
@@ -989,12 +1499,12 @@ dataSource:
             text: What Makes Media Kit Special
             style:
               variant: h2
-  8b2f99e2d9684e40:
+  f1ac3a899bebd3e7:
     en:
       properties:
         gs1rn5jmxfvpxptx:
           value:
-            text: Intelligent Organization, Effortless Discovery
+            text: Intelligent Organization
             style:
               variant: h4
         9ajrz12ik7esfk1z:
@@ -1002,9 +1512,10 @@ dataSource:
             list:
               - id: item-1759185456428-p8i1jjk33
                 type: text
-                text: Find any file in seconds! With smart folders, powerful tags, and
-                  auto-deduplication, your library stays clean and searchable.
-                  Import via drag & drop, Unsplash, or even AI generation.
+                text: Find any file in seconds with Smart Folders & Tags. Import from your
+                  device, clipboard, URLs, webcam, Unsplash, or even generate
+                  images with AI. We support all formats and handle
+                  auto-deduplication so you never store the same file twice!
                 style:
                   color: ""
                   fontSize: 16px
@@ -1013,25 +1524,25 @@ dataSource:
           value: flex-start
         kyg0hdy5uqq4gc1o:
           value: flex-start
-  4ef5a8f1e8f87f5f:
+  af23c5c3552418e5:
     en:
       properties:
         7m5pz8nefl5j9hqq:
           value:
             url: mediakit://upload-dialog-import-options.png
             mediaKitUrl: mediakit://upload-dialog-import-options.png
-            width: 1270
-            height: 520
+            width: 1920
+            height: 932
         70d4dvbqgjal3z6j:
           value: ""
         jjv0hvr8wrixt1f3:
           value: 1
-  95f080b03630f07b:
+  fc5315d7abc56328:
     en:
       properties:
         gs1rn5jmxfvpxptx:
           value:
-            text: Create Stunning Visuals with Built-in AI
+            text: AI-Powered Creation
             style:
               variant: h4
         9ajrz12ik7esfk1z:
@@ -1039,9 +1550,10 @@ dataSource:
             list:
               - id: item-1759185456428-p8i1jjk33
                 type: text
-                text: Unleash your creativity! Generate unique images directly from text prompts
-                  using integrated DALL-E models. Your AI creations are saved
-                  directly to your library, ready to use.
+                text: Unleash your creativity! Generate stunning images directly from text
+                  prompts using built-in DALL-E and other AI models. No external
+                  API keys needed—it all happens right within your media
+                  library, powered by the integrated AIGNE Hub framework.
                 style:
                   color: ""
                   fontSize: 16px
@@ -1050,7 +1562,7 @@ dataSource:
           value: flex-start
         kyg0hdy5uqq4gc1o:
           value: flex-start
-  40692db2b79d3348:
+  4619faa923121b10:
     en:
       properties:
         7m5pz8nefl5j9hqq:
@@ -1063,12 +1575,12 @@ dataSource:
           value: ""
         jjv0hvr8wrixt1f3:
           value: 1
-  68b65ddda964c9b7:
+  55864b4cc5a7303a:
     en:
       properties:
         gs1rn5jmxfvpxptx:
           value:
-            text: Professional Delivery, Bank-Level Security
+            text: Professional Delivery
             style:
               variant: h4
         9ajrz12ik7esfk1z:
@@ -1076,9 +1588,11 @@ dataSource:
             list:
               - id: item-1759185456428-p8i1jjk33
                 type: text
-                text: Deliver perfectly optimized media at global scale with optional CDN
-                  support. Your assets are protected with automatic metadata
-                  removal, team access controls, and complete data sovereignty.
+                text: Get perfect quality with minimal file sizes automatically. Share your
+                  assets via public URLs or with private team access. Every file
+                  is optimized for a flawless experience on all devices, and our
+                  Global CDN readiness ensures lightning-fast delivery
+                  worldwide.
                 style:
                   color: ""
                   fontSize: 16px
@@ -1100,15 +1614,163 @@ dataSource:
           value: ""
         jjv0hvr8wrixt1f3:
           value: 1
-  c78c8aa47ecbddbc:
+  9f9a37c7be3f4851:
     en:
       properties:
         gs1rn5jmxfvpxptx:
           value:
-            text: Perfect For Every Role
+            text: Bank-Level Security
+            style:
+              variant: h4
+        9ajrz12ik7esfk1z:
+          value:
+            list:
+              - id: item-1759185456428-p8i1jjk33
+                type: text
+                text: Your data, your rules. We prioritize your privacy by automatically
+                  removing metadata. With precise team access controls and
+                  advanced protection against modern threats, you get complete
+                  sovereignty over your digital assets.
+                style:
+                  color: ""
+                  fontSize: 16px
+                  variant: body1
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        kyg0hdy5uqq4gc1o:
+          value: flex-start
+  fb611cb8f15e1bb3:
+    en:
+      properties:
+        7m5pz8nefl5j9hqq:
+          value:
+            url: mediakit://media-kit-security-visual.png
+            mediaKitUrl: mediakit://media-kit-security-visual.png
+            width: 1270
+            height: 520
+        70d4dvbqgjal3z6j:
+          value: ""
+        jjv0hvr8wrixt1f3:
+          value: 1
+  fc8aca2223685a5f:
+    en:
+      properties:
+        v5utpm7bu9yvdpnq:
+          value: center
+        kyg0hdy5uqq4gc1o:
+          value: center
+        gs1rn5jmxfvpxptx:
+          value:
+            text: Powerful Blocklet Ecosystem Integration
             style:
               variant: h1
-  992eafb979c842a8:
+  188bf83f2774511b:
+    en:
+      properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        kyg0hdy5uqq4gc1o:
+          value: flex-start
+        gs1rn5jmxfvpxptx:
+          value:
+            text: Pages Kit Integration
+            style:
+              variant: h4
+        9ajrz12ik7esfk1z:
+          value:
+            list:
+              - id: item-1759143324880-zr95ywd04
+                type: text
+                text: Build stunning websites and landing pages. Instantly access your Media Kit
+                  library to drag, drop, and insert images directly into your
+                  designs.
+                style:
+                  color: ""
+                  fontSize: 16px
+                  variant: body1
+  9a4665f91027d3f7:
+    en:
+      properties:
+        5ek4m0kw9cu0ndns:
+          value: lucide:layout-template
+        gugqsxx3xyveuu8n:
+          value: primary.main
+        529qbwiam7oypw8e:
+          value: 40px
+  3d914af2157737bc:
+    en:
+      properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        kyg0hdy5uqq4gc1o:
+          value: flex-start
+        gs1rn5jmxfvpxptx:
+          value:
+            text: Discuss Kit Integration
+            style:
+              variant: h4
+        9ajrz12ik7esfk1z:
+          value:
+            list:
+              - id: item-1759143324880-zr95ywd04
+                type: text
+                text: Enrich community discussions and blog posts. Add images, videos, and
+                  documents directly from Media Kit while writing.
+                style:
+                  color: ""
+                  fontSize: 16px
+                  variant: body1
+  834e8f1413211851:
+    en:
+      properties:
+        5ek4m0kw9cu0ndns:
+          value: lucide:messages-square
+        gugqsxx3xyveuu8n:
+          value: primary.main
+        529qbwiam7oypw8e:
+          value: 40px
+  824549dfc765923c:
+    en:
+      properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        kyg0hdy5uqq4gc1o:
+          value: flex-start
+        gs1rn5jmxfvpxptx:
+          value:
+            text: Payment Kit Integration
+            style:
+              variant: h4
+        9ajrz12ik7esfk1z:
+          value:
+            list:
+              - id: item-1759143324880-zr95ywd04
+                type: text
+                text: Create professional e-commerce experiences. Showcase products with
+                  high-quality images and maintain brand consistency across all
+                  payment pages.
+                style:
+                  color: ""
+                  fontSize: 16px
+                  variant: body1
+  75224870c5e4c765:
+    en:
+      properties:
+        5ek4m0kw9cu0ndns:
+          value: lucide:credit-card
+        gugqsxx3xyveuu8n:
+          value: primary.main
+        529qbwiam7oypw8e:
+          value: 40px
+  3d2ab48fa9c55c40:
+    en:
+      properties:
+        gs1rn5jmxfvpxptx:
+          value:
+            text: Perfect For Every Use Case
+            style:
+              variant: h1
+  7cd7bc8241b8ad67:
     en:
       properties:
         bm5nin5dwota4vwj:
@@ -1116,51 +1778,51 @@ dataSource:
             entities:
               - id: e0
                 label: Content Creators
-                subTitle: 📸
+                subTitle: Replace Dropbox, Google Drive
                 description: ""
-                icon: ""
-                highlight: ""
+                icon: lucide:camera
+                highlight: "false"
                 action:
                   label: ""
                   url: ""
                   tooltip: ""
               - id: e1
                 label: Small Businesses
-                subTitle: 🏢
+                subTitle: Replace Cloudinary, AWS S3
                 description: ""
-                icon: ""
-                highlight: ""
+                icon: lucide:building
+                highlight: "false"
                 action:
                   label: ""
                   url: ""
                   tooltip: ""
               - id: e2
                 label: Web Developers
-                subTitle: 👩‍💻
+                subTitle: Replace ImageKit, Uploadcare
                 description: ""
-                icon: ""
-                highlight: ""
+                icon: lucide:code
+                highlight: "true"
                 action:
                   label: ""
                   url: ""
                   tooltip: ""
               - id: e3
                 label: Marketing Teams
-                subTitle: 📈
+                subTitle: Replace Adobe Creative Cloud
                 description: ""
-                icon: ""
-                highlight: ""
+                icon: lucide:siren
+                highlight: "false"
                 action:
                   label: ""
                   url: ""
                   tooltip: ""
             features:
               - id: f0
-                label: Replaces
+                label: Monthly Savings
                 tooltip: ""
                 icon: ""
               - id: f1
-                label: Save Monthly
+                label: ""
                 tooltip: ""
                 icon: ""
               - id: f2
@@ -1199,44 +1861,44 @@ dataSource:
               {
                 "f0": {
                   "e0": {
-                    "value": "Dropbox, Google Drive",
-                    "tooltip": "",
-                    "highlight": ""
-                  },
-                  "e1": {
-                    "value": "Cloudinary, AWS S3",
-                    "tooltip": "",
-                    "highlight": ""
-                  },
-                  "e2": {
-                    "value": "ImageKit, Uploadcare",
-                    "tooltip": "",
-                    "highlight": ""
-                  },
-                  "e3": {
-                    "value": "Adobe Creative Cloud",
-                    "tooltip": "",
-                    "highlight": ""
-                  }
-                },
-                "f1": {
-                  "e0": {
                     "value": "$15-50",
                     "tooltip": "",
-                    "highlight": ""
+                    "highlight": "false"
                   },
                   "e1": {
                     "value": "$50-200",
                     "tooltip": "",
-                    "highlight": ""
+                    "highlight": "false"
                   },
                   "e2": {
                     "value": "$30-100",
                     "tooltip": "",
-                    "highlight": ""
+                    "highlight": "true"
                   },
                   "e3": {
                     "value": "$100-500",
+                    "tooltip": "",
+                    "highlight": "false"
+                  }
+                },
+                "f1": {
+                  "e0": {
+                    "value": "",
+                    "tooltip": "",
+                    "highlight": ""
+                  },
+                  "e1": {
+                    "value": "",
+                    "tooltip": "",
+                    "highlight": ""
+                  },
+                  "e2": {
+                    "value": "",
+                    "tooltip": "",
+                    "highlight": ""
+                  },
+                  "e3": {
+                    "value": "",
                     "tooltip": "",
                     "highlight": ""
                   }
@@ -1419,8 +2081,8 @@ dataSource:
                 }
               }
         x9k2m5p8q1w3r7t6:
-          value: Role
-  db2d6e57316f086b:
+          value: Use Case
+  b2fd4755c489229c:
     en:
       properties:
         9ajrz12ik7esfk1z:
@@ -1428,16 +2090,16 @@ dataSource:
             list:
               - id: item-1759121327460-gc8w9kaxt
                 type: text
-                text: No credit card. No monthly fees. No vendor lock-in. Get instant access to
-                  unlimited storage, AI image generation, and enterprise-grade
-                  tools right now.
+                text: No credit card. No monthly fees. No vendor lock-in. Get unlimited file
+                  storage, AI image generation, advanced organization,
+                  enterprise security, and full API access, instantly.
                 style:
                   color: ""
                   fontSize: 16px
                   variant: body1
         gs1rn5jmxfvpxptx:
           value:
-            text: Launch in 60 Seconds!
+            text: Launch in 60 Seconds
             style:
               color: ""
               variant: h1
@@ -1445,7 +2107,7 @@ dataSource:
           value: center
         kyg0hdy5uqq4gc1o:
           value: center
-  06080d017bac5b6d:
+  508276fbeb60a116:
     en:
       properties:
         b8x4m3n9kp7qtw5r:
@@ -1456,7 +2118,7 @@ dataSource:
               url: https://store.blocklet.dev/blocklets/z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9
               variant: contained
               size: large
-              target: _self
+              target: auto
               needLogin: false
             - id: btn-1759121436561-6r9xmg35x
               text: ""
