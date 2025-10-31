@@ -1,7 +1,7 @@
 id: 616571b7c79a8472
-createdAt: 2025-10-30T23:13:23.196Z
-updatedAt: 2025-10-30T23:13:23.196Z
-publishedAt: 2025-10-30T23:13:23.196Z
+createdAt: 2025-10-31T00:35:28.254Z
+updatedAt: 2025-10-31T00:35:28.254Z
+publishedAt: 2025-10-31T00:35:28.254Z
 isPublic: true
 locales:
   en:
@@ -893,262 +893,202 @@ sections:
         name: Cards
         component: layout-block
         sections:
-          48373436f58174ce:
-            id: 48373436f58174ce
+          9f312eb9fcf837a8:
+            id: 9f312eb9fcf837a8
             name: Cards-1
             component: layout-block
             sections:
-              188bf83f2774511b:
-                id: 188bf83f2774511b
-                name: Title
-                component: custom-component
-                config:
-                  useCache: true
-                  componentId: xoHu0J44322kDYc-
-                sectionIds: []
-              217c8a0c162c7e73:
-                id: 217c8a0c162c7e73
-                name: Icon
+              cfab56655998c110:
+                id: cfab56655998c110
+                name: Content
                 component: layout-block
                 sections:
-                  9a4665f91027d3f7:
-                    id: 9a4665f91027d3f7
-                    name: Icon
+                  59c95caab7a925b0:
+                    id: 59c95caab7a925b0
+                    name: RichText
                     component: custom-component
                     config:
                       useCache: true
-                      componentId: YwuDiIbyyF5vfGpt
+                      componentId: xoHu0J44322kDYc-
+                    sectionIds: []
+                  d2ae5331d886ac95:
+                    id: d2ae5331d886ac95
+                    name: Action
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: a44r0SiGV9AFn2Fj
                     sectionIds: []
                 sectionIds:
-                  - 9a4665f91027d3f7
+                  - 59c95caab7a925b0
+                  - d2ae5331d886ac95
                 config:
                   gridSettings:
                     desktop:
-                      9a4665f91027d3f7:
+                      59c95caab7a925b0:
                         x: 0
                         y: 0
                         w: 12
                         h: 1
-                  background: transparent
-                  height: 100%
-                  borderRadius: custom:0px
-                  alignContent: start
             sectionIds:
-              - 188bf83f2774511b
-              - 217c8a0c162c7e73
+              - cfab56655998c110
             config:
               gridSettings:
                 desktop:
-                  188bf83f2774511b:
-                    x: 0
-                    y: 1
-                    w: 12
-                    h: 1
-                  217c8a0c162c7e73:
-                    x: 0
-                    y: 0
-                    w: 6
-                    h: 1
-                mobile:
-                  188bf83f2774511b:
-                    x: 0
-                    y: 1
-                    w: 12
-                    h: 1
-                  217c8a0c162c7e73:
+                  59c95caab7a925b0:
                     x: 0
                     y: 0
                     w: 12
                     h: 1
-              background: background.paper
               paddingX: custom:32px
-              paddingY: custom:32px
-              borderRadius: small
               gap: normal
+              paddingY: custom:32px
+              background: background.paper
               border: solid
-              alignContent: start
-          2700bbe606496b87:
-            id: 2700bbe606496b87
+              borderRadius: small
+              alignContent: space-between
+          7180500b4acba095:
+            id: 7180500b4acba095
             name: Cards-2
             component: layout-block
             sections:
-              3d914af2157737bc:
-                id: 3d914af2157737bc
-                name: Title
-                component: custom-component
-                config:
-                  useCache: true
-                  componentId: xoHu0J44322kDYc-
-                sectionIds: []
-              82fbb288a071de99:
-                id: 82fbb288a071de99
-                name: Icon
+              f952b014d0fe7c5b:
+                id: f952b014d0fe7c5b
+                name: Content
                 component: layout-block
                 sections:
-                  834e8f1413211851:
-                    id: 834e8f1413211851
-                    name: Icon
+                  67f8a3320a167302:
+                    id: 67f8a3320a167302
+                    name: RichText
                     component: custom-component
                     config:
                       useCache: true
-                      componentId: YwuDiIbyyF5vfGpt
+                      componentId: xoHu0J44322kDYc-
+                    sectionIds: []
+                  d225189bd293e66b:
+                    id: d225189bd293e66b
+                    name: Action
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: a44r0SiGV9AFn2Fj
                     sectionIds: []
                 sectionIds:
-                  - 834e8f1413211851
+                  - 67f8a3320a167302
+                  - d225189bd293e66b
                 config:
                   gridSettings:
                     desktop:
-                      834e8f1413211851:
+                      67f8a3320a167302:
                         x: 0
                         y: 0
                         w: 12
                         h: 1
-                  background: transparent
-                  height: 100%
-                  borderRadius: custom:0px
-                  alignContent: start
             sectionIds:
-              - 3d914af2157737bc
-              - 82fbb288a071de99
+              - f952b014d0fe7c5b
             config:
               gridSettings:
                 desktop:
-                  3d914af2157737bc:
-                    x: 0
-                    y: 1
-                    w: 12
-                    h: 1
-                  82fbb288a071de99:
-                    x: 0
-                    y: 0
-                    w: 6
-                    h: 1
-                mobile:
-                  3d914af2157737bc:
-                    x: 0
-                    y: 1
-                    w: 12
-                    h: 1
-                  82fbb288a071de99:
+                  67f8a3320a167302:
                     x: 0
                     y: 0
                     w: 12
                     h: 1
-              background: background.paper
               paddingX: custom:32px
-              paddingY: custom:32px
-              borderRadius: small
               gap: normal
+              paddingY: custom:32px
+              background: background.paper
               border: solid
-              alignContent: start
-          ade1629eb50bfd78:
-            id: ade1629eb50bfd78
+              borderRadius: small
+              alignContent: space-between
+          ba09c9f800c402b0:
+            id: ba09c9f800c402b0
             name: Cards-3
             component: layout-block
             sections:
-              824549dfc765923c:
-                id: 824549dfc765923c
-                name: Title
-                component: custom-component
-                config:
-                  useCache: true
-                  componentId: xoHu0J44322kDYc-
-                sectionIds: []
-              e9c33c64b8c6f7e4:
-                id: e9c33c64b8c6f7e4
-                name: Icon
+              72a428f43fb4c345:
+                id: 72a428f43fb4c345
+                name: Content
                 component: layout-block
                 sections:
-                  75224870c5e4c765:
-                    id: 75224870c5e4c765
-                    name: Icon
+                  595a643b7eed56ac:
+                    id: 595a643b7eed56ac
+                    name: RichText
                     component: custom-component
                     config:
                       useCache: true
-                      componentId: YwuDiIbyyF5vfGpt
+                      componentId: xoHu0J44322kDYc-
+                    sectionIds: []
+                  b1b08e2ad1f947ed:
+                    id: b1b08e2ad1f947ed
+                    name: Action
+                    component: custom-component
+                    config:
+                      useCache: true
+                      componentId: a44r0SiGV9AFn2Fj
                     sectionIds: []
                 sectionIds:
-                  - 75224870c5e4c765
+                  - 595a643b7eed56ac
+                  - b1b08e2ad1f947ed
                 config:
                   gridSettings:
                     desktop:
-                      75224870c5e4c765:
+                      595a643b7eed56ac:
                         x: 0
                         y: 0
                         w: 12
                         h: 1
-                  background: transparent
-                  height: 100%
-                  borderRadius: custom:0px
-                  alignContent: start
             sectionIds:
-              - 824549dfc765923c
-              - e9c33c64b8c6f7e4
+              - 72a428f43fb4c345
             config:
               gridSettings:
                 desktop:
-                  824549dfc765923c:
-                    x: 0
-                    y: 1
-                    w: 12
-                    h: 1
-                  e9c33c64b8c6f7e4:
-                    x: 0
-                    y: 0
-                    w: 6
-                    h: 1
-                mobile:
-                  824549dfc765923c:
-                    x: 0
-                    y: 1
-                    w: 12
-                    h: 1
-                  e9c33c64b8c6f7e4:
+                  595a643b7eed56ac:
                     x: 0
                     y: 0
                     w: 12
                     h: 1
-              background: background.paper
               paddingX: custom:32px
-              paddingY: custom:32px
-              borderRadius: small
               gap: normal
+              paddingY: custom:32px
+              background: background.paper
               border: solid
-              alignContent: start
+              borderRadius: small
+              alignContent: space-between
         sectionIds:
-          - 48373436f58174ce
-          - 2700bbe606496b87
-          - ade1629eb50bfd78
+          - 9f312eb9fcf837a8
+          - 7180500b4acba095
+          - ba09c9f800c402b0
         config:
           gridSettings:
             desktop:
-              48373436f58174ce:
+              9f312eb9fcf837a8:
                 x: 0
                 y: 0
                 w: 4
                 h: 1
-              2700bbe606496b87:
+              7180500b4acba095:
                 x: 4
                 y: 0
                 w: 4
                 h: 1
-              ade1629eb50bfd78:
+              ba09c9f800c402b0:
                 x: 8
                 y: 0
                 w: 4
                 h: 1
             mobile:
-              48373436f58174ce:
+              9f312eb9fcf837a8:
                 x: 0
                 y: 0
                 w: 12
                 h: 1
-              2700bbe606496b87:
+              7180500b4acba095:
                 x: 0
                 y: 1
                 w: 12
                 h: 1
-              ade1629eb50bfd78:
+              ba09c9f800c402b0:
                 x: 0
                 y: 2
                 w: 12
@@ -1664,13 +1604,9 @@ dataSource:
             text: Powerful Blocklet Ecosystem Integration
             style:
               variant: h1
-  188bf83f2774511b:
+  59c95caab7a925b0:
     en:
       properties:
-        v5utpm7bu9yvdpnq:
-          value: flex-start
-        kyg0hdy5uqq4gc1o:
-          value: flex-start
         gs1rn5jmxfvpxptx:
           value:
             text: Pages Kit Integration
@@ -1679,7 +1615,7 @@ dataSource:
         9ajrz12ik7esfk1z:
           value:
             list:
-              - id: item-1759143324880-zr95ywd04
+              - id: item-1759185456428-p8i1jjk33
                 type: text
                 text: Build stunning websites and landing pages. Instantly access your Media Kit
                   library to drag, drop, and insert images directly into your
@@ -1688,22 +1624,31 @@ dataSource:
                   color: ""
                   fontSize: 16px
                   variant: body1
-  9a4665f91027d3f7:
-    en:
-      properties:
-        5ek4m0kw9cu0ndns:
-          value: lucide:layout-template
-        gugqsxx3xyveuu8n:
-          value: primary.main
-        529qbwiam7oypw8e:
-          value: 40px
-  3d914af2157737bc:
-    en:
-      properties:
         v5utpm7bu9yvdpnq:
           value: flex-start
         kyg0hdy5uqq4gc1o:
           value: flex-start
+  d2ae5331d886ac95:
+    en:
+      properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        v9979xeclpsbvn0n:
+          value: flex-start
+        b8x4m3n9kp7qtw5r:
+          value:
+            - endIcon: lucide:arrow-right
+              id: btn-default-1
+              type: link
+              text: Explore Pages Kit
+              url: https://store.blocklet.dev/blocklets/z8iZiDFg3vkkrPwsiba1TLXy3H9XHzFERsP8o
+              variant: text
+              size: medium
+              target: auto
+              needLogin: false
+  67f8a3320a167302:
+    en:
+      properties:
         gs1rn5jmxfvpxptx:
           value:
             text: Discuss Kit Integration
@@ -1712,7 +1657,7 @@ dataSource:
         9ajrz12ik7esfk1z:
           value:
             list:
-              - id: item-1759143324880-zr95ywd04
+              - id: item-1759185456428-p8i1jjk33
                 type: text
                 text: Enrich community discussions and blog posts. Add images, videos, and
                   documents directly from Media Kit while writing.
@@ -1720,22 +1665,31 @@ dataSource:
                   color: ""
                   fontSize: 16px
                   variant: body1
-  834e8f1413211851:
-    en:
-      properties:
-        5ek4m0kw9cu0ndns:
-          value: lucide:messages-square
-        gugqsxx3xyveuu8n:
-          value: primary.main
-        529qbwiam7oypw8e:
-          value: 40px
-  824549dfc765923c:
-    en:
-      properties:
         v5utpm7bu9yvdpnq:
           value: flex-start
         kyg0hdy5uqq4gc1o:
           value: flex-start
+  d225189bd293e66b:
+    en:
+      properties:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        v9979xeclpsbvn0n:
+          value: flex-start
+        b8x4m3n9kp7qtw5r:
+          value:
+            - endIcon: lucide:arrow-right
+              id: btn-default-1
+              type: link
+              text: Discover Discuss Kit
+              url: https://store.blocklet.dev/blocklets/z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu
+              variant: text
+              size: medium
+              target: auto
+              needLogin: false
+  595a643b7eed56ac:
+    en:
+      properties:
         gs1rn5jmxfvpxptx:
           value:
             text: Payment Kit Integration
@@ -1744,7 +1698,7 @@ dataSource:
         9ajrz12ik7esfk1z:
           value:
             list:
-              - id: item-1759143324880-zr95ywd04
+              - id: item-1759185456428-p8i1jjk33
                 type: text
                 text: Create professional e-commerce experiences. Showcase products with
                   high-quality images and maintain brand consistency across all
@@ -1753,15 +1707,28 @@ dataSource:
                   color: ""
                   fontSize: 16px
                   variant: body1
-  75224870c5e4c765:
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        kyg0hdy5uqq4gc1o:
+          value: flex-start
+  b1b08e2ad1f947ed:
     en:
       properties:
-        5ek4m0kw9cu0ndns:
-          value: lucide:credit-card
-        gugqsxx3xyveuu8n:
-          value: primary.main
-        529qbwiam7oypw8e:
-          value: 40px
+        v5utpm7bu9yvdpnq:
+          value: flex-start
+        v9979xeclpsbvn0n:
+          value: flex-start
+        b8x4m3n9kp7qtw5r:
+          value:
+            - endIcon: lucide:arrow-right
+              id: btn-default-1
+              type: link
+              text: View Payment Kit
+              url: https://store.blocklet.dev/blocklets/z2qaCNvKMv5GjouKdcDWexv6WqtHbpNPQDnAk
+              variant: text
+              size: medium
+              target: auto
+              needLogin: false
   3d2ab48fa9c55c40:
     en:
       properties:
