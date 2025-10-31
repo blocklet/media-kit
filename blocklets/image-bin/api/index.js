@@ -7,7 +7,8 @@ const cors = require('cors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 // const companion = require('@uppy/companion');
-const fallback = require('@blocklet/sdk/lib/middlewares/fallback');
+const { fallback } = require('@blocklet/sdk/lib/middlewares/fallback');
+
 const {
   initProxyToMediaKitUploadsMiddleware,
   // initDynamicResourceMiddleware

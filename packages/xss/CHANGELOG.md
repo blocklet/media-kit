@@ -1,3 +1,24 @@
+## 0.3.3 (October 30, 2025)
+
+- chore: bump deps to latest
+
+## 0.3.2 (October 29, 2025)
+
+- chore: update deps
+
+## 0.3.1 (October 28, 2025)
+
+- chore: update deps
+
+## 0.3.0 (October 27, 2025)
+
+- feat: use a more secure signature mechanism
+
+## 0.2.12 (October 11, 2025)
+
+- chore: update blocklet sdk to latest
+- Revert "chore: update deps (#459)"
+
 ## 0.2.10 (October 09, 2025)
 
 - chore: update deps

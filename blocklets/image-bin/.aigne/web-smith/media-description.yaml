@@ -1,0 +1,40 @@
+descriptions:
+  79a0b9d6b3a0622d588257829ebd8d5aa611d72b42f76fc83d2949a5c5001c37:
+    path: ../../../screenshots/upload-dialog-import-options.png
+    description: "This screenshot displays an \"Upload Files\" dialog box
+      prominently centered over a web application's media gallery interface. The
+      dialog instructs users to \"Drop files here, paste, browse files, browse
+      folders,\" and provides five distinct import options: \"My Device,\" \"AI
+      Image,\" \"Link,\" \"Camera,\" and \"Unsplash,\" each represented by a
+      clear icon. The background shows parts of the application's left
+      navigation and existing image thumbnails in the gallery."
+    generatedAt: 2025-10-12T11:55:28.495Z
+  329585481823d1e068ed0785ca54e1be7409ee9a367c6eb82648e7df2e923b8e:
+    path: ../../../screenshots/unsplash-search-integration.png
+    description: This screenshot displays a web application's "Import from Unsplash"
+      modal window, overlaid on a media gallery interface. The modal features a
+      search bar with "world" entered, showcasing a grid of diverse image
+      results such as landscapes, globes, and abstract representations. It
+      effectively illustrates the integration of a third-party stock photo
+      service for seamless content creation.
+    generatedAt: 2025-10-12T11:55:28.495Z
+  81fe104929485d6d0d17cf4821da68d3303d56a3d53ab4fcf4ed532ee6a22c39:
+    path: ../../../screenshots/ai-image-generator-dialog.png
+    description: This screenshot displays a modal dialog for generating AI images
+      within a web application's media management interface. The dialog features
+      input fields for a text prompt like "Hello World," options to select an AI
+      model (DALL-E 3 is chosen), and a size setting, alongside a preview of the
+      generated image. A vibrant "Generate" button initiates the image creation
+      process.
+    generatedAt: 2025-10-12T11:55:28.495Z
+  e398c1fd58d5eccc7fdf963438cfbd09e87e3e478c9ff15e3784860d13f89f10:
+    path: ../../../screenshots/media-gallery-grid-view.png
+    description: This image is a screenshot of the ArcBlock platform's "Media
+      Gallery" interface, featuring a grid view of various digital assets. The
+      left sidebar displays navigation options, while the main content area
+      organizes images under "Buckets" with filtering options and shows multiple
+      image files, including illustrations and visually rich renders, each with
+      its filename and a "Copy URL" button. This UI demonstrates a system for
+      managing and displaying diverse media content.
+    generatedAt: 2025-10-12T11:55:28.495Z
+lastUpdated: 2025-10-12T11:55:28.496Z

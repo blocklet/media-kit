@@ -2,11 +2,11 @@ const middleware = require('@blocklet/sdk/lib/middlewares');
 const { verify, getVerifyData } = require('@blocklet/sdk/lib/util/verify-sign');
 const logger = require('./logger');
 
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   try {
     if (req.get('x-component-sig')) {
-      const { data, sig } = getVerifyData(req);
-      const verified = verify(data, sig);
+      const { data, sig } = await getVerifyData(req);
+      const verified = await verify(data, sig);
       if (verified) {
         next();
       } else {

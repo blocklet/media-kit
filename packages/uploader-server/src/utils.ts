@@ -232,7 +232,7 @@ export async function uploadToMediaKit({
         path: '/api/sdk/uploads',
         data: form,
         headers: {
-          'x-component-upload-sig': getSignData({
+          'x-component-upload-sig': (await getSignData({
             data: {
               filename,
               hash: fileHash,
@@ -240,7 +240,7 @@ export async function uploadToMediaKit({
             method: 'POST',
             url: '/api/sdk/uploads',
             params: extraComponentCallOptions?.params || {},
-          }).sig,
+          }))?.sig,
           ...extraComponentCallOptions?.headers,
         },
         ...omit(extraComponentCallOptions, ['name', 'path', 'data', 'headers']),

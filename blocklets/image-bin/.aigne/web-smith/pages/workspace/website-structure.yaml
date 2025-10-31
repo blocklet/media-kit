@@ -1,0 +1,21 @@
+- title: "Media Kit: Own Your Digital Assets & Save Hundreds Monthly"
+  description: "A comprehensive landing page designed to convert visitors by
+    showcasing Media Kit's value. The page is structured with clear sections: a
+    Hero section with the core value proposition 'Own Your Digital Assets' and a
+    primary call-to-action; a 'Why Choose Us' section highlighting massive cost
+    savings, complete data ownership, and enterprise performance; a detailed
+    'Features' section covering Intelligent Organization, Professional Delivery,
+    AI-Powered Creation, and Security; a 'Perfect For' section with a comparison
+    table for different user roles like Content Creators and Developers; and a
+    final 'Launch in 60 Seconds' call-to-action section that simplifies the
+    setup process."
+  path: /home
+  navigation:
+    title: Home
+    description: Discover the self-hosted media solution.
+  parentId: "null"
+  sourceIds:
+    - README.md
+    - blocklet.yml
+    - screenshots/SCREENSHOTS.md
+    - CHANGELOG.md

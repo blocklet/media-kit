@@ -1,3 +1,24 @@
+## 0.14.3 (October 30, 2025)
+
+- chore: bump deps to latest
+
+## 0.14.2 (October 29, 2025)
+
+- chore: update deps
+
+## 0.14.1 (October 28, 2025)
+
+- chore: update deps
+
+## 0.14.0 (October 27, 2025)
+
+- feat: use a more secure signature mechanism
+
+## 0.13.34 (October 11, 2025)
+
+- chore: update blocklet sdk to latest
+- Revert "chore: update deps (#459)"
+
 ## 0.13.32 (October 09, 2025)
 
 - feat: support dynamic asset cdn host
