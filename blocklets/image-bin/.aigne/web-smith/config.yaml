@@ -64,7 +64,7 @@ sourcesPath:  # Source code paths to analyze
   - CHANGELOG.md
   - blocklet.yml
   - screenshots/*
-lastGitHead: 5119cf9189ef279a347a0d5cbad453e7aa793321
+lastGitHead: 3ae6996fd73b194270566328db148119ab09cda7
 # Checkout ID for website deployment service
 checkoutId: ""
 appUrl: https://websmith.aigne.io

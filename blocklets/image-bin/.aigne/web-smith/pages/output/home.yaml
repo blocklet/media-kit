@@ -1,7 +1,7 @@
 id: 616571b7c79a8472
-createdAt: 2025-10-31T00:35:28.254Z
-updatedAt: 2025-10-31T00:35:28.254Z
-publishedAt: 2025-10-31T00:35:28.254Z
+createdAt: 2025-11-02T00:21:52.826Z
+updatedAt: 2025-11-02T00:21:52.826Z
+publishedAt: 2025-11-02T00:21:52.826Z
 isPublic: true
 locales:
   en:
@@ -104,7 +104,7 @@ sections:
       - a8212db5d3655549
     config:
       background: auto
-      paddingX: normal
+      paddingX: none
       paddingY: custom:80px
       gap: normal
       gridSettings:
@@ -226,7 +226,7 @@ sections:
                     y: 0
                     w: 12
                     h: 1
-              background: background.paper
+              background: grey.50
               paddingX: custom:32px
               paddingY: custom:32px
               borderRadius: small
@@ -300,7 +300,7 @@ sections:
                     y: 0
                     w: 12
                     h: 1
-              background: background.paper
+              background: grey.50
               paddingX: custom:32px
               paddingY: custom:32px
               borderRadius: small
@@ -374,7 +374,7 @@ sections:
                     y: 0
                     w: 12
                     h: 1
-              background: background.paper
+              background: grey.50
               paddingX: custom:32px
               paddingY: custom:32px
               borderRadius: small
@@ -571,7 +571,7 @@ sections:
               paddingX: custom:32px
               gap: normal
               paddingY: custom:32px
-              background: background.paper
+              background: grey.50
               border: solid
               borderRadius: small
               alignContent: center
@@ -667,7 +667,7 @@ sections:
               paddingX: custom:32px
               gap: normal
               paddingY: custom:32px
-              background: background.paper
+              background: grey.50
               border: solid
               borderRadius: small
               alignContent: center
@@ -726,7 +726,7 @@ sections:
               paddingX: custom:32px
               gap: normal
               paddingY: custom:32px
-              background: background.paper
+              background: grey.50
               border: solid
               borderRadius: small
               alignContent: center
@@ -785,7 +785,7 @@ sections:
               paddingX: custom:32px
               gap: normal
               paddingY: custom:32px
-              background: background.paper
+              background: grey.50
               border: solid
               borderRadius: small
               alignContent: center
@@ -935,7 +935,7 @@ sections:
             config:
               gridSettings:
                 desktop:
-                  59c95caab7a925b0:
+                  cfab56655998c110:
                     x: 0
                     y: 0
                     w: 12
@@ -943,7 +943,7 @@ sections:
               paddingX: custom:32px
               gap: normal
               paddingY: custom:32px
-              background: background.paper
+              background: grey.50
               border: solid
               borderRadius: small
               alignContent: space-between
@@ -989,7 +989,7 @@ sections:
             config:
               gridSettings:
                 desktop:
-                  67f8a3320a167302:
+                  f952b014d0fe7c5b:
                     x: 0
                     y: 0
                     w: 12
@@ -997,7 +997,7 @@ sections:
               paddingX: custom:32px
               gap: normal
               paddingY: custom:32px
-              background: background.paper
+              background: grey.50
               border: solid
               borderRadius: small
               alignContent: space-between
@@ -1043,7 +1043,7 @@ sections:
             config:
               gridSettings:
                 desktop:
-                  595a643b7eed56ac:
+                  72a428f43fb4c345:
                     x: 0
                     y: 0
                     w: 12
@@ -1051,7 +1051,7 @@ sections:
               paddingX: custom:32px
               gap: normal
               paddingY: custom:32px
-              background: background.paper
+              background: grey.50
               border: solid
               borderRadius: small
               alignContent: space-between
@@ -1319,6 +1319,8 @@ dataSource:
             mediaKitUrl: mediakit://media-kit-hero-visual.png
             width: 2048
             height: 1536
+        nch5frsfoap2lw33:
+          value: false
   d79cdf28faac3108:
     en:
       properties:
@@ -1477,6 +1479,8 @@ dataSource:
           value: ""
         jjv0hvr8wrixt1f3:
           value: 1
+        nch5frsfoap2lw33:
+          value: true
   fc5315d7abc56328:
     en:
       properties:
@@ -1515,6 +1519,8 @@ dataSource:
           value: ""
         jjv0hvr8wrixt1f3:
           value: 1
+        nch5frsfoap2lw33:
+          value: true
   55864b4cc5a7303a:
     en:
       properties:
@@ -1554,6 +1560,8 @@ dataSource:
           value: ""
         jjv0hvr8wrixt1f3:
           value: 1
+        nch5frsfoap2lw33:
+          value: true
   9f9a37c7be3f4851:
     en:
       properties:
@@ -1592,6 +1600,8 @@ dataSource:
           value: ""
         jjv0hvr8wrixt1f3:
           value: 1
+        nch5frsfoap2lw33:
+          value: true
   fc8aca2223685a5f:
     en:
       properties:
