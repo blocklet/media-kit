@@ -1,3 +1,9 @@
+## 0.14.4 (November 04, 2025)
+
+- chore: update:deps
+- chore: bump version
+- chore: bump deps to latest
+
 ## 0.14.3 (October 30, 2025)
 
 - chore: bump deps to latest
