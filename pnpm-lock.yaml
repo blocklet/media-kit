@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@abtnode/cron': ^1.16.54-beta-20251029-055649-a9143beb
+  '@abtnode/cron': ^1.17.0-beta-20251104-112713-e947b159
   '@arcblock/did': ^1.26.3
   '@arcblock/did-ext': ^1.26.3
   '@arcblock/did-util': ^1.26.3
@@ -13,10 +13,10 @@ overrides:
   '@arcblock/validator': ^1.26.3
   '@arcblock/vc': ^1.26.3
   '@arcblock/ws': ^1.26.3
-  '@blocklet/constant': ^1.16.54-beta-20251029-055649-a9143beb
-  '@blocklet/js-sdk': ^1.16.54-beta-20251029-055649-a9143beb
-  '@blocklet/logger': ^1.16.54-beta-20251029-055649-a9143beb
-  '@blocklet/sdk': ^1.16.54-beta-20251029-055649-a9143beb
+  '@blocklet/constant': ^1.17.0-beta-20251104-112713-e947b159
+  '@blocklet/js-sdk': ^1.17.0-beta-20251104-112713-e947b159
+  '@blocklet/logger': ^1.17.0-beta-20251104-112713-e947b159
+  '@blocklet/sdk': ^1.17.0-beta-20251104-112713-e947b159
   '@mui/icons-material': ^7.1.2
   '@mui/material': ^7.1.2
   '@mui/system': ^7.1.1
@@ -96,19 +96,19 @@ importers:
         specifier: ^3.1.54
         version: 3.1.54(b0b59ba84a039cd7dc2c33ae80d9388e)
       '@blocklet/constant':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb
       '@blocklet/embed':
         specifier: ^0.2.5
         version: 0.2.5(@arcblock/ux@3.1.54(b0b59ba84a039cd7dc2c33ae80d9388e))(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@types/react@18.3.12)(react@19.1.0))(@mui/material@7.1.2(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@types/react@18.3.12)(react@19.1.0))(@types/react@18.3.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@types/react@18.3.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@blocklet/js-sdk':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb(encoding@0.1.13)
       '@blocklet/logger':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb(encoding@0.1.13)
       '@blocklet/sdk':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb(@mui/material@7.1.2(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@types/react@18.3.12)(react@19.1.0))(@types/react@18.3.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(encoding@0.1.13)
       '@blocklet/uploader':
         specifier: workspace:^
@@ -431,16 +431,16 @@ importers:
   packages/uploader-server:
     dependencies:
       '@abtnode/cron':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb
       '@blocklet/constant':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb
       '@blocklet/logger':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb(encoding@0.1.13)
       '@blocklet/sdk':
-        specifier: ^1.16.54-beta-20251029-055649-a9143beb
+        specifier: ^1.17.0-beta-20251104-112713-e947b159
         version: 1.16.54-beta-20251029-055649-a9143beb(@mui/material@7.1.2(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@emotion/styled@11.14.1(@emotion/react@11.14.0(@types/react@18.3.12)(react@19.1.0))(@types/react@18.3.12)(react@19.1.0))(@types/react@18.3.12)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(encoding@0.1.13)
       '@tus/file-store':
         specifier: 1.0.0
@@ -708,7 +708,7 @@ packages:
     resolution: {integrity: sha512-sDycG2yiT1rlMYxhoIn6f9PT0dgSnBCD4M1P4f6wHwMxCt6c/A8DaH6rfhAMbVKQKAgV8ArB6CYuGaOI7I6Miw==}
     peerDependencies:
       '@arcblock/ux': ^3.1.0
-      '@blocklet/js-sdk': ^1.16.54-beta-20251029-055649-a9143beb
+      '@blocklet/js-sdk': ^1.17.0-beta-20251104-112713-e947b159
       '@blocklet/theme': ^3.1.0
       '@emotion/react': ^11.14.0
       '@emotion/styled': ^11.14.0
@@ -1286,8 +1286,8 @@ packages:
     peerDependencies:
       '@arcblock/did-connect-react': ^3.1.2
       '@arcblock/ux': ^3.1.31
-      '@blocklet/js-sdk': ^1.16.54-beta-20251029-055649-a9143beb
-      '@blocklet/sdk': ^1.16.54-beta-20251029-055649-a9143beb
+      '@blocklet/js-sdk': ^1.17.0-beta-20251104-112713-e947b159
+      '@blocklet/sdk': ^1.17.0-beta-20251104-112713-e947b159
       react: ^19.1.0
 
   '@blocklet/embed@0.2.5':
@@ -1334,7 +1334,7 @@ packages:
     peerDependencies:
       '@arcblock/did-connect-react': ^3.1.0
       '@arcblock/ux': ^3.1.0
-      '@blocklet/js-sdk': ^1.16.54-beta-20251029-055649-a9143beb
+      '@blocklet/js-sdk': ^1.17.0-beta-20251104-112713-e947b159
       '@emotion/react': ^11.14.0
       '@emotion/styled': ^11.14.0
       '@mui/icons-material': ^7.1.2
