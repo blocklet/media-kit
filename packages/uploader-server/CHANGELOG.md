@@ -1,3 +1,7 @@
+## 0.3.10 (November 13, 2025)
+
+- chore: bump deps to latest
+
 ## 0.3.9 (November 10, 2025)
 
 - chore: update dependencies
