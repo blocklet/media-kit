@@ -9,7 +9,8 @@
       "packages/uploader-server/README.md",
       "packages/uploader/src/index.ts",
       "packages/uploader-server/src/index.ts"
-    ]
+    ],
+    "icon": "lucide:layers"
   },
   {
     "title": "Getting Started",
@@ -19,7 +20,8 @@
     "sourceIds": [
       "packages/uploader/README.md",
       "packages/uploader-server/README.md"
-    ]
+    ],
+    "icon": "lucide:rocket"
   },
   {
     "title": "Frontend Setup (@blocklet/uploader)",
@@ -54,7 +56,8 @@
       "packages/uploader/src/react/uploader.tsx",
       "packages/uploader/src/types.ts",
       "packages/uploader-server/README.md"
-    ]
+    ],
+    "icon": "lucide:book"
   },
   {
     "title": "Configuring Plugins",
@@ -109,7 +112,8 @@
     "sourceIds": [
       "packages/uploader/package.json",
       "packages/uploader-server/package.json"
-    ]
+    ],
+    "icon": "lucide:code"
   },
   {
     "title": "Frontend: @blocklet/uploader",
@@ -225,7 +229,8 @@
       "packages/uploader/README.md",
       "packages/uploader/src/react/uploader.tsx",
       "packages/uploader/src/utils.ts"
-    ]
+    ],
+    "icon": "lucide:lightbulb"
   },
   {
     "title": "Integration with Uppy",
