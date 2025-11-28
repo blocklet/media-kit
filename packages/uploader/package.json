@@ -57,7 +57,7 @@
   "author": "arcblock <blocklet@arcblock.io> https://github.com/blocklet",
   "license": "ISC",
   "dependencies": {
-    "@blocklet/ui-react": "^3.2.8",
+    "@blocklet/ui-react": "^3.2.11",
     "@lottiefiles/react-lottie-player": "^3.5.4",
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
