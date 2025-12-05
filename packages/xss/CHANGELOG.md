@@ -1,3 +1,7 @@
+## 0.3.12 (December 05, 2025)
+
+- fix: add prompt adapter for AI image generation
+
 ## 0.3.11 (November 28, 2025)
 
 - chore: bump deps to latest
