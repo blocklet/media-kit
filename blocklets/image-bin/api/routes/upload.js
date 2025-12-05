@@ -28,6 +28,7 @@ const { MEDIA_KIT_DID } = require('../libs/constants');
 const { getResourceComponents } = require('./resources');
 const env = require('../libs/env');
 const { Upload, Folder } = require('../store');
+const { buildPromptFromTemplate } = require('../libs/prompt-adapter');
 
 const { user, auth, ensureAdmin } = require('../libs/auth');
 
@@ -580,7 +581,7 @@ router.post('/folders', user, ensureAdmin, async (req, res) => {
 router.post('/image/generations', user, auth, async (req, res) => {
   const { prompt, number = 1, model = 'dall-e-2', ...rest } = req.body;
   const imageModel = new AIGNEHubImageModel({ model });
-  const result = await imageModel.invoke({ ...rest, prompt, n: parseInt(number, 10) });
+  const result = await imageModel.invoke({ ...rest, prompt: buildPromptFromTemplate(prompt), n: parseInt(number, 10) });
   res.json(result);
 });
 

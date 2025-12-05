@@ -41,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "@aigne/aigne-hub": "^0.10.11-beta.1",
+    "@aigne/aigne-hub": "^0.10.13-beta",
     "@arcblock/did": "^1.27.12",
     "@arcblock/did-connect-react": "^3.2.11",
     "@arcblock/ux": "^3.2.11",
