@@ -57,18 +57,28 @@ export function initLocalStorageServer({
       cloneUploadMetadata.metadata.filename = cloneUploadMetadata.metadata.name;
     }
 
-    // exist id but not runtime
-    if (cloneUploadMetadata.id && !cloneUploadMetadata.runtime) {
+    // exist id but not runtime, or runtime exists but absolutePath is missing/incorrect
+    if (cloneUploadMetadata.id) {
       const { id, metadata, size } = cloneUploadMetadata;
-      cloneUploadMetadata.runtime = {
-        relativePath: metadata?.relativePath,
-        absolutePath: path.join(_path, id),
-        size,
-        hashFileName: id,
-        originFileName: metadata?.filename,
-        type: metadata?.type,
-        fileType: metadata?.filetype,
-      };
+      // Always ensure runtime.absolutePath is set correctly when id exists
+      if (!cloneUploadMetadata?.runtime?.absolutePath) {
+        cloneUploadMetadata.runtime = {
+          ...cloneUploadMetadata.runtime,
+          relativePath: metadata?.relativePath || cloneUploadMetadata.runtime?.relativePath,
+          absolutePath: path.join(_path, id),
+          size: size || cloneUploadMetadata.runtime?.size,
+          hashFileName: id,
+          originFileName: metadata?.filename || cloneUploadMetadata.runtime?.originFileName,
+          type: metadata?.type || cloneUploadMetadata.runtime?.type,
+          fileType: metadata?.filetype || cloneUploadMetadata.runtime?.fileType,
+        };
+      } else {
+        // Update absolutePath if it doesn't match the expected path
+        const expectedPath = path.join(_path, id);
+        if (cloneUploadMetadata.runtime.absolutePath !== expectedPath) {
+          cloneUploadMetadata.runtime.absolutePath = expectedPath;
+        }
+      }
     }
     return cloneUploadMetadata;
   };
@@ -118,11 +128,19 @@ export function initLocalStorageServer({
     // check offset
     await rewriteMetaDataFile(uploadMetadata);
 
-    // remove EXIF from file
-    try {
-      await removeExifFromFile(uploadMetadata.runtime.absolutePath);
-    } catch (err) {
-      logger.error('failed to remove EXIF from file', err);
+    // remove EXIF from file - only for image files, skip for binary files like zip
+    const fileType = uploadMetadata.metadata?.filetype || uploadMetadata.metadata?.type || '';
+    const fileName = uploadMetadata.metadata?.filename || uploadMetadata.metadata?.name || '';
+    const fileExt = path.extname(fileName).toLowerCase();
+    const isImageFile = fileType.startsWith('image/');
+    const isBinaryFile = ['zip', 'gz', 'tgz', '7z', 'dmg', 'pkg', 'apk'].includes(fileExt.replace('.', ''));
+
+    if (isImageFile && !isBinaryFile && uploadMetadata.runtime?.absolutePath) {
+      try {
+        await removeExifFromFile(uploadMetadata.runtime.absolutePath);
+      } catch (err) {
+        logger.error('failed to remove EXIF from file', err);
+      }
     }
 
     if (_onUploadFinish) {

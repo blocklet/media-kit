@@ -57,4 +57,5 @@ export type UploaderProps = {
   dropTargetProps?: DropTarget;
   initialFiles?: any[];
   imageEditorProps?: ImageEditorOptions;
+  disableXssAttack?: boolean;
 };

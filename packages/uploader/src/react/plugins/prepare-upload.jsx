@@ -447,7 +447,9 @@ class PrepareUpload extends UIPlugin {
     await this.checkImageOrientation(uppyFile);
     await this.getPreviewFromData(uppyFile);
     await this.setHashFileName(uppyFile);
-    await this.preventXssAttack(uppyFile);
+    if (!this.opts.disableXssAttack) {
+      await this.preventXssAttack(uppyFile);
+    }
     await this.preventZipBombAttack(uppyFile);
     await this.setMetaData(uppyFile);
   };
