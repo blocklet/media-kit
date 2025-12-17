@@ -1,3 +1,7 @@
+## 0.14.16 (December 17, 2025)
+
+- fix(uploader): improve runtime path handling and EXIF removal logic
+
 ## 0.14.15 (December 15, 2025)
 
 - chore: bump deps to latest
