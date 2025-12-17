@@ -91,6 +91,7 @@ const getPluginList = (props: any) => {
     imageEditorProps = {},
     theme,
     plugins,
+    disableXssAttack
   } = props;
 
   const { companionUrl } = getUploaderEndpoint(apiPathProps);
@@ -228,6 +229,7 @@ const getPluginList = (props: any) => {
         companionUrl,
         companionHeaders,
         cropperOptions: imageEditorProps?.cropperOptions || null,
+        disableXssAttack,
       },
       alwayUse: true,
     },
