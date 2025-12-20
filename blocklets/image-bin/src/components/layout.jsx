@@ -9,17 +9,17 @@ import Header from '@blocklet/ui-react/lib/Header';
 import Container from '@mui/material/Container';
 import Footer from '@blocklet/ui-react/lib/Footer';
 import { useMemo } from 'react';
+import { joinURL } from 'ufo';
 
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
 import { UploaderProviderWrapper } from './uploader';
 // import Exporter from './exporter';
 import { useSessionContext } from '../contexts/session';
 import { hasAdminPermission, hasMediaKitAccessPermission } from '../libs/utils';
-import { joinURL } from 'ufo';
 
 export default function Layout({ title = window.blocklet.appName }) {
   const { session } = useSessionContext();
-  const pathname = window.location.pathname;
+  const { pathname } = window.location;
   const navigate = useNavigate();
   const hadLogin = !!session?.user;
   const { t } = useLocaleContext();
@@ -56,7 +56,7 @@ export default function Layout({ title = window.blocklet.appName }) {
             <Footer />
           </Box>
         );
-  }, [adminPermissionInSingleTenant, location.pathname]);
+  }, [adminPermissionInSingleTenant]);
 
   return (
     <UploaderProviderWrapper>
