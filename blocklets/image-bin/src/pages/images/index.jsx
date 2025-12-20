@@ -11,13 +11,13 @@ function ImageList() {
   const { session } = useSessionContext();
   const { tab } = useUploadContext();
   const { updateAppInfo } = useAppInfo();
-  const hadLogin = !!session?.user;
+  const hasLoggedIn = !!session?.user;
 
   useEffect(() => {
     updateAppInfo({
-      actions: hadLogin && tab === 'bucket' ? <Uploader key="uploader-addon" /> : null,
+      actions: hasLoggedIn && tab === 'bucket' ? <Uploader key="uploader-addon" /> : null,
     });
-  }, [tab, updateAppInfo, hadLogin]);
+  }, [tab, updateAppInfo, hasLoggedIn]);
 
   return (
     <Div>
