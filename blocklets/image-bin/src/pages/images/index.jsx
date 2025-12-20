@@ -2,12 +2,15 @@
 import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useAppInfo } from '@blocklet/ui-react/lib/Dashboard';
+import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
+
 import { useSessionContext } from '../../contexts/session';
 import { useUploadContext } from '../../contexts/upload';
 import Uploader from '../../components/uploader';
 import UploadHistory from '../../components/history';
 
 function ImageList() {
+  const { t } = useLocaleContext();
   const { session } = useSessionContext();
   const { tab } = useUploadContext();
   const { updateAppInfo } = useAppInfo();
@@ -15,9 +18,10 @@ function ImageList() {
 
   useEffect(() => {
     updateAppInfo({
+      description: t('nav.imagesDesc'),
       actions: hasLoggedIn && tab === 'bucket' ? <Uploader key="uploader-addon" /> : null,
     });
-  }, [tab, updateAppInfo, hasLoggedIn]);
+  }, [tab, updateAppInfo, hasLoggedIn, t]);
 
   return (
     <Div>

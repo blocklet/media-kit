@@ -40,4 +40,7 @@ export default flatten({
     copyDownloadSuccess: '复制下载链接成功',
     copySuccess: '复制链接成功',
   },
+  nav: {
+    imagesDesc: '查看、组织和管理所有项目图片、视频和资源。',
+  },
 });

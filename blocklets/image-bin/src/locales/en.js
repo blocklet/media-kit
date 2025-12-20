@@ -40,4 +40,7 @@ export default flatten({
     copyDownloadSuccess: 'Copy Download Link Success',
     copySuccess: 'Copy URL Success',
   },
+  nav: {
+    imagesDesc: 'View, organize, and manage all project images, videos, and resources in one place.',
+  },
 });
