@@ -9,17 +9,17 @@ import Header from '@blocklet/ui-react/lib/Header';
 import Container from '@mui/material/Container';
 import Footer from '@blocklet/ui-react/lib/Footer';
 import { useMemo } from 'react';
+import { joinURL } from 'ufo';
 
 import { useLocaleContext } from '@arcblock/ux/lib/Locale/context';
-import Uploader, { UploaderProviderWrapper } from './uploader';
+import { UploaderProviderWrapper } from './uploader';
 // import Exporter from './exporter';
-import { useUploadContext } from '../contexts/upload';
 import { useSessionContext } from '../contexts/session';
 import { hasAdminPermission, hasMediaKitAccessPermission } from '../libs/utils';
 
 export default function Layout({ title = window.blocklet.appName }) {
-  const { tab } = useUploadContext();
   const { session } = useSessionContext();
+  const { pathname } = window.location;
   const navigate = useNavigate();
   const hadLogin = !!session?.user;
   const { t } = useLocaleContext();
@@ -27,10 +27,6 @@ export default function Layout({ title = window.blocklet.appName }) {
   const addons = [];
 
   const adminPermissionInSingleTenant = hasAdminPermission(session?.user);
-
-  if (hadLogin && tab === 'bucket') {
-    addons.push(<Uploader key="uploader-addon" />);
-  }
 
   const hasPermission =
     hadLogin &&
@@ -51,8 +47,7 @@ export default function Layout({ title = window.blocklet.appName }) {
             />
             <Container
               sx={{
-                padding: '0px !important',
-                my: '-24px !important',
+                paddingTop: '24px',
                 height: 'calc(100vh - 64px - 68px + 46px)',
                 overflowY: 'hidden',
               }}>
@@ -82,6 +77,7 @@ export default function Layout({ title = window.blocklet.appName }) {
         <DashWrapper
           id="media-kit-layout"
           dense
+          appPath={pathname.endsWith('/admin') ? joinURL(pathname, 'images') : pathname}
           title={title}
           headerAddons={(exists) => {
             return [addons, ...exists];
@@ -130,10 +126,6 @@ const StyledDashboard = styled(Dashboard)`
 
   .dashboard-content {
     max-width: 1680px;
-    padding: 0 !important;
-    & > div {
-      padding: 0 !important;
-    }
   }
 
   // footer

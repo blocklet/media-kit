@@ -314,7 +314,6 @@ export default function Uploads() {
       style={{
         height: '100%',
         overflowY: 'auto',
-        padding: '24px',
       }}>
       {!!tabs.length && (
         <Tabs

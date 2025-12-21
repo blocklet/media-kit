@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.14.16",
+  "version": "0.14.17",
   "private": true,
   "scripts": {
     "dev": "blocklet dev",
@@ -42,11 +42,11 @@
   },
   "dependencies": {
     "@aigne/aigne-hub": "^0.10.15",
-    "@arcblock/did": "^1.27.14",
-    "@arcblock/did-connect-react": "^3.2.13",
-    "@arcblock/ux": "^3.2.13",
+    "@arcblock/did": "^1.27.15",
+    "@arcblock/did-connect-react": "^3.2.19",
+    "@arcblock/ux": "^3.2.19",
     "@blocklet/constant": "^1.17.5",
-    "@blocklet/embed": "^0.3.4",
+    "@blocklet/embed": "^0.3.5",
     "@blocklet/js-sdk": "^1.17.5",
     "@blocklet/logger": "^1.17.5",
     "@blocklet/sdk": "^1.17.5",
@@ -56,7 +56,7 @@
     "@iconify/react": "^5.0.2",
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
-    "@ocap/client": "^1.27.14",
+    "@ocap/client": "^1.27.15",
     "compression": "^1.7.5",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "@arcblock/eslint-config": "^0.3.3",
-    "@blocklet/ui-react": "^3.2.13",
+    "@blocklet/ui-react": "^3.2.19",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@vitejs/plugin-react": "^4.6.0",

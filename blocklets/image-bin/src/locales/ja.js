@@ -40,4 +40,7 @@ export default flatten({
     copyDownloadSuccess: 'ダウンロードリンクのコピーに成功しました',
     copySuccess: 'URLのコピーに成功しました',
   },
+  nav: {
+    imagesDesc: 'プロジェクトの画像、ビデオ、およびリソースを1か所で表示、整理、管理します。',
+  },
 });

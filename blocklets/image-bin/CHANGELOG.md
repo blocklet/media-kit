@@ -1,3 +1,7 @@
+## 0.14.17 (December 20, 2025)
+
+- feat: support app shell in dashboard
+
 ## 0.14.16 (December 17, 2025)
 
 - fix(uploader): improve runtime path handling and EXIF removal logic
