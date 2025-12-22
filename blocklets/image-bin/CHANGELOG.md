@@ -1,3 +1,7 @@
+## 0.14.18 (December 22, 2025)
+
+- feat(uploader): add headless API for programmatic control
+
 ## 0.14.17 (December 20, 2025)
 
 - feat: support app shell in dashboard

@@ -1,4 +1,4 @@
-import { UploaderProps } from '../types';
+import { UploaderProps, UploaderRef } from '../types';
 import keyBy from 'lodash/keyBy';
 import { useReactive, useRequest } from 'ahooks';
 import { createRoot } from 'react-dom/client';
@@ -914,6 +914,81 @@ export function Uploader({
     }, 500);
   }
 
+  const addFilesToUppy = (files: File[], source: string, autoUpload: boolean) => {
+    files.forEach((file) => {
+      state.uppy.addFile({
+        name: file.name,
+        type: file.type,
+        data: file,
+        source,
+      });
+    });
+    if (autoUpload) {
+      state.uppy.upload();
+    }
+  };
+
+  const triggerFileInput = (options?: { accept?: string; multiple?: boolean; autoUpload?: boolean }) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.style.display = 'none';
+    input.accept = options?.accept ?? state.restrictions?.allowedFileTypes?.join(',') ?? '';
+    input.multiple = options?.multiple ?? state.restrictions?.maxNumberOfFiles !== 1;
+
+    input.onchange = (e: Event) => {
+      const target = e.target as HTMLInputElement;
+      const files = Array.from(target.files || []);
+      addFilesToUppy(files, 'local', options?.autoUpload !== false);
+      document.body.removeChild(input);
+    };
+
+    document.body.appendChild(input);
+    input.click();
+  };
+
+  const getDropzoneProps = (options?: { autoUpload?: boolean; noClick?: boolean }) => {
+    const autoUpload = options?.autoUpload !== false;
+    let dragCounter = 0;
+
+    return {
+      onDragEnter: (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter++;
+        if (e.dataTransfer?.items?.length) {
+          e.currentTarget.setAttribute('data-dragging', 'true');
+        }
+      },
+      onDragLeave: (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dragCounter--;
+        if (dragCounter === 0) {
+          e.currentTarget.removeAttribute('data-dragging');
+        }
+      },
+      onDragOver: (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+      },
+      onDrop: (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.currentTarget.removeAttribute('data-dragging');
+        dragCounter = 0;
+        const files = Array.from(e.dataTransfer?.files || []);
+        if (files.length) {
+          addFilesToUppy(files, 'drop', autoUpload);
+        }
+      },
+      onClick: options?.noClick
+        ? undefined
+        : () => {
+            triggerFileInput({ autoUpload });
+          },
+    };
+  };
+
   useImperativeHandle(
     ref,
     () =>
@@ -921,11 +996,18 @@ export function Uploader({
         getUploader: () => state.uppy,
         open,
         close,
-      } as {
-        getUploader: Function;
-        open: Function;
-        close: Function;
-      })
+        // Headless API
+        triggerFileInput,
+        getDropzoneProps,
+        addFiles: (files: File[], options?: { autoUpload?: boolean }) => {
+          addFilesToUppy(files, 'local', options?.autoUpload !== false);
+        },
+        upload: () => state.uppy.upload(),
+        getProgress: () => state.uppy.getState().totalProgress,
+        getFiles: () => state.uppy.getFiles(),
+        removeFile: (fileId: string) => state.uppy.removeFile(fileId),
+        cancelAll: () => state.uppy.cancelAll(),
+      } as UploaderRef)
   );
 
   const Wrapper = popup ? Modal : Fragment;

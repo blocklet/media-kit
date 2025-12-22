@@ -1,3 +1,7 @@
+## 0.3.17 (December 22, 2025)
+
+- feat(uploader): add headless API for programmatic control
+
 ## 0.3.16 (December 17, 2025)
 
 - fix(uploader): improve runtime path handling and EXIF removal logic
