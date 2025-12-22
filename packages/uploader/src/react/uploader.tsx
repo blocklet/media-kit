@@ -923,6 +923,7 @@ export function Uploader({
         source,
       });
     });
+
     if (autoUpload) {
       state.uppy.upload();
     }
@@ -996,17 +997,11 @@ export function Uploader({
         getUploader: () => state.uppy,
         open,
         close,
+
         // Headless API
         triggerFileInput,
         getDropzoneProps,
-        addFiles: (files: File[], options?: { autoUpload?: boolean }) => {
-          addFilesToUppy(files, 'local', options?.autoUpload !== false);
-        },
-        upload: () => state.uppy.upload(),
-        getProgress: () => state.uppy.getState().totalProgress,
-        getFiles: () => state.uppy.getFiles(),
-        removeFile: (fileId: string) => state.uppy.removeFile(fileId),
-        cancelAll: () => state.uppy.cancelAll(),
+        addFilesToUppy,
       } as UploaderRef)
   );
 
