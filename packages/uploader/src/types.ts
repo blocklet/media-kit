@@ -16,28 +16,12 @@ export interface DropzoneProps {
 }
 
 export type UploaderRef = {
-  /** 获取底层 Uppy 实例 */
   getUploader: () => Uppy;
-  /** 打开上传器 (Dashboard) */
   open: (pluginName?: string) => void;
-  /** 关闭上传器 */
   close: () => void;
-  /** 触发系统文件选择器 */
   triggerFileInput: (options?: { accept?: string; multiple?: boolean; autoUpload?: boolean }) => void;
-  /** 获取拖拽区域 props，绑定到元素即可支持拖拽+点击上传 */
   getDropzoneProps: (options?: { autoUpload?: boolean; noClick?: boolean }) => DropzoneProps;
-  /** 批量添加文件 */
-  addFiles: (files: File[], options?: { autoUpload?: boolean }) => void;
-  /** 开始上传 */
-  upload: () => Promise<any>;
-  /** 获取当前总进度 0-100 */
-  getProgress: () => number;
-  /** 获取当前文件列表 */
-  getFiles: () => UppyFile[];
-  /** 移除指定文件 */
-  removeFile: (fileId: string) => void;
-  /** 取消所有上传 */
-  cancelAll: () => void;
+  addFilesToUppy: (files: File[], source: string, autoUpload: boolean) => void;
 };
 
 export type UploaderProps = {
