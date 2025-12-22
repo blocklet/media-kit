@@ -4,14 +4,14 @@ import type { DashboardOptions } from '@uppy/dashboard';
 import type { TusOptions } from '@uppy/tus';
 import type { ImageEditorOptions } from '@uppy/image-editor';
 import type DropTarget from '@uppy/drop-target';
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, DragEvent } from 'react';
 import type { SxProps, Theme } from '@mui/material/styles';
 
 export interface DropzoneProps {
-  onDragEnter: (e: React.DragEvent) => void;
-  onDragLeave: (e: React.DragEvent) => void;
-  onDragOver: (e: React.DragEvent) => void;
-  onDrop: (e: React.DragEvent) => void;
+  onDragEnter: (e: DragEvent) => void;
+  onDragLeave: (e: DragEvent) => void;
+  onDragOver: (e: DragEvent) => void;
+  onDrop: (e: DragEvent) => void;
   onClick?: () => void;
 }
 
