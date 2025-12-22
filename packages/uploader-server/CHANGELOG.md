@@ -1,4 +1,4 @@
-## 0.3.17 (December 22, 2025)
+## 0.3.18 (December 22, 2025)
 
 - feat(uploader): add headless API for programmatic control
 
