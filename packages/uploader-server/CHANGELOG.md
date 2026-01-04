@@ -1,3 +1,7 @@
+## 0.3.19 (January 04, 2026)
+
+- chore: update deps
+
 ## 0.3.18 (December 22, 2025)
 
 - feat(uploader): add headless API for programmatic control
