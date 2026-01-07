@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.0.1",
+  "version": "0.14.19",
   "private": true,
   "scripts": {
     "lint": "pnpm -r lint",

@@ -1,128 +1,55 @@
 /* eslint-disable no-console */
-import { execSync } from "child_process";
-import { $, chalk, fs, path, YAML } from "zx";
-import prompts from "prompts";
+/* eslint-disable import/no-extraneous-dependencies */
+import { execSync } from 'child_process';
+import path from 'path';
+import { $, chalk, fs } from 'zx';
 
-const monthMap = {
-  一月: "January",
-  二月: "February",
-  三月: "March",
-  四月: "April",
-  五月: "May",
-  六月: "June",
-  七月: "July",
-  八月: "August",
-  九月: "September",
-  十月: "October",
-  十一月: "November",
-  十二月: "December",
-};
-
-const toEnglishDate = (log) =>
-  log.replace(/[\u4e00-\u9fa5]+月/g, (match) => monthMap[match]);
-
-const file = fs.readFileSync("pnpm-workspace.yaml", "utf8");
-const data = YAML.parse(file);
-const dirs = [];
-for (const pattern of data.packages) {
-  const prefix = pattern.replace("/**", "");
-  try {
-    const folders = fs
-      .readdirSync(prefix)
-      .map((folder) => {
-        if (folder.startsWith(".")) {
-          return;
-        }
-        return `${prefix}/${folder}`;
-      })
-      .filter(Boolean);
-
-    dirs.push(...folders);
-  } catch (error) {
-    // ignore error
+execSync(
+  'bumpp --no-tag --no-commit --no-push package.json blocklets/*/package.json packages/*/package.json frameworks/*/package.json',
+  {
+    stdio: 'inherit',
   }
-}
+);
 
-const canSelectDirs = dirs.map((item) => {
-  return {
-    title: item,
-    value: item,
-  };
+const { version } = await fs.readJSON('package.json');
+await fs.writeFileSync('version', version);
+
+console.log(chalk.greenBright(`[info]: start to modify blocklets version to ${version}`));
+const dirPath = path.join(__dirname, '../blocklets');
+let pathList = await fs.readdirSync(dirPath);
+// Filter out .DS_Store and other non-directory files
+pathList = pathList.filter((item) => {
+  const fullPath = `${dirPath}/${item}`;
+  return fs.statSync(fullPath).isDirectory();
 });
+pathList = pathList.map((item) => `${dirPath}/${item}`);
 
-// select dir
-const dirResponse = await prompts({
-  type: "multiselect",
-  name: "value",
-  message: "Pick a directory to bump version: ",
-  choices: canSelectDirs,
-});
-
-const dateRes = await $`export LANG="en_US.UTF-8" && date +'%B %d, %Y'`;
-const date = dateRes.stdout.trim();
-
-let newChangelog = "";
+let newChangelog = '';
+const now = new Date();
+const currentDate = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+const title = `## ${version} (${currentDate})`;
 
 try {
-  const gitRes = await $`git log --pretty=format:"- %s" "origin/master"...HEAD`;
+  const gitRes = await $`git log --pretty=format:"- %s" "master"...HEAD`;
   newChangelog = gitRes.stdout.trim();
 } catch {
-  console.error(
-    chalk.redBright("Could not get git log, please write CHANGELOG.md.")
-  );
+  console.error(chalk.redBright('Could not get git log, please write changelog manually.'));
 }
 
-async function updateSelectedDir(selectedDir) {
-  const packageJsonPath = path.join(selectedDir, "package.json");
-  const ymlPath = path.join(selectedDir, "blocklet.yml");
-  const changelogPath = path.join(selectedDir, "CHANGELOG.md");
-  const versionPath = path.join(selectedDir, "version");
-
-  // write changelog
-  const changelogResponse = await prompts({
-    type: "text",
-    name: "value",
-    message: "Please write changelog:",
-    initial: newChangelog,
-  });
-
-  execSync(`bumpp ${packageJsonPath}`, {
-    stdio: "inherit",
-  });
-
-  console.log(chalk.greenBright(`[info]: ${packageJsonPath} modified.`));
-
-  const { version } = await fs.readJSON(packageJsonPath);
-
-  try {
-    const blockletYaml = await fs.readFileSync(ymlPath, "utf8");
-    const yamlConfig = YAML.parse(blockletYaml);
-    yamlConfig.version = version;
-    fs.writeFileSync(ymlPath, YAML.stringify(yamlConfig, 2));
-    console.log(chalk.greenBright(`[info]: ${ymlPath} modified.`));
-  } catch (error) {
-    console.error(chalk.yellowBright(`[warn]: Could not find ${ymlPath}.`));
-  }
-
-  const title = `## ${version} (${date})`;
-
-  await fs.ensureFile(changelogPath);
-  const oldChangelog = await fs.readFile(changelogPath, "utf8");
-  const changelog = [title, changelogResponse.value, oldChangelog]
-    .filter((item) => !!item)
-    .join("\n\n");
-
-  await fs.writeFile(changelogPath, toEnglishDate(changelog));
-  console.log(chalk.greenBright(`[info]: ${changelogPath} modified.`));
-
-  await fs.writeFileSync(versionPath, version);
-  console.log(chalk.greenBright(`[info]: ${versionPath} modified.`));
-
-  // execSync(`code ${changelogPath}`, {
-  //   stdio: "inherit",
-  // });
+for (const ymlDir of pathList) {
+  // eslint-disable-next-line no-await-in-loop
+  await $`cd ${ymlDir} && blocklet version ${version}`;
 }
 
-const selectedDirList = dirResponse.value;
+const rootPath = process.cwd();
+await fs.ensureFile(`${rootPath}/CHANGELOG.md`);
+const oldChangelog = await fs.readFile(`${rootPath}/CHANGELOG.md`, 'utf8');
+const changelog = [title, newChangelog, oldChangelog].filter((item) => !!item).join('\n\n');
+await fs.writeFile(`${rootPath}/CHANGELOG.md`, changelog);
+console.log(`\nNow you can make adjustments to ${chalk.cyan('CHANGELOG.md')}. Then press enter to continue.`);
 
-Promise.all(selectedDirList.map(updateSelectedDir));
+console.log(chalk.greenBright('[info]: all blocklets version modified.'));
+
+process?.stdin?.setRawMode(true);
+process?.stdin?.resume();
+process?.stdin?.on('data', process.exit.bind(process, 0));
