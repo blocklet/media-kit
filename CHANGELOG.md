@@ -93,7 +93,7 @@
 
 ## 0.13.31 (September 30, 2025)
 
-fix: enhance XSS filtering with recursive sanitization
+- fix: enhance XSS filtering with recursive sanitization
 
 ## 0.13.30 (September 29, 2025)
 
@@ -126,7 +126,7 @@ fix: enhance XSS filtering with recursive sanitization
 
 ## 0.13.23 (September 05, 2025)
 
-chore: bump deps to fix csrf token mismatch v2
+- chore: bump deps to fix csrf token mismatch v2
 
 ## 0.13.22 (September 02, 2025)
 
@@ -237,7 +237,7 @@ chore: bump deps to fix csrf token mismatch v2
 
 ## 0.12.5 (June 24, 2025)
 
-fix: fix image paste upload issue in Safari
+- fix: fix image paste upload issue in Safari
 
 ## 0.12.4 (June 06, 2025)
 
