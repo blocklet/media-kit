@@ -1,6 +1,6 @@
 {
   "name": "image-bin",
-  "version": "0.0.1",
+  "version": "0.14.20",
   "private": true,
   "scripts": {
     "lint": "pnpm -r lint",
@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@arcblock/eslint-config": "0.3.3",
-    "bumpp": "^7.2.0",
+    "bumpp": "^10.3.2",
     "eslint": "^8.57.1",
     "husky": "^8.0.3",
     "prettier": "^2.8.8",
