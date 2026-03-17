@@ -53,4 +53,22 @@ export async function cleanupExpiredSessions(env: Env): Promise<void> {
       .set({ status: 'aborted' })
       .where(eq(uploadSessions.id, session.id));
   }
+
+  // Clean up AI-generated temp images (tmp/ai/*) older than 24 hours
+  await cleanupTempAiImages(env);
+}
+
+async function cleanupTempAiImages(env: Env): Promise<void> {
+  const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+  const listed = await env.R2_UPLOADS.list({ prefix: 'tmp/ai/' });
+  for (const obj of listed.objects) {
+    if (obj.uploaded < cutoff) {
+      try {
+        await env.R2_UPLOADS.delete(obj.key);
+      } catch {
+        // ignore
+      }
+    }
+  }
 }

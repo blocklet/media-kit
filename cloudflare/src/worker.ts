@@ -86,31 +86,30 @@ app.post('/api/image/generations', async (c) => {
     }),
   });
   const data: any = await res.json();
-  return c.json(data, res.status as any);
-});
 
-// GET /api/image/proxy — Proxy AIGNE Hub generated images
-app.get('/api/image/proxy', async (c) => {
-  const url = c.req.query('url');
-  if (!url) return c.json({ error: 'url required' }, 400);
-
-  // Only allow proxying from AIGNE Hub
-  const hubBase = c.env.AIGNE_HUB_URL || 'https://hub.aigne.io';
-  if (!url.startsWith(hubBase)) {
-    return c.json({ error: 'Invalid URL' }, 403);
+  // Download hub images to R2 temp directory for fast local access
+  // Avoids CORS + hub connection instability. Cleaned up by cron after 24h.
+  if (data.images) {
+    data.images = await Promise.all(
+      data.images.map(async (img: any) => {
+        if (!img.url) return img;
+        try {
+          const imgRes = await fetch(img.url);
+          if (!imgRes.ok || !imgRes.body) return img;
+          const ext = (img.url.split('.').pop()?.split('?')[0]) || 'png';
+          const key = `tmp/ai/${crypto.randomUUID()}.${ext}`;
+          await c.env.R2_UPLOADS.put(key, imgRes.body, {
+            httpMetadata: { contentType: img.mimeType || 'image/png' },
+          });
+          return { ...img, url: `/uploads/${key}` };
+        } catch {
+          return img;
+        }
+      })
+    );
   }
 
-  const res = await fetch(url, {
-    cf: { cacheTtl: 0 },  // Don't use CF cache for hub images (they may be temporary)
-  } as RequestInit);
-  if (!res.ok) return c.json({ error: `Upstream error: ${res.status}` }, res.status as any);
-
-  return new Response(res.body, {
-    headers: {
-      'Content-Type': res.headers.get('content-type') || 'image/png',
-      'Cache-Control': 'no-cache',  // AI generated images should not be cached by browser
-    },
-  });
+  return c.json(data, res.status as any);
 });
 
 // Health check
