@@ -1,0 +1,33 @@
+{
+  "name": "media-kit-worker",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "build:frontend": "cd frontend && npx vite build",
+    "predeploy": "npm run build:frontend",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate:local": "wrangler d1 migrations apply media-kit-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply media-kit-db --remote",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "aws4fetch": "^1.0.18",
+    "drizzle-orm": "^0.31.0",
+    "fast-xml-parser": "^4.3.0",
+    "hono": "^4.4.0",
+    "js-md5": "^0.8.3"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "~0.5.41",
+    "@cloudflare/workers-types": "^4.20240529.0",
+    "drizzle-kit": "^0.22.0",
+    "typescript": "^5.5.0",
+    "vitest": "~2.1.9",
+    "wrangler": "^3.60.0"
+  }
+}

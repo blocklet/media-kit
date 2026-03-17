@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Kit</title>
+    <script>
+      // Must be set before any module loads — some modules read window.blocklet at top level
+      window.blocklet = {
+        prefix: '/',
+        appName: 'Media Kit',
+        appDescription: 'Media asset management',
+        appLogo: '',
+        version: '1.0.0',
+        status: 'running',
+        appUrl: window.location.origin,
+        tenantMode: 'single',
+        did: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
+        componentId: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
+        CDN_HOST: '',
+        UNSPLASH_KEY: '',
+        componentMountPoints: [{
+          title: 'Media Kit',
+          name: 'image-bin',
+          did: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9',
+          version: '1.0.0',
+          status: 'running',
+          mountPoint: '/',
+        }],
+        preferences: {
+          extsInput: '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico',
+          maxUploadSize: '500MB',
+          useAiImage: true,
+        },
+        navigation: [],
+        theme: {},
+        languages: [
+          { code: 'en', name: 'English' },
+          { code: 'zh', name: '简体中文' },
+        ],
+      };
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
