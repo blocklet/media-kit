@@ -42,20 +42,10 @@ export default defineConfig({
       '@blocklet/ui-react/lib/Footer': join(shimDir, 'blocklet-ui-react-footer.tsx'),
       '@blocklet/ui-react/lib/ComponentInstaller': join(shimDir, 'blocklet-ui-react.tsx'),
 
-      // @arcblock/* shims (each needs its own file for correct default exports)
+      // @arcblock/did-connect-react shims (depends on Blocklet Server session API)
       '@arcblock/did-connect-react/lib/Session': join(shimDir, 'did-connect-react-session.tsx'),
       '@arcblock/did-connect-react/lib/Button': join(shimDir, 'did-connect-react-button.tsx'),
-      '@arcblock/ux/lib/Toast': join(shimDir, 'ux-toast.tsx'),
-      '@arcblock/ux/lib/Center': join(shimDir, 'ux-center.tsx'),
-      '@arcblock/ux/lib/Config': join(shimDir, 'ux-config.tsx'),
-      '@arcblock/ux/lib/withTracker': join(shimDir, 'ux-with-tracker.tsx'),
-      '@arcblock/ux/lib/Locale/context': join(shimDir, 'ux-locale-context.tsx'),
-      '@arcblock/ux/lib/Result': join(shimDir, 'ux-result.tsx'),
-      '@arcblock/ux/lib/Button': join(shimDir, 'ux-button.tsx'),
-      '@arcblock/ux/lib/SplitButton': join(shimDir, 'ux-split-button.tsx'),
-      '@arcblock/ux/lib/Dialog': join(shimDir, 'ux-dialog.tsx'),
-      '@arcblock/ux/lib/Empty': join(shimDir, 'ux-empty.tsx'),
-      '@arcblock/did': join(shimDir, 'arcblock-did.ts'),
+      // @arcblock/ux and @arcblock/did — use real packages (no Blocklet Server dependency)
 
       // Node.js polyfill
       path: 'path-browserify',

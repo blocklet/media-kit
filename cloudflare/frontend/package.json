@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arcblock/did": "^1.27.16",
+    "@arcblock/ux": "^3.3.9",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@lottiefiles/react-lottie-player": "^3.5.4",
