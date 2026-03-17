@@ -86,7 +86,41 @@ app.post('/api/image/generations', async (c) => {
     }),
   });
   const data: any = await res.json();
+
+  // Rewrite hub image URLs to go through our proxy (avoids CORS/connection issues)
+  if (data.images) {
+    data.images = data.images.map((img: any) => {
+      if (img.url) {
+        // /api/image/proxy?url=<encoded-hub-url>
+        img.url = `/api/image/proxy?url=${encodeURIComponent(img.url)}`;
+      }
+      return img;
+    });
+  }
+
   return c.json(data, res.status as any);
+});
+
+// GET /api/image/proxy — Proxy AIGNE Hub generated images
+app.get('/api/image/proxy', async (c) => {
+  const url = c.req.query('url');
+  if (!url) return c.json({ error: 'url required' }, 400);
+
+  // Only allow proxying from AIGNE Hub
+  const hubBase = c.env.AIGNE_HUB_URL || 'https://hub.aigne.io';
+  if (!url.startsWith(hubBase)) {
+    return c.json({ error: 'Invalid URL' }, 403);
+  }
+
+  const res = await fetch(url);
+  if (!res.ok) return c.json({ error: `Upstream error: ${res.status}` }, res.status as any);
+
+  return new Response(res.body, {
+    headers: {
+      'Content-Type': res.headers.get('content-type') || 'image/png',
+      'Cache-Control': 'public, max-age=86400',
+    },
+  });
 });
 
 // Health check
