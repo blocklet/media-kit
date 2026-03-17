@@ -1,3 +1,5 @@
+> **注意**：本文为迁移改动的历史记录，最终实现以代码和 README.md 为准。
+
 # Media Kit — Cloudflare Workers 迁移改动总结
 
 ## 一、背景

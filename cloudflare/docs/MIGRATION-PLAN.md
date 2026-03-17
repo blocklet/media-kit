@@ -1,3 +1,5 @@
+> **注意**：本文为迁移设计阶段的参考文档，最终实现以代码和 README.md 为准。
+
 # Media Kit Cloudflare Migration Plan v6
 
 > Integrated from Media Kit Owner + Cloudflare Expert + Cross-Model Review (Claude Opus 4.6 + GPT-5.4).
@@ -146,7 +148,8 @@
 | GET | `/api/uploader/status` | None | 上传器配置（兼容现有前端响应 schema） | 🔄 Adapt |
 | GET | `/api/unsplash/search` | user + auth | Unsplash 搜索（hotlink 模式） | 🔧 New |
 | POST | `/api/unsplash/track-download` | user + auth | 触发 Unsplash download tracking | 🔧 New |
-| POST | `/api/url/import` | user + auth | 从 URL 导入文件 | 🔧 New |
+| POST | `/api/url/import` | user + auth | 从 URL 导入文件 | ❌ 未实现 |
+| GET | `/api/folders` | user | 列出所有文件夹 | 🔄 Adapt |
 
 #### Group C: Drop
 

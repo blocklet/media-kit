@@ -21,7 +21,7 @@ wrangler login
 wrangler d1 create media-kit-db
 ```
 
-输出中的 `database_id` 填入 `wrangler.toml` 第 20 行。
+输出中的 `database_id` 填入 `wrangler.toml` 的 `[[d1_databases]]` 节的 `database_id`。
 
 ### 3. 创建 R2 Bucket
 
@@ -92,8 +92,8 @@ npm run deploy
 
 等价于：
 ```bash
-cd frontend && npx vite build   # 构建前端到 public/
-cd .. && wrangler deploy         # 部署 Worker + 静态资源
+cd cloudflare/frontend && npx vite build   # 构建前端到 cloudflare/public/
+cd cloudflare && wrangler deploy           # 部署 Worker + 静态资源
 ```
 
 部署后访问 `https://media-kit.<your-subdomain>.workers.dev`
@@ -187,7 +187,7 @@ cloudflare/
   src/                    # CF Worker 后端（Hono + D1 + R2）
     worker.ts             # 入口：路由 + AIGNE Hub 代理
     routes/
-      upload.ts           # 上传：presign / proxy-put / direct / confirm
+      upload.ts           # 上传：presign / proxy-put（开发模式代理上传） / direct（FormData 上传） / confirm
       serve.ts            # 文件服务：R2 → 响应（生产用 cf.image）
       folders.ts          # 文件夹 CRUD
       status.ts           # Uploader 配置

@@ -15,6 +15,10 @@ const app = new Hono<HonoEnv>();
 // Global middleware
 // TODO: restrict CORS origin to actual deployment domain when auth is implemented
 app.use('*', cors());
+// TODO: D1 write consistency — When Drizzle ORM adds support for D1's withSession API,
+// wrap write-path requests with `c.env.DB.withSession("first-primary")` to ensure
+// read-after-write consistency. Without this, D1 replicas may serve stale reads
+// immediately after writes (e.g., confirm then list may miss the new upload).
 app.use('*', async (c, next) => {
   const db = drizzle(c.env.DB);
   c.set('db', db);

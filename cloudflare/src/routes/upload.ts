@@ -5,9 +5,6 @@ import { uploads, uploadTags, uploadSessions, folders } from '../db/schema';
 import {
   createS3Client,
   generatePresignedPutUrl,
-  s3CreateMultipartUpload,
-  s3CompleteMultipartUpload,
-  s3AbortMultipartUpload,
   s3ListParts,
 } from '../utils/s3';
 import { streamMD5, detectMimeType, sanitizeSvg } from '../utils/hash';
@@ -79,7 +76,10 @@ uploadRoutes.post('/uploads/presign', async (c) => {
   const isMultipart = size >= MULTIPART_THRESHOLD;
 
   if (isMultipart) {
-    const uploadId = await s3CreateMultipartUpload(s3, c.env, tempKey, mimetype);
+    const multipartUpload = await c.env.R2_UPLOADS.createMultipartUpload(tempKey, {
+      httpMetadata: mimetype ? { contentType: mimetype } : undefined,
+    });
+    const uploadId = multipartUpload.uploadId;
 
     let partSize = DEFAULT_PART_SIZE;
     let partCount = Math.ceil(size / partSize);
@@ -384,8 +384,8 @@ uploadRoutes.post('/uploads/multipart/complete', async (c) => {
     return c.json({ error: 'Session is not a multipart upload' }, 400);
   }
 
-  const s3 = createS3Client(c.env);
-  await s3CompleteMultipartUpload(s3, c.env, session.key, session.uploadId, parts);
+  const multipart = c.env.R2_UPLOADS.resumeMultipartUpload(session.key, session.uploadId);
+  await multipart.complete(parts.map(p => ({ partNumber: p.partNumber, etag: p.etag })));
 
   return c.json({ status: 'assembled' });
 });
@@ -406,8 +406,8 @@ uploadRoutes.post('/uploads/multipart/abort', async (c) => {
   }
 
   if (session.uploadId) {
-    const s3 = createS3Client(c.env);
-    await s3AbortMultipartUpload(s3, c.env, session.key, session.uploadId);
+    const multipart = c.env.R2_UPLOADS.resumeMultipartUpload(session.key, session.uploadId);
+    await multipart.abort();
   }
 
   await db
@@ -461,7 +461,7 @@ uploadRoutes.put('/uploads/proxy-put/:sessionId', async (c) => {
     return c.json({ error: 'Session not found or not active' }, 400);
   }
 
-  const body = await c.req.arrayBuffer();
+  const body = c.req.raw.body;
   const contentType = c.req.header('content-type') || 'application/octet-stream';
 
   await c.env.R2_UPLOADS.put(session.key, body, {
@@ -477,7 +477,7 @@ uploadRoutes.post('/uploads/direct', async (c) => {
   const user = c.get('user');
 
   const formData = await c.req.formData();
-  const file = formData.get('file') as File | null;
+  const file = formData.get('file') as unknown as File | null;
   const folderId = (formData.get('folderId') as string) || '';
   const tags = (formData.get('tags') as string) || '';
 

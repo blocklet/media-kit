@@ -108,6 +108,9 @@ export function sanitizeSvg(svgContent: string): string {
   // Remove script tags and their content
   let sanitized = svgContent.replace(/<script[\s\S]*?<\/script>/gi, '');
 
+  // Remove style blocks (can contain CSS-based attacks)
+  sanitized = sanitized.replace(/<style[\s\S]*?<\/style>/gi, '');
+
   // Remove on* event attributes
   sanitized = sanitized.replace(/\s+on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
 
@@ -115,8 +118,9 @@ export function sanitizeSvg(svgContent: string): string {
   sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href=""');
   sanitized = sanitized.replace(/xlink:href\s*=\s*["']javascript:[^"']*["']/gi, 'xlink:href=""');
 
-  // Remove data: URLs (potential XSS vector)
+  // Remove data: URLs (potential XSS vector) from both href and xlink:href
   sanitized = sanitized.replace(/href\s*=\s*["']data:[^"']*["']/gi, 'href=""');
+  sanitized = sanitized.replace(/xlink:href\s*=\s*["']data:[^"']*["']/gi, 'xlink:href=""');
 
   // Remove foreignObject (can embed arbitrary HTML)
   sanitized = sanitized.replace(/<foreignObject[\s\S]*?<\/foreignObject>/gi, '');

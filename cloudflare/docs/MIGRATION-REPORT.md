@@ -1,3 +1,5 @@
+> **注意**：本文为迁移设计阶段的参考文档，最终实现以代码和 README.md 为准。
+
 # Media Kit 迁移到 Cloudflare 方案报告
 
 > 2026 年 3 月 16 日 | 版本 6
@@ -29,7 +31,7 @@ Media Kit（又名 image-bin）是 ArcBlock 的媒体资产管理服务，目前
 | CDN 分发 | 手动 CDN_HOST 替换 | Cloudflare CDN 原生集成 |
 | 用户认证 | DID 钱包 + 组件签名 | 默认放行（预留 DID），待 Shijun 提供方案 |
 | 服务间通信 | Blocklet `component.call` | Cloudflare Service Binding |
-| 前端托管 | Blocklet 内嵌 | Cloudflare Pages |
+| 前端托管 | Blocklet 内嵌 | Cloudflare Workers Static Assets（与 Worker 同部署） |
 
 > **产品范围变更**：断点续传粒度从 TUS 的字节级降为分片级（最小 5MB）。用户刷新页面后仍可恢复未完成的上传，但恢复粒度是整个分片而非字节偏移。
 
@@ -65,10 +67,10 @@ Media Kit（又名 image-bin）是 ArcBlock 的媒体资产管理服务，目前
     │ （私有）    │ │ （SQLite）│ │ 连接其他 Worker │
     └────────────┘ └──────────┘ └───────────────┘
 
-    ┌──────────────────┐
-    │ Cloudflare Pages  │
-    │  React 前端        │
-    └──────────────────┘
+    ┌────────────────────────────────────────────┐
+    │ Cloudflare Workers Static Assets（与 Worker 同部署）│
+    │  React 前端                                        │
+    └────────────────────────────────────────────┘
 ```
 
 这里有一个**重要的安全约束**：R2 存储桶不开放公共访问。所有文件请求都必须经过 Worker，Worker 会对图片自动应用 `cf.image { metadata: 'none' }`，确保 EXIF 信息在任何情况下都被移除——这是产品对用户隐私的承诺。
@@ -151,7 +153,7 @@ Media Kit（又名 image-bin）是 ArcBlock 的媒体资产管理服务，目前
 
 Media Kit 承诺自动移除所有图片的 EXIF 元数据（包含拍摄地点、设备信息等隐私数据）。在 Cloudflare 上，这通过 Worker 的 `cf.image` 参数实现。
 
-**工作方式**：当用户请求一张图片时，Worker 检测到文件类型是图片后，会通过一个 WAF 保护的 R2 自定义域名获取原始文件，同时附加 `cf.image { metadata: 'none' }` 参数。Cloudflare 的 Image Resizing 服务会在返回图片前自动剥离所有元数据。
+**工作方式**：当用户请求一张图片时，Worker 检测到文件类型是图片后，会通过 R2 Origin Domain 获取原始文件（该域名通过 IP Access Rule 限制仅 Cloudflare 边缘 IP 可访问），同时附加 `cf.image { metadata: 'none' }` 参数。Cloudflare 的 Image Resizing 服务会在返回图片前自动剥离所有元数据。
 
 如果用户还传了宽高参数（如 `?w=200&h=150`），Worker 会同时传入尺寸参数，实现实时缩放。
 
