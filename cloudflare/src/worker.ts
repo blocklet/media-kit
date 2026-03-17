@@ -86,18 +86,6 @@ app.post('/api/image/generations', async (c) => {
     }),
   });
   const data: any = await res.json();
-
-  // Rewrite hub image URLs to go through our proxy (avoids CORS/connection issues)
-  if (data.images) {
-    data.images = data.images.map((img: any) => {
-      if (img.url) {
-        // /api/image/proxy?url=<encoded-hub-url>
-        img.url = `/api/image/proxy?url=${encodeURIComponent(img.url)}`;
-      }
-      return img;
-    });
-  }
-
   return c.json(data, res.status as any);
 });
 
