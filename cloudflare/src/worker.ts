@@ -112,13 +112,15 @@ app.get('/api/image/proxy', async (c) => {
     return c.json({ error: 'Invalid URL' }, 403);
   }
 
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    cf: { cacheTtl: 0 },  // Don't use CF cache for hub images (they may be temporary)
+  } as RequestInit);
   if (!res.ok) return c.json({ error: `Upstream error: ${res.status}` }, res.status as any);
 
   return new Response(res.body, {
     headers: {
       'Content-Type': res.headers.get('content-type') || 'image/png',
-      'Cache-Control': 'public, max-age=86400',
+      'Cache-Control': 'no-cache',  // AI generated images should not be cached by browser
     },
   });
 });
