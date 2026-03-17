@@ -9,8 +9,8 @@ export const fileServingRoutes = new Hono<HonoEnv>();
  * Production: images go through cf.image for EXIF stripping + resize.
  * Local dev: serve directly from R2 binding (no cf.image).
  */
-fileServingRoutes.get('/uploads/:filename', async (c) => {
-  const { filename } = c.req.param();
+fileServingRoutes.get('/uploads/*', async (c) => {
+  const filename = c.req.path.replace('/uploads/', '');
   const w = c.req.query('w');
   const h = c.req.query('h');
   const downloadName = c.req.query('filename');
