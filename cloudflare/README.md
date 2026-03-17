@@ -67,8 +67,10 @@ wrangler secret put R2_SECRET_ACCESS_KEY
 # Cloudflare Account ID（Dashboard 右侧边栏可见）
 wrangler secret put CF_ACCOUNT_ID
 
-# AIGNE Hub API Key（AI Image 功能需要）
+# AIGNE Hub（AI Image 功能需要）
 wrangler secret put AIGNE_HUB_API_KEY
+# 可选：覆盖默认 AIGNE Hub URL（默认 https://hub.aigne.io）
+# wrangler secret put AIGNE_HUB_URL
 
 # 可选：Unsplash API
 wrangler secret put UNSPLASH_KEY
@@ -192,7 +194,7 @@ cloudflare/
       folders.ts          # 文件夹 CRUD
       status.ts           # Uploader 配置
       unsplash.ts         # Unsplash 代理
-      cleanup.ts          # 定时清理过期 session
+      cleanup.ts          # 定时清理过期 session + AI 临时图片（tmp/ai/，24h）
     middleware/auth.ts     # x-user-did 认证
     db/schema.ts           # Drizzle ORM 表定义
     utils/
@@ -208,7 +210,12 @@ cloudflare/
   scripts/migrate-data.ts  # SQLite → D1 迁移脚本
 ```
 
-前端源码复用 `blocklets/image-bin/src/`，通过 Vite alias 将 `@blocklet/*` 和 `@arcblock/*` 依赖替换为 `frontend/src/shims/` 中的轻量实现。
+前端源码复用 `blocklets/image-bin/src/`，通过 Vite alias 将依赖 Blocklet Server 运行时的包替换为 shim：
+- `@blocklet/js-sdk` → createAxios shim（标准 axios）
+- `@blocklet/ui-react` → Dashboard/Header/Footer/ComponentInstaller shim
+- `@arcblock/did-connect-react` → SessionProvider/ConnectButton shim
+
+`@arcblock/ux` 和 `@arcblock/did` 直接使用原包（纯 UI 组件，无 Blocklet Server 依赖）。
 
 ## 环境差异
 
@@ -218,4 +225,4 @@ cloudflare/
 | D1 数据库 | 本地 SQLite | 真实 D1 |
 | Presigned URL | proxy-put 代理（避免 CORS） | 直传 R2（需配 CORS） |
 | 文件服务 | R2 binding 直接读取 | cf.image EXIF 剥离 + 自动 WebP |
-| 图片生成 | 代理到 hub.aigne.io | 代理到 hub.aigne.io |
+| AI 图片生成 | 代理到 hub.aigne.io，临时缓存到 R2 tmp/ai/ | 同左，cron 每小时清理 24h 前的临时文件 |
