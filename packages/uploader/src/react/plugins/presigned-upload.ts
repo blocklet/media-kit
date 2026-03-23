@@ -153,7 +153,11 @@ export default class PresignedUploadPlugin extends BasePlugin {
     }
 
     // Build result compatible with TUS flow — use the url from server response directly
-    const uploadURL = confirmData.url || `/uploads/${confirmData.filename}`;
+    let uploadURL = confirmData.url || `/uploads/${confirmData.filename}`;
+    // Ensure absolute URL for cross-origin compatibility (CF Workers proxy)
+    if (uploadURL.startsWith('/')) {
+      uploadURL = `${this.opts.apiBase || window.location.origin}${uploadURL}`;
+    }
 
     const result = {
       data: confirmData,
