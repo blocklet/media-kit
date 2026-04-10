@@ -29,7 +29,8 @@ function UploadProvider({ children, pageSize = 12, type = '' }) {
 
   const tabs = [
     { key: 'bucket', value: t('common.buckets') },
-    { key: 'resource', value: t('common.resources') },
+    // Resource tab not available in CF Workers mode
+    ...(!window.blocklet?.inCFWorkers ? [{ key: 'resource', value: t('common.resources') }] : []),
   ];
   const [tab, setTab] = useState('bucket');
 

@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Build output
+public/
+
+# Wrangler
+.wrangler/
+.dev.vars
+
+# Frontend
+frontend/node_modules/
+frontend/node_modules/.vite/
+
+# OS
+.DS_Store

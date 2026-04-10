@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Media Kit</title>
+    <script>
+      // Minimal defaults — overridden by /__blocklet__.js from AUTH_SERVICE
+      window.blocklet = {
+        prefix: '/',
+        appName: 'Media Kit',
+        appUrl: window.location.origin,
+        inCFWorkers: true,
+        cloudflareWorker: true,
+        componentMountPoints: [],
+        preferences: {
+          extsInput: '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico',
+          maxUploadSize: '500MB',
+          useAiImage: true,
+        },
+        navigation: [],
+        theme: {},
+        languages: [
+          { code: 'en', name: 'English' },
+          { code: 'zh', name: '简体中文' },
+        ],
+      };
+    </script>
+    <script src="/__blocklet__.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

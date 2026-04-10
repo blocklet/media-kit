@@ -76,8 +76,10 @@ export default function Output({
       const res = await handleApi({ ...options, outputFileType: 'file' });
       if (res.images) {
         const list: FileContent[] = res.images || [];
-        const arr = list.map((item) => ({
-          src: `data:image/png;base64,${item.data}`,
+        const arr = list.map((item: FileContent & {
+          url?: string;
+        }) => ({
+          src: item?.url || `data:image/png;base64,${item.data}`,
           alt: options.prompt,
         }));
 

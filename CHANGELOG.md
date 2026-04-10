@@ -1,3 +1,7 @@
+## 0.15.0 (2026-4-10)
+
+- feat: Cloudflare Workers deployment for Media Kit
+
 ## 0.14.20 (2026-1-7)
 
 - feat: change bundle method

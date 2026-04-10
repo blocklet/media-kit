@@ -22,6 +22,8 @@ import DropTarget from '@uppy/drop-target';
 import ImageEditor from '@uppy/image-editor';
 import ThumbnailGenerator from '@uppy/thumbnail-generator';
 import Tus from '@uppy/tus';
+// @ts-ignore
+import PresignedUploadPlugin from './plugins/presigned-upload';
 import ComponentInstaller from '@blocklet/ui-react/lib/ComponentInstaller';
 import mime from 'mime-types';
 import xbytes from 'xbytes';
@@ -162,22 +164,42 @@ const getPluginList = (props: any) => {
                       const uploader = ref.current.getUploader();
                       uploader?.emit('ai-image:selected', data);
 
-                      data.forEach(({ src: base64, alt }: any, index: number) => {
+                      data.forEach(({ src, alt }: any, index: number) => {
                         const getSliceText = (str: string) => {
                           return str?.length > 16 ? `${str?.slice(0, 8)}...${str?.slice(-4)}` : str;
                         };
 
-                        const fileName = `${getSliceText(alt) || getSliceText(base64)}.png`; // must be png
+                        const fileName = `${getSliceText(alt) || 'ai-image'}.png`; // must be png
 
-                        const formatFile = {
-                          name: fileName,
-                          type: 'image/png', // must be png
-                          data: base64ToFile(base64, fileName),
-                          source: 'AIImage',
-                          isRemote: false,
-                        };
-
-                        uploader?.addFile(formatFile);
+                        // Support both URL and base64 data URI
+                        if (src && !src.startsWith('data:')) {
+                          // URL — fetch and convert to File
+                          fetch(src)
+                            .then((res) => res.blob())
+                            .then((blob) => {
+                              const file = new File([blob], fileName, { type: 'image/png' });
+                              uploader?.addFile({
+                                name: fileName,
+                                type: 'image/png',
+                                data: file,
+                                source: 'AIImage',
+                                isRemote: false,
+                              });
+                            })
+                            .catch((err) => {
+                              uploader?.log(`[AIImage] Failed to fetch image: ${err.message}`, 'error');
+                            });
+                        } else {
+                          // base64 data URI
+                          const formatFile = {
+                            name: fileName,
+                            type: 'image/png',
+                            data: base64ToFile(src, fileName),
+                            source: 'AIImage',
+                            isRemote: false,
+                          };
+                          uploader?.addFile(formatFile);
+                        }
                       });
                     }}
                   />
@@ -276,6 +298,7 @@ export function initUploader(props: any) {
     restrictions,
     onChange,
     initialFiles,
+    uploadMode = 'tus',
   } = props;
 
   const pluginMap = keyBy(pluginList, 'id');
@@ -314,159 +337,191 @@ export function initUploader(props: any) {
     },
     ...coreProps,
     restrictions,
-  }).use(Tus, {
-    chunkSize: 1024 * 1024 * 10, // default chunk size 10MB
-    removeFingerprintOnSuccess: true,
-    // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
-    withCredentials: true,
-    endpoint: uploaderUrl,
+  });
 
-    async onBeforeRequest(req, file) {
-      // @ts-ignore
-      const { hashFileName, id, meta } = file;
+  if (uploadMode === 'presigned') {
+    // Presigned URL upload mode (for CF Workers / R2)
+    const apiBase = uploaderUrl.replace(/\/uploads\/?$/, '');
+    // @ts-ignore
+    currentUppy.use(PresignedUploadPlugin, {
+      apiBase,
+    });
 
-      // @ts-ignore
-      const mockResponse = currentUppy.getFile(id)?.mockResponse || null;
-      if (req.getMethod() === 'PATCH' && mockResponse) {
-        // mock response to avoid next step upload
-        req.send = () => mockResponse;
-      }
+    // Wire up _onUploadFinish for presigned mode
+    currentUppy.on('upload-success', async (file: any, response: any) => {
+      // Skip if this event was already handled (e.g. from TUS or mock)
+      if (!response.body) return;
 
-      const ext = getExt(file);
-
-      // put the hash in the header
-      req.setHeader('x-uploader-file-name', `${hashFileName}`);
-      req.setHeader('x-uploader-file-id', `${id}`);
-      req.setHeader('x-uploader-file-ext', `${ext}`);
-      req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
-      req.setHeader('x-uploader-endpoint-url', uploaderUrl);
-      req.setHeader(
-        'x-uploader-metadata',
-        JSON.stringify(meta, (key, value) => {
-          if (typeof value === 'string') {
-            return encodeURIComponent(value);
-          }
-          return value;
-        })
-      );
-      // add csrf token if exist
-      const csrfToken = Cookie.get('x-csrf-token');
-      if (csrfToken) {
-        req.setHeader('x-csrf-token', csrfToken);
-      }
-
-      // @ts-ignore get folderId when upload using
-      const componentDid = window?.uploaderComponentId || window?.blocklet?.componentId;
-      if (componentDid) {
-        // @ts-ignore
-        req.setHeader('x-component-did', (componentDid || '').split('/').pop());
-      }
-    },
-    onAfterResponse: async (req, res) => {
-      const result = {} as any;
-      const xhr = req.getUnderlyingObject();
-
-      try {
-        if (xhr.response) {
-          result.data = JSON.parse(xhr.response);
-        }
-      } catch (error) {
-        result.data = {};
-      }
-
-      result.method = req.getMethod().toUpperCase();
-      result.url = req.getURL();
-      result.status = xhr.status;
-      // @ts-ignore
-      result.headers = {
-        // @ts-ignore
-        ...req._headers,
+      const result = {
+        data: response.body,
+        method: 'POST',
+        url: response.uploadURL || '',
+        status: 200,
+        headers: {} as Record<string, string>,
+        file,
+        uploadURL: response.uploadURL || '',
       };
 
-      const allResponseHeaders = xhr.getAllResponseHeaders();
+      await _onUploadFinish?.(result);
 
-      // format headers
-      if (allResponseHeaders) {
-        const headers = allResponseHeaders.split('\r\n');
-        headers.forEach((item: string) => {
-          const [key, value] = item.split(': ');
-          if (key && value) {
-            result.headers[key] = value;
+      // @ts-ignore custom event — mirrors TUS flow's emitUploadSuccess
+      currentUppy.emitUploadSuccess(file, result);
+    });
+  } else {
+    // TUS upload mode (default, for Blocklet)
+    currentUppy.use(Tus, {
+      chunkSize: 1024 * 1024 * 10, // default chunk size 10MB
+      removeFingerprintOnSuccess: true,
+      // docs: https://github.com/tus/tus-js-client/blob/main/docs/api.md
+      withCredentials: true,
+      endpoint: uploaderUrl,
+
+      async onBeforeRequest(req, file) {
+        // @ts-ignore
+        const { hashFileName, id, meta } = file;
+
+        // @ts-ignore
+        const mockResponse = currentUppy.getFile(id)?.mockResponse || null;
+        if (req.getMethod() === 'PATCH' && mockResponse) {
+          // mock response to avoid next step upload
+          req.send = () => mockResponse;
+        }
+
+        const ext = getExt(file);
+
+        // put the hash in the header
+        req.setHeader('x-uploader-file-name', `${hashFileName}`);
+        req.setHeader('x-uploader-file-id', `${id}`);
+        req.setHeader('x-uploader-file-ext', `${ext}`);
+        req.setHeader('x-uploader-base-url', new URL(req.getURL()).pathname);
+        req.setHeader('x-uploader-endpoint-url', uploaderUrl);
+        req.setHeader(
+          'x-uploader-metadata',
+          JSON.stringify(meta, (key, value) => {
+            if (typeof value === 'string') {
+              return encodeURIComponent(value);
+            }
+            return value;
+          })
+        );
+        // add csrf token if exist
+        const csrfToken = Cookie.get('x-csrf-token');
+        if (csrfToken) {
+          req.setHeader('x-csrf-token', csrfToken);
+        }
+
+        // @ts-ignore get folderId when upload using
+        const componentDid = window?.uploaderComponentId || window?.blocklet?.componentId;
+        if (componentDid) {
+          // @ts-ignore
+          req.setHeader('x-component-did', (componentDid || '').split('/').pop());
+        }
+      },
+      onAfterResponse: async (req, res) => {
+        const result = {} as any;
+        const xhr = req.getUnderlyingObject();
+
+        try {
+          if (xhr.response) {
+            result.data = JSON.parse(xhr.response);
           }
-        });
-      }
+        } catch (error) {
+          result.data = {};
+        }
 
-      const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
-
-      // @ts-ignore
-      if (req.getMethod() === 'PATCH' && file.mockResponse) {
-        // mock response do nothing
-        return;
-      }
-
-      // only call onUploadFinish if it's a PATCH / POST request
-      if (['PATCH', 'POST'].includes(result.method) && [200, 500].includes(result.status)) {
-        const isExist = [true, 'true'].includes(result.headers['x-uploader-file-exist']);
-        const uploadURL = getUrl(result.url, result.headers['x-uploader-file-name']); // upload URL with file name
-
-        result.file = file;
-        result.uploadURL = uploadURL;
-
-        const responseResult = {
-          uploadURL,
-          ...result,
+        result.method = req.getMethod().toUpperCase();
+        result.url = req.getURL();
+        result.status = xhr.status;
+        // @ts-ignore
+        result.headers = {
+          // @ts-ignore
+          ...req._headers,
         };
 
-        currentUppy.setFileState(file.id, {
-          responseResult,
-        });
+        const allResponseHeaders = xhr.getAllResponseHeaders();
 
-        // exist but not upload
-        if (isExist && file) {
-          // if POST method check exist
-          if (result.method === 'POST') {
-            // set mock response to avoid next step upload
-            currentUppy.setFileState(file.id, {
-              mockResponse: res,
+        // format headers
+        if (allResponseHeaders) {
+          const headers = allResponseHeaders.split('\r\n');
+          headers.forEach((item: string) => {
+            const [key, value] = item.split(': ');
+            if (key && value) {
+              result.headers[key] = value;
+            }
+          });
+        }
+
+        const file = currentUppy.getFile(result.headers['x-uploader-file-id']);
+
+        // @ts-ignore
+        if (req.getMethod() === 'PATCH' && file.mockResponse) {
+          // mock response do nothing
+          return;
+        }
+
+        // only call onUploadFinish if it's a PATCH / POST request
+        if (['PATCH', 'POST'].includes(result.method) && [200, 500].includes(result.status)) {
+          const isExist = [true, 'true'].includes(result.headers['x-uploader-file-exist']);
+          const uploadURL = getUrl(result.url, result.headers['x-uploader-file-name']); // upload URL with file name
+
+          result.file = file;
+          result.uploadURL = uploadURL;
+
+          const responseResult = {
+            uploadURL,
+            ...result,
+          };
+
+          currentUppy.setFileState(file.id, {
+            responseResult,
+          });
+
+          // exist but not upload
+          if (isExist && file) {
+            // if POST method check exist
+            if (result.method === 'POST') {
+              // set mock response to avoid next step upload
+              currentUppy.setFileState(file.id, {
+                mockResponse: res,
+              });
+            }
+
+            // only trigger uppy event when exist
+            currentUppy.emit('upload-success', currentUppy.getFile(file.id), {
+              ...responseResult,
+              body: result.data,
             });
+            currentUppy.emit('postprocess-complete', currentUppy.getFile(file.id));
+
+            // @ts-ignore
+            currentUppy.calculateTotalProgress();
           }
 
-          // only trigger uppy event when exist
-          currentUppy.emit('upload-success', currentUppy.getFile(file.id), {
-            ...responseResult,
-            body: result.data,
-          });
-          currentUppy.emit('postprocess-complete', currentUppy.getFile(file.id));
+          if (result.status === 200) {
+            await _onUploadFinish?.(result);
 
-          // @ts-ignore
-          currentUppy.calculateTotalProgress();
+            // @ts-ignore custom event
+            currentUppy.emitUploadSuccess(file, result);
+          }
         }
 
-        if (result.status === 200) {
-          await _onUploadFinish?.(result);
-
-          // @ts-ignore custom event
-          currentUppy.emitUploadSuccess(file, result);
+        // each time a response is received
+        if (_onAfterResponse) {
+          await _onAfterResponse?.(xhr);
         }
-      }
 
-      // each time a response is received
-      if (_onAfterResponse) {
-        await _onAfterResponse?.(xhr);
-      }
+        const uploadProgressDone = currentUppy.getState().totalProgress === 100;
 
-      const uploadProgressDone = currentUppy.getState().totalProgress === 100;
+        const shouldAutoCloseAfterDropUpload = currentUppy.getFiles().every((item: any) => item.source === 'DropTarget');
 
-      const shouldAutoCloseAfterDropUpload = currentUppy.getFiles().every((item: any) => item.source === 'DropTarget');
-
-      // close uploader when upload progress done and all files are from DropTarget
-      if (uploadProgressDone && shouldAutoCloseAfterDropUpload) {
-        currentUppy.close();
-      }
-    },
-    ...tusProps,
-  });
-  // .use(GoldenRetriever);
+        // close uploader when upload progress done and all files are from DropTarget
+        if (uploadProgressDone && shouldAutoCloseAfterDropUpload) {
+          currentUppy.close();
+        }
+      },
+      ...tusProps,
+    });
+  }
 
   const appendUploadIdEvent = ({ fileIDs, id }: { fileIDs: string[]; id: string }) => {
     fileIDs.forEach((fileId: any) => {
@@ -551,6 +606,7 @@ export function Uploader({
     availablePluginMap: {} as any,
     restrictions: cloneDeep(props?.coreProps?.restrictions) || ({} as any),
     isError: false,
+    uploadMode: 'tus' as 'tus' | 'presigned',
   });
 
   const theme = useTheme();
@@ -595,6 +651,7 @@ export function Uploader({
         try {
           await mediaKitApi.get('/api/uploader/status').then(({ data }: any) => {
             state.availablePluginMap = data.availablePluginMap;
+            state.uploadMode = data.uploadMode || 'tus';
 
             if (!apiPathProps.disableMediaKitPrefix && isNil(props?.coreProps?.restrictions)) {
               restrictions = data.restrictions || {};
@@ -733,6 +790,7 @@ export function Uploader({
       apiPathProps,
       pluginList,
       restrictions: state.restrictions,
+      uploadMode: state.uploadMode,
     });
 
     state.uppy.open = open;
@@ -832,6 +890,7 @@ export function Uploader({
       locale,
       restrictions: state.restrictions,
       theme,
+      uploadMode: state.uploadMode,
     }),
   ]);
 
