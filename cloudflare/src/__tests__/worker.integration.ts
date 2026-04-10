@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { env, SELF } from 'cloudflare:test';
+import { SELF } from 'cloudflare:test';
 
 describe('Worker integration', () => {
   it('responds to health check', async () => {
@@ -32,59 +32,22 @@ describe('Worker integration', () => {
     expect(res.status).toBe(404);
   });
 
-  it('check endpoint returns exists:false for empty DB', async () => {
-    const res = await SELF.fetch('https://media-kit.test/api/uploads/check', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ size: 1024, ext: '.png' }),
-    });
-    expect(res.status).toBe(200);
-    const body = await res.json() as any;
-    expect(body.exists).toBe(false);
-  });
-
-  it('presign endpoint returns sessionId and presignedUrl', async () => {
-    const res = await SELF.fetch('https://media-kit.test/api/uploads/presign', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        originalname: 'test.png',
-        mimetype: 'image/png',
-        size: 1024,
-        ext: '.png',
-      }),
-    });
-    expect(res.status).toBe(200);
-    const body = await res.json() as any;
-    expect(body).toHaveProperty('sessionId');
-    // presignedUrl may fail without real R2 credentials, but sessionId should exist
-    expect(typeof body.sessionId).toBe('string');
-  });
-
-  it('list uploads returns paginated response', async () => {
+  it('auth-protected routes require authentication (no AUTH_SERVICE returns 503)', async () => {
+    // Without AUTH_SERVICE binding, auth middleware returns 503
     const res = await SELF.fetch('https://media-kit.test/api/uploads');
+    expect([401, 503]).toContain(res.status);
+  });
+
+  it('returns __blocklet__.js with app metadata', async () => {
+    const res = await SELF.fetch('https://media-kit.test/__blocklet__.js?type=json');
     expect(res.status).toBe(200);
     const body = await res.json() as any;
-    expect(body).toHaveProperty('uploads');
-    expect(body).toHaveProperty('folders');
-    expect(body).toHaveProperty('total');
-    expect(body).toHaveProperty('page');
-    expect(body).toHaveProperty('pageSize');
+    expect(body).toHaveProperty('appName');
+    expect(body.cloudflareWorker).toBe(true);
   });
 
-  it('auth middleware sets default DID', async () => {
-    const res = await SELF.fetch('https://media-kit.test/api/uploads');
-    expect(res.status).toBe(200);
-    // If auth failed, we'd get 401/403
-  });
-
-  it('admin routes reject non-admin users', async () => {
-    // Default DID is in ADMIN_DIDS, so it IS admin
-    // A different DID should be rejected
-    const res = await SELF.fetch('https://media-kit.test/api/uploads/some-id', {
-      method: 'DELETE',
-      headers: { 'x-user-did': 'did:abt:non-admin-user' },
-    });
-    expect(res.status).toBe(403);
+  it('DID auth proxy returns 503 without AUTH_SERVICE', async () => {
+    const res = await SELF.fetch('https://media-kit.test/api/did/session');
+    expect(res.status).toBe(503);
   });
 });

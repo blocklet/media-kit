@@ -2,9 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   timeout: 200000,
-  headers: {
-    'x-user-did': 'did:abt:default-uploader',
-  },
+  withCredentials: true, // send login_token cookie
 });
 
 export default api;

@@ -60,9 +60,9 @@ export default class DirectUploadPlugin extends BasePlugin {
     const result = await new Promise<any>((resolve, reject) => {
       xhr.open('POST', `${this.opts.apiBase}/uploads/direct`, true);
 
-      // Set auth headers
+      // Set custom headers (auth is handled via login_token cookie)
+      xhr.withCredentials = true;
       const headers = this.opts.headers || {};
-      headers['x-user-did'] = headers['x-user-did'] || 'did:abt:default-uploader';
       Object.entries(headers).forEach(([k, v]) => {
         if (k.toLowerCase() !== 'content-type') {
           xhr.setRequestHeader(k, v);

@@ -20,6 +20,8 @@ export default defineConfig({
       '/api': 'http://localhost:8787',
       '/uploads': 'http://localhost:8787',
       '/health': 'http://localhost:8787',
+      '/__blocklet__.js': 'http://localhost:8787',
+      '/.well-known/service': 'http://localhost:8787',
     },
     fs: {
       strict: false,

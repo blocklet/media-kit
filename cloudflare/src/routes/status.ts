@@ -22,6 +22,7 @@ statusRoutes.get('/uploader/status', async (c) => {
     },
     availablePluginMap: {
       Uploaded: true,
+      Resources: false,
       ...(isUnsplashEnabled ? { Unsplash: true } : {}),
       ...(isAiImageEnabled ? { AIImage: true } : {}),
     },

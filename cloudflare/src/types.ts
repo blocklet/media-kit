@@ -1,5 +1,16 @@
 import type { DrizzleD1Database } from 'drizzle-orm/d1';
 
+export interface CallerIdentityDTO {
+  did: string;
+  pk: string;
+  displayName: string;
+  avatar: string;
+  role: 'owner' | 'admin' | 'member' | 'guest';
+  authMethod: 'passkey' | 'did-connect' | 'access-key' | 'oauth' | 'email';
+  accessKeyId?: string;
+  approved: boolean;
+}
+
 export interface Env {
   // D1 Database
   DB: D1Database;
@@ -16,7 +27,29 @@ export interface Env {
   MAX_UPLOAD_SIZE: string;
   ALLOWED_FILE_TYPES: string;
   USE_AI_IMAGE: string;
-  ADMIN_DIDS: string;
+  // App identity
+  APP_SK: string;    // 64-byte hex secret key — used to register & derive instance DID
+  APP_NAME: string;
+  APP_PID: string;   // Derived from APP_SK after registerApp; can also be set explicitly
+  APP_PREFIX: string; // Mount prefix (e.g. '/media-kit') — empty or '/' means root
+  // Auth Service (DID Connect via Service Binding)
+  AUTH_SERVICE: {
+    fetch: (request: Request | string) => Promise<Response>;
+    resolveIdentity: (
+      jwt: string | null,
+      authorizationHeader: string | null,
+      instanceDid?: string
+    ) => Promise<CallerIdentityDTO | null>;
+    verify: (jwt: string) => Promise<CallerIdentityDTO | null>;
+    verifyFull: (jwt: string) => Promise<CallerIdentityDTO | null>;
+    registerApp: (config: {
+      instanceDid: string;
+      appSk: string;
+      appPsk?: string;
+      appName?: string;
+      appDescription?: string;
+    }) => Promise<{ instanceDid: string }>;
+  };
   // Unsplash
   UNSPLASH_KEY: string;
   UNSPLASH_SECRET: string;
@@ -34,7 +67,7 @@ export interface ConfirmQueueMessage {
 
 export interface UserContext {
   id: string;
-  role: 'admin' | 'member';
+  role: 'owner' | 'admin' | 'member' | 'guest';
 }
 
 // Hono env bindings

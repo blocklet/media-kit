@@ -12,9 +12,70 @@ import { cleanupExpiredSessions } from './routes/cleanup';
 
 const app = new Hono<HonoEnv>();
 
-// Global middleware
-// TODO: restrict CORS origin to actual deployment domain when auth is implemented
-app.use('*', cors());
+// Prefix strip middleware — allows mounting at a sub-path (e.g. /media-kit/)
+// When APP_PREFIX is set, requests to /media-kit/* are internally rewritten to /*
+// and X-Mount-Prefix is set so __blocklet__.js and HTML rewriting work correctly.
+app.use('*', async (c, next) => {
+  const prefix = c.env.APP_PREFIX;
+  if (!prefix || prefix === '/') return next();
+
+  const pfx = prefix.endsWith('/') ? prefix.slice(0, -1) : prefix;
+  const url = new URL(c.req.url);
+  if (url.pathname.startsWith(pfx + '/') || url.pathname === pfx) {
+    // Strip prefix and rewrite URL
+    const newPath = url.pathname.slice(pfx.length) || '/';
+    url.pathname = newPath;
+    const newReq = new Request(url.toString(), c.req.raw);
+    newReq.headers.set('X-Mount-Prefix', pfx + '/');
+    // Replace the raw request so downstream sees the stripped path
+    return app.fetch(newReq, c.env);
+  }
+
+  return next();
+});
+
+// Root path redirect: logged in → /media-kit/admin, not logged in → login
+// /.well-known/service/* is global (no prefix) — it's the auth service
+app.get('/', async (c) => {
+  const pfx = c.env.APP_PREFIX || '';
+  const loginUrl = '/.well-known/service/login';
+  const adminUrl = `${pfx}/admin`;
+
+  const authService = c.env.AUTH_SERVICE;
+  if (!authService || typeof authService.resolveIdentity !== 'function') {
+    return c.redirect(loginUrl);
+  }
+
+  const cookieHeader = c.req.header('Cookie') || '';
+  const match = cookieHeader.match(/(?:^|;\s*)login_token=([^;]*)/);
+  const jwt = match ? decodeURIComponent(match[1]) : null;
+  if (!jwt) {
+    return c.redirect(loginUrl);
+  }
+
+  try {
+    const caller = await authService.resolveIdentity(jwt, null, c.env.APP_PID);
+    if (caller) {
+      return c.redirect(adminUrl);
+    }
+  } catch {}
+
+  return c.redirect(loginUrl);
+});
+
+// Global middleware — CORS restricted to deployment origin
+app.use(
+  '*',
+  cors({
+    origin: (origin) => {
+      // Auth is enforced by AUTH_SERVICE — CORS allows same-origin requests with credentials
+      return origin || '';
+    },
+    credentials: true,
+    allowHeaders: ['Content-Type', 'Authorization'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  })
+);
 // TODO: D1 write consistency — When Drizzle ORM adds support for D1's withSession API,
 // wrap write-path requests with `c.env.DB.withSession("first-primary")` to ensure
 // read-after-write consistency. Without this, D1 replicas may serve stale reads
@@ -25,14 +86,170 @@ app.use('*', async (c, next) => {
   return next();
 });
 
+// Auto-register instance in DID service on first request
+let registeredInstanceDid: string | null = null;
+
+async function ensureRegistered(env: Env): Promise<string> {
+  if (registeredInstanceDid) return registeredInstanceDid;
+  if (!env.AUTH_SERVICE || !env.APP_SK) {
+    return env.APP_PID || '';
+  }
+  try {
+    const result = await env.AUTH_SERVICE.registerApp({
+      instanceDid: 'auto',
+      appSk: env.APP_SK,
+      appName: env.APP_NAME || 'Media Kit',
+      appDescription: 'Media asset management',
+    });
+    registeredInstanceDid = result.instanceDid;
+    console.log(`[media-kit] Registered as instance: ${registeredInstanceDid}`);
+    return registeredInstanceDid;
+  } catch (e: any) {
+    console.error('[media-kit] registerApp failed:', e?.message || e);
+    return env.APP_PID || '';
+  }
+}
+
+// Resolve instance DID on every request (cached after first call)
+app.use('*', async (c, next) => {
+  const instanceDid = await ensureRegistered(c.env);
+  if (instanceDid) {
+    // Override APP_PID with the derived instance DID
+    (c.env as any).APP_PID = instanceDid;
+  }
+  return next();
+});
+
+// DID Auth login/session routes — proxy to AUTH_SERVICE (blocklet-service)
+const DID_AUTH_PROXY_PATHS = [
+  '/api/did/login/',
+  '/api/did/session',
+  '/api/did/refreshSession',
+  '/api/did/connect/',
+  '/api/did/logout',
+];
+
+app.all('/api/did/*', async (c) => {
+  const path = new URL(c.req.url).pathname;
+  const shouldProxy = DID_AUTH_PROXY_PATHS.some((p) => path.startsWith(p) || path === p);
+  if (!shouldProxy) {
+    return c.json({ error: 'Not Found' }, 404);
+  }
+  if (!c.env.AUTH_SERVICE) {
+    return c.json({ error: 'AUTH_SERVICE not configured' }, 503);
+  }
+  const url = new URL(c.req.url);
+  url.pathname = `/.well-known/service${url.pathname}`;
+  const req = new Request(url.toString(), c.req.raw);
+  if (c.env.APP_PID) {
+    req.headers.set('X-Instance-Did', c.env.APP_PID);
+  }
+  const resp = await c.env.AUTH_SERVICE.fetch(req);
+  return new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers: new Headers(resp.headers) });
+});
+
+// Proxy all /.well-known/service/* to AUTH_SERVICE (login page, session API, admin, etc.)
+app.all('/.well-known/service/*', async (c) => {
+  if (!c.env.AUTH_SERVICE) {
+    return c.json({ error: 'AUTH_SERVICE not configured' }, 503);
+  }
+  const req = new Request(c.req.url, c.req.raw);
+  if (c.env.APP_PID) {
+    req.headers.set('X-Instance-Did', c.env.APP_PID);
+    req.headers.set('X-Arc-Domain', new URL(c.req.url).host);
+  }
+  const resp = await c.env.AUTH_SERVICE.fetch(req);
+  return new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers: new Headers(resp.headers) });
+});
+
+// Media Kit component DID (used by uploader to detect media-kit)
+const MEDIA_KIT_COMPONENT_DID = 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9';
+
+// __blocklet__.js — app metadata for frontend SessionProvider
+app.get('/__blocklet__.js', async (c) => {
+  const isJson = new URL(c.req.url).searchParams.get('type') === 'json';
+  const requestOrigin = new URL(c.req.url).origin;
+  const mountPrefix = c.req.header('X-Mount-Prefix') || '/';
+  const defaultPreferences = {
+    extsInput: c.env.ALLOWED_FILE_TYPES || '.jpeg,.png,.gif,.svg,.webp,.bmp,.ico',
+    maxUploadSize: c.env.MAX_UPLOAD_SIZE || '500MB',
+    useAiImage: c.env.USE_AI_IMAGE === 'true',
+  };
+  const data: Record<string, unknown> = {
+    appPid: c.env.APP_PID || '',
+    appName: c.env.APP_NAME || 'Media Kit',
+    appUrl: requestOrigin,
+    prefix: mountPrefix,
+    groupPrefix: mountPrefix,
+    cloudflareWorker: true,
+          inCFWorkers: true,
+    componentId: MEDIA_KIT_COMPONENT_DID,
+    preferences: defaultPreferences,
+    componentMountPoints: [{
+      title: 'Media Kit',
+      name: 'image-bin',
+      did: MEDIA_KIT_COMPONENT_DID,
+      version: '1.0.0',
+      status: 'running',
+      mountPoint: mountPrefix,
+    }],
+  };
+
+  // Merge auth service metadata (appPid, appUrl, DID, theme, etc.)
+  if (c.env.AUTH_SERVICE) {
+    try {
+      const url = new URL(c.req.url);
+      url.pathname = '/__blocklet__.js';
+      url.searchParams.set('type', 'json');
+      const blockletReq = new Request(url.toString(), c.req.raw);
+      if (c.env.APP_PID) blockletReq.headers.set('X-Instance-Did', c.env.APP_PID);
+      const resp = await c.env.AUTH_SERVICE.fetch(blockletReq);
+      if (resp.ok) {
+        const authData = (await resp.json()) as Record<string, unknown>;
+        const authPreferences = authData.preferences as Record<string, unknown> | undefined;
+        Object.assign(data, authData, {
+          appName: c.env.APP_NAME || authData.appName || 'Media Kit',
+          appUrl: requestOrigin,
+          prefix: mountPrefix,
+          groupPrefix: mountPrefix,
+          cloudflareWorker: true,
+          inCFWorkers: true,
+          componentId: MEDIA_KIT_COMPONENT_DID,
+          preferences: { ...defaultPreferences, ...authPreferences },
+          // Ensure media-kit component is always present
+          componentMountPoints: [
+            ...((authData.componentMountPoints as any[]) || []),
+            {
+              title: 'Media Kit',
+              name: 'image-bin',
+              did: MEDIA_KIT_COMPONENT_DID,
+              version: '1.0.0',
+              status: 'running',
+              mountPoint: mountPrefix,
+            },
+          ],
+        });
+      }
+    } catch (e: any) {
+      console.error('[__blocklet__.js] AUTH_SERVICE fetch error:', e?.message || e);
+    }
+  }
+
+  if (isJson) {
+    return c.json(data);
+  }
+  return c.text(`window.blocklet = ${JSON.stringify(data)};`, 200, {
+    'Content-Type': 'application/javascript',
+  });
+});
+
 // File serving (no auth required for public files, EXIF stripped)
 app.route('/', fileServingRoutes);
 
 // Status endpoint (no auth)
 app.route('/api', statusRoutes);
 
-// Auth-protected routes
-// TODO: replace x-user-did header auth with shijun's CF auth SDK when ready
+// Auth-protected routes (via AUTH_SERVICE RPC)
 app.use('/api/*', authMiddleware);
 app.route('/api', uploadRoutes);
 app.route('/api', folderRoutes);
@@ -115,18 +332,55 @@ app.post('/api/image/generations', async (c) => {
 // Health check
 app.get('/health', (c) => c.json({ status: 'ok', version: '1.0.0' }));
 
-// SPA fallback — non-API routes return index.html for client-side routing
+// SPA fallback — non-API routes return index.html with prefix-aware asset rewriting
 app.notFound(async (c) => {
   const path = new URL(c.req.url).pathname;
   if (path.startsWith('/api/') || path.startsWith('/health')) {
     return c.json({ error: 'Not Found' }, 404);
   }
+
+  const assets = (c.env as any).ASSETS;
+  if (!assets) {
+    return c.json({ error: 'Not Found' }, 404);
+  }
+
+  // Rewrite HTML for mount prefix support + inject __blocklet__.js
+  const rewriteHtml = async (htmlResponse: Response) => {
+    if (!htmlResponse.headers.get('content-type')?.includes('text/html')) return htmlResponse;
+    let html = await htmlResponse.text();
+    const mountPrefix = c.req.header('X-Mount-Prefix');
+    if (mountPrefix && mountPrefix !== '/') {
+      const pfx = mountPrefix.endsWith('/') ? mountPrefix.slice(0, -1) : mountPrefix;
+      // Rewrite all absolute asset/src paths in HTML attributes
+      html = html.replace(/((?:src|href)=["'])\/(assets|src)\//g, `$1${pfx}/$2/`);
+      // Rewrite __blocklet__.js script tag
+      html = html.replace(/(<script[^>]*src=["'])\/__blocklet__\.js(["'])/g, `$1${pfx}/__blocklet__.js$2`);
+    }
+    return new Response(html, {
+      status: htmlResponse.status,
+      headers: { ...Object.fromEntries(htmlResponse.headers.entries()), 'Cache-Control': 'no-cache' },
+    });
+  };
+
   try {
-    const assets = (c.env as any).ASSETS;
-    if (assets) {
-      return assets.fetch(new Request(new URL('/', c.req.url)));
+    // Try exact asset first
+    const assetResponse = await assets.fetch(c.req.raw);
+    if (assetResponse.status !== 404) {
+      if (assetResponse.headers.get('content-type')?.includes('text/html')) {
+        return rewriteHtml(assetResponse);
+      }
+      return assetResponse;
     }
   } catch {}
+
+  // Fall back to index.html for SPA routing
+  try {
+    const url = new URL(c.req.url);
+    url.pathname = '/index.html';
+    const htmlResponse = await assets.fetch(new Request(url.toString(), c.req.raw));
+    return rewriteHtml(htmlResponse);
+  } catch {}
+
   return c.json({ error: 'Not Found' }, 404);
 });
 

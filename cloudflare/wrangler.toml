@@ -6,7 +6,8 @@ compatibility_flags = ["nodejs_compat"]
 # Serve frontend static assets (vite build output)
 [assets]
 directory = "./public"
-not_found_handling = "single-page-application"
+not_found_handling = "none"
+html_handling = "none"
 binding = "ASSETS"
 
 [vars]
@@ -14,8 +15,15 @@ ENVIRONMENT = "production"
 MAX_UPLOAD_SIZE = "500MB"
 ALLOWED_FILE_TYPES = ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico"
 USE_AI_IMAGE = "true"
-ADMIN_DIDS = "did:abt:default-uploader"
+APP_NAME = "Media Kit"
+APP_PREFIX = "/media-kit"
 AIGNE_HUB_URL = "https://hub.aigne.io"
+
+# Service Binding to DID Connect Auth Worker (blocklet-service)
+[[services]]
+binding = "AUTH_SERVICE"
+service = "blocklet-service"
+entrypoint = "BlockletServiceRPC"
 
 [[r2_buckets]]
 binding = "R2_UPLOADS"
@@ -31,6 +39,7 @@ migrations_dir = "migrations"
 crons = ["0 * * * *"]
 
 # Secrets (wrangler secret put):
+# APP_SK (64-byte hex secret key — used to auto-register instance in DID service)
 # R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
 # R2_ORIGIN_DOMAIN (R2 public domain, restricted by IP Access Rule)
 # UNSPLASH_KEY, UNSPLASH_SECRET
@@ -42,4 +51,4 @@ crons = ["0 * * * *"]
 name = "media-kit-staging"
 [env.staging.vars]
 ENVIRONMENT = "staging"
-ADMIN_DIDS = "did:abt:default-uploader"
+APP_NAME = "Media Kit (Staging)"
