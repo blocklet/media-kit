@@ -302,7 +302,3 @@ cloudflare/
 | Presigned URL | proxy-put 代理（避免 CORS） | 直传 R2（需配 CORS） |
 | 文件服务 | R2 binding 直接读取 | cf.image EXIF 剥离 + 自动 WebP |
 | AI 图片生成 | 代理到 hub.aigne.io，临时缓存到 R2 tmp/ai/ | 同左，cron 每小时清理 24h 前的临时文件 |
-
-## Merge 前待完成
-
-- [ ] Production optimization: S3 CopyObject for large file dedup（独立于认证，可随时做）
