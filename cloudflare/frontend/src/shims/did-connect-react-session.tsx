@@ -44,19 +44,15 @@ function SessionProvider({
       const user = data?.user || null;
       setSession({ user, loading: false, error: null });
 
-      // Redirect to login if on a protected route and not authenticated
-      if (!user && protectedRoutes?.length) {
-        const path = window.location.pathname;
-        const isProtected = protectedRoutes.some(
-          (r) => r.endsWith('*') ? path.startsWith(r.slice(0, -1)) : path === r
-        );
-        if (isProtected) {
-          const returnUrl = encodeURIComponent(path + window.location.search);
-          window.location.href = `/.well-known/service/login?return=${returnUrl}`;
-        }
+      // Not authenticated — redirect to login
+      if (!user) {
+        const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+        window.location.href = `/.well-known/service/login?return=${returnUrl}`;
       }
     } catch {
-      setSession({ user: null, loading: false, error: null });
+      // Session fetch failed — redirect to login
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
+      window.location.href = `/.well-known/service/login?return=${returnUrl}`;
     }
   }, [protectedRoutes]);
 
