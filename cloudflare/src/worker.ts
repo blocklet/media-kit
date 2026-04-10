@@ -16,18 +16,20 @@ const app = new Hono<HonoEnv>();
 // When APP_PREFIX is set, requests to /media-kit/* are internally rewritten to /*
 // and X-Mount-Prefix is set so __blocklet__.js and HTML rewriting work correctly.
 app.use('*', async (c, next) => {
+  // Already stripped by a previous pass — skip
+  if (c.req.header('X-Prefix-Stripped')) return next();
+
   const prefix = c.env.APP_PREFIX;
   if (!prefix || prefix === '/') return next();
 
   const pfx = prefix.endsWith('/') ? prefix.slice(0, -1) : prefix;
   const url = new URL(c.req.url);
   if (url.pathname.startsWith(pfx + '/') || url.pathname === pfx) {
-    // Strip prefix and rewrite URL
     const newPath = url.pathname.slice(pfx.length) || '/';
     url.pathname = newPath;
     const newReq = new Request(url.toString(), c.req.raw);
     newReq.headers.set('X-Mount-Prefix', pfx + '/');
-    // Replace the raw request so downstream sees the stripped path
+    newReq.headers.set('X-Prefix-Stripped', '1');
     return app.fetch(newReq, c.env);
   }
 
@@ -68,9 +70,10 @@ app.get('/', async (c) => {
 app.use(
   '*',
   cors({
-    origin: (origin) => {
-      // Auth is enforced by AUTH_SERVICE — CORS allows same-origin requests with credentials
-      return origin || '';
+    origin: (origin, c) => {
+      // Only allow same-origin — SPA is served from the same worker
+      const self = new URL(c.req.url).origin;
+      return origin === self ? origin : '';
     },
     credentials: true,
     allowHeaders: ['Content-Type', 'Authorization'],

@@ -27,8 +27,6 @@ export async function cleanupExpiredSessions(env: Env): Promise<void> {
       ),
     );
 
-  if (expired.length === 0) return;
-
   for (const session of expired) {
     if (session.uploadId && session.key) {
       // Multipart session — abort via R2 binding

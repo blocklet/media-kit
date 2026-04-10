@@ -67,8 +67,9 @@ export async function authMiddleware(c: Context<HonoEnv>, next: Next) {
     const jwt = match ? decodeURIComponent(match[1]) : null;
     const authHeader = c.req.header('Authorization') || null;
 
-    // Try cache first
-    const cacheKey = jwt || authHeader;
+    // Try cache first — extract raw token from Bearer header for correct expiry parsing
+    const rawToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+    const cacheKey = jwt || rawToken;
     let caller: CallerIdentityDTO | null = null;
     if (cacheKey) {
       caller = getCachedIdentity(cacheKey);
@@ -102,6 +103,9 @@ export async function authMiddleware(c: Context<HonoEnv>, next: Next) {
 
 export async function isAdminMiddleware(c: Context<HonoEnv>, next: Next) {
   const user = c.get('user');
+  if (!user) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
   if (user.role !== 'admin') {
     return c.json({ error: 'Admin access required' }, 403);
   }
