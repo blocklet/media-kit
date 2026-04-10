@@ -16,7 +16,6 @@ MAX_UPLOAD_SIZE = "500MB"
 ALLOWED_FILE_TYPES = ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico"
 USE_AI_IMAGE = "true"
 APP_NAME = "Media Kit"
-APP_PREFIX = "/media-kit"
 AIGNE_HUB_URL = "https://hub.aigne.io"
 
 # Service Binding to DID Connect Auth Worker (blocklet-service)
