@@ -37,7 +37,8 @@ app.use('*', async (c, next) => {
 // Root path redirect: logged in → /media-kit/admin, not logged in → login
 // /.well-known/service/* is global (no prefix) — it's the auth service
 app.get('/', async (c) => {
-  const pfx = c.env.APP_PREFIX || '';
+  const raw = c.env.APP_PREFIX || '/';
+  const pfx = raw === '/' ? '' : raw.replace(/\/$/, '');
   const loginUrl = '/.well-known/service/login';
   const adminUrl = `${pfx}/admin`;
 
