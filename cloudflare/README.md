@@ -6,6 +6,7 @@
 - pnpm
 - Cloudflare 账号（免费即可）
 - Wrangler CLI：`npm install -g wrangler`
+- DID service（blocklet-service）已部署为 CF Worker
 
 ## 一次性初始化（首次部署）
 
@@ -60,6 +61,10 @@ Dashboard → R2 → 管理 R2 API 令牌 → 创建 API 令牌：
 ```bash
 cd cloudflare
 
+# APP_SK — 用于在 DID service 中注册 instance（自动派生 instance DID）
+# 生成方法：node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+wrangler secret put APP_SK
+
 # R2 凭证
 wrangler secret put R2_ACCESS_KEY_ID
 wrangler secret put R2_SECRET_ACCESS_KEY
@@ -69,8 +74,6 @@ wrangler secret put CF_ACCOUNT_ID
 
 # AIGNE Hub（AI Image 功能需要）
 wrangler secret put AIGNE_HUB_API_KEY
-# 可选：覆盖默认 AIGNE Hub URL（默认 https://hub.aigne.io）
-# wrangler secret put AIGNE_HUB_URL
 
 # 可选：Unsplash API
 wrangler secret put UNSPLASH_KEY
@@ -99,6 +102,76 @@ cd cloudflare && wrangler deploy           # 部署 Worker + 静态资源
 ```
 
 部署后访问 `https://media-kit.<your-subdomain>.workers.dev`
+
+## 认证架构
+
+Media Kit 通过 CF Service Binding 对接 DID service（blocklet-service）进行用户认证。
+
+```
+用户请求（带 login_token cookie）
+    ↓
+media-kit Worker
+    ↓ AUTH_SERVICE.resolveIdentity(jwt, authHeader, instanceDid)
+blocklet-service Worker（Service Binding，零网络延迟）
+    ↓ 返回 { did, role, displayName }
+media-kit 设置 user context → 处理请求
+```
+
+### 关键配置
+
+```toml
+# wrangler.toml
+
+# Service Binding 到 DID service
+[[services]]
+binding = "AUTH_SERVICE"
+service = "blocklet-service"
+entrypoint = "BlockletServiceRPC"
+```
+
+### 自动注册
+
+Worker 首次启动时通过 `AUTH_SERVICE.registerApp()` 自动注册 instance：
+- 从 `APP_SK`（secret）派生 instance DID
+- 无需手动配置 `APP_PID` — 自动从 APP_SK 生成
+
+### 认证流程
+
+1. 用户访问 `/` → 未登录时 302 到 `/.well-known/service/login`
+2. DID service 提供登录页（passkey / wallet / email）
+3. 登录成功 → 设置 `login_token` cookie → 重定向回 media-kit
+4. media-kit auth middleware 从 cookie 提取 JWT → 调用 `AUTH_SERVICE.resolveIdentity()` 验证
+5. JWT 验证结果缓存 5 分钟（避免重复 RPC 调用）
+
+### 路由代理
+
+| 路径 | 处理方式 |
+|------|---------|
+| `/.well-known/service/*` | 代理到 AUTH_SERVICE（登录页、session API、管理后台） |
+| `/api/did/*` | 代理到 AUTH_SERVICE（login/session/logout） |
+| `/__blocklet__.js` | Worker 生成（合并 AUTH_SERVICE 元数据） |
+| `/api/uploader/status` | 无需认证 — 返回 uploader 配置 |
+| `/api/*`（其他） | 需要认证 |
+
+## Prefix 支持
+
+Media Kit 支持挂载在子路径下运行，通过 `APP_PREFIX` 环境变量配置：
+
+```toml
+# wrangler.toml
+[vars]
+APP_PREFIX = "/media-kit"    # 可改为任意路径，留空或 "/" 表示根路径
+```
+
+配置后：
+- 访问 `/media-kit/admin` → media-kit 管理页面
+- 访问 `/media-kit/api/*` → media-kit API
+- 访问 `/media-kit/__blocklet__.js` → 返回正确的 prefix 配置
+- 访问 `/` → 自动重定向到 `/media-kit/admin`（已登录）或登录页（未登录）
+
+Prefix 也支持通过 gateway Worker 的 `X-Mount-Prefix` header 动态设置。
+
+**注意**：`/.well-known/service/*` 是全局认证服务路径，不加 prefix。
 
 ## 数据迁移（从 Blocklet Server 迁移）
 
@@ -166,6 +239,7 @@ cd cloudflare
 # 创建 .dev.vars 文件
 cat > .dev.vars << 'EOF'
 ENVIRONMENT=development
+APP_SK=<64-byte-hex-secret-key>
 R2_ACCESS_KEY_ID=your-key
 R2_SECRET_ACCESS_KEY=your-secret
 CF_ACCOUNT_ID=your-account-id
@@ -187,33 +261,34 @@ cd frontend && npx vite --port 3030
 ```
 cloudflare/
   src/                    # CF Worker 后端（Hono + D1 + R2）
-    worker.ts             # 入口：路由 + AIGNE Hub 代理
+    worker.ts             # 入口：prefix strip、root redirect、auth proxy、路由、SPA fallback
     routes/
-      upload.ts           # 上传：presign / proxy-put（开发模式代理上传） / direct（FormData 上传） / confirm
+      upload.ts           # 上传：presign / proxy-put / direct / confirm
       serve.ts            # 文件服务：R2 → 响应（生产用 cf.image）
       folders.ts          # 文件夹 CRUD
-      status.ts           # Uploader 配置
+      status.ts           # Uploader 配置（uploadMode: presigned）
       unsplash.ts         # Unsplash 代理
-      cleanup.ts          # 定时清理过期 session + AI 临时图片（tmp/ai/，24h）
-    middleware/auth.ts     # x-user-did 认证
+      cleanup.ts          # 定时清理过期 session + AI 临时图片
+    middleware/auth.ts     # AUTH_SERVICE RPC 认证 + JWT 缓存
     db/schema.ts           # Drizzle ORM 表定义
+    types.ts               # Env、CallerIdentityDTO、UserContext 类型
     utils/
       s3.ts               # R2 S3 兼容 API（presigned URL、multipart）
       hash.ts             # MD5 哈希、MIME 检测、SVG 净化
   frontend/               # 前端构建配置
     vite.config.ts         # Alias 指向原版源码 + shim
     src/shims/             # Blocklet SDK 替代实现
-    index.html             # window.blocklet 注入
+    index.html             # window.blocklet 默认值 + __blocklet__.js 加载
   public/                  # vite build 产物（Worker 静态资源）
-  wrangler.toml            # CF Workers 配置
+  wrangler.toml            # CF Workers 配置（Service Binding、prefix 等）
   migrations/              # D1 数据库迁移
   scripts/migrate-data.ts  # SQLite → D1 迁移脚本
 ```
 
 前端源码复用 `blocklets/image-bin/src/`，通过 Vite alias 将依赖 Blocklet Server 运行时的包替换为 shim：
-- `@blocklet/js-sdk` → createAxios shim（标准 axios）
-- `@blocklet/ui-react` → Dashboard/Header/Footer/ComponentInstaller shim
-- `@arcblock/did-connect-react` → SessionProvider/ConnectButton shim
+- `@blocklet/js-sdk` → createAxios shim（axios + withCredentials）
+- `@blocklet/ui-react` → Dashboard（含 Header）/ Header / Footer / ComponentInstaller shim
+- `@arcblock/did-connect-react` → SessionProvider（真实 DID Connect session via cookie）/ ConnectButton shim
 
 `@arcblock/ux` 和 `@arcblock/did` 直接使用原包（纯 UI 组件，无 Blocklet Server 依赖）。
 
@@ -221,8 +296,13 @@ cloudflare/
 
 | 特性 | 本地开发 | 线上 |
 |------|---------|------|
+| 认证 | AUTH_SERVICE Service Binding（需本地运行 blocklet-service） | AUTH_SERVICE Service Binding |
 | R2 存储 | miniflare 本地模拟 | 真实 R2 |
 | D1 数据库 | 本地 SQLite | 真实 D1 |
 | Presigned URL | proxy-put 代理（避免 CORS） | 直传 R2（需配 CORS） |
 | 文件服务 | R2 binding 直接读取 | cf.image EXIF 剥离 + 自动 WebP |
 | AI 图片生成 | 代理到 hub.aigne.io，临时缓存到 R2 tmp/ai/ | 同左，cron 每小时清理 24h 前的临时文件 |
+
+## Merge 前待完成
+
+- [ ] Production optimization: S3 CopyObject for large file dedup（独立于认证，可随时做）
