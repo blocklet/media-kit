@@ -66,7 +66,9 @@ uploadRoutes.post('/uploads/presign', async (c) => {
 
   const db = c.get('db');
   const user = c.get('user');
-  const s3 = createS3Client(c.env);
+  // S3 client is only needed in non-dev mode (presigned direct-to-R2 upload).
+  // Lazy-construct inside the else branch below so dev mode (proxy-put) works
+  // without R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY secrets.
   const cleanExt = ext.replace(/^\./, '');
   const sessionId = crypto.randomUUID();
   const tempKey = `tmp/${crypto.randomUUID()}.${cleanExt}`;
@@ -128,6 +130,7 @@ uploadRoutes.post('/uploads/presign', async (c) => {
   if (isDev) {
     presignedUrl = `/api/uploads/proxy-put/${sessionId}`;
   } else {
+    const s3 = createS3Client(c.env);
     presignedUrl = await generatePresignedPutUrl(s3, c.env, tempKey, {
       contentType: mimetype,
     });
