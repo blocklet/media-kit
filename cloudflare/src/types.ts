@@ -31,6 +31,13 @@ export interface Env {
   APP_SK: string;    // 64-byte hex secret key — used to register & derive instance DID
   APP_NAME: string;
   APP_PID: string;   // Derived from APP_SK after registerApp; can also be set explicitly
+  /**
+   * Optional permanent signer key (ED25519 expanded form) for PSK delegation.
+   * When APP_PID is set explicitly and refers to a DID that differs from
+   * fromSecretKey(APP_SK).address, pass APP_PSK so blocklet-service stores
+   * the delegation pair and buildIdentity() returns the correct (appDid, appPid).
+   */
+  APP_PSK?: string;
   APP_PREFIX: string; // Mount prefix (e.g. '/media-kit') — empty or '/' means root
   // Auth Service (DID Connect via Service Binding)
   AUTH_SERVICE: {
