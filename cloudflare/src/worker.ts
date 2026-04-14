@@ -95,8 +95,15 @@ let registeredInstanceDid: string | null = null;
 
 async function ensureRegistered(env: Env): Promise<string> {
   if (registeredInstanceDid) return registeredInstanceDid;
+  // Explicit APP_PID wins — caller has already registered the instance out-of-band
+  // (e.g. staging-aigne-hub where the umbrella PID is pre-registered with SK+PSK).
+  // Skip auto-registration so we don't overwrite the canonical PID with the SK-derived DID.
+  if (env.APP_PID) {
+    registeredInstanceDid = env.APP_PID;
+    return registeredInstanceDid;
+  }
   if (!env.AUTH_SERVICE || !env.APP_SK) {
-    return env.APP_PID || '';
+    return '';
   }
   try {
     const result = await env.AUTH_SERVICE.registerApp({
