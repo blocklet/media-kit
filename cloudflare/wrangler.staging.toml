@@ -1,0 +1,46 @@
+name = "staging-aigne-hub-media-kit"
+main = "src/worker.ts"
+compatibility_date = "2024-12-01"
+compatibility_flags = ["nodejs_compat"]
+
+[assets]
+directory = "./public"
+not_found_handling = "none"
+html_handling = "none"
+binding = "ASSETS"
+
+[vars]
+ENVIRONMENT = "staging"
+APP_NAME = "AIGNE Hub Media Kit (staging)"
+APP_PID = "zNKWm5HBgaTLptTZBzjHo6PPFAp8X3n8pabY"
+APP_PREFIX = "/image-bin"
+MAX_UPLOAD_SIZE = "500MB"
+ALLOWED_FILE_TYPES = ".jpeg,.png,.gif,.svg,.webp,.bmp,.ico,.mp4,.mov,.webm"
+USE_AI_IMAGE = "false"
+AIGNE_HUB_URL = "https://hub.aigne.io"
+
+# Service Binding to DID Connect Auth Worker — staging blocklet-service
+[[services]]
+binding = "AUTH_SERVICE"
+service = "blocklet-service-staging"
+entrypoint = "BlockletServiceRPC"
+
+[[r2_buckets]]
+binding = "R2_UPLOADS"
+bucket_name = "staging-aigne-hub-media-kit"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "staging-aigne-hub-media-kit"
+database_id = "92773574-63d9-4ffa-a065-4ff5583b6289"
+migrations_dir = "migrations"
+
+[triggers]
+crons = ["0 * * * *"]
+
+# Secrets (already set on the deployed Worker; re-set only if rotated):
+#   APP_SK           — 64-byte hex; same umbrella SK as Payment Kit
+#   CF_ACCOUNT_ID    — Cloudflare account ID
+#   R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_ORIGIN_DOMAIN   (if using S3-compat)
+#   UNSPLASH_KEY, UNSPLASH_SECRET
+#   AIGNE_HUB_API_KEY
