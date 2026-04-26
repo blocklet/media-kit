@@ -15,7 +15,10 @@ jobs:
     uses: ./.github/workflows/version-check.yml
 
   upload:
-    if: "!contains(toJSON(github.event.commits.*.message) , '[skip ci]')"
+    if: >-
+      !contains(toJSON(github.event.commits.*.message) , '[skip ci]') &&
+      needs.check-version.outputs.folders != '[]' &&
+      needs.check-version.outputs.folders != ''
     name: Upload to test store
     needs: check-version
     runs-on: ubuntu-latest

@@ -52,11 +52,8 @@ jobs:
 
           echo "$BASE_SHA...$HEAD_SHA"
 
-          # Build pattern for grep based on monitored directories
-          VERSION_PATTERN="(${MONITORED_DIRS})/.*/version"
-
           # Get the changed files list
-          CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA | grep -E "$VERSION_PATTERN" || true)
+          CHANGED_FILES=$(git diff --name-only $BASE_SHA $HEAD_SHA | grep -E "^(${MONITORED_DIRS})/[^/]+/(version|package.json|blocklet.yml)$" || true)
 
           # Extract the directory names using an array instead of string concatenation
           # Initialize an empty array
@@ -71,7 +68,15 @@ jobs:
               # If depth is 2 (default), get dir/subdir
               DIR=$(echo $file | grep -oE "(${MONITORED_DIRS})/[^/]+" || true)
             fi
-            
+
+            if [[ "$file" == */package.json ]] && ! git diff "$BASE_SHA" "$HEAD_SHA" -- "$file" | grep -Eq '^[+-][[:space:]]*"version"[[:space:]]*:'; then
+              continue
+            fi
+
+            if [[ "$file" == */blocklet.yml ]] && ! git diff "$BASE_SHA" "$HEAD_SHA" -- "$file" | grep -Eq '^[+-][[:space:]]*version[[:space:]]*:'; then
+              continue
+            fi
+
             if [ ! -z "$DIR" ]; then
               # Add to array (will handle duplicates later)
               FOLDERS_ARRAY+=("$DIR")
