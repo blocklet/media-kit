@@ -1,3 +1,7 @@
+## 0.15.3 (2026-4-26)
+
+- fix: address safe dependency vulnerabilities
+
 ## 0.15.2 (2026-4-26)
 
 - fix: upgrade dependencies and restore uploader file selection
