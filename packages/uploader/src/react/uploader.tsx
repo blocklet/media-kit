@@ -25,7 +25,6 @@ import Tus from '@uppy/tus';
 // @ts-ignore
 import PresignedUploadPlugin from './plugins/presigned-upload';
 import ComponentInstaller from '@blocklet/ui-react/lib/ComponentInstaller';
-import mime from 'mime-types';
 import xbytes from 'xbytes';
 import Modal from '@mui/material/Modal';
 import Cookie from 'js-cookie';
@@ -52,6 +51,8 @@ import {
   getUrl,
   initUppy,
   mockUploaderFileResponse,
+  getMimeExtension,
+  lookupMimeType,
 } from '../utils';
 
 // @ts-ignore
@@ -321,8 +322,8 @@ export function initUploader(props: any) {
         // is duplicate file
         return false;
       }
-      const standardExt = !!mime.extension(file.type as string);
-      const mimeType = (mime.lookup(file.name) || '') as string;
+      const standardExt = !!getMimeExtension(file.type as string);
+      const mimeType = (lookupMimeType(file.name) || '') as string;
 
       // rewrite file extension and type: if file type is not standard and not equal to mime type
       if (!standardExt && mimeType && mimeType !== file.type) {
@@ -672,7 +673,7 @@ export function Uploader({
               ? restrictions?.allowedFileExts.split(',')
               : restrictions?.allowedFileExts) || []
           )
-            ?.map((ext: string) => mime.lookup(ext?.replaceAll(' ', '') || ''))
+            ?.map((ext: string) => lookupMimeType(ext?.replaceAll(' ', '') || ''))
             ?.filter((x: any) => x)
         );
         delete restrictions.allowedFileExts;
@@ -746,7 +747,7 @@ export function Uploader({
                 return mainType;
             }
           }
-          return mime.extension(item);
+          return getMimeExtension(item);
         }) || []
       )
         ?.filter(Boolean)
@@ -814,7 +815,7 @@ export function Uploader({
         const formatFiles = files.map((data: any) => {
           const formatFile = {
             name: data.id || data.fileUrl?.split('/')?.slice(-1)?.[0],
-            type: data.mimetype || mime.lookup(data.fileUrl),
+            type: data.mimetype || lookupMimeType(data.fileUrl) || '',
             data: '', // mock a data, will upload auto download by isRemote
             preview: data.fileUrl,
             source: pluginName,

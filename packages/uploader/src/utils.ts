@@ -1,7 +1,9 @@
 import { createAxios } from '@blocklet/js-sdk';
 import joinUrl from 'url-join';
-import mime from 'mime-types';
 import debounce from 'lodash/debounce';
+export { getMimeExtension, lookupMimeType } from './mime';
+import { getMimeExtension, lookupMimeType } from './mime';
+
 export const getObjectURL = (fileBlob: Blob) => {
   let url = null;
   if (!fileBlob || !isBlob(fileBlob)) {
@@ -23,17 +25,17 @@ export const getExt = (uppyFile: any) => {
   const { type, name } = uppyFile;
 
   // such as .DS_Store and .gitignore
-  if (name.startsWith('.') && !mime.lookup(name)) {
+  if (name.startsWith('.') && !lookupMimeType(name)) {
     return false;
   }
 
-  const nameContentType = mime.lookup(name);
+  const nameContentType = lookupMimeType(name);
 
   if (nameContentType) {
-    return mime.extension(nameContentType) || '';
+    return getMimeExtension(nameContentType) || '';
   }
 
-  return mime.extension(type);
+  return getMimeExtension(type);
 };
 
 export function isBlob(file: any) {
@@ -472,7 +474,7 @@ export const mockUploaderFileResponse = (file: any) => {
     // ensure the file is valid
     const safeFile = {
       fileUrl: file.fileUrl || file.icon || '',
-      mimetype: file.mimetype || mime.lookup(file.fileUrl),
+      mimetype: file.mimetype || lookupMimeType(file.fileUrl),
       originalname: file.originalname || file.name || 'unknown',
       filename: file.filename || file._id || `${Date.now()}.unknown`,
       size: file.size || 0,

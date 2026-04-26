@@ -1,9 +1,8 @@
 // @jsxImportSource preact
 import { UIPlugin } from '@uppy/core';
 import DOMPurify from 'dompurify';
-import { getObjectURL, getExt, blobToFile, getDownloadUrl, isSvgFile } from '../../utils';
+import { getObjectURL, getExt, blobToFile, getDownloadUrl, isSvgFile, getMimeExtension, lookupMimeType } from '../../utils';
 import { unzipSync, decompressSync } from 'fflate';
-import mime from 'mime-types';
 import SparkMD5 from 'spark-md5';
 import { rotation } from 'exifr';
 
@@ -267,7 +266,7 @@ class PrepareUpload extends UIPlugin {
               throw new Error('Zip bomb detected, please check your file');
             }
 
-            const ext = mime.extension(mime.lookup(name));
+            const ext = getMimeExtension(lookupMimeType(name));
 
             if (zipBombMap[ext]) {
               const childUnzippedMap = zipBombMap[ext](item);
