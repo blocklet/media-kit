@@ -1,3 +1,7 @@
+## 0.15.2 (2026-4-26)
+
+- fix: upgrade dependencies and restore uploader file selection
+
 ## 0.15.0 (2026-4-10)
 
 - feat: Cloudflare Workers deployment for Media Kit
