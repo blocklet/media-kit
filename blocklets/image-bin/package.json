@@ -101,7 +101,6 @@
     "react-dom": "^19.1.0",
     "react-router-dom": "^6.30.3",
     "react-use": "^17.5.1",
-    "swiper": "^9.4.1",
     "timeago.js": "^4.0.2",
     "vite": "^7.3.2",
     "vite-plugin-blocklet": "^0.14.6",
