@@ -1,3 +1,5 @@
+## 0.15.4 (2026-4-26)
+
 ## 0.15.3 (2026-4-26)
 
 - fix: address safe dependency vulnerabilities
