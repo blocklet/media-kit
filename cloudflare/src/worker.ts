@@ -99,11 +99,30 @@ async function ensureRegistered(env: Env): Promise<string> {
     return env.APP_PID || '';
   }
   try {
+    // When APP_PID is set explicitly we're in "shared identity" mode: this
+    // worker is part of a multi-component deployment (e.g. aigne-hub +
+    // payment-kit + media-kit all sharing one Blocklet Server identity) and
+    // another component owns the user-facing instance branding.
+    //   - Pass the explicit instanceDid so blocklet-service does NOT derive
+    //     a fresh DID from APP_SK and trigger a destructive migrateInstanceDid
+    //     against the sibling component.
+    //   - Pass APP_PSK (if set) so buildIdentity can return the correct
+    //     delegated (appDid, appPid) pair.
+    //   - Do NOT pass appName/appDescription so we don't overwrite the
+    //     owner component's branding every time media-kit boots.
+    // When APP_PID is unset (legacy single-tenant deploy) fall back to the
+    // old 'auto' behaviour with our own branding.
+    const isSharedIdentity = !!env.APP_PID;
     const result = await env.AUTH_SERVICE.registerApp({
-      instanceDid: 'auto',
+      instanceDid: env.APP_PID || 'auto',
       appSk: env.APP_SK,
-      appName: env.APP_NAME || 'Media Kit',
-      appDescription: 'Media asset management',
+      ...(env.APP_PSK ? { appPsk: env.APP_PSK } : {}),
+      ...(isSharedIdentity
+        ? {}
+        : {
+            appName: env.APP_NAME || 'Media Kit',
+            appDescription: 'Media asset management',
+          }),
     });
     registeredInstanceDid = result.instanceDid;
     console.log(`[media-kit] Registered as instance: ${registeredInstanceDid}`);
